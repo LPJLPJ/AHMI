@@ -349,7 +349,7 @@ function fixProjectContent(content,id,host){
 
     }
     transformSrc = function(key,value) {
-        if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage'||key=='originSrc') {
+        if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage'||key=='originSrc'||key=='backgroundImg') {
             // console.log("key:",key);
             // console.log("value0:",value);
             if((typeof value==='string')&&(value!='')){

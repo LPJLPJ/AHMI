@@ -116,7 +116,9 @@ ideServices
                     value:45,
                     offsetValue:0,
                     pointerLength:185,
-                    enableAnimation:false
+                    enableAnimation:false,
+                    pointerImgWidth:0,
+                    pointerImgHeight:0
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -821,10 +823,11 @@ ideServices
                 expand:true,
                 url:'',
                 zIndex:0,
-                texList:texList
-
+                texList:texList,
+                transition:_.cloneDeep(defaultTransition)
             }
         };
+
 
         //仪表盘控件
         this.getDefaultDashboard= function () {
@@ -834,13 +837,14 @@ ideServices
                 id: Math.random().toString(36).substr(2),
                 info: info,
                 dashboardModeId:'0',//0-简单模式，1-复杂模式,2-精简模式
+                backgroundModeId:'0', //0-不启用无背景模式 //1-启用无背景模式
                 name: 'NewDashboard',
                 type: Type.MyDashboard,
                 expand:true,
                 url:'',
                 zIndex:0,
                 texList:texList,
-
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 
@@ -1626,6 +1630,68 @@ ideServices
         };
         this.getTemplateId = function(){
             return templateId;
+        };
+
+        //matteTemplate  add by tang
+        this.getDefaultMatte=function(){
+            var pageNode=CanvasService.getPageNode();
+            var info={
+                width:pageNode.getWidth()/pageNode.getZoom(),
+                height:pageNode.getHeight()/pageNode.getZoom(),
+                left: 0,
+                top: 0,
+                backgroundColor:'rgba(0,0,0,0)',
+                backgroundImg:"",
+                opacity:0,
+                originX: 'center',
+                originY: 'center'
+            };
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                type:'MyMatte',
+                matteOn:false,
+                info:info
+            }
+        };
+
+
+        //获取仪表盘的背景纹理
+        this.getBackgroundSlice = function(){
+            return defaultDashboard.texList[0];
+        };
+
+        // 用于切换仪表盘模式，返回不同的texList
+        this.getDashboardTex = function(mode){
+            var background = _.cloneDeep(defaultDashboard.texList[0]);
+            var pointer = _.cloneDeep(defaultDashboard.texList[1]);
+            var lightband = {
+                currentSliceIdx:0,
+                name:'光带效果',
+                slices:[{
+                    color:'rgba(0,0,0,0)',
+                    imgSrc:'',
+                    name:'光带效果'
+                }]
+            };
+
+            var tex = [];
+            switch (mode){
+                case '0':
+                    tex.push(background,pointer);
+                    break;
+                case '1':
+                    tex.push(background,pointer,lightband);
+                    break;
+                case '2':
+                    tex.push(lightband);
+                    break;
+                default:
+                    tex.push(background,pointer);
+                    break;
+
+            }
+            return tex
         }
 
     }]);

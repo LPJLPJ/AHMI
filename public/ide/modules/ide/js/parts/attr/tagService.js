@@ -3,7 +3,7 @@
  */
 ideServices.service('TagService', [function () {
 
-    function Tag(name, register, indexOfRegister, writeOrRead, value, type, bindMod) {
+    function Tag(name, register, indexOfRegister, writeOrRead, value, type, bindMod, valueType) {
         this.name = name;
         this.register = register;
         this.indexOfRegister = indexOfRegister;
@@ -11,6 +11,7 @@ ideServices.service('TagService', [function () {
         this.value = value;
         this.type = type || 'custom'; //custom, system, timer
         this.bindMod = bindMod || 'default';
+        this.valueType = valueType || 0; //0 数字 1字符串
     }
 
     var defaultTag = new Tag('', false, null, 'true', null, 'custom', 'default');
@@ -177,10 +178,18 @@ ideServices.service('TagService', [function () {
 
     //设置Timer的tags
     this.setTimerTags = function (num) {
-        timerTags.length = 0;//先清空timerTags
-        for (var i = 0; i < num; i++) {
-            timerTags[i] = {name: "", register: false, indexOfRegister: null, value: 0};
-            timerTags[i].name = "SysTmr_" + i + "_t";
+        var curLength = timerTags.length;
+        if(num<0){
+            return;
+        }
+        if(num>curLength){
+            for(var i=curLength,il=num;i<il;i++){
+                timerTags.push(new Tag("SysTmr_" + i + "_t", false, null, 'true', 0, 'timer', 'forbidden'));
+            }
+        }else if(num<curLength){
+            timerTags.splice(num,curLength-num);
+        }else{
+            return;
         }
     };
 
@@ -322,7 +331,6 @@ ideServices.service('TagService', [function () {
     };
 
 
-    //edit by lx
     /**
      * 同步从服务器获取的tags，用于导入tag功能
      * @param newTags 获取到的tag
@@ -330,7 +338,7 @@ ideServices.service('TagService', [function () {
      * @param overlay 是否覆盖
      * @param cb 回调函数
      */
-    this.syncTagFromRemote = function (newTags, curTagClass,overlay,cb) {
+    this.syncTagFromRemote = function (newTags, curTagClass, overlay, cb) {
         var allTags = tags;
         var curTag = null;
         var noDuplicate = false;
@@ -340,18 +348,17 @@ ideServices.service('TagService', [function () {
                 return item.name !== curTag.name;
             });
 
-            if(!noDuplicate&&overlay){
+            if (!noDuplicate && overlay) {
                 replaceTag(curTag);
-            }else if(!noDuplicate&&!overlay){
+            } else if (!noDuplicate && !overlay) {
                 continue;
-            }else {
+            } else {
                 allTags.push(curTag);
             }
 
-            curTagClass.tagArray.push(curTag);
         }
 
-        cb&&cb();
+        cb && cb();
     };
 
     /**
@@ -360,8 +367,8 @@ ideServices.service('TagService', [function () {
      */
     function replaceTag(curTag) {
         var allTags = tags;
-        for(var i=0,il=allTags.length;i<il;i++){
-            if(curTag.name===tags[i].name){
+        for (var i = 0, il = allTags.length; i < il; i++) {
+            if (curTag.name === tags[i].name) {
                 tags[i] = curTag;
                 return;
             }

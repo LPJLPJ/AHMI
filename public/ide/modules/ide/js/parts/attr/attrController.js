@@ -178,11 +178,78 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
     function onAttributeChanged() {
         $timeout(function () {
             $scope.component.bottom.page = ProjectService.getCurrentPage();
-
-
         })
-
-
     }
+
+    /**
+     * @author tang
+     * 右下角图层菜单拖拽操作
+     * @type {{accept: Function}}
+     */
+
+    $scope.myLayerTree = dragTree();
+
+    function dragTree(){
+        var dragNodeIndex;
+        return{
+            dragStart: function (e) {
+                var dragNode = e.source.nodeScope.$modelValue;
+                var dragNodeId = e.source.nodeScope.$modelValue.id;
+                var layers = $scope.component.bottom.page.layers;
+                dragNodeIndex= e.source.nodesScope.$modelValue.indexOf(dragNode);
+
+                //拖拽前先选中，且拖拽时关闭菜单展开状态
+                if (dragNode.type == 'MyLayer') {
+                    selectLayer(dragNode);
+                    _.forEach(layers, function (layer) {
+                        if (layer.id != dragNodeId) {
+                            layer.expand = false;
+                        }
+                    })
+                } else if (dragNode.type == 'MySubLayer') {
+                    var sLayer=e.source.nodesScope.$nodeScope.$modelValue;
+                    selectSubLayer(sLayer, dragNode);
+                    _.forEach(layers, function (layer) {
+                        _.forEach(layer.subLayers, function (subLayer) {
+                            if (subLayer.id != dragNodeId) {
+                                subLayer.expand = false;
+                            }
+                        })
+                    })
+                } else{
+                    var wSubLayer = e.source.nodesScope.$nodeScope.$modelValue;
+                    var wLayer = e.source.nodesScope.$nodeScope.$parentNodeScope.$modelValue;
+                    selectWidget(wLayer, wSubLayer, dragNode);
+                }
+            },
+            dropped: function (e) {
+                var _endIndex = e.dest.index;
+
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                if(_endIndex!==-1){
+                    if (_endIndex != dragNodeIndex) {//若落点位置和原位置一样则不执行
+                        ProjectService.ChangeDragZIndex(_endIndex,function(){
+                            $timeout(function () {
+                                $scope.$emit('ChangeCurrentPage', oldOperate);
+                            })
+                        });
+                        toastr.info('调整层级成功');
+                    }
+                }else{
+                    toastr.info('调整出现错误，请保存刷新页面')
+                }
+            },
+            accept: function (sourceNodeScope, destNodesScope, destIndex) {
+                //设置同一父级下才能执行拖拽
+                if (destNodesScope.isParent(sourceNodeScope)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    };
+
+
 }]);
 

@@ -243,8 +243,9 @@ body{
     background-color: #D2D2D2;
 }
 
-
-.my-page-tree
+.angular-ui-tree-empty{
+    display: none!important;
+}
 .my-current-thumb{
     border: 2px solid #4084f6;
 }
@@ -567,7 +568,7 @@ body{
     display: inline-block;
     padding: 2px 10px;
     white-space: nowrap;
-
+    cursor: pointer!important;
 }
 .my-levels-title.selected{
     color: #1C2B4B;
@@ -576,7 +577,8 @@ body{
     border-radius: 10px;
 }
 .my-object-label{
-    cursor: pointer;
+    cursor: pointer!important;
+    font-weight: normal!important;
 }
 .my-object-label.selected{
     color: #1C2B4B;
@@ -594,7 +596,7 @@ body{
     min-height:660px;
     height:100%;
     width:100%;
-    z-index: 999;
+    z-index: 1000000;
     top:0;
     bottom:0;
     overflow: auto;
@@ -752,6 +754,13 @@ body{
     /*早期浏览器*/
      user-select: text;
 
+}
+
+/*.modal-dialog {*/
+    /*z-index: 100000000;!important;*/
+/*}*/
+.modal-content {
+    z-index:100000000 ;
 }
 
 .my-Font-div{

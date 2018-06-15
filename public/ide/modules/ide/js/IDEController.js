@@ -756,6 +756,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             $scope.$broadcast('ChangeMask', data)
         });
 
+        //matte  add by tang
+        $scope.$on('ChangeMatte', function (event) {
+            $scope.$broadcast('ChangeMatteAttr');
+            $scope.$broadcast('PageNodeChanged');
+        });
+
 
         function reOpenProject(event, pid) {
             $scope.ide.loaded = false;

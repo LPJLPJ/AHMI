@@ -5,6 +5,46 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      */
     this.transDataFile = transDataFile;
 
+    var tagList;
+
+    function transCmds(cmds,changelt){
+        // actionCompiler
+        var reg = new RegExp("^[0-9]*$");
+
+        //检查一个tag的valueType是否为字符串
+        var checkTagTypeIsStr = function(tagName){
+            var result = false;
+            for(var i=0,il=tagList.length;i<il;i++){
+                if(tagName===tagList[i].name&&(tagList[i].valueType===1)){
+                    result = true;
+                    return;
+                }
+            }
+        };
+
+        cmds.forEach(function(cmd){
+            cmd.forEach(function(op){
+                if(op.hasOwnProperty('value')){
+                    if(!reg.test(op.value)&&!!op.value){
+                        //值为字符串
+                        op.value = convertStrToUint8Array(op.value,supportedEncodings.ascii)
+                    }
+                }
+            })
+        });
+
+        return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
+    }
+    
+    function transActions(object,changelt) {
+        changelt = changelt||true;
+        if (object&&object.actions&&object.actions.length){
+            for (var i=0;i<object.actions.length;i++){
+                var curAction = object.actions[i];
+                curAction.commands = transCmds(curAction.commands,changelt);
+            }
+        }
+    }
     var idStart=0;
 
     /**
@@ -12,6 +52,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
      */
     function transDataFile(rawProject){
         var targetProject = {};
+        tagList = rawProject.customTags;
         targetProject.version = rawProject.version;
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
@@ -1389,4 +1430,49 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         return false;
     }
 
+
+    /**
+     * edit in 2017/09/15
+     * use for trans string type tag
+     */
+
+    var supportedEncodings = {
+        ascii:'ascii',
+        'utf-8':'utf-8'
+    };
+
+    var convertStrToUint8Array=function (str,encoding) {
+        encoding = encoding || supportedEncodings.ascii;
+        var uint8array;
+        switch (encoding) {
+            case supportedEncodings.ascii:
+                uint8array = new TextEncoder(encoding, {NONSTANDARD_allowLegacyEncoding: true}).encode(str);
+                break;
+            case supportedEncodings['utf-8']:
+                uint8array = new TextEncoder().encode(str);
+                break;
+            default:
+                console.log('unsupported encoding');
+        }
+        return uint8array
+    };
+
+    var convertUint8ArrayToStr=function (buf,encoding) {
+        encoding = encoding||supportedEncodings.ascii;
+        var str = '';
+        switch (encoding){
+            case supportedEncodings.ascii:
+            case supportedEncodings['utf-8']:
+                str = new TextDecoder(encoding).decode(buf);
+                break;
+
+            default:
+                console.log('unsupported encoding')
+        }
+        return str
+    };
+
+    this.supportedEncodings = supportedEncodings;
+    this.convertStrToUint8Array = convertStrToUint8Array;
+    this.convertUint8ArrayToStr = convertUint8ArrayToStr;
 }]);

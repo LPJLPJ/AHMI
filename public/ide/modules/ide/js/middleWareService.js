@@ -106,6 +106,9 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             if (level.transition === undefined) {
                 level.transition = AnimationService.getDefaultTransition();
             }
+            if (level.backgroundModeId === undefined) {
+                level.backgroundModeId = '0';
+            }
         },
         button: function () {
             var level = arguments[0];
@@ -157,20 +160,20 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 layer.transition = AnimationService.getDefaultTransition()
             }
             if (layer.animations) {
-                layer.animations.map(function(animation){
+                layer.animations.map(function (animation) {
                     var translate = animation.animationAttrs && animation.animationAttrs.translate;
                     var scale = animation.animationAttrs && animation.animationAttrs.scale;
                     var temp, key;
-                    if (translate && translate.dstPos && (typeof translate.dstPos.x ==='number')) {
+                    if (translate && translate.dstPos && (typeof translate.dstPos.x === 'number')) {
                         for (key in translate) {
                             temp = translate[key].x;
                             translate[key].x = {
-                                value: temp||0,
+                                value: temp || 0,
                                 tag: ''
                             };
                             temp = translate[key].y;
                             translate[key].y = {
-                                value: temp||0,
+                                value: temp || 0,
                                 tag: ''
                             }
                         }
@@ -187,7 +190,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                             }
                         }
                     }
-                    if(animation.timingFun===undefined){
+                    if (animation.timingFun === undefined) {
                         animation.timingFun = '';
                     }
                 })
@@ -251,8 +254,10 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
+        var tags, timers;
 
         project = arguments[0];
+        console.log('haha',project);
 
         pages = project.pages || [];
         pages.forEach(function (page) {
@@ -275,6 +280,22 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 layers.showSubLayer = subLayers[0];
             })
         });
+
+        tags = project.customTags;
+        tags.forEach(function (tag) {
+            if (tag.valueType === undefined) {
+                tag.valueType = 0;
+            }
+        });
+
+        timers = project.customTags;
+        timers.forEach(function (timer) {
+            if (timer.valueType === undefined) {
+                timer.valueType = 0;
+            }
+        });
+
+        console.log('keke',project);
     }
 
     //检查工程版本是否过时

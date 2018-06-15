@@ -496,6 +496,9 @@
          * @param _target
          */
         function doubleClickLayer(_target) {
+            if(_target.type=='MyMatte'){
+                return;
+            }
             layerDoubleClicking=true;
 
 

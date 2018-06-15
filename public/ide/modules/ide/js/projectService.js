@@ -741,6 +741,8 @@ ideServices
 
                     if (shearPlate.type==Type.MyLayer){
                         return true;
+                    }else if(shearPlate.type==Type.MySubLayer){//add by tang
+                        return true;
                     }else if(shearPlate.type == Type.MyGroup && shearPlate.mode == 0){
                         return true;
                     }else{
@@ -749,6 +751,8 @@ ideServices
                 }else if (selectObj.type==Type.MySubLayer){
                     //SubLayer下面只有Widget或者Widget组可以粘贴
                     if (Type.isWidget(shearPlate.type)){
+                        return true;
+                    }else if(shearPlate.type==Type.MySubLayer){//tang
                         return true;
                     }else return (shearPlate.type == Type.MyGroup && shearPlate.mode == 1);
                 }else if (Type.isWidget(selectObj.type)||(selectObj.type==Type.MyGroup&&selectObj.mode==1)){
@@ -1594,6 +1598,19 @@ ideServices
                 return copyLayer;
             }
 
+            //subLayer拷贝 tang
+            function _getCopySubLayer(_subLayer){
+                var copySubLayer= _.cloneDeep(_subLayer);
+                copySubLayer.id=_genUUID();
+
+                copySubLayer.widgets&&copySubLayer.widgets.forEach(function(_widget,index){
+                    _widget.id = _genUUID();
+                });
+
+
+                return copySubLayer;
+            }
+
             function _getCopyPage(_page){
                 var pageCopy= _.cloneDeep(_page);
                 pageCopy.id=Math.random().toString(36).substr(2);   //重置id
@@ -1706,6 +1723,22 @@ ideServices
                 _successCallback&&_successCallback();
 
             };
+            //add by tang
+            this.CopySubLayer=function(_subLayer,_successCallback){
+                var fabSubLayer=_self.getFabricObject(_subLayer.id);
+
+                shearPlate={
+                    type:Type.MySubLayer,
+                    objects:[_subLayer],
+                    mode:0,
+                    target:fabSubLayer
+                };
+
+                toastr.info('复制成功');
+                _successCallback&&_successCallback();
+            };
+
+
             this.CopyWidget= function (_widget, _successCallback) {
                 // var copyWidget= _getCopyWidget(_widget);
                 var fabWidget=_self.getFabricObject(_widget.id,true);
@@ -1805,6 +1838,11 @@ ideServices
                     var newLayer= _getCopyLayer(shearPlate.objects[0]);
                     newLayer.$$hashKey=undefined;
                     _self.AddNewLayerInCurrentPage(newLayer,_successCallback);
+
+                }else if(shearPlate.type==Type.MySubLayer){//add by tang
+                    var newSubLayer= _getCopySubLayer(shearPlate.objects[0]);
+                    newSubLayer.$$hashKey=undefined;
+                    _self.AddNewSubLayerInCurrentLayer(newSubLayer,_successCallback)
 
                 }else if (shearPlate.type==Type.MyGroup&&shearPlate.mode==0){
                     //粘贴LayerGroup
@@ -4104,79 +4142,16 @@ ideServices
                 pageNode.renderAll();
                 _successCallback && _successCallback(currentOperate);
 
-            }
+            };
 
             //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
             this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
                 var templateId = TemplateProvider.getTemplateId();
                 var selectObj = _self.getCurrentSelectObject();
+                var level = selectObj.level;
                 selectObj.level.dashboardModeId = _option.dashboardModeId;
-                if(selectObj.level.dashboardModeId=='0')
-                {
-                    selectObj.level.texList=[
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘背景',
-                            slices:[{
-                                color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
-                                name:'仪表盘背景'
-                            }]
-                        },
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘指针',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
-                                name:'仪表盘指针'
-                            }]
-                        }
-                    ]
-                }else if(selectObj.level.dashboardModeId=='1'){
-                    selectObj.level.texList=[
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘背景',
-                            slices:[{
-                                color:templateId?'rgba(0,0,0,0)':'rgba(100,100,100,1)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/dashboard.png':'',
-                                name:'仪表盘背景'
-                            }]
-                        },
-                        {
-                            currentSliceIdx:0,
-                            name:'仪表盘指针',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/pointer.png':'',
-                                name:'仪表盘指针'
-                            }]
-                        },
-                        {
-                            currentSliceIdx:0,
-                            name:'光带效果',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
-                                name:'光带效果'
-                            }]
+                level.texList = TemplateProvider.getDashboardTex(level.dashboardModeId,level.backgroundModeId);
 
-                        }
-                    ]
-                }else if(selectObj.level.dashboardModeId=='2'){
-                    selectObj.level.texList=[
-                        {
-                            currentSliceIdx:0,
-                            name:'光带效果',
-                            slices:[{
-                                color:'rgba(0,0,0,0)',
-                                imgSrc:templateId?'/public/templates/defaultTemplate/defaultResources/lightBand.png':'',
-                                name:'光带效果'
-                            }]
-                        }
-                    ];
-                }
                 //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
                 var level = _.cloneDeep(selectObj.level);
                 arg={
@@ -4187,6 +4162,21 @@ ideServices
                 };
                 selectObj.target.fire('changeDashboardMode',arg);
             };
+
+            this.ChangeAttributeBackgroundModeId = function(_option,_successCallback){
+                var selectObj = _self.getCurrentSelectObject();
+                var level = selectObj.level;
+                if(_option.backgroundModeId===level.backgroundModeId){
+                    return;
+                }
+                selectObj.level.backgroundModeId = _option.backgroundModeId;
+                var arg = {
+                    backgroundModeId:_option.backgroundModeId,
+                    callback:_successCallback,
+                };
+                selectObj.target.fire('changeBackgroundMode',arg)
+            };
+
             this.changeVideoSource=function(_option,_successCallback){
                 var VideoSource = _option.source;
                 var selectObj= _self.getCurrentSelectObject();
@@ -4249,7 +4239,6 @@ ideServices
 
             };
             this.ChangeAttributeButtonCount= function (_option, _successCallback) {
-                //console.log(_successCallback);
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.info.count=_option.count;
                 checkTexList(selectObj.level,selectObj.level.info.count, function () {
@@ -4421,11 +4410,25 @@ ideServices
 
             this.ChangeAttributeTexList= function (_actionObj,_successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
-                selectObj.level.texList=_actionObj;
-                var arg={
-                    level:selectObj.level,
-                    callback:_successCallback
+                var level = selectObj.level;
+                level.texList=_actionObj;
+                switch(level.type){
+                    case Type.MyDashboard:
+                        var info = level.info;
+                        var texList = level.texList;
+                        if(level.dashboardModeId!=='2'&&!!texList[1].slices[0].imgSrc){
+                            var img = ResourceService.getResourceFromCache(texList[1].slices[0].imgSrc);
+                            info.pointerImgWidth = img.width;
+                            info.pointerImgHeight = img.height;
+                        }
+                        break;
+                    default:
+                        break;
                 }
+                var arg={
+                    level:level,
+                    callback:_successCallback
+                };
                 selectObj.target.fire('changeTex',arg);
             };
 
@@ -4635,7 +4638,7 @@ ideServices
                     var subLayerNode = CanvasService.getSubLayerNode();
                     var fabWidget = null;
                     var currentSubLayer=getCurrentSubLayer();
-                    console.log(currentSubLayer.widgets);
+                    //console.log(currentSubLayer.widgets);
                     var currentWidget = getCurrentWidget();
                     _.forEach(subLayerNode.getObjects(), function (_fabObj) {
                         if (_fabObj.id == object.target.id) {
@@ -4705,6 +4708,78 @@ ideServices
                 }
 
                 _successCallback&&_successCallback(currentOperate);
+            };
+
+
+            /**
+             * @author tang
+             * _endIndex 拖拽落点坐标
+             * _cb 回调函数
+             * @type {{changeLayer: Function, changeSubLayer: Function, changeWidget: Function}}
+             */
+            this.ChangeDragZIndex=function (_endIndex,_cb){
+                var currentOperate=SaveCurrentOperate();
+                var object=getCurrentSelectObject();
+                if (object.type==Type.MyLayer){
+                    var pageNode = CanvasService.getPageNode();
+                    var fabLayer = null;
+                    var currentPage=_self.getCurrentPage();
+                    _.forEach(pageNode.getObjects(), function (_fabObj) {
+                        if (_fabObj.id == object.target.id) {
+                            fabLayer = _fabObj;
+                        }
+                    });
+                    if (!fabLayer) {
+                        console.warn('找不到Layer');
+                        alertErr();
+                        return;
+                    }
+
+                    fabLayer.moveTo(_endIndex);
+                    var layers = pageNode.getObjects();
+                    _.forEach(currentPage.layers, function (_layer) {
+                        for (var i=0;i<layers.length;i++){
+                            if (layers[i].id == _layer.id){
+                                _layer.zIndex = i;
+                                break;
+                            }
+                        }
+                    });
+
+                }else if (Type.isWidget(object.type)){
+                    var subLayerNode = CanvasService.getSubLayerNode();
+                    var fabWidget = null;
+                    var currentSubLayer=getCurrentSubLayer();
+                    _.forEach(subLayerNode.getObjects(), function (_fabObj) {
+                        if (_fabObj.id == object.target.id) {
+                            fabWidget = _fabObj;
+                        }
+                    });
+                    if (!fabWidget) {
+                        console.warn('找不到Widget');
+                        alertErr();
+                        return;
+                    }
+
+                    fabWidget.moveTo(_endIndex);
+                    var widgetObjs = subLayerNode.getObjects();
+                    _.forEach(currentSubLayer.widgets, function (_widget) {
+                        for (var i=0;i<widgetObjs.length;i++){
+                            if (widgetObjs[i].id == _widget.id){
+                                _widget.zIndex = i;
+                                break;
+                            }
+                        }
+                    });
+                }else if(object.type==Type.MySubLayer){
+                    var currentLayer = getCurrentLayer();
+                    var subLayers = currentLayer.subLayers;
+                    currentLayer.showSubLayer=subLayers[0];
+                }else{
+                    //无匹配返回
+                    return
+                }
+                _cb&&_cb(currentOperate);
             };
 
             this.ChangeAttributeSize= function (_option, _successCallback) {
@@ -5216,6 +5291,17 @@ ideServices
                 backgroundCanvas.width = _subLayerW;
                 backgroundCanvas.height = _subLayerH;
                 var ctx = backgroundCanvas.getContext('2d');
+                //add by tang
+                if(currentPage.matte&&currentPage.matte.info.backgroundImg){
+                    var matteImgSrc=currentPage.matte.info.backgroundImg;
+                    var matteColor=currentPage.matte.info.backgroundColor;
+                    var matteOpacity=currentPage.matte.info.opacity/100;
+                    var matteImg=ResourceService.getResourceFromCache(matteImgSrc);
+                    var matteX = parseInt(matteImg.width/pageWidth*x);
+                    var matteY = parseInt(matteImg.height/pageHeight*y);
+                    var matteWidth =parseInt(matteImg.width/pageWidth*width);
+                    var matteHeight =parseInt(matteImg.height/pageHeight*height)
+                }
 
                 //draw dash rect
                 ctx.strokeStyle = "#ff0000";
@@ -5228,13 +5314,46 @@ ideServices
                     var sourceY = parseInt(pageBackgroundImg.height/pageHeight*y);
                     var sourceWidth =parseInt(pageBackgroundImg.width/pageWidth*width);
                     var sourceHeight =parseInt(pageBackgroundImg.height/pageHeight*height);
+                    ctx.beginPath();
                     ctx.drawImage(pageBackgroundImg,sourceX,sourceY,sourceWidth,sourceHeight,0,0,_width,_height);
+                    ctx.closePath();
+
+                    //draw matte  add by tang
+                    if(currentPage.matte&&currentPage.matte.matteOn&&currentPage.matte.info.backgroundImg){
+                        drawSubLayerMatte(ctx,matteX,matteY,matteWidth,matteHeight,_width,_height,matteImg,matteColor,matteOpacity);
+                    }
                 }else{
                     ctx.beginPath();
                     ctx.rect(0,0,_width,_height);
                     ctx.fillStyle=pageColor;
                     ctx.fill();
                     ctx.closePath();
+
+                    if(currentPage.matte&&currentPage.matte.matteOn&&currentPage.matte.info.backgroundImg){
+                        drawSubLayerMatte(ctx,matteX,matteY,matteWidth,matteHeight,_width,_height,matteImg,matteColor,matteOpacity);
+                    }
+                }
+            }
+            /**
+             * 绘制在subLayer上的蒙板
+             * @author tang
+             */
+            function drawSubLayerMatte(ctx,matteX,matteY,matteWidth,matteHeight,_width,_height,matteImg,matteColor,matteOpacity){
+                try{
+                    ctx.beginPath();
+                    ctx.globalAlpha=matteOpacity;
+                    ctx.drawImage(matteImg,matteX,matteY,matteWidth,matteHeight,0,0,_width,_height);
+                    ctx.closePath();
+
+                    ctx.beginPath();
+                    ctx.globalAlpha=matteOpacity;
+                    ctx.rect(0,0,_width,_height);
+                    ctx.fillStyle=matteColor;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+                catch(err){
+                    console.log("绘制matte错误")
                 }
             }
 
@@ -5294,6 +5413,13 @@ ideServices
                                 _addFabricObjInCanvasNode(layer,node);
                             });
                             _cb&&_cb();
+                        }
+
+                        //draw matte -->add by tang
+                        if(data.matte){
+                            if(data.matte.matteOn){
+                                _addMatteInCanvasNode(data.matte)
+                            }
                         }
                         break;
                     case Type.MySubLayer:
@@ -5415,6 +5541,17 @@ ideServices
                 _cb&&_cb();
             }
 
+            /**
+             * add by tang
+             * 将蒙板对象添加到Canvas
+             * @param matteData 蒙板数据
+             * @private
+             */
+            function _addMatteInCanvasNode(matteData){
+                _self.addMatte(matteData);
+            }
+
+
 
 
             /**
@@ -5478,7 +5615,7 @@ ideServices
             /**
              * 模具框
              * @return maskStyle
-             * add by tang
+             * @author add by tang
              */
             this.initMaskAttr=function(){
                 var mask=project.mask;
@@ -5504,9 +5641,116 @@ ideServices
                     }
                 }
                 return maskStyle;
+            };
+
+            /**
+             * @name 蒙板
+             * 说明：定义蒙板的zIndex在page最底层,介于背景图之上，layer层之下。
+             * 开启:addMatte，关闭:offMate。若page存在matte属性则按属性生成，若无则添加默认模板。
+             * 修改蒙板 背景图:changeMatteBgi、颜色:changeMatteBgc、透明度:changeMatteOpacity。
+             * changeMatteAttr：操作完成后通知
+             * @author tang
+             */
+
+            this.addMatte=function (matteData){
+                var defaultMatte = TemplateProvider.getDefaultMatte();
+                var pageNode = CanvasService.getPageNode();
+                var object=getCurrentSelectObject();
+                var currentPage=_self.getCurrentPage();
+
+                var initiator="",matteInfo="";
+                if(matteData){
+                    matteData.matteOn=true;
+                    matteInfo=matteData;
+                    initiator={
+                        width:pageNode.getWidth()/pageNode.getZoom(),
+                        height:pageNode.getHeight()/pageNode.getZoom(),
+                        top:matteData.info.top,
+                        left:matteData.info.left,
+                        backgroundImg:matteData.info.backgroundImg,
+                        opacity:matteData.info.opacity,
+                        backgroundColor:matteData.info.backgroundColor
+                    };
+                }else{
+                    defaultMatte.matteOn=true;
+                    matteInfo=defaultMatte;
+                    initiator={
+                        width:defaultMatte.info.width,
+                        height:defaultMatte.info.height,
+                        top:defaultMatte.info.top,
+                        left:defaultMatte.info.left,
+                        backgroundImg:defaultMatte.info.backgroundImg,
+                        opacity:defaultMatte.info.opacity,
+                        backgroundColor:defaultMatte.info.backgroundColor
+                    }
+                }
+
+                var matte=new fabric.MyMatte(initiator);
+                pageNode.add(matte);
+                matte.moveTo(pageNode,0);
+                pageNode.renderAll.bind(pageNode)();
+
+                object.level.matte=matteInfo;
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                changeMatteAttr();
+            };
+
+            this.offMatte=function(){
+                var object=getCurrentSelectObject();
+                var pageNode = CanvasService.getPageNode();
+                var matteNode = getMatteNode();
+                var currentPage=_self.getCurrentPage();
+                pageNode.remove(matteNode);
+
+                object.level.matte.matteOn=false;
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                changeMatteAttr();
+            };
+
+            this.changeMatteBgi=function(img){
+                var matte=getMatteNode();
+                var object=getCurrentSelectObject();
+
+                matte.fire('changeBgi',img);
+                object.level.matte.info.backgroundImg=img;
+
+                changeMatteAttr();
+            };
+
+            this.changeMatteOpacity=function(op){
+                var matte=getMatteNode();
+                var object=getCurrentSelectObject();
+
+                matte.fire('changeOpacity',op);
+                object.level.matte.info.opacity=op;
+
+                changeMatteAttr();
+            };
+
+            this.changeMatteBgc=function(co){
+                var matte=getMatteNode();
+                var object=getCurrentSelectObject();
+
+                matte.fire('changeBgc',co);
+                object.level.matte.info.backgroundColor=co;
+                changeMatteAttr();
+            };
+
+            var getMatteNode=this.getMatteNode=function(){
+                var pageNode=CanvasService.getPageNode();
+                var matteNode=pageNode.getObjects('MyMatte')[0];
+                if(matteNode){
+                    return matteNode;
+                }else{
+                    console.log('matte错误')
+                }
+            };
+
+            //更改matte属性时通知attr属性面板区
+            this.setScope=function(scope){
+                this.attrScope=scope;
+            };
+            function changeMatteAttr(){
+                _self.attrScope.$emit('ChangeMatte');
             }
-
-
-
-
         }]);

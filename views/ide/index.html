@@ -123,6 +123,10 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/texCtl.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/characterSetController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationController.js"></script>
+    <!--<script src="../../public/ide/modules/ide/js/parts/attr/SortableController.js"></script>-->
+    <script type="text/javascript" src="../../public/ide/modules/ide/min-js/myDirective.js"></script>
+
+
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
     <!--directive-->
 
@@ -183,7 +187,7 @@
      ng-class="{'my-left-show':leftShown,'my-left-hide':!leftShown,'my-right-show':rightShown,'my-right-hide':!rightShown}">
     <!--<div class="container-fluid" >-->
 
-    <div ng-controller="NavCtrl" data-step="1">
+    <div ng-controller="NavCtrl" data-step="1" data-step-c1="1-3-10-11">
 
         <ul class="nav nav-tabs my-nav-tabs">
 
@@ -248,17 +252,34 @@
                                             <option value="custom">自定义:{{saveAsWidth}} * {{saveAsHeight}}</option>
                                         </select>
                                     </div>
-                                    <div ng-show="selectCustomResolution=='custom'">
-                                        <div class="form-group">
-                                            <span class="control-label">自定义宽度：</span>
-                                            <input type="number" class="col-lg-2 form-control" placeholder="1~1920" ng-model="saveAsWidth" min="0" max="1920"/>
+                                    <div ng-show="selectCustomResolution=='custom'" class="customResolutionWrap">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2">自定义宽度：</label>
+                                            <input type="number" placeholder="1~1920" class="form-control col-sm-4" ng-model="saveAsWidth" min="0" max="1920"/>
                                         </div>
-                                        <div class="form-group">
-                                            <span class="control-label">自定义高度：</span>
-                                            <input type="number" class="col-lg-2 form-control" placeholder="1~1920" ng-model="saveAsHeight" min="0" max="1920"/>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2">自定义高度：</label>
+                                            <input type="number" placeholder="1~1920" class="form-control col-sm-4" ng-model="saveAsHeight" min="0" max="1920"/>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!--控件拉伸 tang-->
+                                <div class="form-group projectScale">
+                                    <label class="control-label">图层、控件尺寸拉伸：</label>
+                                    <input type="checkbox" ng-model="isPulling"/>
+                                </div>
+                                <div ng-show="isPulling" class="pullingWrap">
+                                    <div class="form-group row">
+                                        <label for="pullingWidth" class="col-sm-2">宽度比例 1:</label>
+                                        <input type="number" class="form-control col-sm-4" id="pullingWidth" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="pullingHeight" class="col-sm-2">宽度比例 1:</label>
+                                        <input type="number" class="form-control col-sm-4" id="pullingHeight" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
+                                    </div>
+                                </div>
+
                             </form>
                         </div>
                     </div>
@@ -500,6 +521,20 @@
                         </a>
                     </div>
                 </div>
+                <script type="text/ng-template" id="introModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">新手引导</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+                        <div class="modal-title form-group modelPart">
+                            <select class="form-control dengModel-trigger" ng-model="mode" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button" ng-click="ok()">确认</button>
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                    </div>
+                </script>
             </div>
             <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==4">
                 <a ng-click="component.tool.showLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe644;</span><span
@@ -514,7 +549,7 @@
                     <span class="iconfont icon">&#xe65d;</span><span class="caption"></span>
                 </a>
                 <a class="my-cmd-item" id="maskIcon" ng-click="component.tool.maskSwitch()">
-                    <span class="iconfont icon">&#xe661;</span><span class="caption"></span>
+                    <span class="iconfont icon">&#xe663;</span><span class="caption"></span>
                 </a>
                 <a ng-click="" class="my-cmd-item" ng-class="">
                     <!--视图缩放-->
@@ -565,7 +600,7 @@
             </ol>
         </div>
     </div>
-    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)" data-step="3">
+    <div ng-controller="StageCtrl" ng-class="{true:'my-tool-show'}[component.out.toolShow]" class="my-stage-container" id="stage" ng-click="selectMask(false)" data-step="3" data-step-c1="2-4">
 
         <div id="mask" ng-hide="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
             <img style="position: absolute;left: 0;top: 0;z-index: 100;float: left" width="100%" height="100%" ng-src="{{maskSrc}}"/>
@@ -618,7 +653,7 @@
     </div>
     <div class="my-attribute" ng-controller="AttrCtrl"
          ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'my-tool-show':component.out.toolShow}">
-        <div class="my-top-panel" data-step="4">
+        <div class="my-top-panel" data-step="4" data-step-c1="5-7-9">
             <ul class="attribute-nav nav nav-tabs my-nav-tabs ">
 
                 <li role="presentation"
@@ -739,6 +774,31 @@
                                 <option ng-repeat="image in component.images track by $index" value="{{image.src}}">{{image.name}}
                                 </option>
                             </select>
+                        </div>
+
+                        <!--蒙板 tang-->
+                        <div class="my-matte lg">
+                            <span class="my-attr-title dengPage-title" style="width: 100%">蒙板</span>
+                            <div class="my-matte-switch" ng-click="component.matte.matteSwitch()">
+                                <div id='btn' class="switch-button" ng-class="{'switch-button-close':!component.matte.matteOn}"><span class="switch-flag"></span></div>
+                            </div>
+                            <div class="my-matte-wrap" ng-show="component.matte.matteOn">
+                                <div>
+                                    <span class="my-matte-title">蒙板图</span>
+                                    <select class="my-matte-input form-control"
+                                                ng-model="component.matte.matteBgi" ng-change="component.matte.enterMatteBgi()">
+                                            <option ng-repeat="image in component.images track by $index" value="{{image.src}}">{{image.name}}</option>
+                                    </select>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span class="my-matte-title">透明度</span>
+                                    <input type="range" ng-model="component.matte.matteOpacity" ng-change="component.matte.enterMatteOpacity()" class="my-matte-range"/>
+                                </div>
+                                <div style="margin-top: 10px">
+                                    <span class="my-matte-title">滤镜层</span>
+                                    <input type="text" colorpicker="rgba" ng-model="component.matte.matteColor" class="my-matte-color form-control"/>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -1652,27 +1712,37 @@
                                    ng-keypress="component.enterMinAlert($event)"
                                    type="number">
                         </div><div class="my-attr-item ">
-                        <span class="my-attr-title">高警报</span>
-                        <input class="my-attr-number-input form-control  short-input"
-                               ng-model="component.object.level.info.highAlarmValue"
-                               ng-blur="component.restore()"
-                               ng-keypress="component.enterMaxAlert($event)"
-                               type="number">
-                    </div>
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title">指针长度</span>
-                            <input class="my-attr-number-input form-control"
-                                   ng-model="component.object.level.info.pointerLength"
+                            <span class="my-attr-title">高警报</span>
+                            <input class="my-attr-number-input form-control  short-input"
+                                   ng-model="component.object.level.info.highAlarmValue"
                                    ng-blur="component.restore()"
-                                   ng-keypress="component.dashboard.enterPointerLength($event)"
+                                   ng-keypress="component.enterMaxAlert($event)"
                                    type="number">
                         </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">指针长度</span>-->
+                            <!--<input class="my-attr-number-input form-control"-->
+                                   <!--ng-model="component.object.level.info.pointerLength"-->
+                                   <!--ng-blur="component.restore()"-->
+                                   <!--ng-keypress="component.dashboard.enterPointerLength($event)"-->
+                                   <!--type="number">-->
+                        <!--</div>-->
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">模式</span>
                             <select class="my-attr-number-input form-control"
                                     ng-model="component.dashboard.dashboardModeId"
                                     ng-change="component.dashboard.enterDashboardMode($event)">
                                 <option ng-repeat="mode in component.dashboard.dashboardModes" value="{{mode.id}}">
+                                    {{mode.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">无背景模式</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.dashboard.backgroundModeId"
+                                    ng-change="component.dashboard.enterBackgroundMode($event)">
+                                <option ng-repeat="mode in component.dashboard.backgroundModes" value="{{mode.id}}">
                                     {{mode.name}}
                                 </option>
                             </select>
@@ -3326,7 +3396,7 @@
                                     </td>
                                     <!--image-->
                                     <td><select class="form-control" ng-model="slice.imgSrc"
-                                                ng-options="image.src as image.name for image in images "
+                                                ng-options="image.src as image.name for image in images"
                                                 ng-change="disableColorInput(slice)" ng-disabled="disableEditImg">
                                         <!--<option value="">-&#45;&#45;</option>-->
                                     </select></td>
@@ -3352,7 +3422,13 @@
                         <div class="modal-footer my-row-left">
                             <span>
                                 <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">
-                                    添加图片
+                                    向下插入
+                                </button>
+                                <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlicePrev()">
+                                    向上插入
+                                </button>
+                                <button type="button" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
+                                    批量插入
                                 </button>
                             </span>
                             <span  class="my-but-right">
@@ -3364,6 +3440,42 @@
                     </script>
 
                 </div>
+
+                <!--开机动画批量插入 by tang-->
+                <script type="text/ng-template" id="batchSelectorModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">批量选择</h3>
+                        <span>说明：批量选择完成后将会按照文件名“例如：<span style="color: red">图片名(1)</span>”中的“()”里面的数字从小到大按顺序排列，请按示例样式命名文件。</span>
+                    </div>
+                    <div class="modal-body batch-select-wrap">
+                        <table class="table table-bordered batch-select-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-xs-2">操作</th>
+                                    <th class="col-xs-7">名称</th>
+                                    <th class="col-xs-3">预览图</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="img in imgResources" ng-click="selectResource($index)">
+                                    <td><input type="checkbox" ng-model="batchSelectArr[$index]" ng-click="stopProp($event)"/></td>
+                                    <td>{{img.name}}</td>
+                                    <td><img class="batch-select-img" ng-src="{{img.src}}"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <span class="my-but-left">
+                            <button class="btn btn-success" ng-click="selectAll()">全选</button>
+                            <button class="btn btn-success" ng-click="invertSelect()">反选</button>
+                        </span>
+                        <span class="my-but-right">
+                            <button class="btn btn-primary" type="button" ng-click="add()">添加</button>
+                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        </span>
+                    </div>
+                </script>
 
                 <!--tag控制-->
                 <script type="text/ng-template" id="tagSelect.html">
@@ -3393,7 +3505,7 @@
                     </div>
                 </script>
 
-                <div ng-show="component.showTagPanel"  class="my-attr-item lg deng-bgTags" ng-controller='TagSelectCtl'>
+                <div ng-show="component.showTagPanel&&!myMask"  class="my-attr-item lg deng-bgTags" ng-controller='TagSelectCtl'>
                     <span class="my-tagSelect-main-span">变量</span>
                     <tag-select bind="selectedTagObj" action-function="component.selectedTagFun()"></tag-select>
                 </div>
@@ -3905,12 +4017,6 @@
                     <div class="my-attr-item deng-attr-item lg deng-tags">
                         <div class="addTag-container"  ng-show="component.timerTagShow==false">
                             <span>tags</span>
-                            <!--<button type="button"-->
-                            <!--ng-click=""-->
-                            <!--class="btn btn-default"style="float: none">-->
-                            <!--批量操作-->
-                            <!--</button>-->
-
                             <button type="button"
                                     ng-click="component.addNewTag()"
                                     class="btn btn-default">
@@ -3920,72 +4026,71 @@
                                     ng-click="component.importTags()"
                                     class="btn btn-default my-tag-button-import">导入tag
                             </button>
-                            <!--导入tags模板-->
-                            <script type="text/ng-template" id="tagsImport.html">
-                                <div class="modal-header">
-                                    <h3 class="modal-title" style="margin-bottom: 5px">导入预设变量集<small></small></h3>
-                                    <p class="text-muted" style="margin-bottom: 0px">变量集将会追加到所有变量中，并自动归类到当前变量标签</p>
-                                </div>
-                                <div class="modal-body">
-                                    <h5>选项:</h5>
-                                    <div class="row" style="margin-bottom: 10px">
-                                        <div class="col-xs-5">
-                                            <label class="checkbox-inline">
-                                                <input type="checkbox"
-                                                       value="option1"
-                                                       ng-model="overlay"> 覆盖重名变量
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <h5>主题:</h5>
-                                    <div class="row" style="margin-bottom: 10px">
-                                        <div class="col-xs-3">
-                                            <label class="radio-inline">
-                                                <input type="radio" name="tagsOptions" value="tags_default" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default" target="_blank">预设</a>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-xs-3">
-                                            <label class="radio-inline">
-                                                <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default1" target="_blank">主题1</a>
-                                            </label>
-                                        </div>
-                                        <div class="col-xs-3">
-                                            <label class="radio-inline">
-                                                <input type="radio" name="tagsOptions" value="tags_default2" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default2" target="_blank">主题2</a>
-                                            </label>
-                                        </div>
-                                        <div class="col-xs-3">
-                                            <label class="radio-inline">
-                                                <input type="radio" name="tagsOptions" value="tags_default3" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default3" target="_blank">主题3</a>
-                                            </label>
-                                        </div>
-                                        <div class="col-xs-3">
-                                            <label class="radio-inline">
-                                                <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default4" target="_blank">主题4</a>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-primary"
-                                            type="button"
-                                            ng-disabled="disableBtn"
-                                            ng-click="ok()">{{btnText}}</button>
-                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
-                                </div>
-                            </script>
                         </div>
-
+                        <!--导入tags模板-->
+                        <script type="text/ng-template" id="tagsImport.html">
+                            <div class="modal-header">
+                                <h3 class="modal-title" style="margin-bottom: 5px">导入预设变量集<small></small></h3>
+                                <p class="text-muted" style="margin-bottom: 0px">变量集将会追加到所有变量中，并自动归类到当前变量标签</p>
+                            </div>
+                            <div class="modal-body">
+                                <h5>选项:</h5>
+                                <div class="row" style="margin-bottom: 10px">
+                                    <div class="col-xs-5">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox"
+                                                   value="option1"
+                                                   ng-model="overlay"> 覆盖重名变量
+                                        </label>
+                                    </div>
+                                </div>
+                                <h5>主题:</h5>
+                                <div class="row" style="margin-bottom: 10px">
+                                    <div class="col-xs-3">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="tagsOptions" value="tags_default" ng-model="selectedTagId">
+                                            <a href="/tags/preview?id=default" target="_blank">预设</a>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
+                                            <a href="/tags/preview?id=default1" target="_blank">主题1</a>
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="tagsOptions" value="tags_default2" ng-model="selectedTagId">
+                                            <a href="/tags/preview?id=default2" target="_blank">主题2</a>
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="tagsOptions" value="tags_default3" ng-model="selectedTagId">
+                                            <a href="/tags/preview?id=default3" target="_blank">主题3</a>
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
+                                            <a href="/tags/preview?id=default4" target="_blank">主题4</a>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary"
+                                        type="button"
+                                        ng-disabled="disableBtn"
+                                        ng-click="ok()">{{btnText}}</button>
+                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
                         <script type="text/ng-template" id="tagModal.html">
                             <div class="modal-header">
-                                <h3 class="modal-title">Tag</h3>
+                                <h3 class="modal-title">变量</h3>
                             </div>
 
                             <div class="modal-body">
@@ -4001,48 +4106,34 @@
                                         <input type="checkbox"
                                                ng-model="tag.register"
                                                ng-true-value="true"
-                                               ng-false-value="false" id="register" class="col-sm-8 register-activate-box"/>
+                                               ng-false-value="false" id="register" class="col-sm-1 register-activate-box"/>
+                                    </fieldset>
+                                    <fieldset>
+                                        <label class="col-sm-4 tag-modal-label">
+                                            变量类型
+                                        </label>
+                                        <div class="radio" class="col-sm-8">
+                                            <label>
+                                                <input type="radio" value="0" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
+                                                数字
+                                            </label>
+                                            <label>
+                                                <input type="radio" value="1" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
+                                                字符串
+                                            </label>
+                                        </div>
                                     </fieldset>
                                     <div class="register-option">
                                         <fieldset>
                                             <label for="indexOfRegister" class="col-sm-4 tag-modal-label">寄存器序号</label>
                                             <input ng-disabled="!tag.register" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
-                                                   ng-model="tag.indexOfRegister" class="col-sm-8" />
+                                                   ng-model="tag.indexOfRegister" class="form-control col-sm-8" />
                                         </fieldset>
-                                        <!--<fieldset>-->
-                                        <!--<label for="writeRegister" class="col-sm-4 tag-modal-label">写寄存器</label>-->
-                                        <!--<input ng-disabled="!tag.register" id="writeRegister" type="radio"-->
-                                        <!--name="writeOrRead" ng-model="tag.writeOrRead" value="false"-->
-                                        <!--class="col-sm-8"/>-->
-                                        <!--</fieldset>-->
-                                        <!--<fieldset>-->
-                                        <!--<label for="readRegister" class="col-sm-4 tag-modal-label">读寄存器</label>-->
-                                        <!--<input ng-disabled="!tag.register" id="readRegister" type="radio"-->
-                                        <!--name="writeOrRead" ng-model="tag.writeOrRead" value="true"-->
-                                        <!--class="col-sm-8"/>-->
-                                        <!--</fieldset>-->
-                                        <!--<fieldset>-->
-                                        <!--<label for="readRegister" class="col-sm-4 tag-modal-label">读写寄存器</label>-->
-                                        <!--<input ng-disabled="!tag.register" id="readRegister" type="radio"-->
-                                        <!--name="writeOrRead" ng-model="tag.writeOrRead" value="readAndWrite"-->
-                                        <!--class="col-sm-8"/>-->
-                                        <!--</fieldset>-->
-
-
                                     </div>
-
-                                    <!--<div class="input-group-btn">-->
-                                    <!--<span class="glyphicon"-->
-                                    <!--ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"-->
-                                    <!--ng-click="collapse($event)">-->
-                                    <!--</span>-->
-                                    <!---->
-                                    <!--</div>-->
-
                                 </form>
-
                             </div>
                             <div class="modal-footer">
+                                <button class="btn btn-primary" type="button" ng-show="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
                                 <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
                                 <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                             </div>
@@ -4117,20 +4208,15 @@
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary" type="button" ng-click="close()">确定</button>
+                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                             </div>
                         </script>
 
                         <div class="listTable-container"uib-collapse="status.collapsed">
                             <table class="listTable table table-hover"ng-show="component.timerTagShow==false">
                                 <tr class="">
-                                    <td>名称
-                                        <span class="iconfont" ng-click="component.sortByName()">
-                                    &#xe6a5;</span>
-                                    </td>
-                                    <td>寄存器
-                                        <span class="iconfont" ng-click="component.sortByRegister()">
-                                        &#xe6a5;</span>
-                                    </td>
+                                    <td>名称</td>
+                                    <td>寄存器</td>
                                     <td>启用</td>
                                     <td>标签</td>
                                     <td>删除</td>
@@ -4140,18 +4226,21 @@
                                     <td ng-click="component.openPanel($index,'custom')">
                                         <div class="tagName">{{tag.name}}</div>
                                     </td>
-                                    <td><div class="tagReg">{{tag.indexOfRegister}}</div></td>
-                                    <td><input type="checkbox"
+                                    <td>
+                                        <div class="tagReg">{{tag.indexOfRegister}}</div>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox"
                                                class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
                                                ng-change="component.regCheckboxClick(tag)"
                                                ng-model="tag.register">
                                     </td>
-                                    <td><i class="iconfont" ng-click="component.addToTagClass(tag.name)">
-                                        &#xe7c5;</i></td>
-                                    <td><i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">
-                                        &#xe627;</i></td>
-                                    <!--<td><img class="icon-close" src="../../public/ide/modules/ide/img-web/icon_close.png"-->
-                                    <!--ng-click="component.deleteTag($index)"></td>-->
+                                    <td>
+                                        <i class="iconfont" ng-click="component.addToTagClass(tag.name)">&#xe7c5;</i>
+                                    </td>
+                                    <td>
+                                        <i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">&#xe627;</i>
+                                    </td>
                                 </tr>
                             </table>
                             <table class="listTable table table-hover" ng-show="component.timerTagShow==true">
@@ -4492,7 +4581,7 @@
         </div>
 
 
-        <div class="my-bottom-panel" data-step="5">
+        <div class="my-bottom-panel" data-step="5" data-step-c1="6-8">
             <div class="my-panel-title"><span>图层</span></div>
             <div class="my-layers-panel">
 
@@ -4511,53 +4600,55 @@
                 </div>
 
 
-                <div class="my-toggle-area" ng-show="component.bottom.page.expand" style="padding-left: 20px;">
-                    <div ng-repeat="layer in component.bottom.page.layers track by $index">
-                        <div class="my-levels-line">
-                            <div class="my-levels-title" ng-class="{true:'selected'}[layer.selected]">
-                                <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="layer.expand">&#xe722;</i>
-                                <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="!layer.expand">&#xe721;</i>
+                <div class="my-toggle-area" ng-show="component.bottom.page.expand" style="padding-left: 20px;" ui-tree="myLayerTree" data-drag-delay="200" data-drag-enabled="true">
+                    <div ui-tree-nodes ng-model="component.bottom.page.layers">
+                        <div ng-repeat="layer in component.bottom.page.layers" ui-tree-node>
+                            <div class="my-levels-line" ui-tree-handle>
+                                <div class="my-levels-title" ng-class="{true:'selected'}[layer.selected]">
+                                    <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="layer.expand">&#xe722;</i>
+                                    <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="!layer.expand">&#xe721;</i>
                                 <span class="my-object-label"
                                       ng-class="{true:'selected'}[layer.selected]"
                                       ng-click="component.bottom.selectLayer(layer)">{{layer.name}}</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="my-toggle-area" ng-show="layer.expand" style="padding-left: 20px">
-                            <div ng-repeat="subLayer in layer.subLayers track by $index">
-                                <div class="my-levels-line">
-                                    <div class="my-levels-title" ng-class="{true:'selected'}[subLayer.selected]">
-                                        <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
-                                           ng-show="subLayer.expand">&#xe722;</i>
-                                        <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
-                                           ng-show="!subLayer.expand">&#xe721;</i>
+                            <div class="my-toggle-area" ng-show="layer.expand" style="padding-left: 20px" ui-tree-nodes ng-model="layer.subLayers">
+                                <div ng-repeat="subLayer in layer.subLayers" ui-tree-node>
+                                    <div class="my-levels-line" ui-tree-handle>
+                                        <div class="my-levels-title" ng-class="{true:'selected'}[subLayer.selected]">
+                                            <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
+                                               ng-show="subLayer.expand">&#xe722;</i>
+                                            <i class="iconfont display-hidden" ng-click="toggleShow(subLayer.id)"
+                                               ng-show="!subLayer.expand">&#xe721;</i>
                                         <span class="my-object-label"
                                               ng-class="{true:'selected'}[subLayer.selected]"
                                               ng-click="component.bottom.selectSubLayer(layer,subLayer)">{{subLayer.name}}</span>
+                                        </div>
                                     </div>
-                                </div>
 
 
-                                <div class="my-toggle-area" ng-show="subLayer.expand" style="padding-left: 20px">
-                                    <div ng-repeat="widget in subLayer.widgets">
-                                        <div class="my-levels-line">
-                                            <div class="my-levels-title" ng-class="{true:'selected'}[widget.selected]">
+                                    <div class="my-toggle-area" ng-show="subLayer.expand" style="padding-left: 20px" ui-tree-nodes ng-model="subLayer.widgets">
+                                        <div ng-repeat="widget in subLayer.widgets" ui-tree-node>
+                                            <div class="my-levels-line" ui-tree-handle>
+                                                <div class="my-levels-title" ng-class="{true:'selected'}[widget.selected]">
                                                 <span class="my-object-label"
                                                       ng-class="{true:'selected'}[widget.selected]"
                                                       ng-click="component.bottom.selectWidget(layer,subLayer,widget)">{{widget.name}}
                                                 </span>
 
+                                                </div>
                                             </div>
-                                        </div>
 
+                                        </div>
                                     </div>
+
                                 </div>
 
                             </div>
 
+
                         </div>
-
-
                     </div>
 
                 </div>
@@ -4577,6 +4668,5 @@
 <!--<script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
 <script type="text/javascript" src="../../public/general/js/versionTag.js"></script>
-<script type="text/javascript" src="../../public/ide/modules/ide/js/myDirective.js"></script>
 </body>
 </html>

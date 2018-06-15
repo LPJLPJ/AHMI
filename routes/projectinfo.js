@@ -773,6 +773,10 @@ projectRoute.saveProjectAs = function(req,res){
                         copyProject.resolution=data.saveAsResolution;
                     }
 
+                    if(data.pullingRatio){
+                        copyProject.content=resolutionPulling(copyProject.content,data.pullingRatio);
+                    }
+
                     var newProject = new ProjectModel(copyProject);
                     var newId = newProject._id;
                     if(newProject.content){
@@ -924,6 +928,55 @@ function saveAsReset(newResolution,oldResolution,content){
         }
     }
     return JSON.stringify(content);
+}
+//控件拉伸 add by tang
+function resolutionPulling(content,pullingRatio){
+    var newContent=JSON.parse(content);
+    var widthRatio = pullingRatio.widthRatio;
+    var heightRatio = pullingRatio.heightRatio;
+
+    _.forEach(newContent.pages,function(page){//page
+        if(page.layers){
+            _.forEach(page.layers,function(layer){//layer
+                var layerInfo=layer.info;
+                console.log(layerInfo.top,layerInfo.height);
+
+                layerInfo.left+=-Math.round((layerInfo.width*(widthRatio-1))/2);
+                layerInfo.top+=-Math.round((layerInfo.height*(heightRatio-1))/2);
+                layerInfo.width=Math.round(layerInfo.width*widthRatio);
+                layerInfo.height=Math.round(layerInfo.height*heightRatio);
+                //console.log(layerInfo.left,layerInfo.width);
+                console.log(layerInfo.top,layerInfo.height);
+
+                if(layer.subLayers){//sublayer
+                    _.forEach(layer.subLayers,function(subLayer){
+
+                        if(subLayer.widgets){//widget
+                            _.forEach(subLayer.widgets,function(widget){
+                                var widgetInfo=widget.info;
+                                widgetInfo.left+=-Math.round((widgetInfo.width*(widthRatio-1))/2);
+                                widgetInfo.top+=-Math.round((widgetInfo.height*(heightRatio-1))/2);
+                                widgetInfo.width=Math.round(widgetInfo.width*widthRatio);
+                                widgetInfo.height=Math.round(widgetInfo.height*heightRatio);
+                            })
+                        }
+                    })
+                }
+
+                if(layer.showSubLayer){//show
+                    _.forEach(layer.showSubLayer.widgets,function(widget){
+                        var widgetInfo=widget.info;
+                        widgetInfo.left+=-Math.round((widgetInfo.width*(widthRatio-1))/2);
+                        widgetInfo.top+=-Math.round((widgetInfo.height*(heightRatio-1))/2);
+                        widgetInfo.width=Math.round(widgetInfo.width*widthRatio);
+                        widgetInfo.height=Math.round(widgetInfo.height*heightRatio);
+                    })
+                }
+            })
+        }
+    });
+
+    return JSON.stringify(newContent);
 }
 
 projectRoute.saveThumbnail = function (req, res) {
@@ -1087,7 +1140,7 @@ projectRoute.generateLocalProject = function(req, res){
                 //check and change resource url
                 var transformSrc = function(key,value){
                     //console.log('key');
-                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'){
+                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'||key=='backgroundImg'){
                         if(typeof(value)=='string'&&value!=''){
                             try{
                                 if(value.indexOf('http')==-1){

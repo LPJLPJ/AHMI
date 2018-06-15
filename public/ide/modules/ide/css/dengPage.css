@@ -363,8 +363,8 @@
 }
 
 .deng-attr-item .listTable-container{
-    max-height: 280px;
-    overflow-y: auto;
+    /*max-height: 280px;*/
+    /*overflow-y: auto;*/
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -372,9 +372,8 @@
 }
 .deng-attr-item .listTable{
     width: 100%;
-    /*border: 0px solid;*/
-    /*border-color: lightgrey;*/
     margin-bottom: 0;
+    font-size: 12px;
 }
 .deng-attr-item .listTable >tbody>tr{
     /*border: 1px solid;*/
@@ -405,8 +404,7 @@
     background-color: #e0e0e0;
 }
 .deng-attr-item .listTable td{
-    /*padding-top:4px;*/
-    /*padding-bottom:4px ;*/
+    vertical-align:middle;
     padding: 4px;
 }
 .deng-attr-item .listTable td:nth-child(2) {
@@ -515,17 +513,23 @@
 }
 
 .deng-tagModel .tag-modal-label{
-    font-size: 12px;
+    font-size: 13px;
     width: 100%;
     padding-left: 0;
 }
 .deng-tagModel .col-sm-8{
-    height: 28px;
     margin-bottom: 10px;
+    height:28px;
+    font-size: 12px;
+}
+.deng-tagModel .radio{
+    font-size: 12px;
 }
 
 .deng-tagModel .register-activate-box{
     margin-top: 0px;
+    margin-bottom:10px;
+    height: 28px;
 }
 .deng-bg-table {
     max-height: 534px;
@@ -581,6 +585,9 @@
 }
 .my-but-right{
     float: right;
+}
+.my-but-left{
+    float: left;
 }
 .texRow:hover{ background-color:#f5f5f5;}
 
@@ -742,4 +749,134 @@
 }
 .my-tag-edit-td-width{
     width: 60%;
+}
+/*蒙板*/
+.switch-button{
+    margin:0 auto;
+    position: relative;
+    background: #008CEE;
+    width: 38px;
+    height: 20px;
+    cursor: pointer;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+    -webkit-transition:background-color 0.5s ease-in-out 0s;
+    -moz-transition:background-color 0.5s ease-in-out 0s;
+    transition:background-color 0.5s ease-in-out 0s;
+    -webkit-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    -moz-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+}
+.switch-button .switch-flag{
+    display: block;
+    position: absolute;
+    width:20px;
+    height: 20px;
+    left:18px;
+    background: #fff;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+    -webkit-transition:left 0.2s ease-in-out 0s;
+    -moz-transition:left 0.2s ease-in-out 0s;
+    transition: left 0.2s ease-in-out 0s;
+    -webkit-box-shadow:1px 0 1px 1px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:1px 0 1px 1px rgba(0,0,0,0.3);
+    box-shadow: 1px 0 1px 1px rgba(0,0,0,0.3);
+}
+.switch-button-close{
+    background:#eee;
+}
+.switch-button-close .switch-flag{
+    left:0px;
+}
+
+
+
+.my-matte{
+    margin-bottom: 10px;
+}
+.my-matte-wrap{
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    vertical-align: middle;
+    margin-top: 5px;
+}
+.my-matte-title{
+    text-align: center;
+    display: inline-block;
+    width: 50px;
+    margin: 0;
+}
+.my-matte-input,.my-matte-color{
+    width: calc(100% - 60px)!important;
+    height: 28px;
+    display: inline!important;
+}
+.my-matte-range{
+    width: calc(100% - 60px)!important;
+    height: 20px;
+    display: inline!important;
+    outline: none;
+    cursor: pointer;
+}
+.my-matte-color{
+    text-align: center;
+    cursor: pointer;
+}
+.my-matte-switch{
+    float: right;
+    margin-right: calc(100% - 120px);
+    line-height: normal;
+    width: 38px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/*批量选择*/
+.batch-select-table thead{
+    background-color: #eeeeee;
+}
+.batch-select-img{
+    width: 40px;
+    height: 40px;
+}
+.batch-select-table tbody tr:hover{
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+.batch-select-wrap{
+    height: 500px!important;
+    overflow-y: scroll;
+}
+.batch-select-table tbody tr td{
+    vertical-align: middle!important;
+}
+.batch-select-table thead tr th,.batch-select-table tbody tr td:not(:nth-of-type(2)){
+    text-align: center;
+}
+.batch-select-table tbody tr td:nth-of-type(2){
+    overflow: hidden!important;
+}
+
+/*拉伸*/
+.pullingWrap{
+    width: 100%;
+}
+
+.pullingWrap input,.customResolutionWrap input{
+    width: 20%!important;
+}
+
+.pullingWrap label,.customResolutionWrap label{
+    line-height: 32px;
+    padding-right: 0;
+}
+
+.layer-preview{
+    float: right;
+    margin-right: 20px;
 }

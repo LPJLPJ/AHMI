@@ -69,7 +69,7 @@ $(function () {
     function makeTemplateSelectorOptions(id,title,resolution) {
         var basicOptions = '<option value="">---</option>' +
             '<option value="defaultTemplate">默认模板</option>' +
-            '<option value="collectTemplate">收藏模板</option>'
+            '<option value="collectedTemplate">收藏模板</option>'
         return  basicOptions+'<option value="'+id+'">'+(title+" -- "+resolution)+'</option>'
     }
 
@@ -105,7 +105,7 @@ $(function () {
                     '<i class="template-btn-delete iconfont">&#xe607;</i>'+
                     '<div class="template-thumbnail-wrapper">' +
                         '<div class="template-thumbnail-container">' +
-                            '<img class="template-thumbnail" src="'+template.thumbnail+'">'+
+                            '<img class="template-thumbnail" src="'+(template.thumbnail||'../../public/login/assets/img/pro_1.png')+'">'+
                             '<div class="template-info"><div class="template-info-title">'+template.name+'</div><div class="template-info-size">'+template.resolution+'</div></div>'+
                         '</div>'+
                     '</div>' +

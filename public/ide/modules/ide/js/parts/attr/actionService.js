@@ -21,8 +21,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
     var tLeaveHighAlarm = new Trigger('离开高警报','LeaveHighAlarm');
     var tEnter = new Trigger('进入','Enter');
     var tLeave = new Trigger('离开','Leave');
-    var tTagChange = new Trigger('Tag改变(对性能有影响，谨慎使用)','TagChange')
-
+    var tTagChange = new Trigger('Tag改变','TagChange')
 
 
 
