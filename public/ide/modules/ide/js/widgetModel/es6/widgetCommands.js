@@ -635,7 +635,7 @@
             set('this.layers.1.hidden',0)
             if(cur==1){
                 set('this.layers.2.hidden',0)
-                set('this.layers.2.x',0)
+                // set('this.layers.2.x',0)
             }
         `,
         onMouseUp: `
@@ -861,7 +861,18 @@
                var(cur,0)
                set(cur,'this.otherAttrs.19')
                if(cur==1){
-                  set('this.layers.2.x',temp1)
+                  if(arr==0){
+                    set('this.layers.2.x',temp1)
+                  }else{
+                    var(temp1prime,0)
+                    set(temp1prime,h)
+                    minus(temp1prime,temp1)
+                    var(cursorH,0)
+                    set(cursorH,'this.layers.2.height')
+                    minus(temp1prime,cursorH)
+                    set('this.layers.2.y',temp1prime)
+                  }
+                  
                }
               }
             }
@@ -1094,9 +1105,23 @@
              }
              var(cur,0)
              set(cur,'this.otherAttrs.19')
+             // if(cur==1){
+             //    set('this.layers.2.x',temp1)
+             // }
              if(cur==1){
-                set('this.layers.2.x',temp1)
-             }
+                  if(arr==0){
+                    set('this.layers.2.x',temp1)
+                  }else{
+                    var(temp1prime,0)
+                    set(temp1prime,h)
+                    minus(temp1prime,temp1)
+                    var(cursorH,0)
+                    set(cursorH,'this.layers.2.height')
+                    minus(temp1prime,cursorH)
+                    set('this.layers.2.y',temp1prime)
+                  }
+                  
+               }
              
 
              //reset oldValue

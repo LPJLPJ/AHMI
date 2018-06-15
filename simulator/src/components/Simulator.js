@@ -495,7 +495,7 @@ module.exports =   React.createClass({
     paintFontSL:function (curX,curY,slWidth,slHeight,subLayer,ctx) {
         // var slX = curX + subLayer.x;
         // var slY = curY + subLayer.y;
-        if (subLayer) {
+        if (subLayer&&subLayer.text!==undefined&&subLayer.text!==null) {
             var self = this
             this.drawTextByTempCanvas(ctx,curX,curY,slWidth,slHeight,subLayer.text,self.transFont(subLayer.fontStyle));
         }
