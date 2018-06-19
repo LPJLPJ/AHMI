@@ -824,7 +824,7 @@ ideServices
                 url:'',
                 zIndex:0,
                 texList:texList,
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
@@ -844,7 +844,7 @@ ideServices
                 url:'',
                 zIndex:0,
                 texList:texList,
-                transition:_.cloneDeep(defaultTransition)
+                transition:AnimationService.getDefaultTransition()
             }
         };
 
