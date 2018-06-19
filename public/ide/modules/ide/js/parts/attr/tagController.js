@@ -830,7 +830,6 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
 
     $scope.forceSave = function (th) {
 
-
         var shouldForceEdit = false
         if (index !== -1) {
             //edit tag
