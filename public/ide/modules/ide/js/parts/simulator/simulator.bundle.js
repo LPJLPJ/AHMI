@@ -19826,7 +19826,6 @@
 	    totalResourceNum: 0,
 	    fps: 0
 	};
-
 	module.exports = React.createClass({
 	    displayName: 'exports',
 
@@ -19901,7 +19900,6 @@
 	        });
 	        this.state.tagList = data.tagList;
 	        this.setState({ tagList: data.tagList });
-
 	        console.log('tagList loaded', data.tagList, this.state.tagList);
 	        //initialize registers
 	        this.registers = {};
@@ -24390,7 +24388,7 @@
 	        } else {
 	            if (param) {
 	                if (param.tag) {
-	                    value = this.getValueByTagName(param.tag);
+	                    value = Number(this.getValueByTagName(param.tag));
 	                } else {
 	                    value = Number(param.value);
 	                }
@@ -24807,7 +24805,8 @@
 	                var param2Tag = this.findTagByName(param2.tag);
 	                if (targetTag && param2Tag && param2.valueType == 1) {
 	                    // targetTag.value = parseInt(param2);
-	                    this.setTagByTag(targetTag, param2Tag.value.length);
+	                    var param2Str = this.getParamValue(param2);
+	                    this.setTagByTag(targetTag, param2Str.length);
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
 	                    });
@@ -24817,10 +24816,11 @@
 	                var deleteLen = Number(this.getParamValue(param2));
 	                if (targetTag && targetTag.valueType == 1) {
 	                    // targetTag.value = parseInt(param2);
-	                    var oldLen = targetTag.value.length;
+	                    var targetStr = this.getParamValue(param1);
+	                    var oldLen = targetStr.length;
 	                    var newLen = oldLen - deleteLen;
 	                    newLen = newLen < 0 ? 0 : newLen;
-	                    this.setTagByTagRawValue(targetTag.value.slice(0, newLen));
+	                    this.setTagByName(param1.tag, targetStr.slice(0, newLen));
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
 	                    });
@@ -24831,8 +24831,9 @@
 	                var deleteLen = Number(this.getParamValue(param2));
 	                if (targetTag && targetTag.valueType == 1) {
 	                    // targetTag.value = parseInt(param2);
+	                    var targetStr = this.getParamValue(param1);
 	                    newLen = newLen < 0 ? 0 : newLen;
-	                    this.setTagByTagRawValue(targetTag.value.slice(deleteLen));
+	                    this.setTagByTag(targetTag, targetStr.slice(deleteLen));
 	                    this.draw(null, {
 	                        updatedTagName: param1.tag
 	                    });
@@ -52145,15 +52146,18 @@
 	var convertUint8ArrayToStr = function (buf, encoding) {
 	    encoding = encoding || supportedEncodings.ascii;
 	    var str = '';
-	    switch (encoding) {
-	        case supportedEncodings.ascii:
-	        case supportedEncodings['utf-8']:
-	            str = new TextDecoder(encoding).decode(buf);
-	            break;
+	    if (buf) {
+	        switch (encoding) {
+	            case supportedEncodings.ascii:
+	            case supportedEncodings['utf-8']:
+	                str = new TextDecoder(encoding).decode(buf);
+	                break;
 
-	        default:
-	            console.log('unsupported encoding');
+	            default:
+	                console.log('unsupported encoding');
+	        }
 	    }
+
 	    return str;
 	};
 

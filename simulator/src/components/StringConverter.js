@@ -25,15 +25,18 @@ var convertStrToUint8Array=function (str,encoding) {
 var convertUint8ArrayToStr=function (buf,encoding) {
     encoding = encoding||supportedEncodings.ascii
     var str = ''
-    switch (encoding){
-        case supportedEncodings.ascii:
-        case supportedEncodings['utf-8']:
-            str = new TextDecoder(encoding).decode(buf);
-            break;
+    if(buf){
+        switch (encoding){
+            case supportedEncodings.ascii:
+            case supportedEncodings['utf-8']:
+                str = new TextDecoder(encoding).decode(buf);
+                break;
 
-        default:
-            console.log('unsupported encoding')
+            default:
+                console.log('unsupported encoding')
+        }
     }
+
     return str
 }
 
