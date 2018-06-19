@@ -20270,7 +20270,7 @@
 	    getValueByTagName: function (name, defaultValue) {
 	        var curTag = this.findTagByName(name);
 	        if (curTag && curTag.value != undefined) {
-	            return this.getTagTrueValue(curTag.value);
+	            return this.getTagTrueValue(curTag);
 	        } else if (defaultValue) {
 	            return defaultValue;
 	        } else {
@@ -24388,9 +24388,9 @@
 	        } else {
 	            if (param) {
 	                if (param.tag) {
-	                    value = Number(this.getValueByTagName(param.tag));
+	                    value = this.getValueByTagName(param.tag);
 	                } else {
-	                    value = Number(param.value);
+	                    value = param.value;
 	                }
 	            } else {
 	                value = 0;
@@ -24485,7 +24485,7 @@
 	                    var nextValue;
 	                    if (targetTag.valueType == 1) {
 	                        //tagStr
-	                        nextValue = '' + this.getTagTrueValue(targetTag.value) + this.getParamValue(param2);
+	                        nextValue = '' + this.getTagTrueValue(targetTag) + this.getParamValue(param2);
 	                    } else {
 	                        //tagNum
 	                        nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
@@ -24800,10 +24800,44 @@
 	                    }
 	                });
 	                break;
+
+	            case 'SET_STR':
+
+	                var targetTag = this.findTagByName(param1.tag);
+
+	                if (targetTag) {
+	                    // targetTag.value = parseInt(param2);
+	                    this.setTagByTag(targetTag, this.getParamValue(param2));
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+	                break;
+
+	            case 'CONCAT_STR':
+
+	                var targetTag = this.findTagByName(param1.tag);
+
+	                if (targetTag) {
+	                    var nextValue;
+	                    if (targetTag.valueType == 1) {
+	                        //tagStr
+	                        nextValue = '' + this.getTagTrueValue(targetTag) + this.getParamValue(param2);
+	                    } else {
+	                        //tagNum
+	                        nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
+	                    }
+	                    this.setTagByTag(targetTag, nextValue);
+	                    this.draw(null, {
+	                        updatedTagName: param1.tag
+	                    });
+	                }
+
+	                break;
 	            case 'GET_STR_LEN':
 	                var targetTag = this.findTagByName(param1.tag);
 	                var param2Tag = this.findTagByName(param2.tag);
-	                if (targetTag && param2Tag && param2.valueType == 1) {
+	                if (targetTag && param2Tag && param2Tag.valueType == 1) {
 	                    // targetTag.value = parseInt(param2);
 	                    var param2Str = this.getParamValue(param2);
 	                    this.setTagByTag(targetTag, param2Str.length);
@@ -24811,6 +24845,7 @@
 	                        updatedTagName: param1.tag
 	                    });
 	                };
+	                break;
 	            case 'DELETE_STR_FROM_TAIL':
 	                var targetTag = this.findTagByName(param1.tag);
 	                var deleteLen = Number(this.getParamValue(param2));
