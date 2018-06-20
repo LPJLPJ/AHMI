@@ -2988,6 +2988,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 //判断输入是否合法
                 var cur = Number($scope.component.object.level.info.itemCount);
                 var showCnt = Number($scope.component.object.level.info.itemShowCount);
+                var curValue = Number($scope.component.object.level.info.curValue);
                 if (!_.isInteger(cur)) {
                     toastr.warning('输入不合法');
                     restore();
@@ -3031,18 +3032,26 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     toastr.info('error');
                     return;
                 }
-                toastr.info('修改成功');
+
+                if(curValue<=cur){
+                    curValue = cur-1;
+                }else{
+
+                }
+
                 var option = {
                     itemCount: cur,
                     sliceList1: sliceList1,
-                    sliceList2: sliceList2
+                    sliceList2: sliceList2,
+                    curValue:curValue,
                 };
                 // ProjectService.ChangeAttrOfSelectorNoRender(option, function (oldOperate) {
                 ProjectService.ChangeAttributeOfSelector(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
 
-                })
+                });
 
+                toastr.info('修改成功');
 
             }
         }
