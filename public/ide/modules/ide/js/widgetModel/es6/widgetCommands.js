@@ -1198,7 +1198,10 @@
             }
             var(t,0)
             getTag(t)
-            set('this.layers.t.hidden',0)
+            set(len,'this.layers.length')
+            if(t<len){
+                set('this.layers.t.hidden',0)
+            }
 
         `
     };

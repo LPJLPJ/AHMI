@@ -80,7 +80,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         onInitialize: '\n        ',
         onMouseUp: '\n        ',
         onMouseDown: '\n        ',
-        onTagChange: '\n            var(len,0)\n            set(len,\'this.layers.length\')\n            while(len>0){\n                minus(len,1)\n                set(\'this.layers.len.hidden\',1)\n            }\n            var(t,0)\n            getTag(t)\n            set(\'this.layers.t.hidden\',0)\n\n        '
+        onTagChange: '\n            var(len,0)\n            set(len,\'this.layers.length\')\n            while(len>0){\n                minus(len,1)\n                set(\'this.layers.len.hidden\',1)\n            }\n            var(t,0)\n            getTag(t)\n            set(len,\'this.layers.length\')\n            if(t<len){\n                set(\'this.layers.t.hidden\',0)\n            }\n\n        '
     };
 
     WidgetCommands['Animation'] = {
