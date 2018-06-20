@@ -341,3 +341,14 @@ body{
 .filedragOverflow{
     overflow: auto
 }
+
+
+.templates-tools-getmore{
+    float:right;
+    margin-right:1em;
+    text-decoration: none;
+    color:black;
+}
+.templates-tools-getmore:hover{
+    text-decoration: none;
+}
