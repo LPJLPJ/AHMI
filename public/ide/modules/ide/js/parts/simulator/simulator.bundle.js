@@ -21085,6 +21085,9 @@
 	                case 'MyAnimation':
 	                    this.drawAnimation(curX, curY, widget, options, cb);
 	                    break;
+	                case 'MyAlphaImg':
+	                    this.drawAlphaImg(curX, curY, widget, options, cb);
+	                    break;
 	            }
 	        }
 	    },
@@ -21180,6 +21183,9 @@
 	                break;
 	            case 'MyAnimation':
 	                this.paintAnimation(curX, curY, widget, options, cb);
+	                break;
+	            case 'MyAlphaImg':
+	                this.paintAlphaImg(curX, curY, widget, options, cb);
 	                break;
 	        }
 	    },
@@ -23101,6 +23107,7 @@
 	        this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
 	        widget.oldValue = curArc;
 	    },
+
 	    paintRotateImg: function (curX, curY, widget, options, cb) {
 
 	        var width = widget.info.width;
@@ -23114,6 +23121,45 @@
 	            var curArc = widget.curArc;
 
 	            this.drawRotateElem(curX, curY, width, height, width, height, curArc + initValue, widget.texList[0].slices[0], -0.5, -0.5, widget.subType);
+	        }
+
+	        cb && cb();
+	    },
+	    drawAlphaImg: function (curX, curY, widget, options, cb) {
+	        var lowAlarm = widget.info.lowAlarmValue;
+	        var highAlarm = widget.info.highAlarmValue;
+	        var minValue = widget.info.minValue;
+	        var maxValue = widget.info.maxValue;
+	        var curValue = this.getValueByTagName(widget.tag, 0);
+	        if (curValue > maxValue) {
+	            curValue = maxValue;
+	        } else if (curValue < minValue) {
+	            curValue = minValue;
+	        }
+	        widget.curValue = curValue;
+	        this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
+	        widget.oldValue = curValue;
+	    },
+	    paintAlphaImg: function (curX, curY, widget, options, cb) {
+	        var offctx = this.offctx;
+	        var width = widget.info.width;
+	        var height = widget.info.height;
+	        if (widget.texList) {
+
+	            //pointer
+
+	            //var initValue = widget.info.initValue;
+	            // var curArc = widget.info.value;
+	            var curValue = widget.curValue || 0;
+	            var maxValue = widget.info.maxValue || 0;
+	            var minValue = widget.info.minValue || 0;
+
+	            var curAlpha = Number((curValue - minValue) / (maxValue - minValue)) || 0;
+	            curAlpha = this.limitValueBetween(curAlpha, 0, 1);
+	            offctx.save();
+	            offctx.globalAlpha = curAlpha;
+	            this.drawBg(curX, curY, width, height, widget.texList[0].slices[0].imgSrc, widget.texList[0].slices[0].color, offctx);
+	            offctx.restore();
 	        }
 
 	        cb && cb();
