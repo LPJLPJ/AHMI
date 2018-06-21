@@ -9,11 +9,12 @@ var watch = require('gulp-watch');
 //css
 var autoprefixer = require('gulp-autoprefixer');
 var csso = require('gulp-csso');
-var htmlmin = require('gulp-htmlmin');
-
+var minifyejs = require('gulp-minify-ejs')
+var runSequence = require('run-sequence');
 var path = require('path');
 var os = require('os');
 var baseUrl = './public/ide/modules/ide/js/';
+//var debug = require('gulp-debug');
 var AUTOPREFIXER_BROWSERS = [
     'ie >= 10',
     'ie_mob >= 10',
@@ -113,11 +114,22 @@ gulp.task('transferAllFiles',function () {
 
 
 var srcBaseUrl = './src/'
+//transferAllFiles
+gulp.task('transferBeforeCompress', function () {
+    return gulp.src([srcBaseUrl+'**/*'],{base:srcBaseUrl})
+    // Auto-prefix css styles for cross browser compatibility
+        // Output
+        .pipe(gulp.dest('./'))
+});
+
+var ignoreCSSList = [
+    '!'+srcBaseUrl+'**/@(lib|libs)/**/*.css'
+]
 // Gulp task to minify CSS files
 gulp.task('compressCSS', function () {
-    return gulp.src([srcBaseUrl+'**/*.css'],{base:srcBaseUrl})
+    return gulp.src([srcBaseUrl+'**/*.css'].concat(ignoreCSSList),{base:srcBaseUrl})
     // Auto-prefix css styles for cross browser compatibility
-        .pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
+        //.pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
         // Minify the file
         .pipe(csso())
         // Output
@@ -125,25 +137,57 @@ gulp.task('compressCSS', function () {
 });
 
 // Gulp task to minify JavaScript files
+var ignoreJSList = [
+    '!'+srcBaseUrl+'public/general/js/spinner.js',
+    '!'+srcBaseUrl+'public/ide/modules/visualization/js/d3Tree.js',
+    '!'+srcBaseUrl+'public/ide/modules/ide/js/parts/simulator/simulator.bundle.js',
+    '!'+srcBaseUrl+'**/@(lib|libs)/**/*.js'
+]
+
+
 gulp.task('compressJS', function() {
-    return gulp.src([srcBaseUrl+'**/*.js'],{base:srcBaseUrl})
+    return gulp.src([srcBaseUrl+'**/*.js'].concat(ignoreJSList),{base:srcBaseUrl})
     // Minify the file
         .pipe(uglify())
         // Output
         .pipe(gulp.dest('./'))
 });
 
+gulp.task('copyJStoMin',function () {
+    return gulp.src([srcBaseUrl+'public/ide/modules/ide/js/**/*.js'],{base:srcBaseUrl})
+        .pipe(gulp.dest(srcBaseUrl+'public/ide/modules/ide/min-js'))
+})
+
+
 // Gulp task to minify HTML files
-gulp.task('pages', function() {
+gulp.task('compressHTML', function() {
     return gulp.src([srcBaseUrl+'**/*.html'],{base:srcBaseUrl})
-        .pipe(htmlmin({
-            collapseWhitespace: true,
-            removeComments: true
-        }))
+        .pipe(minifyejs())
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('build',['keepCompressing','transferNormalFiles']);
+gulp.task('compressALL',['compressJS','compressCSS','compressHTML'],function () {
+    
+})
 
-gulp.task('dev',['transferAllFiles'])
+gulp.task('buildAll',function () {
+    runSequence(
+        'transferBeforeCompress',
+        'compressALL',
+        'copyJStoMin'
+    );
+})
 
+// gulp.task('build',['keepCompressing','transferNormalFiles']);
+//
+// gulp.task('dev',['transferAllFiles'])
+
+gulp.task('build',['buildAll'])
+
+gulp.task('dev',function () {
+    runSequence(
+        'transferBeforeCompress',
+        // 'compressALL',
+        'copyJStoMin'
+    );
+})

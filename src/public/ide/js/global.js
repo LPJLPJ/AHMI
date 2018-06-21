@@ -3,7 +3,7 @@
  */
 
 angular.module('GlobalModule',[])
-    .service('GlobalService', function (TemplateProvider,Type) {
+    .service('GlobalService', ['TemplateProvider','Type',function (TemplateProvider,Type) {
 
         var exampleProject={
             initSize:{
@@ -62,7 +62,7 @@ angular.module('GlobalModule',[])
 
 
 
-    })
+    }])
     .service('Utils', function () {
         this.getRandomId= function () {
             return Math.random().toString(36).substr(2);

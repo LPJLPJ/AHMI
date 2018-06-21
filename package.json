@@ -30,8 +30,11 @@
     "formidable": "^1.0.17",
     "fs-extra": "^0.30.0",
     "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
     "gulp-babel": "^7.0.1",
+    "gulp-csso": "^3.0.1",
     "gulp-line-ending-corrector": "^1.0.2",
+    "gulp-minify-ejs": "^1.0.3",
     "gulp-plumber": "^1.2.0",
     "gulp-uglify": "^2.0.0",
     "lodash": "^4.11.2",
@@ -43,12 +46,14 @@
     "nodemailer": "^2.4.0",
     "pump": "^1.0.1",
     "qs": "^6.2.0",
+    "run-sequence": "^2.2.1",
     "socket.io": "^2.0.3",
     "swig-email-templates": "^3.0.0",
     "yazl": "^2.4.1"
   },
   "devDependencies": {
     "cross-env": "^5.1.5",
+    "gulp-debug": "^4.0.0",
     "gulp-watch": "^4.3.11"
   }
 }
