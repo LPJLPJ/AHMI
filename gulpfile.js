@@ -6,10 +6,25 @@ var uglify = require('gulp-uglify');
 var plumber = require('gulp-plumber');
 var pump = require('pump');
 var watch = require('gulp-watch');
+//css
+var autoprefixer = require('gulp-autoprefixer');
+var csso = require('gulp-csso');
+var htmlmin = require('gulp-htmlmin');
+
 var path = require('path');
 var os = require('os');
 var baseUrl = './public/ide/modules/ide/js/';
-
+var AUTOPREFIXER_BROWSERS = [
+    'ie >= 10',
+    'ie_mob >= 10',
+    'ff >= 30',
+    'chrome >= 34',
+    'safari >= 7',
+    'opera >= 23',
+    'ios >= 7',
+    'android >= 4.4',
+    'bb >= 10'
+];
 
 var NODE_ENV = process.env.NODE_ENV;
 
@@ -95,6 +110,38 @@ gulp.task('transferAllFiles',function () {
         .pipe(watch([baseUrl+'**/*.js'],{base:baseUrl}))
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
+
+
+var srcBaseUrl = './src/'
+// Gulp task to minify CSS files
+gulp.task('compressCSS', function () {
+    return gulp.src([srcBaseUrl+'**/*.css'],{base:srcBaseUrl})
+    // Auto-prefix css styles for cross browser compatibility
+        .pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
+        // Minify the file
+        .pipe(csso())
+        // Output
+        .pipe(gulp.dest('./'))
+});
+
+// Gulp task to minify JavaScript files
+gulp.task('compressJS', function() {
+    return gulp.src([srcBaseUrl+'**/*.js'],{base:srcBaseUrl})
+    // Minify the file
+        .pipe(uglify())
+        // Output
+        .pipe(gulp.dest('./'))
+});
+
+// Gulp task to minify HTML files
+gulp.task('pages', function() {
+    return gulp.src([srcBaseUrl+'**/*.html'],{base:srcBaseUrl})
+        .pipe(htmlmin({
+            collapseWhitespace: true,
+            removeComments: true
+        }))
+        .pipe(gulp.dest('./'));
+});
 
 gulp.task('build',['keepCompressing','transferNormalFiles']);
 
