@@ -9,7 +9,7 @@ var watch = require('gulp-watch');
 //css
 var autoprefixer = require('gulp-autoprefixer');
 var csso = require('gulp-csso');
-var minifyejs = require('gulp-minify-ejs')
+var htmlmin = require('gulp-htmlmin')
 var runSequence = require('run-sequence');
 var path = require('path');
 var os = require('os');
@@ -162,7 +162,8 @@ gulp.task('copyJStoMin',function () {
 // Gulp task to minify HTML files
 gulp.task('compressHTML', function() {
     return gulp.src([srcBaseUrl+'**/*.html'],{base:srcBaseUrl})
-        .pipe(minifyejs())
+        // .pipe(minifyejs())
+        .pipe(htmlmin({collapseWhitespace: true,removeComments: true,ignoreCustomFragments: [/{{.*?}}/,/<%.*?%>/]}))
         .pipe(gulp.dest('./'));
 });
 
