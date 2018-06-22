@@ -14,7 +14,7 @@ $(function(){
      * searchState 搜索状态
      * searchStr 搜索关键字
      */
-    const pageSize = 10;
+    var pageSize = 10;
     var curUsers = [];
     var tempUsers = [];
     var curPageIdx = 1;

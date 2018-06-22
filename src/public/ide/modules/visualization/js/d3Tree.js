@@ -1,14 +1,12 @@
 $(function(){
-
-    //
     let margin = {
         top:20,
         right:90,
         bottom:50,
         left:140
-    },
-        width = 1000-margin.left-margin.right,
-        height = 800-margin.top-margin.bottom;
+    }
+    let width = 1000-margin.left-margin.right
+    let height = 800-margin.top-margin.bottom;
 
     //将svg加入到body，并设置宽高
     //在group加入到svg，并移动到合适位置

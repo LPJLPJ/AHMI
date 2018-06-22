@@ -3,6 +3,9 @@
  */
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
+var uglifyES = require('uglify-es')
+var composer = require('gulp-uglify/composer');
+var uglifyWithES = composer(uglifyES, console);
 var plumber = require('gulp-plumber');
 var pump = require('pump');
 var watch = require('gulp-watch');
@@ -129,7 +132,7 @@ var ignoreCSSList = [
 gulp.task('compressCSS', function () {
     return gulp.src([srcBaseUrl+'**/*.css'].concat(ignoreCSSList),{base:srcBaseUrl})
     // Auto-prefix css styles for cross browser compatibility
-        //.pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
+        .pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
         // Minify the file
         .pipe(csso())
         // Output
@@ -138,8 +141,8 @@ gulp.task('compressCSS', function () {
 
 // Gulp task to minify JavaScript files
 var ignoreJSList = [
-    '!'+srcBaseUrl+'public/general/js/spinner.js',
-    '!'+srcBaseUrl+'public/ide/modules/visualization/js/d3Tree.js',
+    // '!'+srcBaseUrl+'public/general/js/spinner.js',
+    // '!'+srcBaseUrl+'public/ide/modules/visualization/js/d3Tree.js',
     '!'+srcBaseUrl+'public/ide/modules/ide/js/parts/simulator/simulator.bundle.js',
     '!'+srcBaseUrl+'**/@(lib|libs)/**/*.js'
 ]
@@ -148,14 +151,15 @@ var ignoreJSList = [
 gulp.task('compressJS', function() {
     return gulp.src([srcBaseUrl+'**/*.js'].concat(ignoreJSList),{base:srcBaseUrl})
     // Minify the file
-        .pipe(uglify())
+    //     .pipe(uglify())
+        .pipe(uglifyWithES())
         // Output
         .pipe(gulp.dest('./'))
 });
 
 gulp.task('copyJStoMin',function () {
-    return gulp.src([srcBaseUrl+'public/ide/modules/ide/js/**/*.js'],{base:srcBaseUrl})
-        .pipe(gulp.dest(srcBaseUrl+'public/ide/modules/ide/min-js'))
+    return gulp.src(['./public/ide/modules/ide/js/**/*.js'],{base:'./public/ide/modules/ide/js'})
+        .pipe(gulp.dest('./public/ide/modules/ide/min-js/'))
 })
 
 

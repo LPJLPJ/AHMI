@@ -11,7 +11,7 @@ $(function(){
    * infoCount 信息个数
    * pageCount 页面个数
    */
-  const pageSize = 10;
+  var pageSize = 10;
 	var releaseInfo=[];
   var curPageIdx = 1;
   var selectPageIdx = 1;
