@@ -164,30 +164,18 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                     var translate = animation.animationAttrs && animation.animationAttrs.translate;
                     var scale = animation.animationAttrs && animation.animationAttrs.scale;
                     var temp, key;
-                    if (translate && translate.dstPos && (typeof translate.dstPos.x === 'number')) {
+                    if (translate && translate.dstPos ) {
                         for (key in translate) {
                             temp = translate[key].x;
-                            translate[key].x = {
-                                value: temp || 0,
-                                tag: ''
-                            };
+                            translate[key].x = temp || 0
                             temp = translate[key].y;
-                            translate[key].y = {
-                                value: temp || 0,
-                                tag: ''
-                            }
+                            translate[key].y = temp || 0
                         }
                         for (key in scale) {
                             temp = scale[key].x;
-                            scale[key].x = {
-                                value: temp,
-                                tag: ''
-                            };
+                            scale[key].x = temp||1
                             temp = scale[key].y;
-                            scale[key].y = {
-                                value: temp,
-                                tag: ''
-                            }
+                            scale[key].y = temp||1
                         }
                     }
                     if (animation.timingFun === undefined) {
