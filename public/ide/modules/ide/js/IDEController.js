@@ -970,6 +970,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 pageNode.setWidth(tempContentObj.initSize.width);
                 pageNode.setHeight(tempContentObj.initSize.height);
                 pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                page.backgroundImage = page.originBackgroundImage;
                 // pageNode.clear();
                 if (page.canvasList !== undefined) {
                     page.selected = (index === 0) ? true : false

@@ -297,8 +297,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }else{
                     //this.trackedRes.push(new ResTrack(img,page.backgroundColor,null,outputFilename,width,height,page))
 
+                    page.originBackgroundImage = page.backgroundImage;
                     page.backgroundImage = path.join(imgUrlPrefix||'',outputFilename);
-
 
                     cb && cb()
                 }
