@@ -1,0 +1,90 @@
+.header-container{
+    text-align:center;
+    height:50px;
+    margin:1em 0;
+}
+
+.header-title{
+    font-size:2em;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    display: inline-block;
+
+}
+
+.header-container img{
+    height:50px;
+}
+
+.screen{
+    padding:1em;
+}
+
+.showcase{
+    width:70%;
+    padding: 0.5em;
+    text-align: center;
+}
+
+.showcase img{
+    box-shadow: rgba(0, 0, 0, 0.25) 0 5px 20px;
+}
+
+.description{
+    padding: 0.5em;
+    width:30%;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.row{
+    display: table-row;
+}
+
+.col{
+    display:table-cell;
+}
+.download-container{
+    padding:1em;
+}
+.download-button-wrapper{
+    text-align: center;
+}
+
+.download-description{
+    display:inline-block;
+    width:30%;
+    vertical-align:middle;
+}
+
+.download-button{
+    width:30%;
+    display: inline-block;
+    background: #126EB7;
+    color: #fff;
+    border-radius: 3px;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    cursor:pointer;
+    vertical-align:middle;
+}
+
+.download-button span{
+    display: block;
+    font-size:0.8em;
+}
+
+.download-button:hover{
+    text-decoration: none;
+    color:#fff;
+}
+
+.quote{
+    text-align:center;
+}
+

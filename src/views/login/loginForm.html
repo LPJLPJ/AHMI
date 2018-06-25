@@ -1,0 +1,28 @@
+<form id='login-form' class="form-horizontal form" >
+<div class="fieldset">
+	<input name="username" id="username" type='text' placeholder="用户名或邮箱" class="form-control" required />
+	<span id="username-verify" class="verify-result"></span>
+</div>
+<div class="fieldset">
+	<input type="password" class="form-control" id="password" placeholder="密码" required />
+	<span id="password-verify" class="verify-result"></span>
+</div>
+
+<div class="fieldset">
+	<input type="text" id="captcha-input" class="form-control" placeholder="输入验证码" />
+	<div class="captcha-wrap">
+		<img id="captcha-img"  src="/captcha" />
+		<a id='change-captcha' class="noselelct" style="cursor: pointer;" >换一张</a>
+	</div>
+	
+</div>
+<div class="fieldset">
+	<span id="captcha-verify" class="verify-result"></span>
+</div>
+<div class="fieldset">
+	<button type="button" id="submit" class="form-control" disabled>登录</button>
+</div>
+<div>
+	<a style="float: left;" href="/user/forgetpassword">忘记密码</a> <a style="float: right;" href="/user/signup">没有账号，注册</a>
+</div>
+</form>

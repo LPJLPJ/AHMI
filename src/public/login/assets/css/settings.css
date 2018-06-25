@@ -1,0 +1,45 @@
+*{margin: 0px;padding: 0px;}
+a{text-decoration: none;}
+.main{
+    width: 650px;
+    height: 500px;
+    margin: 60px auto;
+}
+.head{
+    font-size: 30px;
+    margin-bottom: 50px;
+}
+.input1,.input2,.input3,.input4{
+    width: 650px;
+    height: 80px;
+    margin-bottom: 20px;
+}
+.input1 p,.input2 p,.input3 p{
+    margin-bottom: 5px;
+    font-weight: bold;
+    color:#3c3c3c;
+}
+.name1,.name2,.email{
+    width: 630px;
+    height: 40px;
+    padding-left: 10px;
+    padding-right: 5px;
+    border:2px solid #ccc;
+    border-radius: 5px;
+    line-height: 40px;
+}
+.name1:focus,.name2:focus,.email:focus{
+    border:2px solid #4A8BFA;
+    border-radius: 5px;
+    outline: none;
+}
+.submit{
+    padding: 10px 15px;
+    border:1px solid #4E8EF7;
+    background: #4E8EF7;
+    border-radius: 3px;
+    color:#fff;
+    font-family: "微软雅黑";
+    font-size: 14px;
+    cursor: pointer;
+}

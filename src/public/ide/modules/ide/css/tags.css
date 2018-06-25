@@ -1,0 +1,11 @@
+/*edit by lixiang*/
+
+.tagTr.selected{
+    background: grey;
+}
+.timerTagTr.selected{
+    background: grey;
+}
+#var-timertag-input{
+    text-align: left;
+}

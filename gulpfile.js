@@ -3,13 +3,32 @@
  */
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
+var uglifyES = require('uglify-es')
+var composer = require('gulp-uglify/composer');
+var uglifyWithES = composer(uglifyES, console);
 var plumber = require('gulp-plumber');
 var pump = require('pump');
 var watch = require('gulp-watch');
+//css
+var autoprefixer = require('gulp-autoprefixer');
+var csso = require('gulp-csso');
+var htmlmin = require('gulp-htmlmin')
+var runSequence = require('run-sequence');
 var path = require('path');
 var os = require('os');
 var baseUrl = './public/ide/modules/ide/js/';
-
+//var debug = require('gulp-debug');
+var AUTOPREFIXER_BROWSERS = [
+    'ie >= 10',
+    'ie_mob >= 10',
+    'ff >= 30',
+    'chrome >= 34',
+    'safari >= 7',
+    'opera >= 23',
+    'ios >= 7',
+    'android >= 4.4',
+    'bb >= 10'
+];
 
 var NODE_ENV = process.env.NODE_ENV;
 
@@ -96,7 +115,84 @@ gulp.task('transferAllFiles',function () {
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 })
 
-gulp.task('build',['keepCompressing','transferNormalFiles']);
 
-gulp.task('dev',['transferAllFiles'])
+var srcBaseUrl = './src/'
+//transferAllFiles
+gulp.task('transferBeforeCompress', function () {
+    return gulp.src([srcBaseUrl+'**/*'],{base:srcBaseUrl})
+    // Auto-prefix css styles for cross browser compatibility
+        // Output
+        .pipe(gulp.dest('./'))
+});
 
+var ignoreCSSList = [
+    '!'+srcBaseUrl+'**/@(lib|libs)/**/*.css'
+]
+// Gulp task to minify CSS files
+gulp.task('compressCSS', function () {
+    return gulp.src([srcBaseUrl+'**/*.css'].concat(ignoreCSSList),{base:srcBaseUrl})
+    // Auto-prefix css styles for cross browser compatibility
+        .pipe(autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
+        // Minify the file
+        .pipe(csso())
+        // Output
+        .pipe(gulp.dest('./'))
+});
+
+// Gulp task to minify JavaScript files
+var ignoreJSList = [
+    // '!'+srcBaseUrl+'public/general/js/spinner.js',
+    // '!'+srcBaseUrl+'public/ide/modules/visualization/js/d3Tree.js',
+    '!'+srcBaseUrl+'public/ide/modules/ide/js/parts/simulator/simulator.bundle.js',
+    '!'+srcBaseUrl+'**/@(lib|libs)/**/*.js'
+]
+
+
+gulp.task('compressJS', function() {
+    return gulp.src([srcBaseUrl+'**/*.js'].concat(ignoreJSList),{base:srcBaseUrl})
+    // Minify the file
+    //     .pipe(uglify())
+        .pipe(uglifyWithES())
+        // Output
+        .pipe(gulp.dest('./'))
+});
+
+gulp.task('copyJStoMin',function () {
+    return gulp.src(['./public/ide/modules/ide/js/**/*.js'],{base:'./public/ide/modules/ide/js'})
+        .pipe(gulp.dest('./public/ide/modules/ide/min-js/'))
+})
+
+
+// Gulp task to minify HTML files
+gulp.task('compressHTML', function() {
+    return gulp.src([srcBaseUrl+'**/*.html'],{base:srcBaseUrl})
+        // .pipe(minifyejs())
+        .pipe(htmlmin({collapseWhitespace: true,removeComments: true,ignoreCustomFragments: [/{{.*?}}/,/<%.*?%>/]}))
+        .pipe(gulp.dest('./'));
+});
+
+gulp.task('compressALL',['compressJS','compressCSS','compressHTML'],function () {
+    
+})
+
+gulp.task('buildAll',function () {
+    runSequence(
+        'transferBeforeCompress',
+        'compressALL',
+        'copyJStoMin'
+    );
+})
+
+// gulp.task('build',['keepCompressing','transferNormalFiles']);
+//
+// gulp.task('dev',['transferAllFiles'])
+
+gulp.task('build',['buildAll'])
+
+gulp.task('dev',function () {
+    runSequence(
+        'transferBeforeCompress',
+        // 'compressALL',
+        'copyJStoMin'
+    );
+})
