@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack');
 // var Uglify = require("uglifyjs-webpack-plugin");
 module.exports = {
+    mode: 'development',
     entry: {
         //webpackDevServer:'webpack-dev-server/client?http://localhost:4000',
         //webpackHot:'webpack/hot/only-dev-server',
