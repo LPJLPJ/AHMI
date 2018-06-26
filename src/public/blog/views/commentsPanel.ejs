@@ -1,0 +1,17 @@
+<% for(var j=0;j<comments.length;j++) {%>
+    <div class="box-footer" commentId="<%=comments[j]._id%>" authorId="<%=comments[j].authorId%>">
+        <div class="comment-text">
+            <span class="username">
+                <%=comments[j].authorName%>
+                <span class="text-muted pull-right">
+                <% if((comments[j].authorId == comments.userId)||(comments.type == "admin")) {%>
+                    <a class="xs" commentId="<%=comments[j]._id%>" authorId="<%=comments[j].authorId%>" href="javascript:void(0)" onclick="deleteComments(this)">
+                            <i class="iconfont icon">&#xe607</i>
+                    </a>
+                <%}%>
+                <%=comments[j].createTime%></span>
+            </span>
+            <p><%=comments[j].content%></p>
+        </div>
+    </div>
+<%}%>

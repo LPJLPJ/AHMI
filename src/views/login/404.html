@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>404</title>
+    <!-- BOOTSTRAP CORE STYLE CSS -->
+    <link href="../../public/images/favicon.ico" rel="icon" type="image/x-icon"/>
+    <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet"/>
+    <!-- FONT AWESOME CSS -->
+    <link href="../../public/login/assets/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- FLEXSLIDER CSS -->
+    <link href="../../public/login/assets/css/flexslider.css" rel="stylesheet"/>
+    <!-- CUSTOM STYLE CSS -->
+    <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
+    <!--弹出-->
+    <link href="../../public/login/assets/css/index.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="../../public/login/assets/css/css.css" type="text/css"/>
+    <link rel="stylesheet" href="../../public/login/assets/css/zhuce.css" type="text/css"/>
+
+    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css"/>
+    <script src="../../public/general/js/versionTag.js"></script>
+
+    <!--  Jquery Core Script -->
+    <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
+    <!--  Core Bootstrap Script -->
+    <script src="../../public/login/assets/js/bootstrap.js"></script>
+    <!--  Flexslider Scripts -->
+    <script src="../../public/login/assets/js/jquery.flexslider.js"></script>
+    <!--  Scrolling Reveal Script -->
+    <script src="../../public/login/assets/js/scrollReveal.js"></script>
+    <!--  Scroll Scripts -->
+    <script src="../../public/login/assets/js/jquery.easing.min.js"></script>
+    <!--  Custom Scripts -->
+    <script src="../../public/login/assets/js/custom.js"></script>
+
+    <script src="../../public/login/assets/js/vector-zyj.js"></script>
+
+    <script>
+        $(function(){
+            // 初始化 传入dom id
+            var victor = new Victor("container-zyj", "output");
+            var theme = [
+                ["#002c4a", "#005584"],
+                ["#35ac03", "#3f4303"],
+                ["#ac0908", "#cd5726"],
+                ["#18bbff", "#00486b"]
+            ]
+            $(".color li").each(function(index, val) {
+                var color = theme[index];
+                $(this).mouseover(function(){
+                    victor(color).set();
+                })
+            });
+        });
+    </script>
+
+</head>
+<body>
+<!--<div class="content" style="padding-bottom: 50px;">-->
+<div class="">
+<div class="navbar navbar-inverse navbar-fixed-top " id="menu" style="">
+    <div class="container container-zyj1">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><img class="logo-custom" src="../../public/login/assets/img/速显微.png"
+                                                  alt=""/></a>
+        </div>
+
+    </div>
+</div>
+<!--NAVBAR SECTION END-->
+<div class="home-sec" id="home">
+    <div id="output">
+        <div class="overlay" id="container-zyj" style="height:100%">
+            <div class="container slide-container">
+                <div class="row text-center ">
+                    <div class="col-lg-12  col-md-12 col-sm-12">
+
+                        <div class="flexslider set-flexi" id="main-section">
+                            <ul class="slides move-me">
+                                <!-- Slider 01 -->
+                                <li>
+                                    <h1 >页面没有找到</h1>
+                                    <a class="btn btn-primary btn-lg" href="/">返回主页</a>
+                                </li>
+                                <!-- End Slider 01 -->
+                            </ul>
+                        </div>
+
+                        <!-- Modal -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+<div class="claim">
+    <footer>
+        <% include ../all/footer-3.html %>
+    </footer>
+
+</div>
+<!-- FOOTER SECTION END-->
+
+
+
+</body>
+</html>

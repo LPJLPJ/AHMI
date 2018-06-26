@@ -1,0 +1,33 @@
+*{margin: 0px;padding: 0px;}
+li{list-style-type: none;}
+a{text-decoration: none;}
+a img{border:none;}
+.zhaohui{
+    float: left;
+    margin-top: -50px;
+}
+.zhuce{
+    float: right;
+    margin-top: -50px;
+    margin-right: 15px;
+}
+.iconfont{
+    color:red;
+    float: right;
+    font-size: 30px !important;
+    cursor: pointer;
+    width: 30px;
+    height:30px;
+    border-left:1px solid #666;
+    border-bottom:1px solid #666;
+}
+input{
+    color:black;
+}
+#list{
+    display: none;
+}
+
+.captcha-refresh{
+    text-decoration: none;
+}

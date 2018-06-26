@@ -10,8 +10,14 @@ log/
 .idea/
 .db/
 
-views/learn/
-public/learn/
+src/views/learn/
+src/public/learn/
 
-public/blog/media
-public/ide/modules/ide/min-js/
+src/public/blog/media
+src/public/ide/modules/ide/min-js/
+
+src/public/ide/modules/ide/js/parts/simulator/
+
+public/
+
+views/

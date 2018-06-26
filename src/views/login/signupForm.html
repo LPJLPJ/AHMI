@@ -1,0 +1,39 @@
+<form id='signup-form' class="form-horizontal form" >
+<div class="fieldset">
+	<input name="username" id="username" type='text' placeholder="用户名" class="form-control" required />
+	<span id="username-verify" class="verify-result"></span>
+</div>
+<div class="fieldset">
+	<input name="mail" id="mail" type='mail' class="form-control" placeholder="邮箱" required />
+	<span id="mail-verify" class="verify-result"></span>
+</div>
+<div class="fieldset">
+	<input name="password" type="password" class="form-control" id="password" placeholder="密码" required />
+	<span id="password-verify" class="verify-result"></span>
+</div>
+<div class="fieldset">
+	<input name="comparepassword" type="password" id="comparepassword" class="form-control" required placeholder="确认密码" />
+	<span id="comparepassword-verify" class="verify-result"></span>
+</div>
+<div class="fieldset">
+	<input name="captcha" type="text" id="captcha-input" class="form-control" placeholder="输入验证码" />
+	<div class="captcha-wrap">
+		<img id="captcha-img"  src="/captcha" />
+		<a id='change-captcha' class="noselelct" style="cursor: pointer;" >换一张</a>
+	</div>
+	
+</div>
+<div class="fieldset">
+	<span id="captcha-verify" class="verify-result"></span>
+</div>
+<div class="fieldset" >
+	<!-- 阅读协议 -->
+	<input type="checkbox" id="agree"/>我已阅读<a href="/public/login/docs/rule.html" target="_blank">使用协议</a>
+</div>
+<div class="fieldset">
+	<button type="button" id="submit" class="form-control" disabled>注册</button>
+</div>
+<div style="text-align: right;">
+	<a href="/user/login">已有账号，直接登录</a>
+</div>
+</form>

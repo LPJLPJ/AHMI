@@ -1,0 +1,25 @@
+
+.modal-selected-bg{
+    background-color: #2D59A2;
+}
+.modal-downloading-alpha{
+    opacity: 0.5;
+}
+.modal-project-div{
+    width: 100%;
+    height: 100%;
+}
+.modal-project-img{
+    width: 80%;
+    height: 80%;
+    left: 10%;
+    top: 10%;
+    position: absolute;
+}
+.modal-project-progressbar{
+    display: inline-block;
+    width: 80%;
+    position: absolute;
+    left: 10%;
+    top: calc(50% - 10px);
+}
