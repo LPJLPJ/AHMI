@@ -593,9 +593,8 @@ body{
 }
 
 .tag-table-wrapper>table>tbody>tr>td>input{
-    width: 60px;
+    /*width: 60px;*/
 }
-
 .setting-wrapper{
     background-color:white;
 }
@@ -670,7 +669,9 @@ body{
 .form-control{
     padding: 2px 12px;
 }
-
+.tag-string{
+    background-color: #1A94C4;
+}
 .my-widget-list{
     min-width: 240px;
     padding:10% 5% 15% 5%;

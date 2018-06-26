@@ -54,7 +54,12 @@
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
     <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.js"></script>
-
+    <!--encoding-->
+    <script>
+        window.TextEncoder = window.TextDecoder = null;
+    </script>
+    <script src="../../public/ide/lib/text-encoding/encoding-indexes.js"></script>
+    <script src="../../public/ide/lib/text-encoding/encoding.js"></script>
 
 
 
@@ -3250,6 +3255,7 @@
                                         <td class="col-xs-1">操作</td>
                                         <td class="col-xs-1">操作数1</td>
                                         <td class="col-xs-1">操作数2</td>
+                                        <td class="col-xs-1">删除</td>
                                         <td class="col-xs-1"></td>
                                     </tr>
                                     </thead>
@@ -3262,8 +3268,13 @@
                                         <td><p>{{cmd[2].tag||cmd[2].value}}</p></td>
                                         <td><i class="iconfont" ng-click="deleteCmd($index)">
                                             &#xe627;</i></td>
-                                        <!--<td><img src="../../public/ide/modules/ide/img-web/icon_close.png"-->
-                                                 <!--ng-click="deleteCmd($index)"></td>-->
+                                        <td>
+                                            <span class="label label-danger"
+                                                  ng-show="!validateArr[$index].pass"
+                                                  tooltip-placement="top"
+                                                  uib-tooltip="{{validateArr[$index].tooltip}}"
+                                                  style="cursor: pointer;">!</span>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>

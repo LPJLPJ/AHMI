@@ -1,4 +1,5 @@
 var React = require('react');
+var StringConverter = require('./StringConverter')
 module.exports = React.createClass({
     getInitialState: function () {
         return {
@@ -7,6 +8,21 @@ module.exports = React.createClass({
             curTagIdx: -1,
             inputingTag:false
         };
+    },
+    getTagTrueValue:function (tag) {
+        if(tag){
+            tag.valueType = tag.valueType||0
+            switch (tag.valueType){
+                case 0:
+                    //num
+                    return Number(tag.value)||0
+                case 1:
+                    //str
+                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding)
+                default:
+                    console.log('tag type unsupported')
+            }
+        }
     },
     handleValueInputFocus: function (e) {
         var tagList = this.state.tagList;
@@ -76,7 +92,9 @@ module.exports = React.createClass({
 
     },
     render: function () {
-
+        var tdDefaultStyle = {
+            'verticalAlign':'middle'
+        }
         return (
             <div className='tag-table-wrapper'>
                 <table className='tag-table table table-responsive'>
@@ -96,13 +114,19 @@ module.exports = React.createClass({
                             if (tag.register) {
                                 {/*var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');*/}
                                 var disabled = false;
+                                var curValue
+                                if (this.state.inputingTag && this.state.curTagIdx === index){
+                                    curValue = tag.value
+                                }else{
+                                    curValue = this.getTagTrueValue(tag)
+                                }
                                 return (
                                     <tr key={index} className='tag-table-row'>
-                                        <td className='tag-table-col'> {tag.name}</td>
-                                        <td className='tag-table-col'> {tag.indexOfRegister}</td>
-                                        <td className='tag-table-col'>
-                                            <input className='value' name={tag.name} type='text' disabled={disabled}
-                                                   value={tag.value}
+                                        <td className={'tag-table-col '+(tag.valueType==1?'tag-string':'tag-num')} style={tdDefaultStyle}> {tag.name}</td>
+                                        <td className='tag-table-col' style={tdDefaultStyle}> {tag.indexOfRegister}</td>
+                                        <td className='tag-table-col' style={tdDefaultStyle}>
+                                            <input className={'value form-control '} name={tag.name} type='text' disabled={disabled}
+                                                   value={curValue}
                                                    onFocus={this.handleValueInputFocus}
                                                    onBlur={this.handleValueInputBlur}
                                                    onKeyDown={this.handleValueInputEnter}
