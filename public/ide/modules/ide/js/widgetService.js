@@ -2005,6 +2005,109 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MyDateTime.async = true;
 
+
+    //my alpha img
+    //rotateImg
+    fabric.MyAlphaImg = fabric.util.createClass(fabric.Object, {
+        type: Type.MyAlphaImg,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.backgroundColor=level.texList[0].slices[0].color;
+            this.minValue=level.info.minValue||0;
+            this.maxValue=level.info.maxValue||0;
+            this.initValue=level.info.initValue||0;
+
+
+            this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            if (this.imageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.backgroundColor=tex.slices[0].color;
+
+                self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            this.on('changeInitValue',function(arg){
+                var _callback=arg.callback;
+
+                if(arg.hasOwnProperty('initValue')){
+                    self.initValue=arg.initValue;
+                }else if(arg.hasOwnProperty('maxValue')){
+                    self.maxValue=arg.maxValue;
+                }else if(arg.hasOwnProperty('minValue')){
+                    self.minValue=arg.minValue;
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                // ctx.rotate((Math.PI/180)*this.initValue);
+                ctx.save()
+                var curAlpha= Number((this.initValue - this.minValue) /(this.maxValue-this.minValue))||0
+                if(curAlpha<0){
+                    curAlpha = 0
+                }else if(curAlpha>1){
+                    curAlpha = 1
+                }
+
+                ctx.globalAlpha = curAlpha
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.imageElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                ctx.restore()
+            }
+            catch(err){
+                ctx.restore()
+                console.log('错误描述',err);
+                toastr.warning('渲染透明图出错');
+            }
+        }
+    });
+    fabric.MyAlphaImg.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyAlphaImg(level, option));
+    };
+    fabric.MyAlphaImg.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                imageElement:this.imageElement,
+                backgroundColor:this.backgroundColor
+            });
+        }
+    })(fabric.MyAlphaImg.prototype.toObject);
+    fabric.MyAlphaImg.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyAlphaImg(level, object));
+    };
+    fabric.MyAlphaImg.async = true;
+
+
     /**
      * 按字符串渲染时间控件
      * @param mode
