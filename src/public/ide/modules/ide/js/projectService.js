@@ -1192,6 +1192,18 @@ ideServices
                         subLayerNode.renderAll.bind(subLayerNode)();
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MyAlphaImg){
+                    fabric.MyAlphaImg.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }
 
             };
@@ -4383,6 +4395,14 @@ ideServices
                         selectObj.target.fire('changeInitValue',arg);
                     }
 
+                    if(selectObj.type==Type.MyAlphaImg){
+                        arg={
+                            maxValue:_option.maxValue,
+                            callback:_successCallback
+                        };
+                        selectObj.target.fire('changeInitValue',arg);
+                    }
+
                 }
                 if (_option.hasOwnProperty('minValue')){
                     selectObj.level.info.minValue=_option.minValue;
@@ -4411,6 +4431,14 @@ ideServices
                         selectObj.target.fire('ChangeAttributeOscilloscope',arg);
                     }
                     if(selectObj.type==Type.MySlideBlock){
+                        arg={
+                            minValue:_option.minValue,
+                            callback:_successCallback
+                        }
+                        selectObj.target.fire('changeInitValue',arg);
+                    }
+
+                    if(selectObj.type==Type.MyAlphaImg){
                         arg={
                             minValue:_option.minValue,
                             callback:_successCallback
@@ -5350,6 +5378,9 @@ ideServices
                         break;
                     case 'MyTexTime':
                         node.add(new fabric.MyTexTime(dataStructure,initiator));
+                        break;
+                    case 'MyAlphaImg':
+                        fabric.MyAlphaImg.fromLevel(dataStructure, addFabWidget, initiator);
                         break;
                     default :
                         console.error('not match widget in _addFabricObjInCanvasNode!');

@@ -218,6 +218,10 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 rotateImg: {
                     enterInitValue: enterInitValue
                 },
+                //alpha
+                alphaImg: {
+                    enterInitValue: enterInitValue
+                },
                 dateTime: {
                     dateTimeModes: [
                         {id: '0', name: '时分秒模式'},
