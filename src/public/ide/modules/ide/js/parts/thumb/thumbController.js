@@ -26,7 +26,7 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
             menuOptions:[],
             allContextMenus:[],
             out:{
-                toolShow:false
+                toolShow:true
             }
         }
     }
