@@ -54,7 +54,12 @@
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
     <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.js"></script>
-
+    <!--encoding-->
+    <script>
+        window.TextEncoder = window.TextDecoder = null;
+    </script>
+    <script src="../../public/ide/lib/text-encoding/encoding-indexes.js"></script>
+    <script src="../../public/ide/lib/text-encoding/encoding.js"></script>
 
 
 
@@ -2456,6 +2461,87 @@
                         </div>
                     </div>
 
+                    <div ng-show="component.object.type=='MyAlphaImg'&&!myMask">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">名称</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="text"
+                                   ng-model="component.object.level.name"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterName($event)">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.left"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                    </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">最小值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.minValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMinValue($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">初始值</span>
+                            <input type="number"
+                                   class="my-attr-number-input form-control"
+                                   ng-model="component.object.level.info.initValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.alphaImg.enterInitValue($event)"/>
+                        </div>
+                    </div>
+
                     <div ng-show="component.object.type=='MyDateTime'&&!myMask">
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">名称</span>
@@ -3250,6 +3336,7 @@
                                         <td class="col-xs-1">操作</td>
                                         <td class="col-xs-1">操作数1</td>
                                         <td class="col-xs-1">操作数2</td>
+                                        <td class="col-xs-1">删除</td>
                                         <td class="col-xs-1"></td>
                                     </tr>
                                     </thead>
@@ -3262,8 +3349,13 @@
                                         <td><p>{{cmd[2].tag||cmd[2].value}}</p></td>
                                         <td><i class="iconfont" ng-click="deleteCmd($index)">
                                             &#xe627;</i></td>
-                                        <!--<td><img src="../../public/ide/modules/ide/img-web/icon_close.png"-->
-                                                 <!--ng-click="deleteCmd($index)"></td>-->
+                                        <td>
+                                            <span class="label label-danger"
+                                                  ng-show="!validateArr[$index].pass"
+                                                  tooltip-placement="top"
+                                                  uib-tooltip="{{validateArr[$index].tooltip}}"
+                                                  style="cursor: pointer;">!</span>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -162,6 +162,25 @@ ideServices
                     }]
                 }]
             },
+            defaultAlphaImage={
+                info:{
+                    width: 100,
+                    height: 100,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    minValue:0,maxValue:100,
+                    initValue:50
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(150,150,150,1)',
+                        imgSrc:'',
+                        name:'背景'
+                    }]
+                }]
+            },
             defaultSlideBlock={
                 info:{
                     width:160,
@@ -209,6 +228,9 @@ ideServices
             }
             if(widget.defaultRotateImage){
                 defaultRotateImage=widget.defaultRotateImage;
+            }
+            if(widget.defaultAlphaImage){
+                defaultAlphaImage=widget.defaultAlphaImage;
             }
             if(widget.defaultSlideBlock){
                 defaultSlideBlock=widget.defaultSlideBlock
@@ -738,6 +760,21 @@ ideServices
                 info: info,
                 name: 'NewRotateImg',
                 type: Type.MyRotateImg,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList
+            }
+        };
+
+        this.getDefaultAlphaImg=function(){
+            var info = _.cloneDeep(defaultAlphaImage.info);
+            var texList=_.cloneDeep(defaultAlphaImage.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewAlphaImage',
+                type: Type.MyAlphaImg,
                 expand:true,
                 url:'',
                 zIndex:0,

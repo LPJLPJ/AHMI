@@ -867,7 +867,6 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
 
     $scope.forceSave = function (th) {
 
-
         var shouldForceEdit = false
         if (index !== -1) {
             //edit tag
@@ -1015,6 +1014,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyVideo:
             case Type.MyAnimation:
             case Type.MyTexNum:
+            case Type.MyAlphaImg:
                 $scope.component.showTagPanel = true;
                 break;
             default:
