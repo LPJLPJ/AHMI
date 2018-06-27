@@ -1210,7 +1210,7 @@ projectRoute.saveDataAndCompress = function (req, res) {
     if (projectId!=""){
         var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DataFileUrl = path.join(ProjectBaseUrl,'resources','data.json');
-
+        dataStructure.generateTime = moment().format("YYYY-MM-DD HH:mm:ss")
         fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
             if (err){
                 errHandler(res,500,err);
@@ -1228,14 +1228,17 @@ projectRoute.saveDataAndCompress = function (req, res) {
                 //})
                 var output = fse.createWriteStream(DistUrl);
                 var archive = archiver('zip');
+
                 output.on('close',function(){
                     //console.log(archive.pointer()+"total bytes",'relese new updfiles success');
                     //编辑Log文件并返回响应
-                    res.send('ok');
+                   res.end('ok')
+
                 });
                 archive.on('error',function(err){
                     errHandler(res,500,'package folder err');
                 });
+
                 archive.pipe(output);
                 archive.directory(SrcUrl,'/');
                 archive.finalize();
@@ -1245,6 +1248,25 @@ projectRoute.saveDataAndCompress = function (req, res) {
         errHandler(res,500,'projectId error');
     }
 };
+
+
+//add hash function
+function createHashForFile(fileUrl,algo,cb) {
+    var algo = algo||'md5'
+    var hash = crypto.createHash(algo),
+        stream = fs.createReadStream(fileUrl);
+
+    stream.on('data', function (data) {
+        hash.update(data, 'utf8')
+    })
+
+    stream.on('error',function (err) {
+        cb && cb(err)
+    })
+    stream.on('end', function () {
+        cb && cb(null,hash.digest('hex'))
+    })
+}
 
 function isFont(font) {
     var names = font.src.split('.');
@@ -1309,16 +1331,36 @@ function cpDefaultTemplates(newProjectId,cb) {
 
 projectRoute.downloadProject = function (req, res) {
     var projectId = req.params.id;
+    var shouldCalHash = !!req.query.hash
     if (projectId!=""){
         var ProjectBaseUrl = path.join(__dirname,'../project',String(projectId));
         var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-        res.download(DistUrl,'file.zip', function (err) {
-            if (err){
-                errHandler(res,500,err);
-            }else{
-                //res.end('ok');
-            }
-        })
+
+        if (shouldCalHash){
+            //create hash
+            createHashForFile(DistUrl,null,function (err,hash) {
+                if (err){
+                    errHandler(res,500,'create hash error');
+                }else{
+                    res.download(DistUrl,'file_'+hash+'.zip', function (err) {
+                        if (err){
+                            errHandler(res,500,err);
+                        }else{
+                            //res.end('ok');
+                        }
+                    })
+                }
+            })
+        }else{
+            res.download(DistUrl,'file.zip', function (err) {
+                if (err){
+                    errHandler(res,500,err);
+                }else{
+                    //res.end('ok');
+                }
+            })
+        }
+
 
     }else{
         errHandler(res,500,'projectId error');

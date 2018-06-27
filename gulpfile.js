@@ -190,11 +190,12 @@ gulp.task('buildAll',function () {
 gulp.task('build',['buildAll'])
 
 gulp.task('dev',function () {
-    // runSequence(
-    //     'transferBeforeCompress',
-    //     // 'compressALL',
-    //     'copyJStoMin'
-    // );
+    runSequence(
+        'transferBeforeCompress',
+        // 'compressALL',
+        'copyJStoMin'
+    );
+    console.log('watch files ...')
     return gulp.watch([srcBaseUrl+'**/*'],{base:srcBaseUrl}, function(event) {
         runSequence(
             'transferBeforeCompress',

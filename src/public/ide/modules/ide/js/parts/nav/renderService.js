@@ -1388,7 +1388,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                                     .success(function (data) {
                                         if (data == 'ok'){
                                             //download
-                                            window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download'
+                                            window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download?hash=true'
 
                                         }else{
                                             console.log(data);
