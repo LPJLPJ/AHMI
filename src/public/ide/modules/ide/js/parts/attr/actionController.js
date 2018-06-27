@@ -201,7 +201,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         }),'name');
 
         $scope.timerTags = _.map(timerTags,function(timerTags){
-          return timerTags.name;
+            return timerTags.name;
         });
 
         $scope.action = action;
