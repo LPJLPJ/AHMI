@@ -33,6 +33,10 @@ body{
     border:none
 }
 
+a,a:hover{
+    text-decoration: none;
+    color:black;
+}
 
 /*加载*/
 .my-mask.my-hidden{
@@ -743,4 +747,53 @@ body{
 /*}*/
 .modal-content {
     z-index:100000000 ;
+}
+
+
+.modal-dragzone{
+    border:1px dashed darkgrey;
+    padding:12.5% 0;
+    text-align:center;
+    cursor:default;
+    position:relative;
+    display:inline-block;
+    width:100%;
+}
+
+.modal-uploadfile-wrapper{
+    position:relative;
+    display:inline-block;
+    width:100%;
+}
+
+.modal-dragzone-input{
+    opacity:0;
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+}
+
+.modal-dragzone-accept{
+    background-color: green;
+}
+
+.modal-dragzone-reject{
+    background-color: red;
+}
+
+.modal-validate-valid{
+    color:green;
+}
+
+.modal-validate-invalid{
+    color:red;
+}
+
+.modal-validate-wrapper{
+    padding:1em;
+}
+.modal-validate-info{
+    display:block;
 }

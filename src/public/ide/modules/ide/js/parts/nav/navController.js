@@ -93,6 +93,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     play: play,
                     openPanel: openPanel,
                     openShare: openShare,
+                    openValidate:openValidate,
                     openCANPanel: openCANPanel,
                     runSimulator: runSimulator,
                     closeSimulator: closeSimulator,
@@ -111,6 +112,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             };
 
         }
+
 
         function initProject() {
             ProjectService.getProjectTo($scope);
@@ -1308,6 +1310,27 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             });
         }
 
+        function openValidate() {
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'validateModal.html',
+                controller: 'validateModalCtl',
+                scope: $scope,
+                size: 'md',
+                resolve: {
+                    // id: function () {
+                    //     return $scope.project.projectId
+                    // }
+                }
+            });
+
+            modalInstance.result.then(function (result) {
+                //
+            }, function () {
+
+            });
+        }
+
 
         /**
          * 打开CAN配置模态框
@@ -1660,6 +1683,58 @@ ide.controller('shareModalCtl', ['$rootScope', '$scope', '$uibModalInstance', '$
     $scope.cancel = function () {
         $uibModalInstance.dismiss($scope.shareInfo.shared);
     };
+}]);
+
+
+ide.controller('validateModalCtl', ['$rootScope', '$scope', '$uibModalInstance', function ($rootScope, $scope, $uibModalInstance) {
+    $scope.validateResult = {
+        canShow:false,
+        name:'',
+        generateTime:'',
+        hash:'xxx',
+        valid:''
+    }
+    $scope.validateZipFile = validateZipFile
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+    function validateZipFile($files) {
+        if($files.length){
+            var curFile = $files[0]
+            if(curFile && curFile.type && curFile.type === 'application/zip'){
+                //filename
+                $scope.validateResult.canShow = false
+                $scope.validateResult.name = curFile.name
+                var matches = curFile.name.match(/_([0-9|a-f]+)\./)
+                if(matches&&matches[1]){
+                    var expectedHash = matches[1]
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function(event) {
+                    var binary = event.target.result;
+                    var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(binary)).toString();
+
+                    $scope.$apply(function () {
+                        $scope.validateResult.hash = md5
+                        if(expectedHash){
+                            $scope.validateResult.valid = (md5 === expectedHash)
+                        }else{
+                            $scope.validateResult.valid = ''
+                        }
+                        $scope.validateResult.canShow = true
+                    });
+                };
+
+                reader.readAsBinaryString(curFile);
+            }
+        }
+
+
+    }
 }]);
 
 

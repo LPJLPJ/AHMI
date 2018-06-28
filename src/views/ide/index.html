@@ -20,6 +20,7 @@
     <script src="../../public/ide/tools/js/ruler.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
+    <script src="../../public/libs/md5.js"></script>
 
     <script src="../../public/ide/lib/angular.min.js"></script>
     <script src="../../public/ide/lib/angular-animate.min.js"></script>
@@ -53,7 +54,7 @@
 
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
-    <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.js"></script>
+    <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.min.js"></script>
     <!--encoding-->
     <script>
         window.TextEncoder = window.TextDecoder = null;
@@ -306,7 +307,10 @@
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
                 </a>
                 <a ng-click="component.tool.openShare()" class="my-cmd-item" ng-class="">
-                    <span class="iconfont icon">&#xe60f;</span><span class="caption">分享</span>
+                    <span class="iconfont icon">&#xe7c5;</span><span class="caption">分享</span>
+                </a>
+                <a ng-click="component.tool.openValidate()" class="my-cmd-item" ng-class="">
+                    <span class="iconfont icon">&#xe664;</span><span class="caption">校验</span>
                 </a>
                 <script type="text/ng-template" id="navModal.html">
                     <div class="modal-header">
@@ -337,6 +341,36 @@
                             <div class='sharedKey' ng-show="shareInfo.shared">密码：{{shareInfo.sharedKey}}</div>
                             <div class='sharedKey' ng-show="shareInfo.shared">只读密码：{{shareInfo.readOnlySharedKey}}</div>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
+                    </div>
+                </script>
+                <script type="text/ng-template" id="validateModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">验证生成压缩包</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+
+                        <span class="modal-dragzone" ngf-accept="'application/zip'" ngf-drag-over-class="{pattern: 'application/zip', accept:'modal-dragzone-accept', reject:'modal-dragzone-reject', delay:100}"  ngf-drop='validateZipFile($files)'>
+
+                            拖拽或上传生成压缩包以验证
+                            <input type='file' class="modal-dragzone-input" ngf-select='validateZipFile($files)'  />
+
+                        </span>
+                        <!--<span class="modal-uploadfile-wrapper" >-->
+                            <!---->
+                            <!--点击上传以验证-->
+                        <!--</span>-->
+                        <div class="modal-validate-wrapper" ng-show="validateResult.canShow">
+                            <span class="modal-validate-info modal-zip-name" >{{'名称：'+validateResult.name}}</span>
+                            <!--<span class="modal-validate-info modal-zip-generate-time" >{{'生成时间：'+validateResult.generateTime}}</span>-->
+                            <span class="modal-validate-info modal-zip-hash" >{{'hash：'+validateResult.hash}}</span>
+                            <span class="modal-validate-info " ng-class="{'modal-validate-valid':validateResult.valid===true,'modal-validate-invalid':validateResult.valid===false}">{{'合法性：'+(validateResult.valid?'合法':(validateResult.valid===false?'不合法':'未知'))}}</span>
+                        </div>
+
+
+
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
