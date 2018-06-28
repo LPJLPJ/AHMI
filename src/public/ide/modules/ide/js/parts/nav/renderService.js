@@ -5,10 +5,31 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
     var local=false;
     var path;
+    var createHashForFile = function () {
+        
+    }
     try {
         path = require('path');
         var fs = require('fs');
+        var crypto = require('crypto')
         local = true;
+        //add hash function
+        createHashForFile = function (fileUrl,algo,cb) {
+            var algo = algo||'md5'
+            var hash = crypto.createHash(algo),
+                stream = fs.createReadStream(fileUrl);
+
+            stream.on('data', function (data) {
+                hash.update(data, 'utf8')
+            })
+
+            stream.on('error',function (err) {
+                cb && cb(err)
+            })
+            stream.on('end', function () {
+                cb && cb(null,hash.digest('hex'))
+            })
+        }
     }catch (e){
         path = {};
 
@@ -1319,7 +1340,15 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 if (err) {
                     errHandler(err);
                 } else {
-                    successHandler();
+                    createHashForFile(dst,null,function (err,hash) {
+                        if (err){
+                            errHandler(err)
+                        }else{
+                            fs.rename(dst,path.join(ProjectBaseUrl,'file_'+hash+'.zip'))
+                            successHandler();
+                        }
+                    })
+
                 }
             }.bind(this));
         }
