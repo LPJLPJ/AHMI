@@ -6,6 +6,7 @@ var mongoose = require('mongoose')
 var ProjectSchema = new mongoose.Schema({
     name:String,
     userId:mongoose.Schema.Types.ObjectId,
+    classId:String,
     author:String,
     resolution:String,
     type:String,
@@ -86,6 +87,23 @@ ProjectSchema.statics = {
     deleteById: function (_projectId, cb) {
         return this
             .remove({_id:_projectId})
+            .exec(cb)
+    },
+    findProInfo:function(_userId,_classId,cb){//add by tang  ¸ù¾ÝuserId£¬classId²éÕÒ(!classId||classId=='space')
+        return this
+            .find({userId:_userId,"$or":[{classId: {$exists: false}},{classId:_classId}]},{content:0,backups:0})
+            .sort({'createTime':-1})
+            .exec(cb)
+    },
+    findProByClass:function(_userId,_classId,cb){
+        return this
+            .find({userId:_userId,classId:_classId},{content:0,backups:0})
+            .sort({'createTime':-1})
+            .exec(cb)
+    },
+    deleteByClass:function(_classId,cb){//batch delete
+        return this
+            .remove({classId:_classId})
             .exec(cb)
     }
 

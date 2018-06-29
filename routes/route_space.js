@@ -1,19 +1,28 @@
 var UserModel = require('../db/models/UserModel');
 var ProjectModel = require('../db/models/ProjectModel');
 var CANProjectModel = require('../db/models/CANProjectModel');
+var ClassModel = require('../db/models/ClassModel');
 var path = require('path');
 var moment = require('moment');
 var _ = require('lodash');
 module.exports = function (req, res) {
-	var _user = req.session.user
+	var _user = req.session.user;
+    var classId='space';
 	if (_user && _user.id) {
-        ProjectModel.findProjectInfosByUser(_user.id, function (err, projects) {
+
+        //edit by tang   将未分类的项目放在个人中心界面
+        ProjectModel.findProInfo(_user.id,classId,function (err, projects) {
             if (err){
-                console.log(err)
+                console.log(err);
                 res.status(500).end()
             }else{
                 var processedProjects = _.cloneDeep(projects).map(function (project) {
-                    var info = {}
+                    var info = {};
+                    if(project.classId){
+                        info.classId=project.classId;
+                    }else{
+                        info.classId='space';
+                    }
                     info._id = project._id;
                     info.userId = project.userId;
                     info.resolution = project.resolution;
@@ -30,26 +39,49 @@ module.exports = function (req, res) {
                         thumbnail:thumbnail
                     }
                 });
-                CANProjectModel.findByUser(_user.id,function(err,CANProjects){
-                    if(err) {
-                        res.status(500).end('error');
+                //获取分类列表
+                ClassModel.findFolderByUser(_user.id,function(err,folders){
+                    if(err){
+                        console.log(err);
+                        res.status(500).end();
                     }else{
-                        CANProjects.reverse();
-                        var processedCANProjects = _.cloneDeep(CANProjects).map(function(CANProject){
-                            var info = {};
-                            info._id = CANProject._id;
-                            info.userId = CANProject.userId;
-                            info.name = CANProject.name;
-                            info.lastModifiedTime = CANProject.lasModifiedTime;
+                        var processedFolders=_.cloneDeep(folders).map(function(folder){
+                            var info={};
+                            info._id = folder._id;
+                            info.userId = folder.userId;
+                            info.name = folder.name;
+                            info.author = folder.author;
+                            info.createTime = moment(folder.createTime).format('YYYY-MM-DD HH:mm');
+                            info.lastModifiedTime = moment(folder.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                             return {
-                                CANProjectInfo : info
+                                folderInfo:info
                             }
                         });
-                        res.render('login/personalProject.html',{
-                            username:_user.username,
-                            projects:processedProjects,
-                            CANProjects:processedCANProjects,
-                        })
+
+                        CANProjectModel.findByUser(_user.id,function(err,CANProjects){
+                            if(err) {
+                                res.status(500).end('error');
+                            }else{
+                                CANProjects.reverse();
+                                var processedCANProjects = _.cloneDeep(CANProjects).map(function(CANProject){
+                                    var info = {};
+                                    info._id = CANProject._id;
+                                    info.userId = CANProject.userId;
+                                    info.name = CANProject.name;
+                                    info.lastModifiedTime = CANProject.lasModifiedTime;
+                                    return {
+                                        CANProjectInfo : info
+                                    }
+                                });
+
+                                res.render('login/personalProject.html',{
+                                    username:_user.username,
+                                    folders:processedFolders,
+                                    projects:processedProjects,
+                                    CANProjects:processedCANProjects
+                                })
+                            }
+                        });
                     }
                 });
             }
@@ -60,4 +92,4 @@ module.exports = function (req, res) {
 		console.log('user not valid')
 		res.redirect('/user/login')
 	}
-}
+};

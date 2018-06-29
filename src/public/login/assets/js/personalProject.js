@@ -9,6 +9,7 @@ $(function(){
  //    })
     var curSelectedPanel = null;
     var curPanel = null;
+    var curFolder = null;
     var closeModal = $('#exampleModal');
     var curProject = null;
     var fs,path,mkdir,__dirname;
@@ -411,9 +412,20 @@ $(function(){
                 case "sub5":
                     openVertion(4,project._id);
                     break;
+                case "space":
+                    moveToClass(project,key);
                 default:
              }
 
+            //移动到分类
+            if(folderList.length>0){
+                for(var i=0;i<folderList.length;i++){
+                    var item='class'+(i+1);
+                    if(key==item){
+                        moveToClass(project,folderList[i].classInfo.id)
+                    }
+                }
+            }
         },
         build:function($trigger, e){
             var project=JSON.parse(e.currentTarget.dataset.project);
@@ -436,6 +448,8 @@ $(function(){
                     items:{
                         "showInfo": {name: "修改工程信息"},
                         "sep1":"---------",
+                        "moveToClass":{name:"移动至",items:loadClass(project)},
+                        "sep5":"---------",
                         "showProjectVersion": {name: "打开较早保存的工程",items: loadItems(project._id)},
                         "sep2":"---------",
                         "visualization":{name:"结构可视化"},
@@ -615,7 +629,18 @@ $(function(){
                 icon.css('display','none')
             }
         })
-
+        .on('mouseenter','.folderPanel',function (e) {
+            var icon = $(this).find('.folderDelete');
+            if (icon){
+                icon.css('display','block')
+            }
+        })
+        .on('mouseleave','.folderPanel',function (e) {
+            var icon = $(this).find('.folderDelete');
+            if (icon){
+                icon.css('display','none')
+            }
+        });
 
 
 
@@ -665,6 +690,13 @@ $(function(){
         var resolution = $('#basicinfo-resolution');
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
+        var folderId=$('#addproject').attr('folder-id');
+
+        if(folderId){
+            project.classId=folderId;
+        }else{
+            project.classId='space';
+        }
 
         if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
             //create
@@ -729,7 +761,6 @@ $(function(){
 
 
     function deleteProject(project,curPanel){
-        //console.log('delete')
         if (local){
             //console.log('project id',project._id);
             var projectdirpath = path.join(localProjectDir,String(project._id));
@@ -888,7 +919,12 @@ $(function(){
         // console.log(newProject,JSON.stringify(newProject));
         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
         // console.log(html,JSON.stringify(html));
-        $('#addproject').after(html)
+        var folder=$('#projectlist').find('.folderPanel');
+        if(!folder||folder.length==0){
+            $('#addproject').after(html);
+        }else{
+            folder.last().after(html);
+        }
     }
 
     //edit by lixiang
@@ -1101,5 +1137,194 @@ $(function(){
             $(objId).height(($(containerId).height() - height)*0.99);
         }
 
+    }
+
+    /**
+     * @author tang
+     * 分类相关方法
+     */
+    var folder;
+    var folderList;
+    var deleteFolderModal=$('#deleteFolderModal');
+    var deleteFolderConfirm=$('#deleteFolderConfirm');
+    $('#projectlist').on('click','.folderPanel',function(e){
+        curFolder=$(this);
+        var fol = curFolder.attr('data-folder');
+        fol = JSON.parse(fol);
+        folder=fol;
+        var point=e.target.nodeName;
+
+        if(point=='I'){
+            deleteFolderModal.modal('show');
+        }else if(point=='IMG'){
+            var url = '/folder/'+folder._id+'/space';
+            window.open(url,"_self");
+        }
+    });
+    deleteFolderConfirm.on('click',function(){
+       deleteFolder(folder,curFolder);
+    });
+    $('#addFolder').on('click',function(){
+        $('#folder-ok').html('创建');
+        $('#folder-title').val('');
+        $('#folder-author').val('');
+    });
+    $('#folder-ok').on('click',changeFolder);
+    $.contextMenu({
+        selector:'.folderPanel',
+        build:function($trigger,e){
+            return{
+                items:{
+                    "folderInfo":{name:"修改信息"},
+                    "sep1":"---------",
+                    "deleteFolder":{name:"删除项目"}
+                }
+            }
+        },
+        callback:function(key){
+            curFolder=$(this);
+            var fol = curFolder.attr('data-folder');
+            fol = JSON.parse(fol);
+            folder=fol;
+
+            switch (key){
+                case 'folderInfo':
+                    showFolderInfo($(this));
+                    break;
+                case 'deleteFolder':
+                    deleteFolderModal.modal('show');
+                    break;
+            }
+        }
+    });
+
+    function changeFolder(){
+        if($(this).html()==='确认'){
+            updateFolder();
+        }else{
+            createFolder();
+        }
+    }
+    function createFolder(){
+        var folder={};
+        var name=$('#folder-title');
+        var author=$('#folder-author');
+
+        folder.name=name.val().trim();
+        folder.author=author.val().trim();
+
+        if (!checkName({value:folder.name,empty:false},{value:folder.author,empty:true})){
+            return;
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/folder/create',
+            data:folder,
+            success: function (data, status, xhr) {
+                var newFolder = JSON.parse(data);
+                var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:newFolder});
+                $('#addproject').after(html);
+            },
+            error: function (err, status, xhr) {
+                console.log(err)
+            }
+        })
+    }
+    function updateFolder(){
+        var name=$('#folder-title');
+        var author=$('#folder-author');
+        name=name.val().trim();
+        author=author.val().trim();
+
+        var folder = curFolder.attr('data-folder');
+        folder = JSON.parse(folder);
+
+        if (!checkName({value:folder.name,empty:false},{value:folder.author,empty:true})){
+            return;
+        }
+
+        if(name!==folder.name||author!==folder.author){
+            folder.name=name;
+            folder.author=author;
+            $.ajax({
+                type:'POST',
+                url:'/folder/update',
+                data:folder,
+                success: function (data, status, xhr) {
+                    var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:folder});
+                    curFolder.replaceWith(html)
+                },
+                error: function (err, status, xhr) {
+                    console.log('err',err);
+                    alert('修改失败')
+                }
+            })
+        }
+    }
+    function deleteFolder(folder,curFolder){
+        $.ajax({
+            type:'POST',
+            url:'/folder/delete',
+            data:{folderId:folder._id},
+            success:function (data, status, xhr){
+                curFolder.remove()
+            },
+            error: function (err, status, xhr) {
+                console.log(err);
+                alert('删除失败')
+            }
+        })
+    }
+    function showFolderInfo(cur){
+        $('#folder-ok').html('确认');
+        var fol = cur.attr('data-folder');
+        fol = JSON.parse(fol);
+        curFolder=cur;
+        $('#folder-title').val(fol.name);
+        $('#folder-author').val(fol.author);
+        $('#myFolderModal').modal('show');
+    }
+    function loadClass(project){
+        var dfd = jQuery.Deferred();
+        $.ajax({
+            type:'GET',
+            url:"/folder/getFolderList",
+            success:function(result){
+                var classList=JSON.parse(result);
+                folderList=classList;
+                var items={};
+                if(project.classId=='space'){
+                    items.space={name:'个人中心',disabled:true};
+                }else{
+                    items.space={name:'个人中心'};
+                }
+
+                if(classList&&classList.length>0){
+                    for(var i=0;i<classList.length;i++){
+                        if(classList[i].classInfo.id==project.classId){
+                            items["class"+(i+1)]={name:classList[i].classInfo.name,disabled:true}
+                        }else{
+                            items["class"+(i+1)]={name:classList[i].classInfo.name};
+                        }
+                    }
+                }
+                dfd.resolve(items);
+            }
+        });
+        return dfd.promise();
+    }
+    function moveToClass(_project,_class){
+        var project=_project;
+        project.classId=_class;
+        $.ajax({
+            type:"post",
+            url:'/project/moveToClass',
+            data:project,
+            success:function(data){
+                console.log(data);
+                curPanel.remove();
+            }
+        })
     }
 });
