@@ -7,6 +7,7 @@ var uploadFile = require('./uploadFile');
 var getCaptcha = require('./getCaptcha');
 var getUsers = require('./getUsers');
 var route_space = require('./route_space');
+var folder_space = require('./folder_space');
 var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
@@ -231,6 +232,22 @@ router.route('/project/create')
     .post(projectInfo.createProject);
 router.route('/project/delete')
     .post(projectInfo.deleteProject);
+router.route('/project/moveToClass')
+    .post(projectInfo.updateProject);
+
+
+//project class   add by tang
+router.route('/folder/create')
+    .post(projectInfo.createFolder);
+router.route('/folder/update')
+    .post(projectInfo.updateFolder);
+router.route('/folder/delete')
+    .post(projectInfo.deleteFolder);
+router.route('/folder/getFolderList')
+    .get(projectInfo.getFolderList);
+router.route('/folder/:id/space')
+    .get(folder_space);
+
 
 //CAN project
 router.route('/CANProject/create')

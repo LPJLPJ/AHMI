@@ -4,6 +4,7 @@
 var ProjectModel = require('../db/models/ProjectModel')
 var UserModel = require('../db/models/UserModel')
 var TemplateModel = require('../db/models/TemplateModel')
+var ClassModel = require('../db/models/ClassModel')
 var projectRoute = {}
 var _ = require('lodash')
 var fs = require('fs')
@@ -487,6 +488,11 @@ projectRoute.createProject = function (req, res) {
 
 function getProjectInfo(newProject) {
     var info = {};
+    if(newProject.classId){
+        info.classId=newProject.classId;
+    }else{
+        info.classId='space';
+    }
     info._id = newProject._id;
     info.userId = newProject.userId;
     info.resolution = newProject.resolution;
@@ -1387,6 +1393,140 @@ projectRoute.getUserType=function(req,res){
         });
     }else{
         errHandler(res,500,'projectId error');
+    }
+};
+
+
+//分类操作 add by tang
+projectRoute.createFolder=function(req,res){
+    var data = _.cloneDeep(req.body);
+    data.userId=req.session.user.id;
+    if(req.session.user){
+        var newFolder=new ClassModel(data);
+        newFolder.save(function(err){
+            if (err){
+                console.log('folder save error',err);
+                errHandler(res,500,'folder save error');
+            }else{
+                var folder=getFolderInfo(newFolder);
+                res.end(JSON.stringify(folder))
+            }
+        })
+    }else{
+        res.status(500).end('not login')
+    }
+};
+function getFolderInfo(newFolder){
+    var info={};
+    info._id=newFolder._id;
+    info.name=newFolder.name;
+    info.author=newFolder.author;
+    info.createTime=moment(newFolder.createTime).format('YYYY-MM-DD HH:mm');
+    info.lastModifiedTime = moment(newFolder.lastModifiedTime).format('YYYY-MM-DD HH:mm');
+    return info;
+}
+projectRoute.updateFolder=function(req,res){
+    var newFolder = req.body;
+    if(newFolder._id){
+        ClassModel.findById(newFolder._id,function(err,floder){
+            if (err) {
+                console.log(err);
+                res.end(err);
+                return
+            }
+            if(floder){
+                for(var key in newFolder){
+                    if(key!='id'){
+                        floder[key]=newFolder[key];
+                    }
+                }
+                floder.save(function (err) {
+                    if (err){
+                        console.log(err);
+                        res.end('save error');
+                        return
+                    }
+                    res.end('folder update')
+                });
+            }else{
+                res.end('no folder')
+            }
+        })
+    }
+};
+projectRoute.deleteFolder=function(req,res){
+    var folderId = req.body.folderId;
+    var _user = req.session.user;
+    if(folderId){
+        //删除分类
+        ClassModel.deleteById(folderId,function(err){
+            if(err){
+                errHandler(res,500,'delete folder err')
+            }else{
+                //查找分类下的project
+                ProjectModel.findProByClass(_user.id,folderId,function(err,projects){
+                    if(err){
+                        errHandler(res,500,'delete folder err')
+                    }else{
+                        if(projects!=''){
+                            var proArr=_.cloneDeep(projects).map(function (project) {
+                                return project._id;
+                            });
+                            //删除project
+                            ProjectModel.deleteByClass(folderId,function(err){
+                                if(err){
+                                    errHandler(res,500,'delete folder err')
+                                }else{
+                                    //删除project文件夹
+                                    proArr.map(function(pro){
+                                        var targetDir = path.join(__dirname,'../project/',String(pro));
+                                        fs.stat(targetDir, function (err, stats) {
+                                            if (stats&&stats.isDirectory&&stats.isDirectory()){
+                                                rmdirAsync(targetDir,function (rmErr) {
+                                                    if (rmErr){
+                                                        errHandler(res,500,'rm directory error')
+                                                    }else{
+                                                        res.end('ok')
+                                                    }
+                                                })
+                                            }else{
+                                                res.end('ok')
+                                            }
+                                        })
+                                    });
+                                }
+                            });
+                        }else{
+                            res.end('delete folder ok')
+                        }
+                    }
+                });
+            }
+        })
+    }
+
+};
+projectRoute.getFolderList=function(req,res){
+    var _user=req.session.user;
+    if(_user){
+        ClassModel.findFolderByUser(_user.id,function(err,folders){
+            if(err){
+                console.log(err);
+                res.end('find error');
+            }else{
+                var classList = _.cloneDeep(folders).map(function(folder){
+                    var info={};
+                    info.id=folder._id;
+                    info.name=folder.name;
+                    return {
+                        classInfo:info
+                    }
+                });
+                res.end(JSON.stringify(classList));
+            }
+        })
+    }else{
+        res.status(500).end('not login')
     }
 };
 
