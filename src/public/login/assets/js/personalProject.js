@@ -1294,7 +1294,6 @@ $(function(){
                 var classList=JSON.parse(result);
                 folderList=classList;
                 var items={};
-                console.log(project);
                 if(project.classId=='space'){
                     items.space={name:'个人中心',disabled:true};
                 }else{
