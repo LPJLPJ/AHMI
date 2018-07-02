@@ -153,7 +153,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                     position: 'bottom'
                 }, {
                     index: 2,
-                    tooltip: '<h4>缩放并进入画布</h4><p>现在一个画布出现在了页面上</p> <p>1.拖住画布的右下角并将画布拉伸到与页面一样大</p><p>2.请双击，并进入到画布编辑界面</p>',
+                    tooltip: '<h4>缩放并进入画布</h4><p>现在一个画布出现在了页面上</p> <p>1.拖住画布的右下角并将画布拉伸到合适的大小</p><p>2.请双击，并进入到画布编辑界面</p>',
                     position: 'right'
                 }, {
                     index: 3,
