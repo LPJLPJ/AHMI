@@ -245,7 +245,6 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         var tags, timers;
 
         project = arguments[0];
-        console.log('haha',project);
 
         pages = project.pages || [];
         pages.forEach(function (page) {
@@ -283,7 +282,6 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             }
         });
 
-        console.log('keke',project);
     }
 
     //检查工程版本是否过时
