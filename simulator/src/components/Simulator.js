@@ -3490,7 +3490,7 @@ module.exports = React.createClass({
             var minCoverAngle = widget.info.minCoverAngle;
             var maxCoverAngle = widget.info.maxCoverAngle;
 
-            // var curArc = widget.info.value;
+            var curArc = widget.info.value;
 
             var curDashboardTagValue = widget.currentValue || 0;
             if (curDashboardTagValue > maxValue) {
@@ -3498,13 +3498,13 @@ module.exports = React.createClass({
             } else if (curDashboardTagValue < minValue) {
                 curDashboardTagValue = minValue;
             }
-            var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue - minValue);
+            //var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue - minValue);
 
             var clockwise = widget.info.clockwise;// == '1' ? 1 : -1;
             var pointerLength = widget.info.pointerLength;
             var pointerWidth, pointerHeight;
-            // pointerWidth = pointerLength / Math.sqrt(2);
-            // pointerHeight = pointerLength / Math.sqrt(2);
+            //pointerWidth = pointerLength / Math.sqrt(2);
+            //pointerHeight = pointerLength / Math.sqrt(2);
             pointerWidth = widget.info.pointerImgWidth;
             pointerHeight = widget.info.pointerImgHeight;
 
@@ -3983,9 +3983,9 @@ module.exports = React.createClass({
             var imageList = this.state.imageList;
             for (var i = 0; i < imageList.length; i++) {
                 if (imageList[i].id == image) {
-                    // console.log(image);
+                    var imgElement=imageList[i].content;
                     // offctx.drawImage(imageList[i].content,0,0,w,h,x,y,w,h);
-                    offctx.drawImage(imageList[i].content, 0, 0, elemWidth, elemHeight);
+                    offctx.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
                     // offctx.drawImage(imageList[i].content,x,y,w,h)
                     break;
                 }
