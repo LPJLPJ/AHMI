@@ -3490,7 +3490,7 @@ module.exports = React.createClass({
             var minCoverAngle = widget.info.minCoverAngle;
             var maxCoverAngle = widget.info.maxCoverAngle;
 
-            var curArc = widget.info.value;
+            //var curArc = widget.info.value;
 
             var curDashboardTagValue = widget.currentValue || 0;
             if (curDashboardTagValue > maxValue) {
@@ -3498,7 +3498,7 @@ module.exports = React.createClass({
             } else if (curDashboardTagValue < minValue) {
                 curDashboardTagValue = minValue;
             }
-            //var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue - minValue);
+            var curArc = (maxArc - minArc) / (maxValue - minValue) * (curDashboardTagValue - minValue);
 
             var clockwise = widget.info.clockwise;// == '1' ? 1 : -1;
             var pointerLength = widget.info.pointerLength;
