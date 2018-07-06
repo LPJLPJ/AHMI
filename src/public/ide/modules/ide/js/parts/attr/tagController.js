@@ -47,7 +47,6 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     //导入tags事件
     $scope.$on('syncTagSuccess', function (event, data) {
-        console.log('syncTagSuccess', data);
         data = data || [];
         data.map(function (item) {
             addTagToTagClass(item, $scope.component.curTagClassName);
@@ -810,6 +809,81 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             }]
         });
     }
+
+    $scope.customTagList=function(){
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'customPreset.html',
+            scope: $scope,//指定父scope
+            size: 'md',
+            resolve: {
+                curTagClass: function () {
+                    return $scope.component.curTagClass;
+                }
+            },
+            controller: ['$scope', '$uibModalInstance', '$http', 'TagService', 'curTagClass', function ($scope, $uibModalInstance, $http, TagService, curTagClass) {
+                $scope.batchSelectList=[];
+
+                $http({
+                    method: 'get',
+                    url: '/public/ide/modules/tagConfig/template/tags.default.json'
+                }).success(function (data) {
+                    $scope.defaultTags=data;
+                }).error(function (err) {
+                    console.log(err)
+                });
+
+                $scope.selectCustomTag=function(i){
+                    if($scope.batchSelectList[i]==null){
+                        $scope.batchSelectList[i]=true;
+                    }else{
+                        $scope.batchSelectList[i]=!$scope.batchSelectList[i];
+                    }
+                };
+                $scope.selectAll=function(){//全选
+                    for(var i=0;i<$scope.defaultTags.length;i++){
+                        $scope.batchSelectList[i]=true;
+                    }
+                };
+                $scope.invertSelect=function(){//反选
+                    for(var i=0;i<$scope.defaultTags.length;i++){
+                        if($scope.batchSelectList[i]==null){
+                            $scope.batchSelectList[i]=true;
+                        }else{
+                            $scope.batchSelectList[i]=!$scope.batchSelectList[i];
+                        }
+                    }
+                };
+                $scope.stopProp=function(e){//阻止点击冒泡
+                    e.stopPropagation();
+                };
+
+                $scope.ok = function () {
+                    var selectTags=[];
+                    for(var i=0;i<$scope.defaultTags.length;i++){
+                        if($scope.batchSelectList[i]){
+                            selectTags.push($scope.defaultTags[i]);
+                        }
+                    }
+
+                    if(!selectTags||selectTags==''){
+                        alert('未选择tag');
+                        return;
+                    }
+                    TagService.syncTagFromRemote(selectTags, curTagClass, $scope.overlay, function () {
+                        $scope.$emit('syncTagSuccess', selectTags);
+                        $uibModalInstance.close();
+                    });
+                    $uibModalInstance.close();
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss();
+                };
+            }]
+        });
+    }
+
 }]);
 
 /**

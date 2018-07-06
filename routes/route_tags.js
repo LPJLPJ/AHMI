@@ -6,8 +6,7 @@ var titleMap = {
     default:'预设',
     default1:'主题1',
     default2:'主题2',
-    default3:'主题3',
-    default4:'主题4'
+    default3:'主题3'
 };
 
 tag.getDefault = function(req,res){

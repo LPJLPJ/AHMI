@@ -387,6 +387,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.selectedTagObjArray[index].tagName='';
             $scope.actionFunction(index);
         };
+        $scope.usetagSwitch(0);
 
 
         /**

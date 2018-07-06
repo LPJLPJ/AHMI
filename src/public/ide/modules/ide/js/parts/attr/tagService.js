@@ -20,10 +20,10 @@ ideServices.service('TagService', [function () {
     var curPageTag = new Tag('当前页面序号', false, null, 'true', 0, 'system', 'forbidden');
     var RTCTag1 = new Tag('时钟变量年月日', false, null, 'true', 0, 'system');
     var RTCTag2 = new Tag('时钟变量时分秒', false, null, 'true', 0, 'system');
-    var backLight = new Tag('背光', false, null, 'true', 0, 'system');
     var buzzer = new Tag('蜂鸣器', false, null, 'true', 0, 'system');
+    var backLight = new Tag('背光', false, null, 'true', 0, 'system');
     var fpsTag = new Tag('帧率', false, null, 'true', 0, 'system');
-    var sysTags = [keyCode, videoTag, curPageTag, RTCTag1, RTCTag2, backLight, buzzer, fpsTag];
+    var sysTags = [keyCode, videoTag, curPageTag, RTCTag1, RTCTag2, buzzer, backLight, fpsTag];
     var tags = sysTags;
     var timerTags = [];
     var timerNum = 0;

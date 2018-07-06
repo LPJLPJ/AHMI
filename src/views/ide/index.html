@@ -3247,7 +3247,7 @@
                                         class="form-control my-tagSelect-tagSelect">
                                     <option value="">---</option>
                                     <option ng-repeat="customTag in component.curTagArray"
-                                            value="{{customTag.name}}">{{customTag.name}}
+                                            value="{{customTag.name}}" ng-click="action()">{{customTag.name}}
                                     </option>
                                 </select>
                             </div>
@@ -3318,18 +3318,14 @@
                                             <span>操作数1</span>
                                             <div class="my-action-div-main">
                                                 <div>
-                                                    <span class="my-action-span">启用变量</span>
-                                                    <input type="checkbox" ng-model='selectedTagObjArray[0].useTag' ng-click="usetagSwitch(0)" class="my-action-check-box">
-                                                </div>
-                                                <div ng-show="selectedTagObjArray[0].useTag">
                                                     <span  class="my-action-span my-action-span-width">变量</span>
                                                     <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
                                                 </div>
-                                                <div ng-show="!selectedTagObjArray[0].useTag">
+                                                <!--<div ng-show="!selectedTagObjArray[0].useTag">
                                                     <span  class="my-action-span my-action-span-width">值</span>
                                                     <input class="form-control modelPart my-action-input-value" type="text"
                                                            ng-model="chosenCmd[1].value"/>
-                                                </div>
+                                                </div>-->
                                             </div>
 
 
@@ -3670,15 +3666,13 @@
                                     </div>
                                 </div>
                                 <h5>主题:</h5>
-                                <div class="row" style="margin-bottom: 10px">
+                                <div class="row" style="margin-bottom: 20px">
                                     <div class="col-xs-3">
                                         <label class="radio-inline">
                                             <input type="radio" name="tagsOptions" value="tags_default" ng-model="selectedTagId">
                                             <a href="/tags/preview?id=default" target="_blank">预设</a>
                                         </label>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-xs-3">
                                         <label class="radio-inline">
                                             <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
@@ -3697,13 +3691,10 @@
                                             <a href="/tags/preview?id=default3" target="_blank">主题3</a>
                                         </label>
                                     </div>
-                                    <div class="col-xs-3">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
-                                            <a href="/tags/preview?id=default4" target="_blank">主题4</a>
-                                        </label>
-                                    </div>
                                 </div>
+
+                                <h5 style="cursor: pointer" ng-click="cancel()"><a ng-click="customTagList()">自定义选择导入</a></h5>
+
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary"
@@ -3713,6 +3704,47 @@
                                 <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                             </div>
                         </script>
+                        <script type="text/ng-template" id="customPreset.html">
+                            <div class="modal-header">
+                                <h3 class="modal-title" style="margin-bottom: 5px">预设tag列表<small></small></h3>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>选择</th>
+                                            <th>#</th>
+                                            <th>变量名称</th>
+                                            <th>是否启用寄存器</th>
+                                            <th>寄存器号</th>
+                                            <th>变量类型</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="tag in defaultTags track by $index" ng-click="selectCustomTag($index)" style="cursor: pointer">
+                                            <td><input type="checkbox" ng-model="batchSelectList[$index]" class="form-group" ng-click="stopProp($event)"/></td>
+                                            <td>{{$index}}</td>
+                                            <td>{{tag.name}}</td>
+                                            <td>{{tag.register?"是":"否"}}</td>
+                                            <td>{{tag.indexOfRegister}}</td>
+                                            <td>{{tag.type==='custom'?'自定义':'系统'}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <span class="my-but-left">
+                                    <button class="btn btn-success" ng-click="selectAll()">全选</button>
+                                    <button class="btn btn-success" ng-click="invertSelect()">反选</button>
+                                </span>
+                                <button class="btn btn-primary"
+                                        type="button"
+                                        ng-disabled="disableBtn"
+                                        ng-click="ok()">确定</button>
+                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
+
                         <script type="text/ng-template" id="tagModal.html">
                             <div class="modal-header">
                                 <h3 class="modal-title">变量</h3>
