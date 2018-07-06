@@ -98,7 +98,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
          * 监听属性Attribute的改变
          */
         $scope.$on('AttributeChanged', function () {
-            console.log('action changed')
+            //console.log('action changed')
             readActionInfo();
         });
 

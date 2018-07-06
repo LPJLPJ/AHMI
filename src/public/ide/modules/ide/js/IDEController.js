@@ -783,6 +783,9 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             $scope.$broadcast('PageNodeChanged');
         });
 
+        $scope.$on('ChangeCurrentTags',function(event){
+            $scope.$broadcast('TagsChanged');
+        })
 
         function reOpenProject(event, pid) {
             $scope.ide.loaded = false;

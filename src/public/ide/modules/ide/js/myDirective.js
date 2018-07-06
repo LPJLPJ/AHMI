@@ -44,6 +44,14 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         initCurTagClass();
     }
 
+    $scope.$on('GlobalProjectReceived', function () {
+        syncTagClasses();
+    });
+
+    $scope.$on('TagsChanged',function(){
+        syncTagClasses();
+    });
+
     //获取所有tag
     function _readTagsInfo() {
         $scope.component.allCustomTags = TagService.getAllCustomTags();

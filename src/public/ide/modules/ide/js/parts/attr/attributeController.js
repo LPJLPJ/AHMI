@@ -446,7 +446,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.info.enableAnimation = false;
                         //     $scope.component.progress.enableAnimationModeId = '1'
                         // } else
-                        if ($scope.component.object.level.info.enableAnimation === false) {
+                        if (!$scope.component.object.level.info.enableAnimation||$scope.component.object.level.info.enableAnimation === false) {
                             $scope.component.progress.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation === true) {
                             $scope.component.progress.enableAnimationModeId = '0'

@@ -124,6 +124,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 //new tag
                 TagService.setUniqueTags(newTag, noDuplication, function () {
                     readTagsInfo();
+                    $scope.$emit('ChangeCurrentTags');
                     //如果添加了一个新的tag，同时将其添加到当前标签里
                     addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
