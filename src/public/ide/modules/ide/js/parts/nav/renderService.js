@@ -6,7 +6,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     var local=false;
     var path;
     var createHashForFile = function () {
-        
+
     }
     try {
         path = require('path');
@@ -271,10 +271,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     renderer.prototype.addImage = function (imageUrl, image) {
         this.images[imageUrl] = image;
     };
-    
-    
+
+
     //render page background
-    
+
     renderer.prototype.renderPage = function (width,height,page,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var _canvas = new Canvas(width,height);
         var ctx = _canvas.getContext('2d');
@@ -531,19 +531,23 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             texList.map(function (tex,i) {
                 var width = info.width;
                 var height = info.height;
+                var curSlice = texList[i].slices[0];
+                var imgSrc = curSlice.imgSrc;
                 if (i===1){
                     //pointer
-                    width = height = info.pointerLength/Math.sqrt(2);
+                    if(imgSrc!==''){
+                        width = height = width/2;
+                    }else{
+                        width = height = info.pointerLength/Math.sqrt(2);
+                    }
                 }
                 var canvas = new Canvas(width,height);
                 var ctx = canvas.getContext('2d');
-                var curSlice = texList[i].slices[0];
                 ctx.clearRect(0,0,width,height);
                 ctx.save();
                 //render color
                 renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
                 //render image;
-                var imgSrc = curSlice.imgSrc;
                 if (imgSrc!==''){
                     var imgUrl = path.join(srcRootDir,imgSrc);
                     var targetImageObj = this.getTargetImage(imgUrl);
@@ -577,8 +581,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                         // console.log(_.cloneDeep(this.trackedRes))
                         curSlice.originSrc = curSlice.imgSrc;
 
-                        if (i===1){
+                        if (i===1&&imgSrc!==''){
                             //pointer
+
 
                         }else{
                             curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
