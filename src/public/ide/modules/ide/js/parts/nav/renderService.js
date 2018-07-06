@@ -1775,7 +1775,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }
         }
         var fontList =  FontGeneratorService.getFontCollections(allWidgets)
-        console.log(fontList)
+        console.log('fontList',fontList);
         for(var i=0;i<fontList.length;i++){
             var curFont = fontList[i]
             var curFontSize = curFont['font-size']||24
