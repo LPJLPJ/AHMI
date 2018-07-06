@@ -273,8 +273,8 @@ projectRoute.getProjectContent = function (req, res) {
             }
             project.backups = [];
             // console.log('readonly state in session',req.session.user.readOnlyState);
-            project.readOnlyState = !!req.session.user.readOnlyState;
-            res.end(JSON.stringify(project))
+            project.readOnlyState = !!(req.session.user && req.session.user.readOnlyState);
+            res.end(JSON.stringify(project));
         })
     }else{
         //console.log(projectId)
@@ -1052,7 +1052,7 @@ projectRoute.generateProject = function (req, res) {
                                     //using myzip
                                     var SrcUrl = path.join(ProjectBaseUrl,'resources');
                                     var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                                    
+
                                 }
                             })
                         }
@@ -1106,7 +1106,7 @@ projectRoute.generateLocalProject = function(req, res){
     if(projectId&&projectId!=''){
         ProjectModel.findById(projectId,function(err,project){
             if(err){
-                errHandler(res,500,'project model err!');                
+                errHandler(res,500,'project model err!');
             }else{
                 //generate local project json
                 var filePath = path.join(__dirname,'../project/',projectId,'project.json');
@@ -1161,7 +1161,7 @@ projectRoute.generateLocalProject = function(req, res){
                     var srcJsonUrl = path.join(__dirname,'../project/',projectId,'/project.json');
                     var output = fs.createWriteStream(targetUrl);
                     var archive = archiver('zip', {
-                                store: true 
+                                store: true
                         });
                     output.on('close',function(){
                             console.log(archive.pointer() + ' total bytes');
@@ -1169,7 +1169,7 @@ projectRoute.generateLocalProject = function(req, res){
                     });
                     archive.on('error',function(err){
                         console.log('error',err);
-                        throw err;   
+                        throw err;
                     });
                     archive.pipe(output);
                     archive.directory(srcResourcesFolderUrl,'/resources');
@@ -1184,7 +1184,7 @@ projectRoute.generateLocalProject = function(req, res){
                     console.log(e);
                     errHandler(res,500,'err');
                 }
-                
+
             }
         })
     }else{

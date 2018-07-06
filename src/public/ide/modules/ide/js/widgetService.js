@@ -1182,6 +1182,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                     ctx.restore();
                 }
+
                 if (this.pointerImageElement){
                     ctx.save();
                     var sqrt2 = Math.sqrt(2);
@@ -1192,7 +1193,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         angleOfPointer=-angleOfPointer;
                     }
                     angleOfPointer=angleOfPointer+45;
-                    //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
                     if(!(this.minCoverAngle==this.maxCoverAngle)){
                         var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                         var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
@@ -1218,12 +1218,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.fillRect(
                         0,
                         0,
-                        pointerImgWidth,
-                        pointerImgHeight
+                        this.width/2,
+                        this.width/2
                     );
-
                     ctx.drawImage(this.pointerImageElement, 0, 0,this.pointerImageElement.width/this.scaleX,this.pointerImageElement.height/this.scaleY);
-
                     ctx.restore();
                 }
                 //将图片超出canvas的部分裁剪
