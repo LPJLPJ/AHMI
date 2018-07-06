@@ -535,7 +535,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 var imgSrc = curSlice.imgSrc;
                 if (i===1){
                     //pointer
-                    if(imgSrc!==''){
+                    if(imgSrc===''){
                         width = height = width/2;
                     }else{
                         width = height = info.pointerLength/Math.sqrt(2);
