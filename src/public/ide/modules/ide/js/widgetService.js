@@ -430,6 +430,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     var length=level.texList.length;
                     self.cursorColor=level.texList[length-1].slices[0].color;
                     self.cursorImageElement=ResourceService.getResourceFromCache(level.texList[length-1].slices[0].imgSrc);
+                }else {
+                    self.cursorColor = 'rgba(0,0,0,0)';
+                    self.cursorImageElement = null;
                 }
 
 
