@@ -19,6 +19,7 @@
         init();
     }
     function init(){
+        $('#projectlist li').on('dragstart',function(){return false});
         //var filedrag = document.getElementById('filedrag');
         var filedrag = document.getElementById('filedrag');
         filedrag.addEventListener('dragover', FileDragHover, false);
@@ -51,7 +52,6 @@
         e.stopPropagation();
         //取消事件的默认动作。
         e.preventDefault();
-        console.log('haha',e.type);
         //修改鼠标滑过的样式
         filedrag.className = (e.type=='dragover'?'hover':'');
     }
@@ -274,7 +274,7 @@
         }
         var items = e.dataTransfer.items;
         var item = items[0].webkitGetAsEntry();
-        if(item.isDirectory){
+        if(item&&item.isDirectory){
             return true;
         }
         return false;
@@ -290,7 +290,7 @@
         var items = e.dataTransfer.items;
         var item = items[0].webkitGetAsEntry();
         var namePattern = /^file(\s?\(\d+\))?\.zip$/g;
-        if(item.isFile){
+        if(item&&item.isFile){
             if(item.name){
                 console.log('item',item);
                 return namePattern.test(item.name);
