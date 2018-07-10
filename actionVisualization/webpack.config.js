@@ -2,8 +2,10 @@ var path = require('path');
 // var Uglify = require("uglifyjs-webpack-plugin");
 module.exports = {
     mode: 'development',
+    devtool:'source-map',
     entry: {
-        actionVisualizer: path.join(__dirname,'index')
+        actionVisualizer: path.join(__dirname,'index'),
+        test:path.join(__dirname,'test')
     },
     output: {
         path: path.join(__dirname,'../src/public/ide/modules/ide/js/parts/actionVisualization/'),

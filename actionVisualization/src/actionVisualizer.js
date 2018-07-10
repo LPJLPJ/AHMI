@@ -186,7 +186,7 @@ class ActionVisualizer extends Component{
 
         graph.on('node:dragstart', function (ev) {
             let item = ev.item;
-            console.log(item)
+            console.log(ev,item)
             let model = item.model;
             node = item;
             dx = model.x - ev.x;
@@ -198,11 +198,12 @@ class ActionVisualizer extends Component{
         });
 
         graph.on('node:drag', function (ev) {
-            console.log('drag',ev.x,dx)
+            console.log('drag',ev.x,dx,node.getEdges())
             node && graph.update(node, {
                 x: ev.x + dx,
                 y: ev.y + dy
             });
+            node && node.getEdges().map((e)=>graph.update(e))
 
         });
     }
