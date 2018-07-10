@@ -3183,7 +3183,7 @@
                                 <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlicePrev()">
                                     向上插入
                                 </button>
-                                <button type="button" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
+                                <button type="button" ng-show="canBatchAddImg" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
                                     批量插入
                                 </button>
                             </span>
@@ -3494,7 +3494,7 @@
 
                     <div ng-show="component.top.showDel">
                     <form ref='uploadForm' encType='multipart/form-data'>
-                        <a href="javascript:;" class="my-upload">
+                        <a href="javascript:;" class="btn btn-default my-upload">
                             <filereadform>
 
                             </filereadform>
