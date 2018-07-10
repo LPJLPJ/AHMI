@@ -15,6 +15,10 @@ export class AGPoint{
         this.x = Number(x)||0
         this.y = Number(y)||0
     }
+
+    relative(aPoint){
+        return new AGPoint(this.x-aPoint.x,this.y-aPoint.y)
+    }
 }
 
 export class AGColor{

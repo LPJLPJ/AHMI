@@ -93,4 +93,8 @@ export class AGView {
         backRect.strokeStyle = null
         AGDraw.canvas.drawRect(this,backRect)
     }
+
+
+    //event system
+    
 }
