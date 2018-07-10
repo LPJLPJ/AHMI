@@ -21,6 +21,8 @@ import {AGSize, AGPoint, AGColor, AGRect, AffineTransform, Transform} from "./AG
 
 import {Matrix,Vector} from "../AGMatrix";
 
+import {AGEventManager,AGEvent} from "./AGEvent";
+
 import AGDraw from "./AGDraw"
 
 class IdentityAffineTransform extends AffineTransform{
@@ -96,5 +98,8 @@ export class AGView {
 
 
     //event system
-    
+    on(eventType,handler){
+        let eventManager = AGEventManager.getEventManager()
+        eventManager.register(this,eventType,handler)
+    }
 }

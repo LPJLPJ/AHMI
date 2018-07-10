@@ -3,6 +3,7 @@
  */
 import {AGPoint} from "./AGProperties";
 import {AGView} from "./AGView";
+import {AGEvent,AGEventManager} from "./AGEvent";
 
 //container for view
 export class AGWindow{
@@ -35,12 +36,84 @@ export class AGWindow{
         rootView.layer.style.top = rootView.frame.origin.y
     }
 
+    static copyMouseEvent(e){
+        //e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey
+        return {
+            x:e.x,
+            y:e.y,
+            screenX:e.screenX,
+            screenY:e.screenY,
+            clientX:e.clientX,
+            clientY:e.clientY,
+            layerX:e.layerX,
+            layerY:e.layerY,
+            offsetX:e.offsetX,
+            offsetY:e.offsetY,
+            pageX:e.pageX,
+            pageY:e.pageY,
+            innerPos:e.innerPos,
+            ctrlKey:e.ctrlKey,
+            altKey:e.altKey,
+            shiftKey:e.shiftKey,
+            metaKey:e.metaKey,
+
+        }
+    }
+
     initEventListen(){
         let self = this
         this.domElem.addEventListener('mousedown',function (e) {
+            console.log(e)
+            for(let key in e){
+                if (e.hasOwnProperty(key)){
+                    console.log(key)
+                }
+            }
             let pos = AGWindow.getPointPos(e)
-            let currentHitView = self.getHitView(pos,self.rootView)
-            console.log(currentHitView)
+            let hitResult = self.getHitView(pos,self.rootView)
+            if (hitResult){
+                this.currentView = hitResult.hitView
+                e.innerPos = hitResult.relativePos
+                //trigger view's mousedown
+                let eventManager = AGEventManager.getEventManager()
+                eventManager.dispatch(this.currentView,new AGEvent('mousedown',AGWindow.copyMouseEvent(e)))
+
+            }
+        })
+
+        this.domElem.addEventListener('mousemove',function (e) {
+            let pos = AGWindow.getPointPos(e)
+            let hitResult = self.getHitView(pos,self.rootView)
+            if (hitResult){
+
+                e.innerPos = hitResult.relativePos
+                let eventManager = AGEventManager.getEventManager()
+
+                if(hitResult.hitView !== this.currentView){
+                    let oldCurrentView = this.currentView
+                    this.currentView = hitResult.hitView
+                    //mouse out
+                    eventManager.dispatch(oldCurrentView,new AGEvent('mouseout'))
+                    //mouse in
+                    eventManager.dispatch(this.currentView,new AGEvent('mousein',AGWindow.copyMouseEvent(e)))
+                }else{
+                    //trigger view's mousemove
+                    eventManager.dispatch(this.currentView,new AGEvent('mousemove',AGWindow.copyMouseEvent(e)))
+                }
+
+            }
+        })
+
+        this.domElem.addEventListener('mouseup',function (e) {
+            let pos = AGWindow.getPointPos(e)
+            let hitResult = self.getHitView(pos,self.rootView)
+            if (hitResult){
+                this.currentView = hitResult.hitView
+                e.innerPos = hitResult.relativePos
+                //trigger view's mouseup
+                let eventManager = AGEventManager.getEventManager()
+                eventManager.dispatch(this.currentView,new AGEvent('mouseup',AGWindow.copyMouseEvent(e)))
+            }
         })
     }
 
