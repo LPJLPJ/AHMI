@@ -5,13 +5,18 @@ import {AGWindow} from "./src/AGWindow";
 let viewWindow = new AGWindow(1000,500,'container')
 let rootView = new AGView(new AGPoint(50,50),new AGSize(800,480))
 let subView = new AGView(new AGPoint(50,50),new AGSize(400,400))
+
+let childView = new AGView(new AGPoint(),new AGSize(200,200))
 subView.backgroundColor = new AGColor(0,255,0,1)
+childView.backgroundColor = new AGColor(255,255,255,1)
 console.log(rootView)
 console.log(subView)
 
 
 rootView.initLayer()
 rootView.addChildView(subView)
+subView.addChildView(childView)
+
 
 viewWindow.addRootView(rootView)
 rootView.draw()
