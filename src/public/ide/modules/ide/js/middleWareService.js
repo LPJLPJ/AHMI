@@ -275,7 +275,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             }
         });
 
-        timers = project.customTags;
+        timers = project.timerTags;
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
