@@ -117,14 +117,14 @@ module.exports = React.createClass({
         // this.state.tagList = data.tagList
         // this.setState({tagList: data.tagList})
         // this.state.tagList = data.tagList;
-        data.tagList.push({
-            name:'stringTest',
-            valueType:1,
-            value:StringConverter.convertStrToUint8Array('hello').slice(0,32),
-            register:true,
-            indexOfRegister:3,
-            type:'custom'
-        })
+        // data.tagList.push({
+        //     name:'stringTest',
+        //     valueType:1,
+        //     value:StringConverter.convertStrToUint8Array('hello').slice(0,32),
+        //     register:true,
+        //     indexOfRegister:3,
+        //     type:'custom'
+        // })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
         console.log('tagList loaded', data.tagList, this.state.tagList);
