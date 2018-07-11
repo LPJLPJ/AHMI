@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <title>AHMI资源下载</title>
+    <link rel="stylesheet" href="../../public/libs/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../public/download/css/index.css">
+    <!-- CUSTOM STYLE CSS -->
+    <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
+
+
+    <script src="../../public/libs/jquery-3.1.1.min.js"></script>
+    <script src="../../public/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<header>
+    <% include resourcesHeader.html %>
+</header>
+<div class="main-container">
+    <div class="table screen">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#localIDE"  aria-controls="localIDE">
+                        IDE历史本地版
+                    </a>
+                </h4>
+            </div>
+            <div id="localIDE" class="panel-collapse collapse in" role="tabpanel" >
+                <div class="panel-body">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <td>版本</td><td>md5</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1.10.5</td><td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#generator"  aria-controls="generator">
+                        生成软件
+                    </a>
+                </h4>
+            </div>
+            <div id="generator" class="panel-collapse collapse in" role="tabpanel" >
+                <div class="panel-body">
+                    <table class="table table-responsive">
+                        <thead>
+                        <tr>
+                            <td>版本</td><td>md5</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1.4.0</td><td>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+</div>
+<footer>
+    <% include ../all/footer.html %>
+</footer>
+
+
+
+</body>
+</html>
