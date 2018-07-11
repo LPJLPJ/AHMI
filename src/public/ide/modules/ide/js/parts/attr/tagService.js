@@ -241,7 +241,7 @@ ideServices.service('TagService', [function () {
         this.tagArray = tagArray || [];
     }
 
-    var allTags = new TagClass('全部', 'system', tags);
+    var allTags = new TagClass('tags', 'system', tags);
     var timeTags = new TagClass('定时器', 'timer', timerTags);
     var defaultTagClass = new TagClass('default', 'custom', []);
     var tagClasses = [allTags, timeTags];
@@ -275,7 +275,7 @@ ideServices.service('TagService', [function () {
 
     //给用户的标签列表添加默认标签
     function addDefaultTagClasses(tagClassesList) {
-        var allTags = new TagClass('全部', 'system', tags);
+        var allTags = new TagClass('tags', 'system', tags);
         var timeTags = new TagClass('定时器', 'timer', timerTags);
         var defaultTagClasses = [allTags, timeTags];
         var sysTagClassFlags = defaultTagClasses.map(function () {

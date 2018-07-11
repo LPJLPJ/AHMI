@@ -3249,11 +3249,11 @@
                                     <span class="my-tagSelect-span-right">寄存器</span>-->
                             </div>
                             <div >
-                                <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()"
+                                <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()" ng-blur="component.resetTagChoose()"
                                         class="form-control my-tagSelect-tagSelect">
                                     <option value="">---</option>
                                     <option ng-repeat="customTag in component.curTagArray"
-                                            value="{{customTag.name}}" ng-click="action()">{{customTag.name}}
+                                            value="{{customTag.name}}">{{customTag.name}}
                                     </option>
                                 </select>
                             </div>

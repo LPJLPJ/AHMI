@@ -242,7 +242,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
-        var tags, timers;
+        var tags, timers ,tagClasses;
 
         project = arguments[0];
 
@@ -282,6 +282,10 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             }
         });
 
+        tagClasses = project.tagClasses;
+        if(tagClasses[0].name == '全部'){
+            tagClasses[0].name = 'tags';
+        }
     }
 
     //检查工程版本是否过时
