@@ -19,9 +19,9 @@ src/public/resources/
 
 src/public/ide/modules/ide/js/parts/simulator/
 
-public/
+./public/
 
-view
+./views/
 
 
 template/
