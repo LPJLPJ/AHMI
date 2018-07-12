@@ -25,6 +25,7 @@ import {AGEventManager,AGEvent} from "./AGEvent";
 
 import AGDraw from "./AGDraw"
 
+
 class IdentityAffineTransform extends AffineTransform{
     constructor(){
         super(1,0,0,1,0,0)
@@ -46,6 +47,15 @@ export class AGView {
     }
 
 
+    updateSize(width=0,height=0){
+        this.frame.size.width = width
+        this.frame.size.height = height
+        this.bounds.size.width = width
+        this.bounds.size.height = height
+        if (this.layer){
+            AGDraw.canvas.updateLayer(this)
+        }
+    }
 
     //transform
     static transformToMatrix(t){

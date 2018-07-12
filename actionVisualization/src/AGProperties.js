@@ -31,11 +31,22 @@ export class AGColor{
 }
 
 //shapes
+export class AGFont{
+    constructor(fontFamily='Arial',fontSize=24,fontColor=new AGColor(0,0,0,1)){
+        this.fontFamily = fontFamily
+        this.fontSize = fontSize
+        this.fontColor = fontColor
+    }
+
+    toStr(){
+        return '\"'+(this.fontFamily||'')+'\" '+fontSize+'px '
+    }
+}
 
 export class AGShape{
     constructor(){
         this.fillStyle = new AGColor()
-        this.strokeStyle = new AGColor(255,255,255,1.0)
+        this.strokeStyle = new AGColor(0,0,0,1.0)
     }
 
     //包围盒
@@ -45,6 +56,24 @@ export class AGShape{
 
 
 
+}
+
+export class AGLine extends AGShape{
+    constructor(start=new AGPoint(),stop=new AGPoint()){
+        super()
+        this.start = start
+        this.stop = stop
+        this.lineWidth = 1
+    }
+}
+
+export class AGText extends AGShape{
+    constructor(origin=new AGPoint(),text,font=new AGFont()){
+        super()
+        this.origin = origin
+        this.text = text
+        this.font = font
+    }
 }
 
 export class AGRect extends AGShape{

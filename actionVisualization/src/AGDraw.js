@@ -96,6 +96,41 @@ let AGDraw = {
             view.layer.width = view.bounds.size.width
             view.layer.height = view.bounds.size.height
         },
+        updateLayer(view){
+            view.layer.width = view.bounds.size.width
+            view.layer.height = view.bounds.size.height
+        },
+        drawLine(view,shape){
+            let ctx = getViewContext(view)
+            if (!ctx){
+                console.error('no ctx supoorted')
+                return
+            }
+            ctx.save()
+            ctx.fillStyle = convertAGColor(shape.fillStyle)
+            ctx.strokeStyle = convertAGColor(shape.strokeStyle)
+            ctx.lineWidth = shape.lineWidth
+            ctx.beginPath()
+            ctx.moveTo(shape.start.x,shape.start.y)
+            ctx.lineTo(shape.stop.x,shape.stop.y)
+            ctx.stroke()
+            ctx.restore()
+        },
+        drawText(view,shape){
+            let ctx = getViewContext(view)
+            if (!ctx){
+                console.error('no ctx supoorted')
+                return
+            }
+            ctx.save()
+            ctx.fillStyle = convertAGColor(shape.font.color)
+
+
+            ctx.beginPath()
+
+            ctx.fillText(shape.text,shape.origin.x,shape.origin.y)
+            ctx.restore()
+        },
         drawRect(view,shape){
             let ctx = getViewContext(view)
             if (!ctx){

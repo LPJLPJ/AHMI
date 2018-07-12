@@ -1,9 +1,13 @@
 
 import {AGView} from "./src/AGView";
-import {AGPoint,AGRect,AGSize,AGColor} from "./src/AGProperties";
+import {AGPoint,AGRect,AGSize,AGColor,AGLine,AGText} from "./src/AGProperties";
 import {AGWindow} from "./src/AGWindow";
-let viewWindow = new AGWindow(1000,500,'container')
-let rootView = new AGView(new AGPoint(50,50),new AGSize(800,480))
+import AGDraw from "./src/AGDraw"
+
+import {AGNode,AGEdge,AGLayoutDefault} from "./src/AGLayout";
+
+let viewWindow = new AGWindow(1000,1000,'container')
+let rootView = new AGView(new AGPoint(50,50),new AGSize(800,800))
 let subView = new AGView(new AGPoint(50,50),new AGSize(400,400))
 
 let childView = new AGView(new AGPoint(),new AGSize(200,200))
@@ -13,10 +17,38 @@ console.log(rootView)
 console.log(subView)
 
 
+//custom view
+class LineView extends AGView{
+    constructor(start=new AGPoint(),stop=new AGPoint()){
+        super()
+        // this.lineShape = new AGLine(start,stop)
+        // let boundingBox = this.lineShape.getBoundingBox()
+
+        let relativePoint = stop.relative(start)
+
+        this.lineShape = new AGLine(new AGPoint(),new AGPoint(relativePoint.x,relativePoint.y))
+        this.frame.origin = start
+        this.frame.size = new AGSize(relativePoint.x,relativePoint.y)
+        this.bounds.size = new AGSize(relativePoint.x,relativePoint.y)
+
+    }
+
+    drawLayer(){
+        //override
+        // super.drawLayer()
+        //draw line
+        AGDraw.canvas.drawLine(this,this.lineShape)
+        AGDraw.canvas.drawText(this,new AGText(new AGPoint(0,50),'hello'))
+
+    }
+}
+
+let lineView = new LineView(new AGPoint(50,50),new AGPoint(100,100))
+
 rootView.initLayer()
 rootView.addChildView(subView)
-subView.addChildView(childView)
-
+rootView.addChildView(childView)
+rootView.addChildView(lineView)
 
 viewWindow.addRootView(rootView)
 rootView.draw()
@@ -34,6 +66,9 @@ rootView.on('mouseout',function (e) {
     rootView.backgroundColor = new AGColor(255,0,0,1)
     rootView.draw()
 })
+
+
+
 
 let initPos
 let initMousePos
@@ -59,4 +94,38 @@ subView.on('mousemove',function (e) {
 subView.on('mouseup',function () {
     initPos = null
 })
-// subView.draw()
+
+//layout childview subview lineview
+
+let nodeSubView = new AGNode(0,subView.bounds.size.width,subView.bounds.size.height,{view:subView})
+let nodeChildView = new AGNode(1,childView.bounds.size.width,childView.bounds.size.height,{view:childView})
+let nodeLineView = new AGNode(2,lineView.bounds.size.width,lineView.bounds.size.height,{view:lineView})
+
+let defaultLayout = new AGLayoutDefault({
+    rankdir:'LR',
+    marginx:50,
+    marginy:50
+})
+let nodes = [nodeSubView,nodeChildView,nodeLineView]
+
+// rootView.frame.size = new AGSize(g.width,g.height)
+// rootView.bounds.size = new AGSize(g.width,g.height)
+
+rootView.on('click',function (e) {
+    let g = defaultLayout.layout(nodes,[
+        new AGEdge(nodeSubView.id,nodeChildView.id),
+        new AGEdge(nodeSubView.id,nodeLineView.id)
+    ])
+
+
+    nodes.forEach(n=>{
+        n.view.frame.origin.x = n.x
+        n.view.frame.origin.y = n.y
+    })
+
+    rootView.updateSize(g.width+100,g.height+100)
+// rootView.initLayer()
+    console.log(rootView)
+    console.log(subView,childView,lineView)
+    rootView.draw()
+})

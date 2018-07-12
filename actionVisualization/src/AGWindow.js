@@ -18,6 +18,7 @@ export class AGWindow{
 
         //inner
         this.currentView = null
+        this.mouseDownView = null
     }
 
     resetDomElemStyle(){
@@ -73,6 +74,7 @@ export class AGWindow{
             let hitResult = self.getHitView(pos,self.rootView)
             if (hitResult){
                 this.currentView = hitResult.hitView
+                this.mouseDownView = hitResult.hitView
                 e.innerPos = hitResult.relativePos
                 //trigger view's mousedown
                 let eventManager = AGEventManager.getEventManager()
@@ -107,12 +109,19 @@ export class AGWindow{
         this.domElem.addEventListener('mouseup',function (e) {
             let pos = AGWindow.getPointPos(e)
             let hitResult = self.getHitView(pos,self.rootView)
+            let mouseDownView = this.mouseDownView
+            this.mouseDownView = null
             if (hitResult){
                 this.currentView = hitResult.hitView
                 e.innerPos = hitResult.relativePos
                 //trigger view's mouseup
                 let eventManager = AGEventManager.getEventManager()
                 eventManager.dispatch(this.currentView,new AGEvent('mouseup',AGWindow.copyMouseEvent(e)))
+                if (mouseDownView === this.currentView){
+                    eventManager.dispatch(this.currentView,new AGEvent('click',AGWindow.copyMouseEvent(e)))
+                }
+
+
             }
         })
     }
