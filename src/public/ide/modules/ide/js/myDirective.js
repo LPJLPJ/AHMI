@@ -17,7 +17,7 @@ ide.directive("tagSelect", function() {
         scope:{
             selectedTag:"=?bind",
             action:"&?actionFunction"
-        },
+        }
 };
 });
 
@@ -32,7 +32,8 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         selectedTagFun:selectedTagFun,
         changeCurTagClass: changeCurTagClass,
         showRegValidTags: showRegValidTags,
-        syncTagClasses:syncTagClasses
+        syncTagClasses:syncTagClasses,
+        resetTagChoose:resetTagChoose
     };
     $scope.selectedTag={tagName:null};
 
@@ -126,5 +127,9 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         }else{
             $scope.component.curTagArray=$scope.component.curTagClass.tagArray;
         }
+    }
+
+    function resetTagChoose(){
+        $scope.selectedTag.tagName='';
     }
 }]);
