@@ -19,6 +19,7 @@ export class AGWindow{
         //inner
         this.currentView = null
         this.mouseDownView = null
+        this.dragState = null
     }
 
     resetDomElemStyle(){
@@ -92,15 +93,32 @@ export class AGWindow{
                 let eventManager = AGEventManager.getEventManager()
 
                 if(hitResult.hitView !== this.currentView){
-                    let oldCurrentView = this.currentView
-                    this.currentView = hitResult.hitView
-                    //mouse out
-                    eventManager.dispatch(oldCurrentView,new AGEvent('mouseout'))
-                    //mouse in
-                    eventManager.dispatch(this.currentView,new AGEvent('mousein',AGWindow.copyMouseEvent(e)))
+                    if (!this.dragState){
+                        let oldCurrentView = this.currentView
+                        this.currentView = hitResult.hitView
+                        //mouse out
+                        eventManager.dispatch(oldCurrentView,new AGEvent('mouseout',AGWindow.copyMouseEvent(e)))
+                        // //drag end
+                        // eventManager.dispatch(oldCurrentView,new AGEvent('dragend',AGWindow.copyMouseEvent(e)))
+
+                        //mouse in
+                        eventManager.dispatch(this.currentView,new AGEvent('mousein',AGWindow.copyMouseEvent(e)))
+                    }else{
+                        //dragging
+                        eventManager.dispatch(this.currentView,new AGEvent('drag',AGWindow.copyMouseEvent(e)))
+                    }
+
                 }else{
                     //trigger view's mousemove
                     eventManager.dispatch(this.currentView,new AGEvent('mousemove',AGWindow.copyMouseEvent(e)))
+                    if (this.mouseDownView === this.currentView){
+                        if (!this.dragState){
+                            eventManager.dispatch(this.currentView,new AGEvent('dragstart',AGWindow.copyMouseEvent(e)))
+                            this.dragState = 'dragging'
+                        }else{
+                            eventManager.dispatch(this.currentView,new AGEvent('drag',AGWindow.copyMouseEvent(e)))
+                        }
+                    }
                 }
 
             }
@@ -111,18 +129,28 @@ export class AGWindow{
             let hitResult = self.getHitView(pos,self.rootView)
             let mouseDownView = this.mouseDownView
             this.mouseDownView = null
+            let eventManager = AGEventManager.getEventManager()
             if (hitResult){
                 this.currentView = hitResult.hitView
                 e.innerPos = hitResult.relativePos
                 //trigger view's mouseup
-                let eventManager = AGEventManager.getEventManager()
+
                 eventManager.dispatch(this.currentView,new AGEvent('mouseup',AGWindow.copyMouseEvent(e)))
+                //drag end
+                eventManager.dispatch(this.currentView,new AGEvent('dragend',AGWindow.copyMouseEvent(e)))
+                this.dragState = null
                 if (mouseDownView === this.currentView){
                     eventManager.dispatch(this.currentView,new AGEvent('click',AGWindow.copyMouseEvent(e)))
                 }
 
 
+            }else{
+                if (this.dragState){
+                    eventManager.dispatch(this.currentView,new AGEvent('dragend',AGWindow.copyMouseEvent(e)))
+                    this.dragState = null
+                }
             }
+            this.currentView = null
         })
     }
 

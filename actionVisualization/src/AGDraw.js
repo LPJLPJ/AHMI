@@ -124,7 +124,8 @@ let AGDraw = {
             }
             ctx.save()
             ctx.fillStyle = convertAGColor(shape.font.color)
-
+            ctx.textAlign = shape.textAlign
+            ctx.textBaseline = shape.textBaseline
 
             ctx.beginPath()
 

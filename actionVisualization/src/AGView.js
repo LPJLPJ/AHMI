@@ -33,13 +33,22 @@ class IdentityAffineTransform extends AffineTransform{
 }
 
 export class AGView {
-    constructor(origin=new AGPoint(),size=new AGSize()){
+    constructor(origin=new AGPoint(),size=new AGSize(),opts={}){
         this.frame = new AGRect(origin,size)
         this.bounds = new AGRect(new AGPoint(),size)
+
         this.hidden = false
         this.alpha = 1.0
         this.backgroundColor = new AGColor(255,0,0,1.0)
         this.canTouch = true
+        let optKeys = ['hidden','alpha','backgroundColor','canTouch']
+        optKeys.forEach(k=>{
+            if (k in opts){
+                this[k] = opts[k]
+            }
+        })
+
+
         this.parent = null
         this.children = []
         this.transform = new IdentityAffineTransform()
@@ -111,5 +120,10 @@ export class AGView {
     on(eventType,handler){
         let eventManager = AGEventManager.getEventManager()
         eventManager.register(this,eventType,handler)
+    }
+
+    cancelOn(eventType,handler){
+        let eventManager = AGEventManager.getEventManager()
+        eventManager.unRegister(this,eventType,handler)
     }
 }

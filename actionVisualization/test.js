@@ -6,6 +6,9 @@ import AGDraw from "./src/AGDraw"
 
 import {AGNode,AGEdge,AGLayoutDefault} from "./src/AGLayout";
 
+import {AGLabel, AGWidget} from "./src/AGVisualization";
+
+
 let viewWindow = new AGWindow(1000,1000,'container')
 let rootView = new AGView(new AGPoint(50,50),new AGSize(800,800))
 let subView = new AGView(new AGPoint(50,50),new AGSize(400,400))
@@ -129,3 +132,14 @@ rootView.on('click',function (e) {
     console.log(subView,childView,lineView)
     rootView.draw()
 })
+
+
+let widget = new AGWidget(new AGPoint(),new AGSize(50,50))
+widget.toggleDraggable(true)
+
+let label = new AGLabel(new AGPoint(),new AGSize(50,50),'hello')
+label.toggleDraggable(true)
+
+rootView.addChildView(widget)
+
+rootView.addChildView(label)

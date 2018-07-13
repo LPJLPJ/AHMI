@@ -73,6 +73,8 @@ export class AGText extends AGShape{
         this.origin = origin
         this.text = text
         this.font = font
+        this.textAlign = 'center'
+        this.textBaseline = 'middle'
     }
 }
 
