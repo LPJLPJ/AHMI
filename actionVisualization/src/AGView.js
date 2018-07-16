@@ -66,6 +66,12 @@ export class AGView {
         }
     }
 
+    center(){
+        let pointX = this.frame.origin.x + 0.5 * this.frame.size.width
+        let pointY = this.frame.origin.y + 0.5 * this.frame.size.height
+        return new AGPoint(pointX,pointY)
+    }
+
     //transform
     static transformToMatrix(t){
         return new Matrix([t.a,t.b,t.e,t.c,t.d,t.f,t.g,t.h,t.i])

@@ -13,9 +13,10 @@ export class AGNode {
 }
 
 export class AGEdge{
-    constructor(start,stop){
+    constructor(start,stop,link=null){
         this.start = start
         this.stop = stop
+        this.link = link
     }
 }
 
@@ -88,7 +89,7 @@ export class AGLayoutDefault extends AGLayout{
             node.y = gn.y - gn.height/2
         })
         let graph = g.graph()
-        console.log(graph)
+
         return {
             width:graph.width,
             height:graph.height,

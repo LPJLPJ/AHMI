@@ -19,6 +19,14 @@ export class AGPoint{
     relative(aPoint){
         return new AGPoint(this.x-aPoint.x,this.y-aPoint.y)
     }
+
+    add(aPoint){
+        return new AGPoint(this.x+aPoint.x,this.y+aPoint.y)
+    }
+
+    copy(){
+        return new AGPoint(this.x,this.y)
+    }
 }
 
 export class AGColor{

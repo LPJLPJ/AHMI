@@ -6,7 +6,7 @@ import AGDraw from "./src/AGDraw"
 
 import {AGNode,AGEdge,AGLayoutDefault} from "./src/AGLayout";
 
-import {AGLabel, AGWidget} from "./src/AGVisualization";
+import {AGLabel, AGVGraph, AGWidget, AGLink, AGVisualization} from "./src/AGVisualization";
 
 
 let viewWindow = new AGWindow(1000,1000,'container')
@@ -137,9 +137,61 @@ rootView.on('click',function (e) {
 let widget = new AGWidget(new AGPoint(),new AGSize(50,50))
 widget.toggleDraggable(true)
 
+
 let label = new AGLabel(new AGPoint(),new AGSize(50,50),'hello')
 label.toggleDraggable(true)
 
-rootView.addChildView(widget)
+let label2 = new AGLabel(new AGPoint(),new AGSize(50,50),'world')
+label2.toggleDraggable(true)
 
-rootView.addChildView(label)
+let link = new AGLink(new AGPoint(),new AGSize(100,100),new AGPoint(10,10),new AGPoint(90,90))
+link.toggleDraggable(true)
+
+// rootView.addChildView(widget)
+//
+// rootView.addChildView(label)
+//
+// rootView.addChildView(label2)
+//
+// rootView.addChildView(link)
+
+//
+//
+//
+// let agvGraph = new AGVGraph()
+// agvGraph.addNode(widget)
+// agvGraph.addNode(label)
+// agvGraph.addNode(label2)
+//
+// agvGraph.addEdge(widget,label)
+// agvGraph.addEdge(widget,label2)
+// agvGraph.layout()
+//
+// // let v = label.frame.origin.relative(widget.frame.origin)
+// console.log(label,label2)
+// link.updatePoint(widget.center(),label.center())
+//
+// console.log(link)
+
+let agv = new AGVisualization(rootView)
+
+agv.addWidgetNode(widget)
+agv.addWidgetNode(label)
+agv.addWidgetNode(label2)
+agv.linkWidgets(widget,label)
+agv.linkWidgets(widget,label2)
+agv.layout()
+agv.sortLinks()
+
+label2.on('mouseup',function (e) {
+    // for (let i=0;i<rootView.children.length;i++){
+    //     let curW = rootView.children[i]
+    //     if (curW.widgetDst === label2 ){
+    //         console.log(curW)
+    //         curW.updatePoint(null,label2.center())
+    //     }
+    // }
+    label2.in.forEach(l=>{
+        l.updatePoint(null,label2.center())
+    })
+})
