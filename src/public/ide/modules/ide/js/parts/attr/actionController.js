@@ -256,6 +256,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
 
+            $scope.$broadcast('ResetTagChoose');
             //console.log('chosenCmd',$scope.chosenCmd);
         };
 
@@ -272,6 +273,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             if($scope.action.trigger==''){
                 toastr.error('未选择触发方式！');
             }
+
+            $scope.$broadcast('ResetTagChoose');
         };
 
         //删除指令

@@ -283,8 +283,8 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tagClasses = project.tagClasses;
-        if(tagClasses[0].name == '全部'){
-            tagClasses[0].name = 'tags';
+        if(tagClasses[0].name == '全部'||tagClasses[0].name == 'tags'){
+            tagClasses[0].name = '变量';
         }
     }
 

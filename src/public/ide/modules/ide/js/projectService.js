@@ -2059,8 +2059,8 @@ ideServices
 
                     //currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                 }
+                //console.log(project);
                 return _.cloneDeep(project);
-
             };
 
             this.LoadCurrentOperate = function (_operate, _successCallback,_errCallback) {
@@ -2074,7 +2074,7 @@ ideServices
                 //project=_operate;
                 TagService.syncCustomTags(project.customTags);
                 TagService.syncTimerTags(project.timerTags);
-                TagService.setTimerNum(project.timers);
+                TagService.setTimerNum(project.timerTags.length||0);
                 TagService.syncTagClasses(project.tagClasses);
 
                 _cleanPageHashKey();
