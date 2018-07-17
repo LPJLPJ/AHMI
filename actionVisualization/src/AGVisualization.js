@@ -162,8 +162,8 @@ export class AGVisualization{
     }
 
     layout(){
-        this.graph.layout()
-        console.log(this.graph.edges)
+        let g = this.graph.layout()
+        this.renderView.updateSize(g.width+100,g.height+100)
         this.graph.edges.forEach(e=>{
             e.link && e.link.updatePoint(e.link.widgetSrc.center(),e.link.widgetDst.center())
         })

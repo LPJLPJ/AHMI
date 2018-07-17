@@ -10,7 +10,13 @@ export class AGWindow{
     constructor(width,height,id){
         this.width = width
         this.height = height
-        this.domElem = document.getElementById(id)
+        if (typeof id === 'string'){
+            this.domElem = document.getElementById(id)
+        }else{
+            console.log(id)
+            this.domElem = id
+        }
+
         //reset domElem style
         this.resetDomElemStyle()
         this.initEventListen()
