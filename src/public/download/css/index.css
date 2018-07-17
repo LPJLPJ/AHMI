@@ -107,3 +107,22 @@ html,body{
 .download-md5{
 
 }
+.download-more{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    margin:4em 0;
+}
+
+.download-more-screen{
+    background-color: #fafafa;
+}
+
+.download-more-anchor,.download-more-anchor:hover{
+    text-decoration:none;
+    color:black;
+}
+
+.download-more-anchor:hover{
+    cursor:pointer;
+}

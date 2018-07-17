@@ -4924,7 +4924,7 @@ module.exports = React.createClass({
             switch (tag.valueType){
                 case 1:
                     //str
-                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding).slice(0,32)
+                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding||StringConverter.supportedEncodings['utf-8']).slice(0,32)
                     break;
                 default:
                     //num
@@ -4941,7 +4941,7 @@ module.exports = React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding)
+                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
                 default:
                     console.log('tag type unsupported')
             }
@@ -5030,7 +5030,7 @@ module.exports = React.createClass({
       if (typeof pValue === 'string'||typeof pValue === 'number'){
           return ''+pValue
       }else{
-          return StringConverter.convertUint8ArrayToStr(pValue)
+          return StringConverter.convertUint8ArrayToStr(pValue,StringConverter.supportedEncodings['utf-8'])
       }
     },
     process: function (cmds,index) {

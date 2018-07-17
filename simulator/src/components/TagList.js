@@ -18,7 +18,7 @@ module.exports = React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding)
+                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
                 default:
                     console.log('tag type unsupported')
             }
