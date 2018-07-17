@@ -32,8 +32,7 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         selectedTagFun:selectedTagFun,
         changeCurTagClass: changeCurTagClass,
         showRegValidTags: showRegValidTags,
-        syncTagClasses:syncTagClasses,
-        resetTagChoose:resetTagChoose
+        syncTagClasses:syncTagClasses
     };
     $scope.selectedTag={tagName:null};
 
@@ -69,7 +68,6 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         $scope.component.curTagArray = $scope.component.curTagClass.tagArray;
     }
     function syncTagClasses(){
-        // console.log('syncTagClasses');
         $scope.component.tagClasses = TagService.getAllTagClasses();
         $scope.component.curTagClassName=$scope.component.curTagClass.name;
         changeCurTagClass();
@@ -129,6 +127,9 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         }
     }
 
+    $scope.$on('ResetTagChoose',function(){
+        resetTagChoose()
+    });
     function resetTagChoose(){
         $scope.selectedTag.tagName='';
     }

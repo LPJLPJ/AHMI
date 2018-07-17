@@ -191,6 +191,7 @@ ideServices.service('TagService', [function () {
         }else{
             return;
         }
+        tagClasses[1].tagArray=timerTags;
     };
 
     //设置timer的数量
@@ -241,7 +242,7 @@ ideServices.service('TagService', [function () {
         this.tagArray = tagArray || [];
     }
 
-    var allTags = new TagClass('tags', 'system', tags);
+    var allTags = new TagClass('变量', 'system', tags);
     var timeTags = new TagClass('定时器', 'timer', timerTags);
     var defaultTagClass = new TagClass('default', 'custom', []);
     var tagClasses = [allTags, timeTags];
@@ -275,7 +276,7 @@ ideServices.service('TagService', [function () {
 
     //给用户的标签列表添加默认标签
     function addDefaultTagClasses(tagClassesList) {
-        var allTags = new TagClass('tags', 'system', tags);
+        var allTags = new TagClass('变量', 'system', tags);
         var timeTags = new TagClass('定时器', 'timer', timerTags);
         var defaultTagClasses = [allTags, timeTags];
         var sysTagClassFlags = defaultTagClasses.map(function () {

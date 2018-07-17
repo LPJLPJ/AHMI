@@ -123,7 +123,6 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 //new tag
                 TagService.setUniqueTags(newTag, noDuplication, function () {
                     readTagsInfo();
-                    $scope.$emit('ChangeCurrentTags');
                     //如果添加了一个新的tag，同时将其添加到当前标签里
                     addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
@@ -238,6 +237,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 }
                 //将tag加入到该标签中
                 $scope.component.tagClasses[i].tagArray.push(tag);
+                TagService.syncTagClasses($scope.component.tagClasses);
+                $scope.$emit('ChangeCurrentTags');
                 return;
             }
         }
@@ -504,7 +505,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 }
             }
         }
-
+        TagService.syncTagClasses($scope.component.tagClasses);
+        $scope.$emit('ChangeCurrentTags');
     }
 
     //点击list里的自定义tag名称，将其先显示编辑面板上。
@@ -619,6 +621,9 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         if (canTimerNumChange($scope.component.timerNum)){
             TagService.setTimerNum($scope.component.timerNum);
             TagService.setTimerTags($scope.component.timerNum);
+            $scope.component.timerNum=TagService.getTimerNum();
+            $scope.component.allTimerTags=TagService.getAllTimerTags();
+            $scope.$emit('ChangeCurrentTags');
         }
 
     }
