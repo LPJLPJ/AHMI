@@ -67,8 +67,8 @@ ideServices.service('TagService', [function () {
         }
 
         if (noDuplication(tag, tags)) {
-
             tags.push(tag);
+            tagClasses[0].tagArray=tags;
             cb && cb();
 
         }
@@ -202,6 +202,19 @@ ideServices.service('TagService', [function () {
     //获取timer的数量
     this.getTimerNum = function () {
         return timerNum;
+    };
+
+    this.deleteTag = function(name){
+        var tagList;
+        for (var j = 0; j < tagClasses.length; j++) {
+            tagList = tagClasses[j].tagArray;
+            for (i = 0; i < tagList.length; i++) {
+                if (tagList[i].name === name) {
+                    tagList.splice(i, 1);
+                }
+            }
+        }
+        tags=tagClasses[0].tagArray;
     };
 
     //将tag按名称排序
