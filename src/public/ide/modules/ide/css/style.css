@@ -467,10 +467,6 @@ a,a:hover{
     line-height: 20px;
     position: relative;
     cursor: pointer;
-    color: #888;
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     overflow: hidden;
     display: inline-block;
     *display: inline;
@@ -681,10 +677,14 @@ a,a:hover{
     padding:10% 5% 15% 5%;
 }
 .my-sel{
-    padding: 4px 6px;
     /*font-size: inherit !important;*/
     color: #888 !important;
-
+    font-weight: 500;
+    margin-right: 10px;
+    cursor: pointer;
+}
+.my-sel-checkbox{
+    vertical-align: sub;
 }
 
 .my-sigOpt{

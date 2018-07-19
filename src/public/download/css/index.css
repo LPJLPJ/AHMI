@@ -1,7 +1,11 @@
+html,body{
+    height:100%;
+}
+
 .header-container{
     text-align:center;
-    height:50px;
-    margin:1em 0;
+    height:70px;
+    padding:10px;
 }
 
 .header-title{
@@ -88,3 +92,37 @@
     text-align:center;
 }
 
+.panel-body{
+    text-align: center;
+}
+
+.download-item{
+    /*display:inline-block;*/
+    width:80%;
+}
+.download-link{
+    cursor: pointer;
+}
+
+.download-md5{
+
+}
+.download-more{
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 2em;
+    font-weight: bold;
+    margin:4em 0;
+}
+
+.download-more-screen{
+    background-color: #fafafa;
+}
+
+.download-more-anchor,.download-more-anchor:hover{
+    text-decoration:none;
+    color:black;
+}
+
+.download-more-anchor:hover{
+    cursor:pointer;
+}

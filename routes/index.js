@@ -435,6 +435,9 @@ router.route('/blog/post/deleteComment')
 router.route('/download/index.html')
     .get(DownloadRouter.getDownloadPage)
 
+router.route('/download/resources.html')
+    .get(DownloadRouter.getResourcesDownloadPage)
+
 router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
 

@@ -17,7 +17,7 @@ ide.directive("tagSelect", function() {
         scope:{
             selectedTag:"=?bind",
             action:"&?actionFunction"
-        },
+        }
 };
 });
 
@@ -68,7 +68,6 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         $scope.component.curTagArray = $scope.component.curTagClass.tagArray;
     }
     function syncTagClasses(){
-        // console.log('syncTagClasses');
         $scope.component.tagClasses = TagService.getAllTagClasses();
         $scope.component.curTagClassName=$scope.component.curTagClass.name;
         changeCurTagClass();
@@ -126,5 +125,12 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         }else{
             $scope.component.curTagArray=$scope.component.curTagClass.tagArray;
         }
+    }
+
+    $scope.$on('ResetTagChoose',function(){
+        resetTagChoose()
+    });
+    function resetTagChoose(){
+        $scope.selectedTag.tagName='';
     }
 }]);

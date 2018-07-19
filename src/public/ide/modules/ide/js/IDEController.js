@@ -851,7 +851,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //tags tbc
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);
-            TagService.setTimerNum(globalProject.timers);
+            TagService.setTimerNum(globalProject.timerTags.length||0);
             TagService.syncTagClasses(globalProject.tagClasses);
             NavModalCANConfigService.setCANId(globalProject.CANId);
         }

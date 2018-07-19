@@ -139,8 +139,14 @@
         function imgdragstart() {
             return false;
         }
+        $(function(){
+            document.body.style.overflowY='scroll';
+        })
     </script>
     <style>
+        body{
+            overflow-y: hidden;
+        }
         .rotating{
             animation:rotate-icon 2s linear infinite;
         }
@@ -739,7 +745,7 @@
                         </div>
 
                         <div class="my-attr-item lg" style="margin-top: 20px" ng-controller="ResourceCtrl">
-                            <a href="javascript:;" class="my-upload" style="width: 100%;text-align: center">
+                            <a href="javascript:;" class="btn btn-default my-upload" style="width: 100%;text-align: center">
                                 <maskform></maskform>
                                 上传模具框图片<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                             </a>
@@ -3177,7 +3183,7 @@
                                 <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlicePrev()">
                                     向上插入
                                 </button>
-                                <button type="button" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
+                                <button type="button" ng-show="canBatchAddImg" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
                                     批量插入
                                 </button>
                             </span>
@@ -3243,11 +3249,11 @@
                                     <span class="my-tagSelect-span-right">寄存器</span>-->
                             </div>
                             <div >
-                                <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()"
+                                <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()" ng-blur="component.resetTagChoose()"
                                         class="form-control my-tagSelect-tagSelect">
                                     <option value="">---</option>
                                     <option ng-repeat="customTag in component.curTagArray"
-                                            value="{{customTag.name}}" ng-click="action()">{{customTag.name}}
+                                            value="{{customTag.name}}">{{customTag.name}}
                                     </option>
                                 </select>
                             </div>
@@ -3488,13 +3494,13 @@
 
                     <div ng-show="component.top.showDel">
                     <form ref='uploadForm' encType='multipart/form-data'>
-                        <a href="javascript:;" class="my-upload">
+                        <a href="javascript:;" class="btn btn-default my-upload">
                             <filereadform>
 
                             </filereadform>
                             上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                         </a>
-                        <button class="my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
+                        <button class="btn btn-default my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
                         <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
                         <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
                     </form>
@@ -3528,13 +3534,15 @@
                     </div>
                     <div ng-hide="component.top.showDel">
                         <div class="my-button-bar" >
-                            <span class="my-sel" >全选 </span>
-                            <input type="checkbox" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
-                            <span><button class="my-upload" ng-click="component.top.oppSelect()">反选</button></span>
-
+                            <label>
+                                <input type="checkbox" class="my-sel-checkbox" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
+                                <span class="my-sel" >全选 </span>
+                            </label>
+                            <span>
+                                <button class="btn btn-default my-upload" ng-click="component.top.oppSelect()">反选</button></span>
                             <span class="my-flout-right">
-                                <button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>
-                                <button class="my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>
+                                <button class="btn btn-default my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>
+                                <button class="btn btn-default my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>
                             </span>
                             <!--<span>&nbsp&nbsp&nbsp&nbsp</span>-->
                             <!--<button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>-->

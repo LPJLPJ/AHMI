@@ -6,7 +6,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     function transCmds(cmds,changelt){
         // actionCompiler
-        var reg = new RegExp("^[0-9]*$");
+        var reg = new RegExp("^-?[0-9]*$");
 
         //检查一个tag的valueType是否为字符串
         var checkTagTypeIsStr = function(tagName){

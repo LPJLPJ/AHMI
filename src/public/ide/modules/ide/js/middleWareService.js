@@ -242,7 +242,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
-        var tags, timers;
+        var tags, timers ,tagClasses;
 
         project = arguments[0];
 
@@ -275,13 +275,17 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             }
         });
 
-        timers = project.customTags;
+        timers = project.timerTags;
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
         });
 
+        tagClasses = project.tagClasses;
+        if(tagClasses[0].name == '全部'||tagClasses[0].name == 'tags'){
+            tagClasses[0].name = '变量';
+        }
     }
 
     //检查工程版本是否过时

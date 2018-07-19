@@ -381,3 +381,10 @@ body{
 .back-to-space i{
     font-size: 20px;
 }
+
+.compatibility-ok {
+    color: #0fff3e;
+}
+.compatibility-warning{
+    color: #ffcd06;
+}

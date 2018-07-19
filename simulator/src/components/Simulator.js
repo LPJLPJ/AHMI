@@ -117,14 +117,14 @@ module.exports = React.createClass({
         // this.state.tagList = data.tagList
         // this.setState({tagList: data.tagList})
         // this.state.tagList = data.tagList;
-        data.tagList.push({
-            name:'stringTest',
-            valueType:1,
-            value:StringConverter.convertStrToUint8Array('hello').slice(0,32),
-            register:true,
-            indexOfRegister:3,
-            type:'custom'
-        })
+        // data.tagList.push({
+        //     name:'stringTest',
+        //     valueType:1,
+        //     value:StringConverter.convertStrToUint8Array('hello').slice(0,32),
+        //     register:true,
+        //     indexOfRegister:3,
+        //     type:'custom'
+        // })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
         console.log('tagList loaded', data.tagList, this.state.tagList);
@@ -4924,7 +4924,7 @@ module.exports = React.createClass({
             switch (tag.valueType){
                 case 1:
                     //str
-                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding).slice(0,32)
+                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding||StringConverter.supportedEncodings['utf-8']).slice(0,32)
                     break;
                 default:
                     //num
@@ -4941,7 +4941,7 @@ module.exports = React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding)
+                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
                 default:
                     console.log('tag type unsupported')
             }
@@ -5026,6 +5026,13 @@ module.exports = React.createClass({
             }
         }
     },
+    convertParamValueToStr:function (pValue) {
+      if (typeof pValue === 'string'||typeof pValue === 'number'){
+          return ''+pValue
+      }else{
+          return StringConverter.convertUint8ArrayToStr(pValue,StringConverter.supportedEncodings['utf-8'])
+      }
+    },
     process: function (cmds,index) {
         var cmdsLength = cmds.length;
         if (index >= cmdsLength) {
@@ -5095,7 +5102,7 @@ module.exports = React.createClass({
                     var nextValue
                     if(targetTag.valueType == 1){
                         //tagStr
-                        nextValue = ''+this.getTagTrueValue(targetTag) + this.getParamValue(param2);
+                        nextValue = ''+this.getTagTrueValue(targetTag) + this.convertParamValueToStr(this.getParamValue(param2));
                     }else{
                         //tagNum
                         nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
@@ -5434,7 +5441,7 @@ module.exports = React.createClass({
                     var nextValue
                     if(targetTag.valueType == 1){
                         //tagStr
-                        nextValue = ''+this.getTagTrueValue(targetTag) + this.getParamValue(param2);
+                        nextValue = ''+this.getTagTrueValue(targetTag) + this.convertParamValueToStr(this.getParamValue(param2));
                     }else{
                         //tagNum
                         nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
@@ -5451,14 +5458,14 @@ module.exports = React.createClass({
                 var param2Tag = this.findTagByName(param2.tag);
                 if (targetTag&&param2Tag&&param2Tag.valueType ==1) {
                     // targetTag.value = parseInt(param2);
-                    var param2Str = this.getParamValue(param2)
+                    var param2Str = this.convertParamValueToStr(this.getParamValue(param2))
                     this.setTagByTag(targetTag, param2Str.length)
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
                 };
                 break;
-            case 'DELETE_STR_FROM_TAIL':
+            case 'DEL_STR_FROM_TAIL':
                 var targetTag = this.findTagByName(param1.tag);
                 var deleteLen = Number(this.getParamValue(param2))
                 if (targetTag&&targetTag.valueType==1) {
@@ -5473,7 +5480,7 @@ module.exports = React.createClass({
                     });
                 };
                 break;
-            case 'DELETE_STR_FROM_HEAD':
+            case 'DEL_STR_FROM_HEAD':
                 var targetTag = this.findTagByName(param1.tag);
                 var deleteLen = Number(this.getParamValue(param2))
                 if (targetTag&&targetTag.valueType==1) {

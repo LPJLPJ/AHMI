@@ -9,6 +9,12 @@
 
 .template-panel:hover .template-btn-delete{
     display:block;
+    position:absolute;
+    right:0;
+    top:0;
+    color:red;
+    cursor:pointer;
+    z-index:999;
 }
 
 .basicinfo-template-options{
