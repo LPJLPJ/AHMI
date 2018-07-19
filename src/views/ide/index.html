@@ -476,6 +476,8 @@
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61c;</span><span class="caption">下标</span></a>-->
                 <a ng-click="component.tool.play()" class="my-cmd-item runProject" ng-class=""><span
                         class="iconfont icon">&#xe620;</span><span class="caption">运行</span></a>
+                <a ng-click="component.tool.showActionVisualization()" class="my-cmd-item runProject" ng-class=""><span
+                        class="iconfont icon">&#xe620;</span><span class="caption">动作可视化</span></a>
             </div>
 
 
@@ -490,6 +492,18 @@
                     </div>
                 </div>
                 <div id="simulator-container">
+                </div>
+            </div>
+            <div id="actionVisualization-wrapper" style="" ng-show="component.actionVisualization.show">
+                <div class="navbar navbar-default" style="text-align:center">
+                    <div class="nav">
+                        <button id="actionVisualization-play" type="button" class=" btn btn-default navbar-btn">运行</button>
+                        <button id="actionVisualization-close" type="button" class=" btn btn-default navbar-btn offProject"
+                                ng-click="component.tool.closeActionVisualizer()">关闭
+                        </button>
+                    </div>
+                </div>
+                <div id="action-visualizer">
                 </div>
             </div>
 
@@ -3402,7 +3416,7 @@
                         </div>
                     </script>
 
-                    <div style="position: absolute;" id="action-visualizer"></div>
+                    <!--<div style="position: absolute;" id="action-visualizer"></div>-->
 
                 </div>
 

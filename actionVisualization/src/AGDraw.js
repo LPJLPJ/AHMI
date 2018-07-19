@@ -100,6 +100,42 @@ let AGDraw = {
             view.layer.width = view.bounds.size.width
             view.layer.height = view.bounds.size.height
         },
+        drawArrow(ctx,x1,y1,x2,y2,aw,ah){
+            if (x1 === x2 && y1 === y2){
+                return
+            }
+            let lineW = Math.sqrt(Math.pow(y2-y1,2)+Math.pow(x2-x1,2))
+            let x3 = x2 - aw/lineW *(x2-x1)
+            let y3 = y2 - aw/lineW * (y2-y1)
+            let a = x2 -x1
+            let b = y2 -y1
+            let temp =0
+            let x4=0,x5=0,y4=0,y5=0
+            if (a){
+                temp = ah*Math.sqrt(1.0/(b/a *b/a+1))
+                y4 = y3 + temp
+                y5 = y3 - temp
+                x4 = x3-b/a*temp
+                x5 = x3+b/a*temp
+            }else{
+                temp = ah * Math.sqrt(1.0/(a/b*a/b+1))
+                x4 = x3 + temp
+                x5 = x3 - temp
+                y4 = y3-a/b*temp
+                y5 = y3+a/b*temp
+            }
+            // console.log(x1,y1,x2,y2,x3,y3,x4,y4,x5,x5)
+
+            ctx.beginPath()
+            // ctx.arc(x3,y3,2,0,2*Math.PI)
+            ctx.moveTo(x4,y4)
+            ctx.lineTo(x2,y2)
+            ctx.lineTo(x5,y5)
+            ctx.closePath()
+            ctx.fill()
+
+
+        },
         drawLine(view,shape){
             let ctx = getViewContext(view)
             if (!ctx){
@@ -114,6 +150,10 @@ let AGDraw = {
             ctx.moveTo(shape.start.x,shape.start.y)
             ctx.lineTo(shape.stop.x,shape.stop.y)
             ctx.stroke()
+            ctx.save()
+            ctx.fillStyle = ctx.strokeStyle
+            this.drawArrow(ctx,shape.start.x,shape.start.y,shape.stop.x,shape.stop.y,8,4)
+            ctx.restore()
             ctx.restore()
         },
         drawText(view,shape){

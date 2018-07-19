@@ -43,7 +43,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         }
     }
 
-    function transDataFile(rawProject){
+    function transDataFile(rawProject,opts){
         var targetProject = {};
         tagList = rawProject.customTags;
         targetProject.version = rawProject.version;
@@ -55,32 +55,40 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.lastSaveUUID = rawProject.lastSaveUUID;
         targetProject.pageList = [];
         for (var i=0;i<rawProject.pages.length;i++){
-            targetProject.pageList.push(transPage(rawProject.pages[i],i));
+            targetProject.pageList.push(transPage(rawProject.pages[i],i,opts));
         }
         return targetProject;
     }
 
-    function transPage(rawPage, index){
+    function transPage(rawPage, index,opts){
         var targetPage = {};
         targetPage.id = ''+index;
         targetPage.type = Type.MyPage;
         // console.log(rawPage);
         deepCopyAttributes(rawPage,targetPage,['name','backgroundImage','backgroundColor','triggers','actions','tag','transition']);
-        transActions(targetPage);
+        if (opts&&opts.rawAction){
+
+        }else{
+            transActions(targetPage);
+        }
         //CanvasList
         targetPage.canvasList = [];
         for (var i=0;i<rawPage.layers.length;i++){
-            targetPage.canvasList.push(transLayer(rawPage.layers[i],i,targetPage.id));
+            targetPage.canvasList.push(transLayer(rawPage.layers[i],i,targetPage.id,opts));
         }
         return targetPage;
     }
 
-    function transLayer(rawLayer,layerIdx,pageIdx){
+    function transLayer(rawLayer,layerIdx,pageIdx,opts){
         var targetLayer = {};
         targetLayer.id = pageIdx+'.'+layerIdx;
         targetLayer.type = Type.MyLayer;
         deepCopyAttributes(rawLayer,targetLayer,['name','triggers','actions','tag','zIndex','animations','transition']);
-        transActions(targetLayer);
+        if (opts&&opts.rawAction){
+
+        }else{
+            transActions(targetLayer);
+        }
         targetLayer.w = rawLayer.info.width;
         targetLayer.h = rawLayer.info.height;
         targetLayer.x = rawLayer.info.left;
@@ -93,31 +101,38 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             if (rawLayer.showSubLayer.id == curSubLayer){
                 targetLayer.curSubCanvasIdx = i;
             }
-            targetLayer.subCanvasList.push(transSubLayer(curSubLayer,i,targetLayer.id));
+            targetLayer.subCanvasList.push(transSubLayer(curSubLayer,i,targetLayer.id,opts));
         }
         return targetLayer;
     }
 
-    function transSubLayer(rawSubLayer,subLayerIdx,layerIdx){
+    function transSubLayer(rawSubLayer,subLayerIdx,layerIdx,opts){
         var targetSubLayer = {};
         targetSubLayer.id = layerIdx+'.'+subLayerIdx;
         targetSubLayer.type = Type.MySubLayer;
         deepCopyAttributes(rawSubLayer,targetSubLayer,['name','tag','actions','zIndex','backgroundImage','backgroundColor']);
-        transActions(targetSubLayer);
+        if (opts&&opts.rawAction){
 
+        }else{
+            transActions(targetSubLayer);
+        }
         targetSubLayer.widgetList = [];
         for (var i=0;i<rawSubLayer.widgets.length;i++){
             var curWidget = rawSubLayer.widgets[i];
-            targetSubLayer.widgetList.push(transWidget(curWidget,i,targetSubLayer.id));
+            targetSubLayer.widgetList.push(transWidget(curWidget,i,targetSubLayer.id,opts));
         }
 
         return targetSubLayer;
     }
 
-    function transWidget(rawWidget,widgetIdx,subLayerIdx){
+    function transWidget(rawWidget,widgetIdx,subLayerIdx,opts){
         var targetWidget = {};
         targetWidget = _.cloneDeep(rawWidget);
-        transActions(targetWidget);
+        if (opts&&opts.rawAction){
+
+        }else{
+            transActions(targetWidget);
+        }
         targetWidget.type = 'widget';
         targetWidget.subType = rawWidget.type;
         targetWidget.id = subLayerIdx+'.'+widgetIdx;

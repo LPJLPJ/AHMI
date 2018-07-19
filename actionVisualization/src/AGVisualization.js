@@ -1,9 +1,11 @@
 import {AGView} from "./AGView";
-import {AGPoint, AGRect, AGSize, AGColor, AGLine, AGText, AGFont} from "./AGProperties";
+import {AGPoint, AGRect, AGSize, AGColor, AGLine, AGText, AGFont, AGPath, AGPathItemLine} from "./AGProperties";
 import {AGWindow} from "./AGWindow";
 import AGDraw from "./AGDraw"
 
 import {AGNode,AGEdge,AGLayoutDefault} from "./AGLayout";
+
+import Bezier from 'bezier-js'
 
 export class AGWidget extends AGView{
     constructor(origin,size,opts={}){
@@ -43,6 +45,14 @@ export class AGWidget extends AGView{
             }
         }
     }
+
+    toPath(){
+        let tl = this.frame.origin.copy()
+        let tr = new AGPoint(this.frame.origin.x + this.frame.size.width,this.frame.origin.y)
+        let br = new AGPoint(this.frame.origin.x + this.frame.size.width,this.frame.origin.y + this.frame.size.height)
+        let bl = new AGPoint(this.frame.origin.x , this.frame.origin.y + this.frame.size.height)
+        return new AGPath([new AGPathItemLine(tl,tr),new AGPathItemLine(tr,br),new AGPathItemLine(br,bl),new AGPathItemLine(bl,tl)])
+    }
 }
 
 export class AGLabel extends AGWidget{
@@ -65,8 +75,15 @@ export class AGLink extends AGWidget{
         this.lineStop = lineStop
         this.widgetSrc = widgetSrc
         this.widgetDst = widgetDst
-        let keys = ['lineWidth','lineType','lineColor']
-        keys.forEach(k=>this[k]=opts[k])
+        this.lineWidth = 1
+        this.lineType = 'solid'
+        this.lineColor = new AGColor(0,0,0,1)
+        this.arrowSrcType = AGLink.arrowTypes.none
+        this.arrowDstType = AGLink.arrowTypes.none
+        let keys = ['lineWidth','lineType','lineColor','arrowSrcType','arrowDstType']
+        keys.forEach(k=> {
+            if (k in opts) this[k]=opts[k]
+        })
     }
 
     updatePoint(start,stop){
@@ -86,6 +103,11 @@ export class AGLink extends AGWidget{
         // super.drawLayer()
         AGDraw.canvas.drawLine(this,new AGLine(this.lineStart,this.lineStop))
     }
+}
+
+AGLink.arrowTypes = {
+    none:'none',
+    arrow:'arrow'
 }
 
 
@@ -124,12 +146,57 @@ export class AGVisualization{
     static createLinkByWidgets(widgetSrc,widgetDst){
         let tempStart = widgetSrc.center()
         let tempStop = widgetDst.center()
+        let oldLine = new AGPath([new AGPathItemLine(tempStart,tempStop)])
+        let intersectionsSrc = AGVisualization.getIntersections(oldLine,widgetSrc.toPath())
+        let intersectionsDst = AGVisualization.getIntersections(oldLine,widgetDst.toPath())
+        // console.log(intersectionsSrc,intersectionsDst)
         //update frame origin
         let origin = new AGPoint(Math.min(tempStart.x,tempStop.x),Math.min(tempStart.y,tempStop.y))
         let lineStart = tempStart.relative(origin)
         let lineStop = tempStop.relative(origin)
         let lineV = lineStop.relative(lineStart)
         return new AGLink(origin,new AGSize(lineV.x,lineV.y),lineStart,lineStop,widgetSrc,widgetDst)
+    }
+
+    static getIntersections(path1,path2){
+
+        function makeBezier(pathItem) {
+            let args = []
+            if (pathItem instanceof AGPathItemLine){
+                args.push(pathItem.points[0].x,pathItem.points[0].y,(pathItem.points[0].x+pathItem.points[1].x)/2+1,(pathItem.points[0].y+pathItem.points[1].y)/2+1,pathItem.points[1].x,pathItem.points[1].y)
+            }else{
+                throw new Error('unsupported path item')
+            }
+
+            return new Bezier(...args)
+        }
+        let intersections = []
+        for(let i=0;i<path1.pathItems.length;i++){
+            let pi1 = path1.pathItems[i]
+            let curve1 = makeBezier(pi1)
+            for(let j=0;j<path2.pathItems.length;j++){
+                let pi2 = path2.pathItems[j]
+                let curve2 = makeBezier(pi2)
+                //console.log(curve1.intersects(curve2))
+                intersections = intersections.concat(curve1.intersects(curve2).map(function(pair) {
+                    let t = pair.split("/").map(function(v) { return parseFloat(v); });
+                    return curve1.get(t[0])
+                }))
+            }
+        }
+        return intersections
+        // var curve = new Bezier(58, 173, 26, 28, 163, 104);
+        // var draw = function() {
+        //     drawSkeleton(curve);
+        //     drawCurve(curve);
+        //     var line = { p1: {x:0, y:175}, p2: {x:200,y:25} };
+        //     setColor("red");
+        //     drawLine(line.p1, line.p2);
+        //     setColor("black");
+        //     curve.intersects(line).forEach(function(t) {
+        //         drawPoint(curve.get(t));
+        //     });
+        // }
     }
 
     static appendUnique(elem,elems){
@@ -165,7 +232,15 @@ export class AGVisualization{
         let g = this.graph.layout()
         this.renderView.updateSize(g.width+100,g.height+100)
         this.graph.edges.forEach(e=>{
-            e.link && e.link.updatePoint(e.link.widgetSrc.center(),e.link.widgetDst.center())
+            let oldLine = new AGPath([new AGPathItemLine(e.link.widgetSrc.center(),e.link.widgetDst.center())])
+            let intersectionsSrc = AGVisualization.getIntersections(oldLine,e.link.widgetSrc.toPath())
+            let intersectionsDst = AGVisualization.getIntersections(oldLine,e.link.widgetDst.toPath())
+            //update frame origin
+            // e.link && e.link.updatePoint(e.link.widgetSrc.center(),e.link.widgetDst.center())
+            console.log(oldLine,e.link.widgetSrc.toPath(),intersectionsSrc,intersectionsDst)
+            let curStartPoint = intersectionsSrc[0]?new AGPoint(intersectionsSrc[0].x,intersectionsSrc[0].y):e.link.widgetSrc.center()
+            let curStopPoint = intersectionsDst[0]?new AGPoint(intersectionsDst[0].x,intersectionsDst[0].y):e.link.widgetDst.center()
+            e.link && e.link.updatePoint(curStartPoint,curStopPoint)
         })
     }
 }

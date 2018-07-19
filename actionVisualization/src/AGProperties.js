@@ -51,6 +51,34 @@ export class AGFont{
     }
 }
 
+export class AGPathItem{
+    constructor(type=AGPathItem.pathItemTypes.line,points=[]){
+        this.type = type
+        this.points = points
+    }
+
+
+}
+
+AGPathItem.pathItemTypes = {
+    line:'line',
+    quadratic:'quadratic',
+    cubic:'cubic'
+}
+
+
+export class AGPathItemLine extends AGPathItem{
+    constructor(statPoint,stopPoint){
+        super(AGPathItem.pathItemTypes.line,[statPoint,stopPoint])
+    }
+}
+
+export class AGPath{
+    constructor(pathItems=[]){
+        this.pathItems = pathItems
+    }
+}
+
 export class AGShape{
     constructor(){
         this.fillStyle = new AGColor()
@@ -59,6 +87,10 @@ export class AGShape{
 
     //包围盒
     getBoundingBox(){
+
+    }
+
+    toPath(){
 
     }
 

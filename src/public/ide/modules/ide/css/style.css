@@ -575,7 +575,7 @@ a,a:hover{
     font-weight: 700;
 }
 
-#simulator-wrapper{
+#simulator-wrapper,#actionVisualization-wrapper{
     position:absolute;
     min-width:1050px;
     min-height:660px;

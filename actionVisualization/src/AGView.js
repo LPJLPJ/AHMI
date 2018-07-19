@@ -39,7 +39,7 @@ export class AGView {
 
         this.hidden = false
         this.alpha = 1.0
-        this.backgroundColor = new AGColor(255,0,0,1.0)
+        this.backgroundColor = new AGColor(255,255,255,1.0)
         this.canTouch = true
         let optKeys = ['hidden','alpha','backgroundColor','canTouch']
         optKeys.forEach(k=>{

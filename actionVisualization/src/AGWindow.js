@@ -40,8 +40,8 @@ export class AGWindow{
         this.rootView = rootView
         this.domElem.appendChild(rootView.layer)
         rootView.layer.style.position = 'absolute'
-        rootView.layer.style.left = rootView.frame.origin.x
-        rootView.layer.style.top = rootView.frame.origin.y
+        rootView.layer.style.left = rootView.frame.origin.x +'px'
+        rootView.layer.style.top = rootView.frame.origin.y + 'px'
     }
 
     static copyMouseEvent(e){
