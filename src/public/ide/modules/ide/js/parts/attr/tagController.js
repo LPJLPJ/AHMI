@@ -237,8 +237,6 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 }
                 //将tag加入到该标签中
                 $scope.component.tagClasses[i].tagArray.push(tag);
-                TagService.syncTagClasses($scope.component.tagClasses);
-                $scope.$emit('ChangeCurrentTags');
                 return;
             }
         }
@@ -505,7 +503,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 }
             }
         }
-        TagService.syncTagClasses($scope.component.tagClasses);
+        TagService.deleteTag(name);
         $scope.$emit('ChangeCurrentTags');
     }
 
