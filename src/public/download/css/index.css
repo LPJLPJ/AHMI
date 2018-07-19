@@ -126,3 +126,7 @@ html,body{
 .download-more-anchor:hover{
     cursor:pointer;
 }
+
+th,tr{
+    text-align: center;
+}
