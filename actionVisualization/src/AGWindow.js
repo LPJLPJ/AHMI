@@ -32,8 +32,9 @@ export class AGWindow{
         this.domElem.style.position = 'relative'
         this.domElem.style.padding = 0
         this.domElem.style.margin = 0
-        this.domElem.style.width = this.width+'px'
-        this.domElem.style.height = this.height+'px'
+        this.domElem.style['min-width'] = this.width+'px'
+        this.domElem.style['min-height'] = this.height+'px'
+        this.domElem.style.width = '100%'
     }
 
     addRootView(rootView){
@@ -42,6 +43,8 @@ export class AGWindow{
         rootView.layer.style.position = 'absolute'
         rootView.layer.style.left = rootView.frame.origin.x +'px'
         rootView.layer.style.top = rootView.frame.origin.y + 'px'
+        rootView.layer.style.width = '100%'
+        // rootView.layer.style.height = '100'
     }
 
     static copyMouseEvent(e){

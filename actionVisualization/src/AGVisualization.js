@@ -64,7 +64,7 @@ export class AGLabel extends AGWidget{
 
     drawLayer(){
         super.drawLayer()
-        AGDraw.canvas.drawText(this,new AGText(new AGPoint(this.bounds.origin.x+0.5*this.bounds.size.width,this.bounds.origin.y+0.5*this.bounds.size.height),this.text))
+        AGDraw.canvas.drawText(this,new AGText(new AGPoint(this.bounds.origin.x+0.5*this.bounds.size.width,this.bounds.origin.y+0.5*this.bounds.size.height),this.text,this.font))
     }
 }
 
@@ -237,7 +237,7 @@ export class AGVisualization{
             let intersectionsDst = AGVisualization.getIntersections(oldLine,e.link.widgetDst.toPath())
             //update frame origin
             // e.link && e.link.updatePoint(e.link.widgetSrc.center(),e.link.widgetDst.center())
-            console.log(oldLine,e.link.widgetSrc.toPath(),intersectionsSrc,intersectionsDst)
+            //console.log(oldLine,e.link.widgetSrc.toPath(),intersectionsSrc,intersectionsDst)
             let curStartPoint = intersectionsSrc[0]?new AGPoint(intersectionsSrc[0].x,intersectionsSrc[0].y):e.link.widgetSrc.center()
             let curStopPoint = intersectionsDst[0]?new AGPoint(intersectionsDst[0].x,intersectionsDst[0].y):e.link.widgetDst.center()
             e.link && e.link.updatePoint(curStartPoint,curStopPoint)
@@ -253,6 +253,8 @@ export class AGVGraph{
         this.edges = []
         this.layoutObj = new AGLayoutDefault({
             rankdir:'LR',
+            // ranker:'longest-path',
+            // ranksep:0,
             marginx:50,
             marginy:50
         })

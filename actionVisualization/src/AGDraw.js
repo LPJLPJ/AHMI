@@ -163,7 +163,8 @@ let AGDraw = {
                 return
             }
             ctx.save()
-            ctx.fillStyle = convertAGColor(shape.font.color)
+            ctx.fillStyle = convertAGColor(shape.font.fontColor)
+            // ctx.strokeStyle = convertAGColor(shape.font.color)
             ctx.textAlign = shape.textAlign
             ctx.textBaseline = shape.textBaseline
 

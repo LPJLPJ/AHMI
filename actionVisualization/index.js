@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 
 import {AGView} from "./src/AGView";
-import {AGPoint,AGRect,AGSize,AGColor,AGLine,AGText} from "./src/AGProperties";
+import {AGPoint,AGRect,AGSize,AGColor,AGLine,AGText,AGFont} from "./src/AGProperties";
 import {AGWindow} from "./src/AGWindow";
 import AGDraw from "./src/AGDraw"
 
@@ -19,7 +19,7 @@ class ActionVisualizer extends React.Component{
         this.state= {
             colors:{
                 tag:new AGColor(0,255,0,1),
-                timer:new AGColor(0,0,255,1),
+                timer:new AGColor(0,255,255,1),
                 action:new AGColor(255,0,0,1),
                 command:new AGColor(255,255,0,1),
                 default:new AGColor(255,255,255,1)
@@ -29,19 +29,45 @@ class ActionVisualizer extends React.Component{
 
     renderGraph(){
         let viewWindow = new AGWindow(1000,1000,this.container)
-        let rootView = new AGView(new AGPoint(50,50),new AGSize(800,800))
+        let rootView = new AGView(new AGPoint(0,0),new AGSize(800,800))
         rootView.initLayer()
         viewWindow.addRootView(rootView)
         let agv = new AGVisualization(rootView)
 
+
+
         //init nodes
         let data = this.props.data
         let nodeW = 100
+        let actionNodeW = 150
         let nodeH = 40
         let self = this
+        //labels
+        let indicatorW=40,indicatorH=40,indicatorD = 5
+        let elemLabel = new AGLabel(new AGPoint(0,indicatorD),new AGSize(indicatorW,indicatorH),'元素',undefined,{
+            backgroundColor:self.state.colors.default
+        })
+        let tagLabel = new AGLabel(new AGPoint(indicatorD+indicatorW,indicatorD),new AGSize(indicatorW,indicatorH),'tag',undefined,{
+            backgroundColor:self.state.colors.tag
+        })
+        let timerLabel = new AGLabel(new AGPoint(2*(indicatorW+indicatorD),indicatorD),new AGSize(indicatorW,indicatorH),'timer',undefined,{
+            backgroundColor:self.state.colors.timer
+        })
+        let actionLabel = new AGLabel(new AGPoint(3*(indicatorW+indicatorD),indicatorD),new AGSize(indicatorW,indicatorH),'动作',undefined,{
+            backgroundColor:self.state.colors.action
+        })
+        let commandLabel = new AGLabel(new AGPoint(4*(indicatorW+indicatorD),indicatorD),new AGSize(indicatorW,indicatorH),'指令',undefined,{
+            backgroundColor:self.state.colors.command
+        })
+        agv.addWidgetView(elemLabel)
+        agv.addWidgetView(timerLabel)
+        agv.addWidgetView(tagLabel)
+        agv.addWidgetView(actionLabel)
+        agv.addWidgetView(commandLabel)
         //project
         let projectWidget  = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),data.name)
         agv.addWidgetNode(projectWidget)
+        data.node = projectWidget
         //tags
         data.tag = '当前页面序号'
         for(let i=0;i<data.tagList.length;i++){
@@ -52,6 +78,7 @@ class ActionVisualizer extends React.Component{
             agv.addWidgetNode(curTagWidget)
             // agv.linkWidgets(projectWidget,curTagWidget)
         }
+        // setTagLink(data,false)
         //timers
         let timerList = [];
         // var postfix = ['Start','Stop','Step','Interval','CurVal','Mode'];
@@ -123,7 +150,7 @@ class ActionVisualizer extends React.Component{
             if (elem && elem.actions && elem.actions.length){
                 for(let i=0;i<elem.actions.length;i++){
                     let curAction = elem.actions[i]
-                    let curActionWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),curAction.title,undefined,{
+                    let curActionWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),curAction.title+': '+curAction.trigger,undefined,{
                         backgroundColor:self.state.colors.action
                     })
                     curAction.node = curActionWidget
@@ -159,8 +186,8 @@ class ActionVisualizer extends React.Component{
                     for(let i=0;i<action.commands.length;i++){
                         let curCmd = action.commands[i]
                         //add curCmd
-                        let curCmdName = curCmd[0].name +' '+(curCmd[1].tag?curCmd[1].tag:curCmd[1].value)+' '+(curCmd[2].tag?curCmd[2].tag:curCmd[2].value)
-                        let curCmdWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),curCmdName,undefined,{
+                        let curCmdName = curCmd[0].symbol +' '+(curCmd[1].tag?curCmd[1].tag:curCmd[1].value)+' '+(curCmd[2].tag?curCmd[2].tag:curCmd[2].value)
+                        let curCmdWidget = new AGLabel(new AGPoint(),new AGSize(actionNodeW,nodeH),curCmdName,undefined,{
                             backgroundColor:self.state.colors.command
                         })
                         agv.addWidgetNode(curCmdWidget)
@@ -169,6 +196,11 @@ class ActionVisualizer extends React.Component{
                         if (curCmd){
                             switch (curCmd[0].name){
                                 //op
+                                case 'IF':
+                                case 'WHILE':
+                                case 'ELSE':
+                                case 'END':
+                                    break;
                                 case 'SET_TIMER_START':
                                 case 'SET_TIMER_STOP':
                                 case 'SET_TIMER_INTERVAL':
@@ -196,12 +228,30 @@ class ActionVisualizer extends React.Component{
 
                                     }
                                     break;
+                                case 'GOTO':
+                                    let paramTag = findTagByName(data.tag)
+
+                                    if (paramTag){
+                                        agv.linkWidgets(curCmdWidget,paramTag.node)
+                                    }
+                                    paramTag = getTagByParam(curCmd[2])
+                                    if (paramTag){
+                                        agv.linkWidgets(paramTag.node,curCmdWidget)
+                                    }else{
+                                        //link page
+                                        let pageNum = parseInt(curCmd[2].value)
+                                        if(pageNum&&data.pageList[pageNum-1]){
+                                            agv.linkWidgets(curCmdWidget,data.pageList[pageNum-1].node)
+                                        }
+                                    }
+
+
+                                    break;
                                 default:
                                     for(let j=0;j<2;j++){
                                         let paramTag = getTagByParam(curCmd[j+1])
-                                        console.log(paramTag)
                                         if (paramTag){
-                                            agv.linkWidgets(curCmdWidget,paramTag.node)
+                                            j===0?agv.linkWidgets(curCmdWidget,paramTag.node):agv.linkWidgets(paramTag.node,curCmdWidget)
                                         }
                                     }
 
@@ -214,14 +264,15 @@ class ActionVisualizer extends React.Component{
             }
         }
 
-        function setTagLink(elem) {
+        function setTagLink(elem,direction) {
+            direction = !!direction
             if (elem && elem.tag){
                 let timerId = findTimerIdByTag(elem.tag)
                 if (timerId!==null){
                     //timer
                     for(let j=0;j<timerList.length;j++){
                         if (timerList[j].id === timerId){
-                            agv.linkWidgets(elem.node,timerList[j].node)
+                            direction?agv.linkWidgets(elem.node,timerList[j].node):agv.linkWidgets(timerList[j].node,elem.node)
                             break;
                         }
                     }
@@ -230,7 +281,7 @@ class ActionVisualizer extends React.Component{
                     for(let j=0;j<data.tagList.length;j++){
                         if (data.tagList[j].name === elem.tag){
                             //hit
-                            agv.linkWidgets(elem.node,data.tagList[j].node)
+                            direction?agv.linkWidgets(elem.node,data.tagList[j].node):agv.linkWidgets(data.tagList[j].node,elem.node)
                         }
                     }
                 }
@@ -239,11 +290,11 @@ class ActionVisualizer extends React.Component{
         //pages
         for(let i=0;i<data.pageList.length;i++){
             let curPage = data.pageList[i]
-            let curPageWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),curPage.name)
+            let curPageWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),(i+1)+': '+curPage.name)
             curPage.node = curPageWidget
             agv.addWidgetNode(curPageWidget)
             agv.linkWidgets(projectWidget,curPageWidget)
-            setTagLink(curPage)
+            setTagLink(curPage,false)
             //canvas
             if (curPage.canvasList && curPage.canvasList.length){
                for(let j=0;j<curPage.canvasList.length;j++){
@@ -252,7 +303,7 @@ class ActionVisualizer extends React.Component{
                    curC.node = curCWidget
                    agv.addWidgetNode(curCWidget)
                    agv.linkWidgets(curPageWidget,curCWidget)
-                   setTagLink(curC)
+                   setTagLink(curC,false)
                    //subcanvas
                    if (curC.subCanvasList&&curC.subCanvasList.length){
                         for(let k=0;k<curC.subCanvasList.length;k++){
@@ -261,7 +312,7 @@ class ActionVisualizer extends React.Component{
                             curSC.node = curSCWidget
                             agv.addWidgetNode(curSCWidget)
                             agv.linkWidgets(curCWidget,curSCWidget)
-                            setTagLink(curSC)
+                            setTagLink(curSC,false)
                             //widgets
                             if (curSC.widgetList&&curSC.widgetList.length){
                                 for(let h=0;h<curSC.widgetList.length;h++){
@@ -270,7 +321,7 @@ class ActionVisualizer extends React.Component{
                                     curWidget.node = curWidgetWidget
                                     agv.addWidgetNode(curWidgetWidget)
                                     agv.linkWidgets(curSCWidget,curWidgetWidget)
-                                    setTagLink(curWidget)
+                                    setTagLink(curWidget,false)
                                 }
                             }
                         }
@@ -316,7 +367,7 @@ class ActionVisualizer extends React.Component{
             var t = pair.split("/").map(function(v) { return parseFloat(v); });
             return curve.get(t[0])
         });
-        console.log(points)
+        // console.log(points)
 
 
     }
