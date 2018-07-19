@@ -284,7 +284,7 @@ add:
     2. project category
     3. resources.html
     4. compatibility check
-    
+    5. download localIDE, sim_gen_all
    
 fix:
     1. upload zip file bug
@@ -298,3 +298,4 @@ update:
     5. tagString default encoding:utf-8
     6. tag list chart
     7. render pure color pointer for dashboard
+    8. gulp watch:modified
