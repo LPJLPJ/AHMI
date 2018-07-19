@@ -259,7 +259,7 @@ add:
     11. mask
     12. IDE multi version
     13. absolute position
-    14. 
+   
 fix:
     1. files can't compress
     2. tags bug
@@ -282,10 +282,19 @@ update:
 add:
     1. tag string support
     2. project category
+    3. resources.html
+    4. compatibility check
+    
    
 fix:
+    1. upload zip file bug
+    2. timer count
+    3. git ignore
 update:
     1. gulp dev watch
     2. local ide generate hash zip file
     3. add zip file validator
     4. newbie guide
+    5. tagString default encoding:utf-8
+    6. tag list chart
+    7. render pure color pointer for dashboard

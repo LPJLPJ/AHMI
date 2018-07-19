@@ -4,7 +4,7 @@ var url = require('url')
 var qs  = require('qs')
 var login = {};
 login.get = function(req, res){
-    console.log('login user',req.session.user);
+    // console.log('login user',req.session.user);
     if (req.session.user){
         var urlQuery = url.parse(req.url).query
         if (urlQuery){
@@ -34,7 +34,7 @@ login.get = function(req, res){
 
 login.logout = function(req, res){
 	req.session.user = null
-    console.log('logout',req.session.user)
+    // console.log('logout',req.session.user)
 	res.redirect('/user/login')
 };
 
