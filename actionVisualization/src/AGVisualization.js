@@ -1,11 +1,35 @@
 import {AGView} from "./AGView";
-import {AGPoint, AGRect, AGSize, AGColor, AGLine, AGText, AGFont, AGPath, AGPathItemLine} from "./AGProperties";
+import {
+    AGPoint, AGRect, AGSize, AGColor, AGLine, AGText, AGFont, AGPath, AGPathItemLine,
+    AGPathItemCubicCurve, AGPathItemQuadraticCurve
+} from "./AGProperties";
 import {AGWindow} from "./AGWindow";
 import AGDraw from "./AGDraw"
 
 import {AGNode,AGEdge,AGLayoutDefault} from "./AGLayout";
 
 import Bezier from 'bezier-js'
+//fix utils bug
+let utils = Bezier.getUtils()
+utils.bboxoverlap = function(b1, b2) {
+    var dims = ["x", "y"],
+        len = dims.length,
+        i,
+        dim,
+        l,
+        t,
+        d;
+    for (i = 0; i < len; i++) {
+        dim = dims[i];
+        l = b1[dim].mid;
+        t = b2[dim].mid;
+        d = (b1[dim].size + b2[dim].size) / 2;
+        if (Math.abs(l - t) > d) {
+            return false;
+        }
+    }
+    return true;
+}
 
 export class AGWidget extends AGView{
     constructor(origin,size,opts={}){
@@ -159,44 +183,110 @@ export class AGVisualization{
     }
 
     static getIntersections(path1,path2){
-
-        function makeBezier(pathItem) {
-            let args = []
-            if (pathItem instanceof AGPathItemLine){
-                args.push(pathItem.points[0].x,pathItem.points[0].y,(pathItem.points[0].x+pathItem.points[1].x)/2+1,(pathItem.points[0].y+pathItem.points[1].y)/2+1,pathItem.points[1].x,pathItem.points[1].y)
-            }else{
-                throw new Error('unsupported path item')
-            }
-
-            return new Bezier(...args)
-        }
         let intersections = []
         for(let i=0;i<path1.pathItems.length;i++){
             let pi1 = path1.pathItems[i]
-            let curve1 = makeBezier(pi1)
+
             for(let j=0;j<path2.pathItems.length;j++){
                 let pi2 = path2.pathItems[j]
-                let curve2 = makeBezier(pi2)
-                //console.log(curve1.intersects(curve2))
-                intersections = intersections.concat(curve1.intersects(curve2).map(function(pair) {
-                    let t = pair.split("/").map(function(v) { return parseFloat(v); });
-                    return curve1.get(t[0])
-                }))
+                if ((pi1 instanceof AGPathItemLine) && (pi2 instanceof AGPathItemLine)){
+                    intersections = intersections.concat(AGVisualization.getIntersectionByLineItemAndLineItem(pi1,pi2))
+                }else if (pi1 instanceof AGPathItemLine){
+                    intersections = intersections.concat(AGVisualization.getIntersectionByLineItemAndCurveItem(pi1,pi2))
+                }else if (pi2 instanceof AGPathItemLine){
+                    intersections = intersections.concat(AGVisualization.getIntersectionByLineItemAndCurveItem(pi2,pi1))
+                }else{
+                    intersections = intersections.concat(AGVisualization.getIntersectionByCurveItemAndCurveItem(pi1,pi2))
+                }
             }
         }
         return intersections
-        // var curve = new Bezier(58, 173, 26, 28, 163, 104);
-        // var draw = function() {
-        //     drawSkeleton(curve);
-        //     drawCurve(curve);
-        //     var line = { p1: {x:0, y:175}, p2: {x:200,y:25} };
-        //     setColor("red");
-        //     drawLine(line.p1, line.p2);
-        //     setColor("black");
-        //     curve.intersects(line).forEach(function(t) {
-        //         drawPoint(curve.get(t));
-        //     });
-        // }
+    }
+
+    static makeBezier(pathItem) {
+        let args = []
+        if (pathItem instanceof AGPathItemCubicCurve){
+            args.push(pathItem.points[0].x,pathItem.points[0].y,pathItem.points[1].x,pathItem.points[1].y,pathItem.points[2].x,pathItem.points[2].y)
+        }else if(pathItem instanceof AGPathItemQuadraticCurve){
+            args.push(pathItem.points[0].x,pathItem.points[0].y,pathItem.points[1].x,pathItem.points[1].y,pathItem.points[2].x,pathItem.points[2].y)
+        }else{
+            throw new Error('unsupported path item')
+        }
+
+        return new Bezier(...args)
+    }
+
+
+    static getIntersectionByLineItemAndLineItem(pi1,pi2){
+        let x1 = pi1.points[0].x
+        let y1 = pi1.points[0].y
+        let x2 = pi1.points[1].x
+        let y2 = pi1.points[1].y
+        let x3 = pi2.points[0].x
+        let y3 = pi2.points[0].y
+        let x4 = pi2.points[1].x
+        let y4 = pi2.points[1].y
+        let x0=0,y0=0
+        let intersections = []
+        let d = (y4-y3)*(x2-x1) - (y2-y1)*(x4-x3)
+
+        if (!!d){
+            let a = y1 - y3;
+            let b = x1 - x3;
+            let numerator1 = ((x4 - x3) * a) - ((y4 - y3) * b);
+            let numerator2 = ((x2 - x1) * a) - ((y2 - y1) * b);
+            a = numerator1 / d;
+            b = numerator2 / d;
+
+
+            x0 = x1 + (a * (x2 - x1));
+            y0 = y1 + (a * (y2 - y1));
+
+            if (a >= 0 && a <=1 && b>=0&&b<=1) {
+                //hit
+                intersections.push({
+                    x:x0,
+                    y:y0
+                })
+            }
+
+
+        }
+        return intersections
+    }
+
+    static getIntersectionByLineItemAndCurveItem(pi1,pi2){
+        let intersections = []
+        let curve1 = {
+            p1:{
+                x:pi1.points[0].x,
+                y:pi1.points[0].y
+            },
+            p2:{
+                x:pi1.points[1].x,
+                y:pi1.points[1].y
+            }
+        }
+
+        let curve2 = AGVisualization.makeBezier(pi2)
+        //console.log(curve1.intersects(curve2))
+        intersections = intersections.concat(curve2.intersects(curve1).map(function(t) {
+            return curve2.get(t)
+        }))
+        return intersections
+    }
+
+    static getIntersectionByCurveItemAndCurveItem(pi1,pi2){
+        let intersections = []
+        let curve1 = AGVisualization.makeBezier(pi1)
+
+        let curve2 = AGVisualization.makeBezier(pi2)
+        //console.log(curve1.intersects(curve2))
+        intersections = intersections.concat(curve1.intersects(curve2).map(function(pair) {
+            let t = pair.split("/").map(function(v) { return parseFloat(v); });
+            return curve1.get(t[0])
+        }))
+        return intersections
     }
 
     static appendUnique(elem,elems){
@@ -235,6 +325,10 @@ export class AGVisualization{
             let oldLine = new AGPath([new AGPathItemLine(e.link.widgetSrc.center(),e.link.widgetDst.center())])
             let intersectionsSrc = AGVisualization.getIntersections(oldLine,e.link.widgetSrc.toPath())
             let intersectionsDst = AGVisualization.getIntersections(oldLine,e.link.widgetDst.toPath())
+            console.log(intersectionsSrc,intersectionsDst)
+            if (!intersectionsSrc.length){
+                AGVisualization.getIntersections(oldLine,e.link.widgetSrc.toPath())
+            }
             //update frame origin
             // e.link && e.link.updatePoint(e.link.widgetSrc.center(),e.link.widgetDst.center())
             //console.log(oldLine,e.link.widgetSrc.toPath(),intersectionsSrc,intersectionsDst)

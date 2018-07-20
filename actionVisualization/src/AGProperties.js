@@ -73,6 +73,18 @@ export class AGPathItemLine extends AGPathItem{
     }
 }
 
+export class AGPathItemQuadraticCurve extends AGPathItem{
+    constructor(statPoint,controlPoint,stopPoint){
+        super(AGPathItem.pathItemTypes.quadratic,[statPoint,controlPoint,stopPoint])
+    }
+}
+
+export class AGPathItemCubicCurve extends AGPathItem{
+    constructor(statPoint,controlPoint,controlPoint2,stopPoint){
+        super(AGPathItem.pathItemTypes.cubic,[statPoint,controlPoint,controlPoint2,stopPoint])
+    }
+}
+
 export class AGPath{
     constructor(pathItems=[]){
         this.pathItems = pathItems
