@@ -6,8 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:webpack": "cd simulator && webpack -p",
-    "build": "npm run build:webpack && cross-env  NODE_ENV=production gulp build",
+    "build:actionV":"cd actionVisualization && webpack -p",
+    "build": "npm run build:webpack && npm run build:actionV && cross-env  NODE_ENV=production gulp build",
     "start:webpack": "cd simulator && webpack",
+    "start:actionV":"cd actionVisualization && webpack",
     "start:build": "cross-env NODE_ENV=development  gulp build",
     "start:dev": "cross-env NODE_ENV=development gulp dev"
   },
