@@ -91,12 +91,14 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     openProject: openProject,
                     generateDataFile: generateDataFile,
                     play: play,
+                    showActionVisualization:showActionVisualization,
                     openPanel: openPanel,
                     openShare: openShare,
                     openValidate:openValidate,
                     openCANPanel: openCANPanel,
                     runSimulator: runSimulator,
                     closeSimulator: closeSimulator,
+                    closeActionVisualizer:closeActionVisualizer,
                     saveProject: saveProject.bind(null, null, true),
                     saveProjectAs: saveProjectAs,
                     showLeft: showLeft,
@@ -108,6 +110,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 },
                 simulator: {
                     show: false
+                },
+                actionVisualization:{
+                    show:false
                 }
             };
 
@@ -1223,6 +1228,17 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         }
 
+        function showActionVisualization(){
+            var temp = {};
+            ProjectService.getProjectCopyTo(temp);
+            temp.project = ProjectTransformService.transDataFile(temp.project,{rawAction:true});
+            temp.project.tagList = TagService.getAllTags();
+            temp.project.timers = TagService.getTimerNum();
+
+            window.rawProject = temp.project;
+            $scope.component.actionVisualization.show = true
+        }
+
         function closeSimulator() {
 
             $scope.component.simulator.show = false;
@@ -1231,6 +1247,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function runSimulator() {
             // console.log(window.runSimulator);
+        }
+
+        function closeActionVisualizer() {
+            $scope.component.actionVisualization.show = false;
         }
 
 
