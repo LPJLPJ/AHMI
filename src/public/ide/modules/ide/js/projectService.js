@@ -422,6 +422,9 @@ ideServices
                     if (page.backgroundImage){
                         names.push(page.backgroundImage);
                     }
+                    if (page.matte.info.backgroundImg){
+                        names.push(page.matte.info.backgroundImg);
+                    }
                     _.forEach(page.layers,function (layer) {
                         _.forEach(layer.subLayers,function (subLayer) {
                             if (subLayer.backgroundImage){
@@ -432,7 +435,6 @@ ideServices
                                     _.forEach(tex.slices,function (slice) {
                                         if (slice.imgSrc){
                                             names.push(slice.imgSrc);
-
                                         }
                                     })
                                 })
