@@ -189,18 +189,29 @@ gulp.task('buildAll',function () {
 
 gulp.task('build',['buildAll'])
 
+gulp.task('watch:modified',function () {
+    gulp.src([srcBaseUrl+'**/*'],{base:srcBaseUrl})
+        .pipe(watch([srcBaseUrl+'**/*'],{base:srcBaseUrl,verbose:true}))
+        .pipe(gulp.dest('./'))
+
+    gulp.src(['./public/ide/modules/ide/js/**/*.js'],{base:'./public/ide/modules/ide/js'})
+        .pipe(watch(['./public/ide/modules/ide/js/**/*.js'],{base:'./public/ide/modules/ide/js',verbose:true}))
+        .pipe(gulp.dest('./public/ide/modules/ide/min-js/'))
+})
+
 gulp.task('dev',function () {
     runSequence(
         'transferBeforeCompress',
         // 'compressALL',
-        'copyJStoMin'
+        'copyJStoMin',
+        'watch:modified'
     );
-    console.log('watch files ...')
-    return gulp.watch([srcBaseUrl+'**/*'],{base:srcBaseUrl}, function(event) {
-        runSequence(
-            'transferBeforeCompress',
-            // 'compressALL',
-            'copyJStoMin'
-        );
-    });
+    // return gulp.watch([srcBaseUrl+'**/*'],{base:srcBaseUrl}, function(event) {
+    //     runSequence(
+    //         'transferBeforeCompress',
+    //         // 'compressALL',
+    //         'copyJStoMin'
+    //     );
+    // });
+
 })
