@@ -422,7 +422,7 @@ ideServices
                     if (page.backgroundImage){
                         names.push(page.backgroundImage);
                     }
-                    if (page.matte.info.backgroundImg){
+                    if (page.matte&&page.matte.info.backgroundImg){
                         names.push(page.matte.info.backgroundImg);
                     }
                     _.forEach(page.layers,function (layer) {
