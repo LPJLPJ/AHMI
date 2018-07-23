@@ -269,9 +269,14 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tags = project.customTags;
-        tags.forEach(function (tag) {
+        tags.forEach(function (tag,index) {
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
+            }
+
+            var pattern = /SysTmr_/;
+            if(pattern.test(tag.name)){
+                tags.splice(index,1);
             }
         });
 
