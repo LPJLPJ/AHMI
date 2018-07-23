@@ -150,6 +150,7 @@ $(function(){
     //versionOptions
     if(!local){
         var $versionSelector = $('#basicinfo-ideversion')
+        // $versionSelector.html($('<option value="">'+'--'+'</option>'))
         $.ajax({
             type:'GET',
             url:'/api/versions',
@@ -546,6 +547,7 @@ $(function(){
             template.val(project.template);
             template.attr('disabled',true);
             ideVersion.val(project.ideVersion);
+            ideVersion.trigger('change')
             supportTouch.val(project.supportTouch);
             supportTouch.attr('disabled',true);
         }else if (curNodeName == 'I'){
@@ -580,6 +582,7 @@ $(function(){
          var resolution = $('#basicinfo-resolution');
          var customWidth = $('#customWidth');
          var customHeight = $('#customHeight');
+         var ideVersion = $('#basicinfo-ideversion')
          var template = $('#basicinfo-template');
          var supportTouch = $('#basicinfo-supportTouch');
          title.val(project.name);
@@ -594,6 +597,8 @@ $(function(){
              customWidth.val(arr[0]);
              customHeight.val(arr[1]);
          }
+         ideVersion.val(project.ideVersion)
+         ideVersion.trigger('change')
          template.val(project.template);
          template.attr('disabled',true);
          supportTouch.val(project.supportTouch);
@@ -650,6 +655,9 @@ $(function(){
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         $('#basicinfo-resolution').val('800*480');
+        $('#basicinfo-ideversion').val('');
+        //trigger change
+        $('#basicinfo-ideversion').trigger('change')
         $('#basicinfo-customResolution').hide();
         $('#customWidth').val('');
         $('#customHeight').val('');
