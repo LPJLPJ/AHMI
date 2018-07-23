@@ -108,6 +108,16 @@ export class AGView {
         childView.parent = this
     }
 
+    removeChildView(childView){
+        for(let i=0;i<this.children.length;i++){
+            if (this.children[i]===childView){
+                childView.parent = null
+                this.children.splice(i,1)
+                return
+            }
+        }
+    }
+
     draw(){
         this.drawLayer()
         this.children.forEach(c=>c.draw())

@@ -87,6 +87,9 @@ let AGDraw = {
         //     ctx.restore()
         // }
         initLayer(view,id){
+            if (view.layer){
+                view.layer = null
+            }
             if(id){
                 view.layer = document.getElementById(id)
             }else{
@@ -156,6 +159,10 @@ let AGDraw = {
             ctx.restore()
             ctx.restore()
         },
+        drawBrokenLine(view,line1,line2){
+            this.drawLine(view,line1)
+            this.drawLine(view,line2)
+        },
         drawText(view,shape){
             let ctx = getViewContext(view)
             if (!ctx){
@@ -165,6 +172,7 @@ let AGDraw = {
             ctx.save()
             ctx.fillStyle = convertAGColor(shape.font.fontColor)
             // ctx.strokeStyle = convertAGColor(shape.font.color)
+            ctx.font = shape.font.fontSize+'px'+' '+ '"'+shape.font.fontFamily +'"'
             ctx.textAlign = shape.textAlign
             ctx.textBaseline = shape.textBaseline
 

@@ -40,7 +40,7 @@ export class AGColor{
 
 //shapes
 export class AGFont{
-    constructor(fontFamily='Arial',fontSize=24,fontColor=new AGColor(0,0,0,1)){
+    constructor(fontFamily='Arial',fontSize=8,fontColor=new AGColor(0,0,0,1)){
         this.fontFamily = fontFamily
         this.fontSize = fontSize
         this.fontColor = fontColor

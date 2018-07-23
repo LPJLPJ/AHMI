@@ -13,9 +13,13 @@ export class AGWindow{
         if (typeof id === 'string'){
             this.domElem = document.getElementById(id)
         }else{
-            console.log(id)
             this.domElem = id
         }
+        this.domElem.innerHTML = ''
+        this.layer = document.createElement('canvas')
+        this.layer.width = this.width
+        this.layer.height = this.height
+        this.domElem.appendChild(this.layer)
 
         //reset domElem style
         this.resetDomElemStyle()
@@ -39,12 +43,50 @@ export class AGWindow{
 
     addRootView(rootView){
         this.rootView = rootView
-        this.domElem.appendChild(rootView.layer)
+        // this.domElem.appendChild(rootView.layer)
         rootView.layer.style.position = 'absolute'
         rootView.layer.style.left = rootView.frame.origin.x +'px'
         rootView.layer.style.top = rootView.frame.origin.y + 'px'
-        rootView.layer.style.width = '100%'
+        // rootView.layer.style.display = 'none'
+        // rootView.layer.style.width = '100%'
         // rootView.layer.style.height = '100'
+    }
+
+    display(opts={}){
+        let self = this
+        let ctx = self.layer.getContext('2d')
+        let curScale = opts.scale || 1.0
+        curScale = 1.0/curScale
+        function limitValueIn(v,min,max) {
+            if (v<min){
+                v = min
+            }else if (v>max){
+                v = max
+            }
+            return v
+        }
+        ctx.save()
+        ctx.save()
+        ctx.fillStyle = 'gray'
+        ctx.fillRect(0,0,self.layer.width,self.layer.height)
+        ctx.restore()
+        ctx.fillText("hello world",self.layer.width/2,self.layer.height/2)
+        // console.log('display',self.rootView.frame.origin.x, self.rootView.frame.origin.y)
+        let rPos = (new AGPoint()).relative(self.rootView.frame.origin)
+        let dx = rPos.x*curScale
+        let dy = rPos.y*curScale
+        let dw = self.layer.width*curScale
+        let dh = self.layer.height*curScale
+        let dxr = dx+dw
+        let dyb = dy + dh
+        let dx2 = limitValueIn(dx,0,self.rootView.layer.width)
+        let dy2 = limitValueIn(dy,0,self.rootView.layer.height)
+        let dxr2 = limitValueIn(dxr,0,self.rootView.layer.width)
+        let dyb2 = limitValueIn(dyb,0,self.rootView.layer.height)
+        dw = dxr2-dx2
+        dh = dyb2 -dy2
+        ctx.drawImage(self.rootView.layer,dx2,dy2,dw||1,dh||1,(dx2-dx)/curScale,(dy2-dy)/curScale,dw/curScale,dh/curScale)
+        ctx.restore()
     }
 
     static copyMouseEvent(e){
@@ -71,17 +113,107 @@ export class AGWindow{
         }
     }
 
+    // initEventListen(){
+    //     let self = this
+    //     this.domElem.addEventListener('mousedown',function (e) {
+    //         for(let key in e){
+    //             if (e.hasOwnProperty(key)){
+    //                 console.log(key)
+    //             }
+    //         }
+    //         let pos = AGWindow.getPointPos(e)
+    //         let hitResult = self.getHitView(pos,self.rootView)
+    //         if (hitResult){
+    //             this.currentView = hitResult.hitView
+    //             this.mouseDownView = hitResult.hitView
+    //             e.innerPos = hitResult.relativePos
+    //             //trigger view's mousedown
+    //             let eventManager = AGEventManager.getEventManager()
+    //             eventManager.dispatch(this.currentView,new AGEvent('mousedown',AGWindow.copyMouseEvent(e)))
+    //
+    //         }
+    //     })
+    //
+    //     this.domElem.addEventListener('mousemove',function (e) {
+    //         let pos = AGWindow.getPointPos(e)
+    //         let hitResult = self.getHitView(pos,self.rootView)
+    //         if (hitResult){
+    //
+    //             e.innerPos = hitResult.relativePos
+    //             let eventManager = AGEventManager.getEventManager()
+    //
+    //             if(hitResult.hitView !== this.currentView){
+    //                 if (!this.dragState){
+    //                     let oldCurrentView = this.currentView
+    //                     this.currentView = hitResult.hitView
+    //                     //mouse out
+    //                     eventManager.dispatch(oldCurrentView,new AGEvent('mouseout',AGWindow.copyMouseEvent(e)))
+    //                     // //drag end
+    //                     // eventManager.dispatch(oldCurrentView,new AGEvent('dragend',AGWindow.copyMouseEvent(e)))
+    //
+    //                     //mouse in
+    //                     eventManager.dispatch(this.currentView,new AGEvent('mousein',AGWindow.copyMouseEvent(e)))
+    //                 }else{
+    //                     //dragging
+    //                     eventManager.dispatch(this.currentView,new AGEvent('drag',AGWindow.copyMouseEvent(e)))
+    //                 }
+    //
+    //             }else{
+    //                 //trigger view's mousemove
+    //                 eventManager.dispatch(this.currentView,new AGEvent('mousemove',AGWindow.copyMouseEvent(e)))
+    //                 if (this.mouseDownView === this.currentView){
+    //                     if (!this.dragState){
+    //                         eventManager.dispatch(this.currentView,new AGEvent('dragstart',AGWindow.copyMouseEvent(e)))
+    //                         this.dragState = 'dragging'
+    //                     }else{
+    //                         eventManager.dispatch(this.currentView,new AGEvent('drag',AGWindow.copyMouseEvent(e)))
+    //                     }
+    //                 }
+    //             }
+    //
+    //         }
+    //     })
+    //
+    //     this.domElem.addEventListener('mouseup',function (e) {
+    //         let pos = AGWindow.getPointPos(e)
+    //         let hitResult = self.getHitView(pos,self.rootView)
+    //         let mouseDownView = this.mouseDownView
+    //         this.mouseDownView = null
+    //         let eventManager = AGEventManager.getEventManager()
+    //         if (hitResult){
+    //             this.currentView = hitResult.hitView
+    //             e.innerPos = hitResult.relativePos
+    //             //trigger view's mouseup
+    //
+    //             eventManager.dispatch(this.currentView,new AGEvent('mouseup',AGWindow.copyMouseEvent(e)))
+    //             //drag end
+    //             eventManager.dispatch(this.currentView,new AGEvent('dragend',AGWindow.copyMouseEvent(e)))
+    //             this.dragState = null
+    //             if (mouseDownView === this.currentView){
+    //                 eventManager.dispatch(this.currentView,new AGEvent('click',AGWindow.copyMouseEvent(e)))
+    //             }
+    //
+    //
+    //         }else{
+    //             if (this.dragState){
+    //                 eventManager.dispatch(this.currentView,new AGEvent('dragend',AGWindow.copyMouseEvent(e)))
+    //                 this.dragState = null
+    //             }
+    //         }
+    //         this.currentView = null
+    //     })
+    // }
+
     initEventListen(){
         let self = this
         this.domElem.addEventListener('mousedown',function (e) {
-            console.log(e)
             for(let key in e){
                 if (e.hasOwnProperty(key)){
-                    console.log(key)
+                    // console.log(key)
                 }
             }
             let pos = AGWindow.getPointPos(e)
-            let hitResult = self.getHitView(pos,self.rootView)
+            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
             if (hitResult){
                 this.currentView = hitResult.hitView
                 this.mouseDownView = hitResult.hitView
@@ -95,7 +227,7 @@ export class AGWindow{
 
         this.domElem.addEventListener('mousemove',function (e) {
             let pos = AGWindow.getPointPos(e)
-            let hitResult = self.getHitView(pos,self.rootView)
+            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
             if (hitResult){
 
                 e.innerPos = hitResult.relativePos
@@ -135,7 +267,7 @@ export class AGWindow{
 
         this.domElem.addEventListener('mouseup',function (e) {
             let pos = AGWindow.getPointPos(e)
-            let hitResult = self.getHitView(pos,self.rootView)
+            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
             let mouseDownView = this.mouseDownView
             this.mouseDownView = null
             let eventManager = AGEventManager.getEventManager()
@@ -162,7 +294,6 @@ export class AGWindow{
             this.currentView = null
         })
     }
-
 
     getHitView(pos,views){
 

@@ -134,12 +134,30 @@ AGLink.arrowTypes = {
     arrow:'arrow'
 }
 
+export class AGBrokenLineLink extends AGLink{
+    constructor(origin,size,lineStart=new AGPoint(),lineBroken=new AGPoint(),lineStop=new AGPoint(),widgetSrc=null,widgetDst=null,opts={}){
+        super(origin,size,lineStart,lineStop,widgetSrc,widgetDst,opts)
+        this.lineBroken = lineBroken
+    }
+
+    updatePoint(start,broken,stop){
+        super.updatePoint(start,stop)
+        if (broken){
+            this.lineBroken = broken.relative(this.frame.origin)
+        }
+    }
+
+    drawLayer(){
+        AGDraw.canvas.drawBrokenLine(this,new AGLine(this.lineStart,this.lineBroken),new AGLine(this.lineBroken,this.lineStop))
+    }
+}
+
 
 
 export class AGVisualization{
-    constructor(view){
+    constructor(view,opts={}){
         this.renderView = view
-        this.graph = new AGVGraph()
+        this.graph = new AGVGraph(opts)
     }
 
     addWidgetView(widget){
@@ -154,6 +172,19 @@ export class AGVisualization{
     addWidgetNode(widget){
         this.addWidgetView(widget)
         this.graph.addNode(widget)
+    }
+
+    removeWidgetView(widget){
+        this.renderView.removeChildView(widget)
+    }
+
+    removeWidgetNode(widget){
+        this.removeWidgetView(widget)
+        this.graph.removeNode(widget)
+    }
+
+    widgetInGraph(widget){
+        return this.graph.widgetInGraph(widget)
     }
 
     addLinkView(link){
@@ -180,6 +211,7 @@ export class AGVisualization{
         let lineStop = tempStop.relative(origin)
         let lineV = lineStop.relative(lineStart)
         return new AGLink(origin,new AGSize(lineV.x,lineV.y),lineStart,lineStop,widgetSrc,widgetDst)
+        // return new AGBrokenLineLink(origin,new AGSize(lineV.x,lineV.y),lineStart,new AGPoint((lineStart.x+lineStop.x)/2,(lineStart.y+lineStop.y)/2),lineStop,widgetSrc,widgetDst)
     }
 
     static getIntersections(path1,path2){
@@ -318,40 +350,76 @@ export class AGVisualization{
         this.graph.addEdge(widgetSrc,widgetDst,link)
     }
 
-    layout(){
-        let g = this.graph.layout()
-        this.renderView.updateSize(g.width+100,g.height+100)
-        this.graph.edges.forEach(e=>{
+    layout(opts={}){
+        let g
+        let graph = this.graph
+        function isAlone(view) {
+            if ((view.in && view.in.length)||(view.out && view.out.length)){
+                return false
+            }
+            return true
+        }
+        if (opts.compact){
+            //compat graph
+
+            for(let i=0;i<this.renderView.children.length;i++){
+                let curV = this.renderView.children[i]
+                if (!(curV instanceof AGLink)){
+                    if (isAlone(curV) && this.widgetInGraph(curV)){
+                        this.removeWidgetNode(curV)
+                        i--
+                    }
+                }
+
+            }
+            g = graph.layout()
+        }else{
+            g = graph.layout()
+        }
+
+        function calIntersectionForEdge(e) {
             let oldLine = new AGPath([new AGPathItemLine(e.link.widgetSrc.center(),e.link.widgetDst.center())])
             let intersectionsSrc = AGVisualization.getIntersections(oldLine,e.link.widgetSrc.toPath())
             let intersectionsDst = AGVisualization.getIntersections(oldLine,e.link.widgetDst.toPath())
-            console.log(intersectionsSrc,intersectionsDst)
-            if (!intersectionsSrc.length){
-                AGVisualization.getIntersections(oldLine,e.link.widgetSrc.toPath())
-            }
+            // console.log(intersectionsSrc,intersectionsDst)
             //update frame origin
             // e.link && e.link.updatePoint(e.link.widgetSrc.center(),e.link.widgetDst.center())
             //console.log(oldLine,e.link.widgetSrc.toPath(),intersectionsSrc,intersectionsDst)
             let curStartPoint = intersectionsSrc[0]?new AGPoint(intersectionsSrc[0].x,intersectionsSrc[0].y):e.link.widgetSrc.center()
             let curStopPoint = intersectionsDst[0]?new AGPoint(intersectionsDst[0].x,intersectionsDst[0].y):e.link.widgetDst.center()
+            // e.link && e.link.updatePoint(curStartPoint,new AGPoint((curStartPoint.x+curStopPoint.x)/2,(curStartPoint.y+curStopPoint.y)/2),curStopPoint)
             e.link && e.link.updatePoint(curStartPoint,curStopPoint)
+        }
+
+        this.renderView.updateSize(g.width,g.height)
+        graph.edges.forEach(e=>{
+            // calIntersectionForEdge(e)
+            // let rawEdge = g.g.edge(e.start,e.stop)
+            // let points = rawEdge.points
+            // e.link && e.link.updatePoint(new AGPoint(points[0].x,points[0].y),new AGPoint(points[1].x,points[1].y),new AGPoint(points[2].x,points[2].y))
+            calIntersectionForEdge(e)
         })
+        return g
     }
+
+
 }
 
 
 //layout
 export class AGVGraph{
-    constructor(){
+    constructor(opts={}){
         this.nodes = []
         this.edges = []
-        this.layoutObj = new AGLayoutDefault({
+        let curOpts = {
             rankdir:'LR',
             // ranker:'longest-path',
             // ranksep:0,
             marginx:50,
             marginy:50
-        })
+        }
+        Object.assign(curOpts,opts)
+        this.layoutObj = new AGLayoutDefault(curOpts)
     }
 
     static isIn(elem,elems,keys){
@@ -377,6 +445,14 @@ export class AGVGraph{
         return AGVGraph.id++
     }
 
+    widgetInGraph(widget){
+        for(let i=0;i<this.nodes.length;i++){
+            if (this.nodes[i].view === widget){
+                return true
+            }
+        }
+        return false
+    }
     getNodeByView(view){
         for(let i=0;i<this.nodes.length;i++){
             if (this.nodes[i].view === view){
@@ -398,9 +474,10 @@ export class AGVGraph{
                 this.removeEdgesBySrc(view)
                 this.removeEdgesByDst(view)
                 this.nodes.splice(i,1)
-                return
+                return true
             }
         }
+        return false
     }
 
     addEdge(viewSrc,viewDst,link){

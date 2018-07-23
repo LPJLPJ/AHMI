@@ -93,7 +93,8 @@ export class AGLayoutDefault extends AGLayout{
         return {
             width:graph.width,
             height:graph.height,
-            nodes:nodes
+            nodes:nodes,
+            g:g
         }
 
     }
