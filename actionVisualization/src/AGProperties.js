@@ -24,8 +24,20 @@ export class AGPoint{
         return new AGPoint(this.x+aPoint.x,this.y+aPoint.y)
     }
 
+    multiply(k){
+        return new AGPoint(this.x*k,this.y*k)
+    }
+
     copy(){
         return new AGPoint(this.x,this.y)
+    }
+
+    distanceToPoint(aPoint){
+        return Math.sqrt(Math.pow(aPoint.x-this.x,2)+Math.pow(aPoint.y-this.y,2))
+    }
+
+    pointProduct(aPoint){
+        return this.x * aPoint.x + this.y * aPoint.y
     }
 }
 
@@ -117,6 +129,47 @@ export class AGLine extends AGShape{
         this.stop = stop
         this.lineWidth = 1
     }
+
+
+    distanceToLine(pos){
+        let p1 = this.start
+        let p2 = this.stop
+        let l12 = p1.distanceToPoint(p2)
+        if (l12 === 0){
+            return p1.distanceToPoint(pos)
+        }else{
+            let v1 = pos.relative(p1)
+            let v2 = p2.relative(p1)
+            let k = v1.pointProduct(v2)/(l12*l12)
+            let v3 = v2.multiply(k)
+            let p3 = p1.add(v3)
+            return p3.distanceToPoint(pos)
+        }
+
+    }
+
+    distanceToLineSegment(pos){
+        let p1 = this.start
+        let p2 = this.stop
+        let l12 = p1.distanceToPoint(p2)
+        if (l12 === 0){
+            return p1.distanceToPoint(pos)
+        }else{
+            let v1 = pos.relative(p1)
+            let v2 = p2.relative(p1)
+            let k = v1.pointProduct(v2)/(l12*l12)
+            if (k>=0&&k<=1){
+                let v3 = v2.multiply(k)
+                let p3 = p1.add(v3)
+                return p3.distanceToPoint(pos)
+            }else if (k<0){
+                return p1.distanceToPoint(pos)
+            }else{
+                return p2.distanceToPoint(pos)
+            }
+
+        }
+    }
 }
 
 export class AGText extends AGShape{
@@ -135,6 +188,14 @@ export class AGRect extends AGShape{
         super()
         this.origin = origin
         this.size = size
+    }
+
+    inRect(pos){
+        if (pos.x>=this.origin.x && pos.x <= this.origin.x + this.size.width && pos.y >= this.origin.y && pos.y <= this.origin.y+this.size.height){
+            return true
+        }else{
+            return false
+        }
     }
 
 

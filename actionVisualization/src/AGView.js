@@ -55,6 +55,10 @@ export class AGView {
         this.layer = null
     }
 
+    isPosHitView(pos){
+        return this.frame.inRect(pos)
+    }
+
 
     updateSize(width=0,height=0){
         this.frame.size.width = width

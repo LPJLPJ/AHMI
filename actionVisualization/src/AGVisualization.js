@@ -123,6 +123,15 @@ export class AGLink extends AGWidget{
         }
     }
 
+    isPosHitView(pos){
+        if (!super.isPosHitView(pos)){return false}
+        let innerPos = pos.relative(this.frame.origin)
+        let lineSegment = new AGLine(this.lineStart,this.lineStop)
+        let d = lineSegment.distanceToLineSegment(innerPos)
+
+        return d<10
+    }
+
     drawLayer(){
         // super.drawLayer()
         AGDraw.canvas.drawLine(this,new AGLine(this.lineStart,this.lineStop))

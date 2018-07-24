@@ -207,13 +207,10 @@ export class AGWindow{
     initEventListen(){
         let self = this
         this.domElem.addEventListener('mousedown',function (e) {
-            for(let key in e){
-                if (e.hasOwnProperty(key)){
-                    // console.log(key)
-                }
-            }
+
             let pos = AGWindow.getPointPos(e)
-            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+            let hitResult = self.getHitView(pos,self.rootView)//{hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+            console.log(hitResult)
             if (hitResult){
                 this.currentView = hitResult.hitView
                 this.mouseDownView = hitResult.hitView
@@ -227,7 +224,7 @@ export class AGWindow{
 
         this.domElem.addEventListener('mousemove',function (e) {
             let pos = AGWindow.getPointPos(e)
-            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+            let hitResult = self.getHitView(pos,self.rootView)//{hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
             if (hitResult){
 
                 e.innerPos = hitResult.relativePos
@@ -267,7 +264,7 @@ export class AGWindow{
 
         this.domElem.addEventListener('mouseup',function (e) {
             let pos = AGWindow.getPointPos(e)
-            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+            let hitResult = self.getHitView(pos,self.rootView)//{hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
             let mouseDownView = this.mouseDownView
             this.mouseDownView = null
             let eventManager = AGEventManager.getEventManager()
@@ -322,17 +319,23 @@ export class AGWindow{
         if (views instanceof Array){
             //children
             for(let i=0;i<views.length;i++){
-                if(AGWindow.inRect(pos,views[i].frame)){
+                // if(views[i].canTouch&&AGWindow.inRect(pos,views[i].frame)){
+                //     hitView = views[i]
+                // }
+                if(views[i].canTouch&&views[i].isPosHitView(pos)){
                     hitView = views[i]
                 }
             }
 
         }else{
             //view
-            if(AGWindow.inRect(pos,views.frame)){
-                //hit
+            // if(views.canTouch&&AGWindow.inRect(pos,views.frame)){
+            //     //hit
+            //     hitView = views
+            //
+            // }
+            if(views.canTouch&&views.isPosHitView(pos)){
                 hitView = views
-
             }
         }
 
