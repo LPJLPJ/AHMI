@@ -134,7 +134,7 @@ export class AGLink extends AGWidget{
 
     drawLayer(){
         // super.drawLayer()
-        AGDraw.canvas.drawLine(this,new AGLine(this.lineStart,this.lineStop))
+        AGDraw.canvas.drawLine(this,new AGLine(this.lineStart,this.lineStop,{lineColor:this.lineColor}))
     }
 }
 

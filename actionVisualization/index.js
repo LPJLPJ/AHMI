@@ -10,6 +10,7 @@ import AGDraw from "./src/AGDraw"
 import {AGNode,AGEdge,AGLayoutDefault} from "./src/AGLayout";
 
 import {AGLabel, AGVGraph, AGWidget, AGLink, AGVisualization} from "./src/AGVisualization";
+import {AGEventManager} from "./src/AGEvent";
 
 import Bezier from 'bezier-js'
 
@@ -36,7 +37,7 @@ class ActionVisualizer extends React.Component{
     initWindow(){
         let viewWindow = new AGWindow(1200,1000,this.container)
         this.viewWindow = viewWindow
-
+        this.viewWindow.scale = this.state.scale
 
     }
 
@@ -44,6 +45,8 @@ class ActionVisualizer extends React.Component{
         let viewWindow = this.viewWindow
         let rootView = new AGView(new AGPoint(0,0),new AGSize(800,800))
         rootView.initLayer()
+        let eventManager = AGEventManager.getEventManager()
+        eventManager.reset()
         viewWindow.addRootView(rootView)
         let agv = new AGVisualization(rootView,{
             ranksep:this.state.rankSep
@@ -413,30 +416,47 @@ class ActionVisualizer extends React.Component{
 
         // agv.sortLinks()
         rootView.draw()
-        viewWindow.display({
-            scale:this.state.scale
-        })
+        viewWindow.display()
         let mouseDownHandler= function(e){
-            rootView.dragStartPos=new AGPoint(e.pageX,e.pageY)
+            rootView.dragStartPos=new AGPoint(e.pageX/viewWindow.scale,e.pageY/viewWindow.scale)
             rootView.lastOrigin=new AGPoint(rootView.frame.origin.x,rootView.frame.origin.y)
         }
 
         let dragHandler=function(e){
-            let curMousePos = new AGPoint(e.pageX,e.pageY)
+            let curMousePos = new AGPoint(e.pageX/viewWindow.scale,e.pageY/viewWindow.scale)
             rootView.frame.origin.x = rootView.lastOrigin.x+curMousePos.x - rootView.dragStartPos.x
             rootView.frame.origin.y = rootView.lastOrigin.y+curMousePos.y - rootView.dragStartPos.y
             // console.log(this.frame.origin.x,this.frame.origin.y)
             //rootView.draw()
-            viewWindow.display({
-                scale:this.state.scale
-            })
+            viewWindow.display()
 
         }.bind(this)
 
         rootView.on('mousedown',mouseDownHandler)
         rootView.on('drag',dragHandler)
 
+        rootView.children.forEach((v=>{
+            if (v instanceof AGLabel){
+                v.on('mousedown',(e)=>{
+                    let lineColor
+                    if (!v.highlight){
+                        lineColor = new AGColor(0,255,255,1)
+                        v.highlight = true
+                    }else{
+                        lineColor = new AGColor(0,0,0,1)
+                        v.highlight = false
+                    }
+                    if (v.out && v.out.length){
+                        v.out.forEach((l)=>{
+                            l.lineColor = lineColor
+                        })
+                    }
+                    rootView.draw()
+                    viewWindow.display()
 
+                })
+            }
+        }))
 
 
     }
@@ -462,6 +482,7 @@ class ActionVisualizer extends React.Component{
 
     changeScale(e){
         this.setState({scale:Number(e.target.value)},()=>{
+            this.viewWindow.scale = this.state.scale
             this.viewWindow.display({
                 scale:this.state.scale
             })

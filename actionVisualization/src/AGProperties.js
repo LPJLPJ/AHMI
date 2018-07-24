@@ -123,11 +123,12 @@ export class AGShape{
 }
 
 export class AGLine extends AGShape{
-    constructor(start=new AGPoint(),stop=new AGPoint()){
+    constructor(start=new AGPoint(),stop=new AGPoint(),opts={}){
         super()
         this.start = start
         this.stop = stop
-        this.lineWidth = 1
+        this.lineWidth = opts.lineWidth||1
+        this.lineColor = opts.lineColor||this.strokeStyle
     }
 
 
