@@ -325,6 +325,9 @@
                     <div class="modal-body dengModel-body">
                         <div class="modal-title form-group modelPart">
                             <select class="form-control dengModel-trigger" ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                            <div class="pixelratio-wrapper" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                                <span>像素宽高比：</span><span>1 : </span><div class="pixelratio-input-wrapper"><input type="number" class="form-control" ng-model="verticalPixelRatio"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">

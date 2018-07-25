@@ -925,7 +925,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
          * 生成符合格式的数据结构
          */
 
-        function generateDataFile(format) {
+        function generateDataFile(format,physicalPixelRatio) {
             if (format == 'local' || format == 'localCompatible') {
                 var curScope = {};
                 var postFun = function () {
@@ -993,7 +993,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 })
 
             }else{
-                generateData(format);
+                generateData(format,physicalPixelRatio);
                 if (window) {
                     if (window.spinner) {
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
@@ -1040,11 +1040,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             }
         }
 
-        function generateData(format) {
+        function generateData(format,physicalPixelRatio) {
             var temp = {};
             ProjectService.getProjectCopyTo(temp);
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
+            temp.project.physicalPixelRatio = physicalPixelRatio
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
@@ -1295,7 +1296,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 // console.log('new action');
                 // console.log(newAction);
                 //process save
-                generateDataFile(result.format);
+                generateDataFile(result.format,result.physicalPixelRatio);
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
             });
@@ -1599,6 +1600,7 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
             name: '压缩'
         }
     ];
+    $scope.verticalPixelRatio = 1
     var localFormat = {
         type: 'local',
         name: '本地'
@@ -1625,7 +1627,8 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
     $scope.generateFormat = 'normal';
     $scope.ok = function () {
         $uibModalInstance.close({
-            format: $scope.generateFormat
+            format: $scope.generateFormat,
+            physicalPixelRatio:'1:'+($scope.verticalPixelRatio||1)
         });
     };
 
