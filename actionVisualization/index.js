@@ -445,6 +445,10 @@ class ActionVisualizer extends React.Component{
                     }else{
                         lineColor = new AGColor(0,0,0,1)
                         v.highlight = false
+                        agv.hideWidgetChildren(v)
+                        agv.layout({
+                            compact:true
+                        })
                     }
                     if (v.out && v.out.length){
                         v.out.forEach((l)=>{

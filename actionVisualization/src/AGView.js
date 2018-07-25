@@ -123,8 +123,11 @@ export class AGView {
     }
 
     draw(){
-        this.drawLayer()
-        this.children.forEach(c=>c.draw())
+        if (!this.hidden){
+            this.drawLayer()
+            this.children.forEach(c=>c.draw())
+        }
+
     }
 
     drawLayer(){

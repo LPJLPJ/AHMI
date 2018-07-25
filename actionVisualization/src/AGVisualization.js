@@ -359,6 +359,24 @@ export class AGVisualization{
         this.graph.addEdge(widgetSrc,widgetDst,link)
     }
 
+    hideWidgetChildren(widget){
+        if (widget.out && widget.out.length){
+            widget.out.forEach((l)=>{
+                l.hidden = true
+                let edge = this.graph.getEdgeByLink(l)
+                edge.hidden = true
+                let node = this.graph.getNodeById(edge.stop)
+                node.hidden = true
+                node.view.hidden = true
+                node.view.out && node.view.out.forEach((nl)=>{
+                    nl.hidden = true
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    nedge.hidden = true
+                })
+            })
+        }
+    }
+
     layout(opts={}){
         let g
         let graph = this.graph
@@ -470,6 +488,22 @@ export class AGVGraph{
         }
     }
 
+    getNodeById(id){
+        for(let i=0;i<this.nodes.length;i++){
+            if (this.nodes[i].id === id){
+                return this.nodes[i]
+            }
+        }
+    }
+
+    getEdgeByLink(link){
+        for(let i=0;i<this.edges.length;i++){
+            if (this.edges[i].link === link){
+                return this.edges[i]
+            }
+        }
+    }
+
     addNode(view){
         if (!AGVGraph.isIn(view,this.nodes,['view'])){
             this.nodes.push(new AGNode(AGVGraph.getId(),view.bounds.size.width,view.bounds.size.height,{view:view}))
@@ -549,7 +583,7 @@ export class AGVGraph{
     }
 
     layout(){
-        let g = this.layoutObj.layout(this.nodes,this.edges)
+        let g = this.layoutObj.layout(this.nodes.filter(n=>!n.hidden),this.edges.filter(e=>!e.hidden))
 
 
         this.nodes.forEach(n=>{
