@@ -84,11 +84,37 @@ export class AGLabel extends AGWidget{
         super(origin,size,opts)
         this.text = text
         this.font = font
+        // this.collapse = false
+        // let indicatorL = 5
+        // this.children.push(new AGView(new AGPoint(size.width-indicatorL,0),new AGSize(indicatorL,indicatorL),{
+        //     hidden:this.collapse
+        // }))
     }
 
     drawLayer(){
         super.drawLayer()
         AGDraw.canvas.drawText(this,new AGText(new AGPoint(this.bounds.origin.x+0.5*this.bounds.size.width,this.bounds.origin.y+0.5*this.bounds.size.height),this.text,this.font))
+    }
+}
+
+export class AGCollapseLabel extends AGLabel{
+    constructor(origin,size,text='',font=new AGFont(),opts={}){
+        super(origin,size,text,font,opts)
+
+        this.collapse = false
+        let indicatorL = 5
+        this.addChildView(new AGLabel(new AGPoint(size.width-indicatorL-5,5),new AGSize(indicatorL,indicatorL),'+',undefined,{hidden:!this.collapse}))
+    }
+
+
+    toggleCollapse(){
+        this.collapse = !this.collapse
+        this.children[0].hidden = !this.collapse
+    }
+
+
+    drawLayer(){
+        super.drawLayer()
     }
 }
 
@@ -359,12 +385,39 @@ export class AGVisualization{
         this.graph.addEdge(widgetSrc,widgetDst,link)
     }
 
+    showWidgetChildren(widget){
+        if (widget.out && widget.out.length){
+            widget.out.forEach((l)=>{
+                l.hidden = false
+                let edge = this.graph.getEdgeByLink(l)
+                edge.hidden = false
+                edge.link.hidden = false
+                let node = this.graph.getNodeById(edge.stop)
+                node.hidden = false
+                node.view.hidden = false
+                node.view.out && node.view.out.forEach((nl)=>{
+
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    this.graph.showEdge(nedge)
+                    // nedge.hidden = false
+                })
+                node.view.in && node.view.in.forEach((nl)=>{
+
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    //nedge.hidden = false
+                    this.graph.showEdge(nedge)
+                })
+            })
+        }
+    }
+
     hideWidgetChildren(widget){
         if (widget.out && widget.out.length){
             widget.out.forEach((l)=>{
                 l.hidden = true
                 let edge = this.graph.getEdgeByLink(l)
                 edge.hidden = true
+                edge.link.hidden = true
                 let node = this.graph.getNodeById(edge.stop)
                 node.hidden = true
                 node.view.hidden = true
@@ -372,6 +425,13 @@ export class AGVisualization{
                     nl.hidden = true
                     let nedge = this.graph.getEdgeByLink(nl)
                     nedge.hidden = true
+
+                })
+                node.view.in && node.view.in.forEach((nl)=>{
+                    nl.hidden = true
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    nedge.hidden = true
+
                 })
             })
         }
@@ -501,6 +561,15 @@ export class AGVGraph{
             if (this.edges[i].link === link){
                 return this.edges[i]
             }
+        }
+    }
+
+    showEdge(edge){
+        let startNode = this.getNodeById(edge.start)
+        let stopNode = this.getNodeById(edge.stop)
+        if (!startNode.hidden&&!stopNode.hidden){
+            edge.hidden = false
+            edge.link.hidden = false
         }
     }
 
