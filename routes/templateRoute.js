@@ -91,7 +91,7 @@ TemplateRoute.saveNewTemplate = function (req, res) {
 }
 
 TemplateRoute.getTemplatesForCenter = function (req, res) {
-    TemplateModel.fetchInfoBatch(0,10,req.query.filter,req.query.key,function (err, templates) {
+    TemplateModel.fetchInfoBatch(0,0,req.query.filter,req.query.key,function (err, templates) {
         if (err){
             errHandler(res,500,JSON.stringify(err))
         }else{

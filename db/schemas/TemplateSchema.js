@@ -62,10 +62,18 @@ TemplateSchema.statics = {
         }else if(filter === 'populate'){
             flag = flag.sort({'collected':-1})
         }
-        return flag
-            .skip(from)
-            .limit(limit)
-            .exec(cb)
+        if (limit){
+            return flag
+                .skip(from)
+                .limit(limit)
+                .exec(cb)
+        }else{
+            return flag
+                .skip(from)
+                // .limit(limit)
+                .exec(cb)
+        }
+
     },
     fetchUserTemplateInfos:function (ids,cb) {
         return this
