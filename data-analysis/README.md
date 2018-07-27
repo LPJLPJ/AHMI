@@ -5,6 +5,8 @@
 
 技术栈
 ---
+   data-analysis功能抽离于IDE本身，data-analysis通过server的api获取ide工程数据即可。
+   抽离之后避免了与IDE代码的耦合，相当于一个独立的app，方便维护。并且使用了新的技术栈，没有历史包袱。
 
  
  - 库：React、Redux、React-Router
