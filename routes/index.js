@@ -189,6 +189,9 @@ router.route('/project/:id/editor')
 router.route('/project/:id/visualization')
     .get(projectInfo.getProjectTreeById);
 
+router.route('/project/:id/data-analysis')
+    .get(projectInfo.renderDataAnalysis);
+
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent);
 
@@ -445,6 +448,12 @@ router.route('/download/pcclient/latest')
 router.route('/tags/preview')
     .get(route_tag.getDefault);
 
+
+// router.route('/project/data-analysis')
+//     .get(function(req, res){
+//         console.log('data-analysis');
+//         res.sendFile(path.join(__dirname,'..','public','data-analysis','index.html'))
+//     });
 
 
 //router.route('*')

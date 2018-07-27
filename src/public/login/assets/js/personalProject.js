@@ -398,6 +398,9 @@ $(function(){
                     break;
                 case "showProjectVersion":
                     break;
+                case "data-analysis":
+                    window.open('/project/'+project._id+'/data-analysis');
+                    break;
                 case "sub1":
                     openVertion(0,project._id);
                     break;
@@ -454,6 +457,8 @@ $(function(){
                         "showProjectVersion": {name: "打开较早保存的工程",items: loadItems(project._id)},
                         "sep2":"---------",
                         "visualization":{name:"结构可视化"},
+                        "sep3":"---------",
+                        "data-analysis":{name:"数据分析"},
                         "sep4":"---------",
                         "deletePro": {name: "删除工程"}
                     }

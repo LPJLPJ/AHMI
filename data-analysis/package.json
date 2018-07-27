@@ -2,13 +2,14 @@
   "private": true,
   "scripts": {
     "start": "umi dev",
-    "build": "umi build",
+    "build": "cross-env NODE_ENV=build umi build",
     "lint": "eslint --ext .js src test",
     "precommit": "npm run lint"
   },
   "dependencies": {
     "@antv/data-set": "^0.8.9",
     "bizcharts": "^3.1.10",
+    "cross-env": "^5.2.0",
     "dva": "^2.3.1",
     "lodash-decorators": "^6.0.0",
     "numeral": "^2.0.6",

@@ -285,6 +285,7 @@ add:
     3. resources.html
     4. compatibility check
     5. download localIDE, sim_gen_all
+    6. data-analysis
    
 fix:
     1. upload zip file bug
