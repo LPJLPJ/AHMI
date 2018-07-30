@@ -84,11 +84,37 @@ export class AGLabel extends AGWidget{
         super(origin,size,opts)
         this.text = text
         this.font = font
+        // this.collapse = false
+        // let indicatorL = 5
+        // this.children.push(new AGView(new AGPoint(size.width-indicatorL,0),new AGSize(indicatorL,indicatorL),{
+        //     hidden:this.collapse
+        // }))
     }
 
     drawLayer(){
         super.drawLayer()
         AGDraw.canvas.drawText(this,new AGText(new AGPoint(this.bounds.origin.x+0.5*this.bounds.size.width,this.bounds.origin.y+0.5*this.bounds.size.height),this.text,this.font))
+    }
+}
+
+export class AGCollapseLabel extends AGLabel{
+    constructor(origin,size,text='',font=new AGFont(),opts={}){
+        super(origin,size,text,font,opts)
+
+        this.collapse = false
+        let indicatorL = 5
+        this.addChildView(new AGLabel(new AGPoint(size.width-indicatorL-5,5),new AGSize(indicatorL,indicatorL),'+',undefined,{hidden:!this.collapse}))
+    }
+
+
+    toggleCollapse(){
+        this.collapse = !this.collapse
+        this.children[0].hidden = !this.collapse
+    }
+
+
+    drawLayer(){
+        super.drawLayer()
     }
 }
 
@@ -123,9 +149,18 @@ export class AGLink extends AGWidget{
         }
     }
 
+    isPosHitView(pos){
+        if (!super.isPosHitView(pos)){return false}
+        let innerPos = pos.relative(this.frame.origin)
+        let lineSegment = new AGLine(this.lineStart,this.lineStop)
+        let d = lineSegment.distanceToLineSegment(innerPos)
+
+        return d<10
+    }
+
     drawLayer(){
         // super.drawLayer()
-        AGDraw.canvas.drawLine(this,new AGLine(this.lineStart,this.lineStop))
+        AGDraw.canvas.drawLine(this,new AGLine(this.lineStart,this.lineStop,{lineColor:this.lineColor}))
     }
 }
 
@@ -350,6 +385,58 @@ export class AGVisualization{
         this.graph.addEdge(widgetSrc,widgetDst,link)
     }
 
+    showWidgetChildren(widget){
+        if (widget.out && widget.out.length){
+            widget.out.forEach((l)=>{
+                l.hidden = false
+                let edge = this.graph.getEdgeByLink(l)
+                edge.hidden = false
+                edge.link.hidden = false
+                let node = this.graph.getNodeById(edge.stop)
+                node.hidden = false
+                node.view.hidden = false
+                node.view.out && node.view.out.forEach((nl)=>{
+
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    this.graph.showEdge(nedge)
+                    // nedge.hidden = false
+                })
+                node.view.in && node.view.in.forEach((nl)=>{
+
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    //nedge.hidden = false
+                    this.graph.showEdge(nedge)
+                })
+            })
+        }
+    }
+
+    hideWidgetChildren(widget){
+        if (widget.out && widget.out.length){
+            widget.out.forEach((l)=>{
+                l.hidden = true
+                let edge = this.graph.getEdgeByLink(l)
+                edge.hidden = true
+                edge.link.hidden = true
+                let node = this.graph.getNodeById(edge.stop)
+                node.hidden = true
+                node.view.hidden = true
+                node.view.out && node.view.out.forEach((nl)=>{
+                    nl.hidden = true
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    nedge.hidden = true
+
+                })
+                node.view.in && node.view.in.forEach((nl)=>{
+                    nl.hidden = true
+                    let nedge = this.graph.getEdgeByLink(nl)
+                    nedge.hidden = true
+
+                })
+            })
+        }
+    }
+
     layout(opts={}){
         let g
         let graph = this.graph
@@ -461,6 +548,31 @@ export class AGVGraph{
         }
     }
 
+    getNodeById(id){
+        for(let i=0;i<this.nodes.length;i++){
+            if (this.nodes[i].id === id){
+                return this.nodes[i]
+            }
+        }
+    }
+
+    getEdgeByLink(link){
+        for(let i=0;i<this.edges.length;i++){
+            if (this.edges[i].link === link){
+                return this.edges[i]
+            }
+        }
+    }
+
+    showEdge(edge){
+        let startNode = this.getNodeById(edge.start)
+        let stopNode = this.getNodeById(edge.stop)
+        if (!startNode.hidden&&!stopNode.hidden){
+            edge.hidden = false
+            edge.link.hidden = false
+        }
+    }
+
     addNode(view){
         if (!AGVGraph.isIn(view,this.nodes,['view'])){
             this.nodes.push(new AGNode(AGVGraph.getId(),view.bounds.size.width,view.bounds.size.height,{view:view}))
@@ -540,7 +652,7 @@ export class AGVGraph{
     }
 
     layout(){
-        let g = this.layoutObj.layout(this.nodes,this.edges)
+        let g = this.layoutObj.layout(this.nodes.filter(n=>!n.hidden),this.edges.filter(e=>!e.hidden))
 
 
         this.nodes.forEach(n=>{

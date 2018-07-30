@@ -23,7 +23,10 @@ function translateLayerCtxByTrace(ctx,traces) {
 
     for(let i=0;i<traces.length;i++){
         //translate
-        ctx.translate(traces[i].frame.origin.x,traces[i].frame.origin.y)
+        if (i!==0){
+            ctx.translate(traces[i].frame.origin.x,traces[i].frame.origin.y)
+        }
+
         let m = traces[i].transform
         ctx.transform(m.a,m.b,m.c,m.d,m.e,m.f)
     }
@@ -147,7 +150,7 @@ let AGDraw = {
             }
             ctx.save()
             ctx.fillStyle = convertAGColor(shape.fillStyle)
-            ctx.strokeStyle = convertAGColor(shape.strokeStyle)
+            ctx.strokeStyle = convertAGColor(shape.lineColor)
             ctx.lineWidth = shape.lineWidth
             ctx.beginPath()
             ctx.moveTo(shape.start.x,shape.start.y)
