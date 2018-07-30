@@ -73,6 +73,7 @@ export class AGLayoutDefault extends AGLayout{
         g.setGraph(this.opts);
         g.setDefaultEdgeLabel(function() { return {}; });
 
+        //console.log(_.cloneDeep(nodes),_.cloneDeep(edges))
         nodes.forEach(n=>{
             g.setNode(n.id,{label:n.id,width:n.width,height:n.height,ref:n})
         })
@@ -84,6 +85,10 @@ export class AGLayoutDefault extends AGLayout{
         Dagre.layout(g)
         g.nodes().forEach(id=>{
             let gn = g.node(id)
+            if (!gn){
+                console.log('hh')
+                return
+            }
             let node = gn.ref
             node.x = gn.x - gn.width/2
             node.y = gn.y - gn.height/2

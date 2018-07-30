@@ -27,6 +27,10 @@ export class AGEventManager{
         }
     }
 
+    reset(){
+        this.events = {}
+    }
+
     dispatch(target,event){
         if (event.type in this.events){
             let curTypeEvents = this.events[event.type]

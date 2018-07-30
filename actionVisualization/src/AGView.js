@@ -55,6 +55,10 @@ export class AGView {
         this.layer = null
     }
 
+    isPosHitView(pos){
+        return this.frame.inRect(pos)
+    }
+
 
     updateSize(width=0,height=0){
         this.frame.size.width = width
@@ -119,8 +123,11 @@ export class AGView {
     }
 
     draw(){
-        this.drawLayer()
-        this.children.forEach(c=>c.draw())
+        if (!this.hidden){
+            this.drawLayer()
+            this.children.forEach(c=>c.draw())
+        }
+
     }
 
     drawLayer(){

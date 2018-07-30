@@ -30,6 +30,8 @@ export class AGWindow{
         this.currentView = null
         this.mouseDownView = null
         this.dragState = null
+
+        this.scale = 1.0
     }
 
     resetDomElemStyle(){
@@ -55,7 +57,7 @@ export class AGWindow{
     display(opts={}){
         let self = this
         let ctx = self.layer.getContext('2d')
-        let curScale = opts.scale || 1.0
+        let curScale = this.scale
         curScale = 1.0/curScale
         function limitValueIn(v,min,max) {
             if (v<min){
@@ -72,20 +74,24 @@ export class AGWindow{
         ctx.restore()
         ctx.fillText("hello world",self.layer.width/2,self.layer.height/2)
         // console.log('display',self.rootView.frame.origin.x, self.rootView.frame.origin.y)
-        let rPos = (new AGPoint()).relative(self.rootView.frame.origin)
-        let dx = rPos.x*curScale
-        let dy = rPos.y*curScale
-        let dw = self.layer.width*curScale
-        let dh = self.layer.height*curScale
-        let dxr = dx+dw
-        let dyb = dy + dh
-        let dx2 = limitValueIn(dx,0,self.rootView.layer.width)
-        let dy2 = limitValueIn(dy,0,self.rootView.layer.height)
-        let dxr2 = limitValueIn(dxr,0,self.rootView.layer.width)
-        let dyb2 = limitValueIn(dyb,0,self.rootView.layer.height)
-        dw = dxr2-dx2
-        dh = dyb2 -dy2
-        ctx.drawImage(self.rootView.layer,dx2,dy2,dw||1,dh||1,(dx2-dx)/curScale,(dy2-dy)/curScale,dw/curScale,dh/curScale)
+        // let rPos = (new AGPoint()).relative(self.rootView.frame.origin)
+        // let dx = rPos.x*curScale
+        // let dy = rPos.y*curScale
+        // let dw = self.layer.width*curScale
+        // let dh = self.layer.height*curScale
+        // let dxr = dx+dw
+        // let dyb = dy + dh
+        // let dx2 = limitValueIn(dx,0,self.rootView.layer.width)
+        // let dy2 = limitValueIn(dy,0,self.rootView.layer.height)
+        // let dxr2 = limitValueIn(dxr,0,self.rootView.layer.width)
+        // let dyb2 = limitValueIn(dyb,0,self.rootView.layer.height)
+        // dw = dxr2-dx2
+        // dh = dyb2 -dy2
+        // ctx.drawImage(self.rootView.layer,dx2,dy2,dw||1,dh||1,(dx2-dx)/curScale,(dy2-dy)/curScale,dw/curScale,dh/curScale)
+        ctx.save()
+        ctx.scale(1/curScale,1/curScale)
+        ctx.drawImage(self.rootView.layer,self.rootView.frame.origin.x,self.rootView.frame.origin.y)
+        ctx.restore()
         ctx.restore()
     }
 
@@ -207,13 +213,11 @@ export class AGWindow{
     initEventListen(){
         let self = this
         this.domElem.addEventListener('mousedown',function (e) {
-            for(let key in e){
-                if (e.hasOwnProperty(key)){
-                    // console.log(key)
-                }
-            }
-            let pos = AGWindow.getPointPos(e)
-            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+
+            let pos = self.getPointPos(e)
+            console.log(pos,self.rootView.frame.origin)
+            let hitResult = self.getHitView(pos,self.rootView)//{hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+            // console.log(hitResult)
             if (hitResult){
                 this.currentView = hitResult.hitView
                 this.mouseDownView = hitResult.hitView
@@ -226,8 +230,8 @@ export class AGWindow{
         })
 
         this.domElem.addEventListener('mousemove',function (e) {
-            let pos = AGWindow.getPointPos(e)
-            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+            let pos = self.getPointPos(e)
+            let hitResult = self.getHitView(pos,self.rootView)//{hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
             if (hitResult){
 
                 e.innerPos = hitResult.relativePos
@@ -266,8 +270,8 @@ export class AGWindow{
         })
 
         this.domElem.addEventListener('mouseup',function (e) {
-            let pos = AGWindow.getPointPos(e)
-            let hitResult = {hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
+            let pos = self.getPointPos(e)
+            let hitResult = self.getHitView(pos,self.rootView)//{hitView:self.rootView,relativePos:pos.relative(self.rootView.frame.origin)}
             let mouseDownView = this.mouseDownView
             this.mouseDownView = null
             let eventManager = AGEventManager.getEventManager()
@@ -322,17 +326,23 @@ export class AGWindow{
         if (views instanceof Array){
             //children
             for(let i=0;i<views.length;i++){
-                if(AGWindow.inRect(pos,views[i].frame)){
+                // if(views[i].canTouch&&AGWindow.inRect(pos,views[i].frame)){
+                //     hitView = views[i]
+                // }
+                if(views[i].canTouch&&views[i].isPosHitView(pos)){
                     hitView = views[i]
                 }
             }
 
         }else{
             //view
-            if(AGWindow.inRect(pos,views.frame)){
-                //hit
+            // if(views.canTouch&&AGWindow.inRect(pos,views.frame)){
+            //     //hit
+            //     hitView = views
+            //
+            // }
+            if(views.canTouch&&views.isPosHitView(pos)){
                 hitView = views
-
             }
         }
 
@@ -361,15 +371,21 @@ export class AGWindow{
 
 
     //handle click
-    static getPointPos(e){
-        var originalW = e.target.width;
-        var originalH = e.target.height;
+    getPointPos(e){
+        let originalW = e.target.width;
+        let originalH = e.target.height;
 
-        var clientRect = e.target.getBoundingClientRect()
+        let clientRect = e.target.getBoundingClientRect()
         // var ratioW = originalW / clientRect.width;
         // var ratioH = originalH / clientRect.height;
-        var x = Math.round(e.clientX - clientRect.left);
-        var y = Math.round(e.clientY - clientRect.top);
+        let x = Math.round(e.clientX - clientRect.left);
+        let y = Math.round(e.clientY - clientRect.top);
+        x = x /this.scale
+        y = y / this.scale
         return new AGPoint(x,y)
+    }
+
+    getPointPosInRootView(e){
+
     }
 }

@@ -9,7 +9,8 @@ import AGDraw from "./src/AGDraw"
 
 import {AGNode,AGEdge,AGLayoutDefault} from "./src/AGLayout";
 
-import {AGLabel, AGVGraph, AGWidget, AGLink, AGVisualization} from "./src/AGVisualization";
+import {AGLabel, AGCollapseLabel,AGVGraph, AGWidget, AGLink, AGVisualization} from "./src/AGVisualization";
+import {AGEventManager} from "./src/AGEvent";
 
 import Bezier from 'bezier-js'
 
@@ -36,7 +37,7 @@ class ActionVisualizer extends React.Component{
     initWindow(){
         let viewWindow = new AGWindow(1200,1000,this.container)
         this.viewWindow = viewWindow
-
+        this.viewWindow.scale = this.state.scale
 
     }
 
@@ -44,6 +45,8 @@ class ActionVisualizer extends React.Component{
         let viewWindow = this.viewWindow
         let rootView = new AGView(new AGPoint(0,0),new AGSize(800,800))
         rootView.initLayer()
+        let eventManager = AGEventManager.getEventManager()
+        eventManager.reset()
         viewWindow.addRootView(rootView)
         let agv = new AGVisualization(rootView,{
             ranksep:this.state.rankSep
@@ -81,13 +84,13 @@ class ActionVisualizer extends React.Component{
         agv.addWidgetView(actionLabel)
         agv.addWidgetView(commandLabel)
         //project
-        let projectWidget  = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),data.name)
+        let projectWidget  = new AGCollapseLabel(new AGPoint(),new AGSize(nodeW,nodeH),data.name)
         agv.addWidgetNode(projectWidget)
         data.node = projectWidget
         //tags
         data.tag = '当前页面序号'
         for(let i=0;i<data.tagList.length;i++){
-            let curTagWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),data.tagList[i].name,undefined,{
+            let curTagWidget = new AGCollapseLabel(new AGPoint(),new AGSize(nodeW,nodeH),data.tagList[i].name,undefined,{
                 backgroundColor:self.state.colors.tag
             })
             data.tagList[i].node = curTagWidget
@@ -112,7 +115,7 @@ class ActionVisualizer extends React.Component{
             timerList.push(newTimer);
         }
         for(let i=0;i<timerList.length;i++){
-            let curTagWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),timerList[i].name,undefined,{
+            let curTagWidget = new AGCollapseLabel(new AGPoint(),new AGSize(nodeW,nodeH),timerList[i].name,undefined,{
                 backgroundColor:self.state.colors.timer
             })
             timerList[i].node = curTagWidget
@@ -197,7 +200,7 @@ class ActionVisualizer extends React.Component{
             if (elem && elem.actions && elem.actions.length){
                 for(let i=0;i<elem.actions.length;i++){
                     let curAction = elem.actions[i]
-                    let curActionWidget = new AGLabel(new AGPoint(),new AGSize(actionNodeW,nodeH),curAction.title+': '+curAction.trigger,undefined,{
+                    let curActionWidget = new AGCollapseLabel(new AGPoint(),new AGSize(actionNodeW,nodeH),curAction.title+': '+curAction.trigger,undefined,{
                         backgroundColor:self.state.colors.action
                     })
                     curAction.node = curActionWidget
@@ -234,7 +237,7 @@ class ActionVisualizer extends React.Component{
                         let curCmd = action.commands[i]
                         //add curCmd
                         let curCmdName = curCmd[0].symbol +' '+(curCmd[1].tag?curCmd[1].tag:curCmd[1].value)+' '+(curCmd[2].tag?curCmd[2].tag:curCmd[2].value)
-                        let curCmdWidget = new AGLabel(new AGPoint(),new AGSize(actionNodeW,nodeH),curCmdName,undefined,{
+                        let curCmdWidget = new AGCollapseLabel(new AGPoint(),new AGSize(actionNodeW,nodeH),curCmdName,undefined,{
                             backgroundColor:self.state.colors.command
                         })
                         agv.addWidgetNode(curCmdWidget)
@@ -343,7 +346,7 @@ class ActionVisualizer extends React.Component{
         //pages
         //for(let i=0;i<data.pageList.length;i++){
             let curPage = data.pageList[this.state.pageIdx-1]
-            let curPageWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),(this.state.pageIdx)+': '+curPage.name)
+            let curPageWidget = new AGCollapseLabel(new AGPoint(),new AGSize(nodeW,nodeH),(this.state.pageIdx)+': '+curPage.name)
             curPage.node = curPageWidget
             agv.addWidgetNode(curPageWidget)
             agv.linkWidgets(projectWidget,curPageWidget)
@@ -352,7 +355,7 @@ class ActionVisualizer extends React.Component{
             if (curPage.canvasList && curPage.canvasList.length){
                for(let j=0;j<curPage.canvasList.length;j++){
                    let curC = curPage.canvasList[j]
-                   let curCWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),curC.name)
+                   let curCWidget = new AGCollapseLabel(new AGPoint(),new AGSize(nodeW,nodeH),curC.name)
                    curC.node = curCWidget
                    agv.addWidgetNode(curCWidget)
                    agv.linkWidgets(curPageWidget,curCWidget)
@@ -361,7 +364,7 @@ class ActionVisualizer extends React.Component{
                    if (curC.subCanvasList&&curC.subCanvasList.length){
                         for(let k=0;k<curC.subCanvasList.length;k++){
                             let curSC = curC.subCanvasList[k]
-                            let curSCWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),curSC.name)
+                            let curSCWidget = new AGCollapseLabel(new AGPoint(),new AGSize(nodeW,nodeH),curSC.name)
                             curSC.node = curSCWidget
                             agv.addWidgetNode(curSCWidget)
                             agv.linkWidgets(curCWidget,curSCWidget)
@@ -370,7 +373,7 @@ class ActionVisualizer extends React.Component{
                             if (curSC.widgetList&&curSC.widgetList.length){
                                 for(let h=0;h<curSC.widgetList.length;h++){
                                     let curWidget = curSC.widgetList[h]
-                                    let curWidgetWidget = new AGLabel(new AGPoint(),new AGSize(nodeW,nodeH),curWidget.name)
+                                    let curWidgetWidget = new AGCollapseLabel(new AGPoint(),new AGSize(nodeW,nodeH),curWidget.name)
                                     curWidget.node = curWidgetWidget
                                     agv.addWidgetNode(curWidgetWidget)
                                     agv.linkWidgets(curSCWidget,curWidgetWidget)
@@ -413,30 +416,58 @@ class ActionVisualizer extends React.Component{
 
         // agv.sortLinks()
         rootView.draw()
-        viewWindow.display({
-            scale:this.state.scale
-        })
+        viewWindow.display()
         let mouseDownHandler= function(e){
-            rootView.dragStartPos=new AGPoint(e.pageX,e.pageY)
+            rootView.dragStartPos=new AGPoint(e.pageX/viewWindow.scale,e.pageY/viewWindow.scale)
             rootView.lastOrigin=new AGPoint(rootView.frame.origin.x,rootView.frame.origin.y)
         }
 
         let dragHandler=function(e){
-            let curMousePos = new AGPoint(e.pageX,e.pageY)
+            let curMousePos = new AGPoint(e.pageX/viewWindow.scale,e.pageY/viewWindow.scale)
             rootView.frame.origin.x = rootView.lastOrigin.x+curMousePos.x - rootView.dragStartPos.x
             rootView.frame.origin.y = rootView.lastOrigin.y+curMousePos.y - rootView.dragStartPos.y
             // console.log(this.frame.origin.x,this.frame.origin.y)
             //rootView.draw()
-            viewWindow.display({
-                scale:this.state.scale
-            })
+            viewWindow.display()
 
         }.bind(this)
 
         rootView.on('mousedown',mouseDownHandler)
         rootView.on('drag',dragHandler)
 
+        rootView.children.forEach((v=>{
+            if (v instanceof AGLabel){
+                v.on('mousedown',(e)=>{
+                    let lineColor
+                    let oldPos = v.frame.origin.copy()
+                    if (v.collapse){
+                        //lineColor = new AGColor(0,255,255,1)
+                        v.toggleCollapse()
+                        agv.showWidgetChildren(v)
+                        agv.layout()
+                    }else{
+                        //lineColor = new AGColor(0,0,0,1)
+                        v.toggleCollapse()
+                        agv.hideWidgetChildren(v)
+                        agv.layout()
+                    }
+                    // if (v.out && v.out.length){
+                    //     v.out.forEach((l)=>{
+                    //         l.lineColor = lineColor
+                    //     })
+                    // }
+                    
+                    
 
+                    rootView.draw()
+                    //if keep v position not change
+                    let changedVector = oldPos.relative(v.frame.origin)
+                    rootView.frame.origin = changedVector.add(rootView.frame.origin)
+                    viewWindow.display()
+
+                })
+            }
+        }))
 
 
     }
@@ -462,6 +493,7 @@ class ActionVisualizer extends React.Component{
 
     changeScale(e){
         this.setState({scale:Number(e.target.value)},()=>{
+            this.viewWindow.scale = this.state.scale
             this.viewWindow.display({
                 scale:this.state.scale
             })
