@@ -269,23 +269,27 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tags = project.customTags;
+        var pattern = /SysTmr_/;
         tags.forEach(function (tag,index) {
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
-
-            var pattern = /SysTmr_/;
             if(pattern.test(tag.name)){
                 tags.splice(index,1);
             }
         });
 
         timers = project.timerTags;
+        var tmr=[];
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
+            if(pattern.test(timer.name)){
+                tmr.push(timer)
+            }
         });
+        project.timerTags = tmr;
 
         tagClasses = project.tagClasses;
         if (!tagClasses){
