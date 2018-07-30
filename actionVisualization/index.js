@@ -439,23 +439,30 @@ class ActionVisualizer extends React.Component{
             if (v instanceof AGLabel){
                 v.on('mousedown',(e)=>{
                     let lineColor
+                    let oldPos = v.frame.origin.copy()
                     if (v.collapse){
-                        lineColor = new AGColor(0,255,255,1)
+                        //lineColor = new AGColor(0,255,255,1)
                         v.toggleCollapse()
                         agv.showWidgetChildren(v)
                         agv.layout()
                     }else{
-                        lineColor = new AGColor(0,0,0,1)
+                        //lineColor = new AGColor(0,0,0,1)
                         v.toggleCollapse()
                         agv.hideWidgetChildren(v)
                         agv.layout()
                     }
-                    if (v.out && v.out.length){
-                        v.out.forEach((l)=>{
-                            l.lineColor = lineColor
-                        })
-                    }
+                    // if (v.out && v.out.length){
+                    //     v.out.forEach((l)=>{
+                    //         l.lineColor = lineColor
+                    //     })
+                    // }
+                    
+                    
+
                     rootView.draw()
+                    //if keep v position not change
+                    let changedVector = oldPos.relative(v.frame.origin)
+                    rootView.frame.origin = changedVector.add(rootView.frame.origin)
                     viewWindow.display()
 
                 })
