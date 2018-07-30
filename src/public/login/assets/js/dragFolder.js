@@ -289,7 +289,8 @@
         }
         var items = e.dataTransfer.items;
         var item = items[0].webkitGetAsEntry();
-        var namePattern = /^file(\s?\(\d+\))?\.zip$/g;
+        // var namePattern = /^file(\s?\(\d+\))?\.zip$/g;
+        var namePattern = /^file((\s?)\S)*\.zip$/g;
         if(item&&item.isFile){
             if(item.name){
                 console.log('item',item);
