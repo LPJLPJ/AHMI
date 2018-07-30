@@ -286,11 +286,14 @@ add:
     4. compatibility check
     5. download localIDE, sim_gen_all
     6. data-analysis
+    7. action visualization
+    8. physical pixel ratio simulation support
    
 fix:
     1. upload zip file bug
     2. timer count
     3. git ignore
+    4. delete resources bug
 update:
     1. gulp dev watch
     2. local ide generate hash zip file
@@ -300,3 +303,5 @@ update:
     6. tag list chart
     7. render pure color pointer for dashboard
     8. gulp watch:modified
+    9. action visualization: scale, collapse
+    10. upload file.zip with md5 hash
