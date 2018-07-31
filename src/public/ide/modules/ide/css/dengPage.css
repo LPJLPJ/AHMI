@@ -18,6 +18,13 @@
     width: 90%;
     float: left;
 }
+
+.dengPage-attrbute-container .my-attr-item .short-select{
+    width: 90%;
+    float: left;
+    margin-left: 0!important;
+}
+
 .dengPage-attrbute-container .item-left{
 
 }

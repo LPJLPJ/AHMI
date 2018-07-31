@@ -37,12 +37,39 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             if (info.enableAnimation === undefined) {
                 info.enableAnimation = false;
             }
+            if (info.numSystem === undefined) {
+                info.numSystem = '0';
+                info.hexControl = {
+                    markingMode:'0',
+                    transformMode:'0'
+                }
+            }
         },
         texNum: function () {
             var level = arguments[0];
             var info = level.info;
             if (level.transition === undefined) {
                 level.transition = AnimationService.getDefaultTransition();
+            }
+
+            if (info.numSystem === undefined) {
+                info.numSystem = '0';
+                info.hexControl = {
+                    markingMode:'0',
+                    transformMode:'0'
+                }
+            }
+
+            var slices=level.texList[0].slices;
+            if(slices.length<26){
+                var hexTex = ['x','a','b','c','d','e','f','A','B','C','D','E','F'];
+                for(var i=0;i<hexTex.length;i++){
+                    var n=i+13;
+                    slices[n] = {};
+                    slices[n].imgSrc = '';
+                    slices[n].color = 'rgba(120,120,120,1)';
+                    slices[n].name = hexTex[i];
+                }
             }
         },
         dateTime: function () {

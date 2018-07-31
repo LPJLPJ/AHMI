@@ -271,7 +271,6 @@
                                     </div>
                                 </div>
 
-                                <!--控件拉伸 tang-->
                                 <div class="form-group projectScale">
                                     <label class="control-label">图层、控件尺寸拉伸：</label>
                                     <input type="checkbox" ng-model="isPulling"/>
@@ -282,7 +281,7 @@
                                         <input type="number" class="form-control col-sm-4" id="pullingWidth" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="pullingHeight" class="col-sm-2">宽度比例 1:</label>
+                                        <label for="pullingHeight" class="col-sm-2">高度比例 1:</label>
                                         <input type="number" class="form-control col-sm-4" id="pullingHeight" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
                                     </div>
                                 </div>
@@ -1830,6 +1829,37 @@
                                    type="number"
                                    disabled>
                         </div>
+
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">数字进制</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.num.numSystem"
+                                    ng-change="component.num.enterNumSystem()">
+                                <option ng-repeat="numSystem in component.num.numSystems" value="{{numSystem.id}}">
+                                    {{numSystem.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item" ng-show="component.num.numSystem=='1'">
+                            <span class="my-attr-title">进制符(0x)</span>
+                            <select class="my-attr-number-input form-control short-select"
+                                    ng-model="component.num.hexControl.markingMode"
+                                    ng-change="component.num.hexControl.enterMarkingMode()">
+                                <option ng-repeat="markingMode in component.num.markingModes" value="{{markingMode.id}}">
+                                    {{markingMode.name}}
+                                </option>
+                            </select>
+                        </div><div class="my-attr-item" ng-show="component.num.numSystem=='1'">
+                            <span class="my-attr-title">大小写</span>
+                            <select class="my-attr-number-input form-control short-select"
+                                    ng-model="component.num.hexControl.transformMode"
+                                    ng-change="component.num.hexControl.enterTransformMode()">
+                                <option ng-repeat="transformMode in component.num.transformModes" value="{{transformMode.id}}">
+                                    {{transformMode.name}}
+                                </option>
+                            </select>
+                        </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1871,6 +1901,7 @@
                         </div><div class="my-attr-item">
                             <span class="my-attr-title">小数位数</span>
                             <input class="my-attr-number-input form-control short-input"
+                                   ng-disabled="component.num.numSystem=='1'"
                                    ng-model="component.object.level.info.decimalCount"
                                    ng-keypress="component.num.changeDecimalCount($event)"
                                    ng-blur="component.restore()"
@@ -1912,6 +1943,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">符号</span>
                             <select class="my-attr-number-input form-control"
+                                    ng-disabled="component.num.numSystem=='1'"
                                     ng-model="component.num.symbolMode"
                                     ng-change="component.num.enterSymbolMode()">
                                 <option ng-repeat="mode in component.num.symbolModes" value="{{mode.id}}">
@@ -1922,6 +1954,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">前导0</span>
                             <select class="my-attr-number-input form-control"
+                                    ng-disabled="component.num.numSystem=='1'"
                                     ng-model="component.num.frontZeroMode"
                                     ng-change="component.num.enterFrontZeroMode()">
                                 <option ng-repeat="mode in component.num.frontZeroModes" value="{{mode.id}}">
@@ -2008,6 +2041,36 @@
                                type="number">
                         </div>
 
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">数字进制</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.texNum.numSystem"
+                                    ng-change="component.texNum.enterNumSystem()">
+                                <option ng-repeat="numSystem in component.texNum.numSystems" value="{{numSystem.id}}">
+                                    {{numSystem.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item" ng-show="component.texNum.numSystem=='1'">
+                            <span class="my-attr-title">进制符(0x)</span>
+                            <select class="my-attr-number-input form-control short-select"
+                                    ng-model="component.texNum.hexControl.markingMode"
+                                    ng-change="component.texNum.hexControl.enterMarkingMode()">
+                                <option ng-repeat="markingMode in component.texNum.markingModes" value="{{markingMode.id}}">
+                                    {{markingMode.name}}
+                                </option>
+                            </select>
+                        </div><div class="my-attr-item" ng-show="component.texNum.numSystem=='1'">
+                        <span class="my-attr-title">大小写</span>
+                        <select class="my-attr-number-input form-control short-select"
+                                ng-model="component.texNum.hexControl.transformMode"
+                                ng-change="component.texNum.hexControl.enterTransformMode()">
+                            <option ng-repeat="transformMode in component.texNum.transformModes" value="{{transformMode.id}}">
+                                {{transformMode.name}}
+                            </option>
+                        </select>
+                    </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2082,6 +2145,7 @@
                             <span class="my-attr-title">小数位数</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.decimalCount"
+                                   ng-disabled="component.texNum.numSystem=='1'"
                                    ng-keypress="component.texNum.changeDecimalCount($event)"
                                    ng-blur="component.restore()"
                                    type="number">
@@ -2129,6 +2193,7 @@
                             <span class="my-attr-title">前导0</span>
                             <select class="my-attr-number-input form-control"
                                     ng-model="component.texNum.frontZeroMode"
+                                    ng-disabled="component.texNum.numSystem=='1'"
                                     ng-change="component.texNum.enterFrontZeroMode()">
                                 <option ng-repeat="mode in component.texNum.frontZeroModes" value="{{mode.id}}">
                                     {{mode.name}}

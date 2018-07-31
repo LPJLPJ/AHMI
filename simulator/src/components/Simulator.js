@@ -2879,6 +2879,12 @@ module.exports = React.createClass({
         var curWidth = widget.info.width;
         var curHeight = widget.info.height;
 
+        var hexMode = {
+            numSystem: widget.info.numSystem,
+            markingMode: widget.info.hexControl.markingMode,
+            transformMode: widget.info.hexControl.transformMode
+        };
+
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
@@ -2907,7 +2913,7 @@ module.exports = React.createClass({
             if (!enableAnimation || (enableAnimation && widget.animateTimerId == 0)) {
 
 
-                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode ,hexMode)
 
                 //drawbackground
                 var bgTex = {
@@ -2933,11 +2939,11 @@ module.exports = React.createClass({
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
 
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
@@ -2955,11 +2961,11 @@ module.exports = React.createClass({
 
                 } else {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
@@ -3092,6 +3098,12 @@ module.exports = React.createClass({
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
+        //16进制
+        var hexMode = {
+            numSystem: widget.info.numSystem,
+            markingMode: widget.info.hexControl.markingMode,
+            transformMode: widget.info.hexControl.transformMode
+        };
 
         var tempcanvas = this.refs.tempcanvas;
 
@@ -3109,7 +3121,7 @@ module.exports = React.createClass({
             if (!enableAnimation || (enableAnimation && widget.animateTimerId == 0)) {
 
 
-                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                 // console.log('tempNumValue',tempNumValue)
                 this.paintStyledTexNum(widget, tempNumValue, curX, curY, curX, curY, curWidth, curHeight)
 
@@ -3128,11 +3140,11 @@ module.exports = React.createClass({
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
 
 
@@ -3148,11 +3160,11 @@ module.exports = React.createClass({
 
                 } else {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
 
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
@@ -3240,6 +3252,45 @@ module.exports = React.createClass({
                     break;
                 case '-':
                     curTexSlice = widget.texList[0].slices[12];
+                    break;
+                case 'x':
+                    curTexSlice = widget.texList[0].slices[13];
+                    break;
+                case 'a':
+                    curTexSlice = widget.texList[0].slices[14];
+                    break;
+                case 'b':
+                    curTexSlice = widget.texList[0].slices[15];
+                    break;
+                case 'c':
+                    curTexSlice = widget.texList[0].slices[16];
+                    break;
+                case 'd':
+                    curTexSlice = widget.texList[0].slices[17];
+                    break;
+                case 'e':
+                    curTexSlice = widget.texList[0].slices[18];
+                    break;
+                case 'f':
+                    curTexSlice = widget.texList[0].slices[19];
+                    break;
+                case 'A':
+                    curTexSlice = widget.texList[0].slices[20];
+                    break;
+                case 'B':
+                    curTexSlice = widget.texList[0].slices[21];
+                    break;
+                case 'C':
+                    curTexSlice = widget.texList[0].slices[22];
+                    break;
+                case 'D':
+                    curTexSlice = widget.texList[0].slices[23];
+                    break;
+                case 'E':
+                    curTexSlice = widget.texList[0].slices[24];
+                    break;
+                case 'F':
+                    curTexSlice = widget.texList[0].slices[25];
                     break;
 
             }
@@ -3336,7 +3387,7 @@ module.exports = React.createClass({
         // tempCtx.fillText(tempNumValue,0,)
         tempCtx.restore()
     },
-    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
+    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode) {
         var negative = false;
         if (curValue < 0) {
             negative = true;
@@ -3388,6 +3439,16 @@ module.exports = React.createClass({
         } else if (negative) {
             symbol = '-';
             tempNumValue = symbol + tempNumValue;
+        }
+
+        if (hexMode && hexMode.numSystem == '1') {
+            tempNumValue = parseInt(tempNumValue).toString(16);
+            if (hexMode.transformMode == '1') {
+                tempNumValue = tempNumValue.toUpperCase();
+            }
+            if (hexMode.markingMode == '1') {
+                tempNumValue = '0x' + tempNumValue;
+            }
         }
 
         return tempNumValue

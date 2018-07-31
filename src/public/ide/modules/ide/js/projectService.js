@@ -1188,6 +1188,7 @@ ideServices
                         syncSublayer(fabWidget);
                     },initiator);
                 }else if(_newWidget.type===Type.MyTexNum){
+                    console.log(_newWidget);
                     fabric.MyTexNum.fromLevel(_newWidget,function (fabWidget) {
                         _self.currentFabLayerIdList = [fabWidget.id];
                         subLayerNode.add(fabWidget);
@@ -3717,6 +3718,43 @@ ideServices
                 _successCallback&&_successCallback(currentOperate);
             };
 
+            /**
+             * 切换数字进制
+             * 切换16进制的 进制符，大小写
+             * @author tang
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeNumSystem = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+
+                if(_option.numSystem){//改进制
+                    selectObj.level.info.numSystem=_option.numSystem;
+                    arg.numSystem=_option.numSystem;
+                }
+                if(_option.markingMode){//16进制 0x标识
+                    selectObj.level.info.hexControl.markingMode=_option.markingMode;
+                    arg.markingMode=_option.markingMode;
+                }
+                if(_option.transformMode){//16进制 大小写
+                    selectObj.level.info.hexControl.transformMode=_option.transformMode;
+                    arg.transformMode=_option.transformMode;
+                }
+                selectObj.target.fire('changeNumSystem',arg);
+            };
+
+            //数字字体
             this.ChangeAttributeTexNumContent = function(_option,_successCallback){
                 var currentOperate = SaveCurrentOperate();
                 var selectObj=_self.getCurrentSelectObject();
