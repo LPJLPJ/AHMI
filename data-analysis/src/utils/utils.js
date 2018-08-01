@@ -1,211 +1,4 @@
-
-// 资源占用计算类
-class SizeCalculator {
-  constructor() {
-    this.totalSize = 0;
-  }
-
-  convertTotalSize = () => {
-    return Math.ceil((this.totalSize) / 1024 / 1024) + 'MB'
-  }
-
-  addSize = (width, height, bytePerPixel) => {
-    const curSize = Number(Number(width) * Number(height)) || 0
-    this.totalSize += curSize * (bytePerPixel || 4)
-  }
-
-  calcButton = (widget) => {
-    let info = widget.info;
-    if (info) {
-      const slices = widget.texList[0].slices;
-      slices.map((slice, index) => {
-        return this.addSize(widget.info.width, widget.info.height)
-      })
-    }
-  }
-
-  calcButtonGroup = (widget) => {
-    let info = widget.info;
-    if (!!info) {
-      //trans each slide
-      let width = info.width;
-      let height = info.height;
-
-      let interval = info.interval;
-      let count = info.count;
-      let arrange = (info.arrange === 'horizontal');
-      if (arrange) {
-        width = (width - (count - 1) * interval) / count;
-      } else {
-        height = (height - (count - 1) * interval) / count;
-      }
-
-      let texList = widget.texList;
-
-      let slices = [];
-      for (let i = 0; i < count; i++) {
-        for (let j = 0; j < 2; j++) {
-          slices.push(texList[i].slices[j]);
-        }
-      }
-      if (texList[count]) {
-        slices.push((texList[count].slices[0]));
-      }
-      slices.map(function (slice, i) {
-        this.addSize(width, height)
-      }.bind(this));
-
-    }
-  }
-
-  calcDashboard = (widget) => {
-    let info = widget.info;
-    if (!!info) {
-      //trans each slide
-
-
-      let texList = widget.texList;
-      texList.map(function (tex, i) {
-        let width = info.width;
-        let height = info.height;
-        if (i === 1) {
-          //pointer
-          width = height = info.pointerLength / Math.sqrt(2);
-        }
-        this.addSize(width, height)
-      }.bind(this));
-    }
-  }
-
-  calcSlide = (widget) => {
-    let info = widget.info;
-    if (!!info) {
-      //font
-      //trans each slide
-      let width = info.width;
-      let height = info.height;
-
-      let slideTex = widget.texList[0];
-      slideTex.slices.map(function (slice, i) {
-        this.addSize(width, height)
-      }.bind(this));
-
-    }
-  }
-
-  calcTexNum = (widget) => {
-    let info = widget.info;
-    if (!!info) {
-      //trans each slide
-      let width = info.characterW;
-      let height = info.characterH;
-
-      let slideTex = widget.texList[0];
-      slideTex.slices.map(function (slice, i) {
-        this.addSize(width, height)
-      }.bind(this));
-
-
-    }
-  }
-
-  calcTexTime = (widget) => {
-    let info = widget.info;
-    if (!!info) {
-      //trans each slide
-      let width = info.characterW;
-      let height = info.characterH;
-
-      // let slideTex = widget.texList[0];
-      let slideTex = widget.texList[0];
-      slideTex.slices.push(widget.texList[1].slices[0]);
-      slideTex.slices.map(function (slice, i) {
-        this.addSize(width, height)
-      }.bind(this));
-
-    }
-  }
-
-  calcRotateImg = (widget) => {
-    let info = widget.info;
-    if (!!info) {
-      //trans each slide
-      let width = info.width;
-      let height = info.height;
-
-      let slideTex = widget.texList[0];
-      slideTex.slices.map(function (slice, i) {
-        this.addSize(width, height)
-      }.bind(this));
-
-    }
-  }
-
-  calcOscilloscope = (widget) => {
-    let info = widget.info;
-    let width = info.width;
-    let height = info.height;
-    if (info) {
-      //draw bg
-      //draw grid
-      this.addSize(width, height)
-
-    }
-  }
-
-  calcTextArea = (widget) => {
-    let info = widget.info;
-    let width = info.width;
-    let height = info.height;
-    if (info) {
-      this.addSize(width, height)
-    }
-  }
-
-  calcPage = (page, width, height) => {
-    if (page.backgroundImage) {
-      this.addSize(width, height)
-    }
-  }
-
-  calcWidget = (widget) => {
-    switch (widget.type) {
-      case 'MyButton':
-      case 'MySwitch':
-        this.calcButton(widget);
-        break;
-      case 'MyButtonGroup':
-        this.calcButtonGroup(widget);
-        break;
-      case 'MySlide':
-        this.calcSlide(widget);
-        break;
-      case 'MyAnimation':
-        this.calcSlide(widget);
-        break;
-      case 'MyOscilloscope':
-        this.calcOscilloscope(widget);
-        break;
-      case 'MyTextArea':
-        this.calcTextArea(widget);
-        break;
-      case 'MyDashboard':
-        this.calcDashboard(widget);
-        break;
-      case 'MyRotateImg':
-        this.calcRotateImg(widget);
-        break;
-      case 'MyTexNum':
-        this.calcTexNum(widget);
-        break;
-      case 'MyTexTime':
-        this.calcTexTime(widget);
-        break;
-      default:
-        break;
-    }
-  }
-}
+// config文件常量
 
 const mDynamicPageCfg_Unit = 28;
 const TagClassCfg_Unit = 12;
@@ -218,6 +11,20 @@ const WidgetClassCfg_Unit = 104;
 const AnimationVectorClass_Unit = 44;
 const Instruction_Unit = 5;
 const Texture_Unit = 40;
+
+// texture文件常量
+
+const FORMAT_NORMAL = 'normal';
+const FORMAT_DXT3 = 'dxt3';
+
+const PNG = 'png';
+const BMP = 'bmp';
+
+const ARGB8888 = "ARGB8888";
+const RGB565 = "RGB565";
+const DXT1 = "DXT1";
+const DXT5 = "DXT5";
+const ALPH4 = "ALPH4";
 
 
 /**
@@ -234,7 +41,7 @@ const Texture_Unit = 40;
  * WidgetClassCfg    单位：104字节。与widget数目有关--widgetCnt
  * AnimationVectorClass 单位：44字节。与Animation数目有关--animationCnt
  * Instruction       单位：5字节。与指令数目有关--instructionsCnt
- * Texture           单位：40字节。所有纹理数目有关--textureCnt 
+ * Texture           单位：40字节。所有纹理数目有关--textureCnt
  */
 class CfgSizeCalculator {
   // 单位是Byte
@@ -275,7 +82,7 @@ class CfgSizeCalculator {
 
   load(project) {
     // console.log('project', project);
-    const { pages = [], customTags = [], timerTags = [] } = project;
+    const {pages = [], customTags = [], timerTags = []} = project;
 
     let allPage = [];
     let allCanvas = [];
@@ -292,7 +99,7 @@ class CfgSizeCalculator {
       if (!actions)
         return;
       actions.forEach((action) => {
-        const { commands = [] } = action;
+        const {commands = []} = action;
         commands.forEach((command) => {
           this.instructionsCnt++;
         })
@@ -305,29 +112,29 @@ class CfgSizeCalculator {
       const widgets = allWidgets;
       // let oldCount = 0;
       widgets.forEach(widget => {
-        const { texList = [], type } = widget;
+        const {texList = [], type} = widget;
 
         // oldCount = count;
         switch (type) {
           case "MyProgress":
             texList.forEach(tex => {
-              const { slices } = tex;
+              const {slices} = tex;
               count += slices.length;
             });
             count += 1;
             break;
           case "MyDashBoard":
             texList.forEach(tex => {
-              const { slices } = tex;
+              const {slices} = tex;
               count += slices.length;
             });
-            const { dashboardModeId } = widget;
+            const {dashboardModeId} = widget;
             if (dashboardModeId !== '0') {
               count += 4;
             }
             break;
           case "MyDateTime":
-            const { info: { dateTimeModeId } } = widget;
+            const {info: {dateTimeModeId}} = widget;
             if (dateTimeModeId === '0') {
               count += 8;
             } else if (dateTimeModeId === '1') {
@@ -341,7 +148,7 @@ class CfgSizeCalculator {
             break;
           case "MyNum":
           case "MyTexNum":
-            let { info: { numOfDigits, decimalCount, symbolMode } } = widget;
+            let {info: {numOfDigits, decimalCount, symbolMode}} = widget;
             count += Number(numOfDigits);
             if (Number(decimalCount) > 0) {
               count += 1;
@@ -357,7 +164,7 @@ class CfgSizeCalculator {
             count += 1;
             break;
           case "MyButton":
-            const { info: { disableHighlight } } = widget;
+            const {info: {disableHighlight}} = widget;
             count += 1;
             if (!disableHighlight) {
               count += 1;
@@ -367,7 +174,7 @@ class CfgSizeCalculator {
             count += 1;
             break;
           case "MyButtonGroup":
-            const { info: { count: btnCount } } = widget;
+            const {info: {count: btnCount}} = widget;
             count += btnCount;
             break;
           case "MySwitch":
@@ -401,7 +208,7 @@ class CfgSizeCalculator {
 
     // 遍历
     pages.forEach((page) => {
-      const { layers = [], actions } = page;
+      const {layers = [], actions} = page;
       allPage.push(page);
 
       addInstructionCnt(actions); // 计算指令数量-页面
@@ -410,7 +217,7 @@ class CfgSizeCalculator {
         allPagesBindTag.push(page);
 
       layers.forEach((layer) => {
-        const { subLayers = [], actions } = layer;
+        const {subLayers = [], actions} = layer;
 
         addInstructionCnt(actions);   // 计算指令数量-图层
 
@@ -421,14 +228,14 @@ class CfgSizeCalculator {
           allAnimations.push(layer.animations);
 
         subLayers.forEach((subLayer) => {
-          const { widgets = [], actions } = subLayer;
+          const {widgets = [], actions} = subLayer;
 
           addInstructionCnt(actions);
 
           allSubCanvas.push(subLayer);
 
           widgets.forEach((widget) => {
-            const { actions } = widget;
+            const {actions} = widget;
 
             addInstructionCnt(actions); // 收集动作指令
 
@@ -496,7 +303,7 @@ class CfgSizeCalculator {
     // return Math.ceil(total / 1024);
     return {
       total: Math.ceil(total / 1024),
-      widgetCalssCfgSize: Math.ceil(this.WidgetClassCfg / 1024),
+      widgetClassCfgSize: Math.ceil(this.WidgetClassCfg / 1024),
       textureSize: Math.ceil(this.Texture / 1024),
       otherSize: Math.ceil((total - this.WidgetClassCfg - this.Texture) / 1024),
     }
@@ -504,87 +311,252 @@ class CfgSizeCalculator {
 }
 
 /**
- * 返回所有字符集
- * @param widgets
- * @returns {Array}
+ * 纹理类
  */
-function getFontCollections(widgets) {
-  var fontWidgets,
-    fonts = [],
-    paddingRatio = 1.2;
-  fontWidgets = widgets.filter(function (widget) {
-    return ((widget.subType === 'MyNum') || (widget.subType === 'MyDateTime'))
-  });
-  fontWidgets.forEach(function (widget) {
-    var info = widget.info,
-      font = {},
-      result,
-      fontFamily = info.fontFamily,
-      reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
-    if (reg.test(fontFamily)) {
-      var str = '';
-      for (var i = 0; i < fontFamily.length; i++) {
-        str += fontFamily.charCodeAt(i).toString(32);
-      }
-      fontFamily = str;
-    }
-    widget.originFont = {};
-    widget.originFont.src = '\\' + fontFamily + '-' + info.fontSize + '-' + info.fontBold + '-' + (info.fontItalic || 'null') + '.png';
-    widget.originFont.w = info.fontSize;
-    widget.originFont.h = info.fontSize;
-    widget.originFont.W = Math.ceil(info.fontSize * paddingRatio);
-    widget.originFont.H = Math.ceil(info.fontSize * paddingRatio);
-    widget.originFont.paddingX = Math.ceil(info.fontSize * (paddingRatio - 1) / 2);
-    widget.originFont.paddingY = Math.ceil(info.fontSize * (paddingRatio - 1) / 2);
+class Texture {
+  constructor(w, h, type) {
+    this.width = w;
+    this.height = h;
+    this.type = type;
+  }
 
-    widget.originFont.paddingRatio = paddingRatio;
-    result = fonts.some(function (item) {
-      return ((item.fontFamily === info.fontFamily) && (item.fontSize === info.fontSize) && (item.fontBold === info.fontBold) && (item.fontItalic === info.fontItalic));
-    });
-    if (!result) {
-      font['font-family'] = info.fontFamily;
-      font['font-size'] = info.fontSize;
-      font['font-bold'] = info.fontBold;
-      font['font-italic'] = info.fontItalic;
-      fonts.push(font);
-    }
-  });
-  return fonts;
-}
-
-// 计算工程资源占用大小
-const calcProjectSize = function (dataStructure) {
-  let allWidgets = []
-  let curSizeCalulator = new SizeCalculator()
-  for (let i = 0; i < dataStructure.pages.length; i++) {
-    let curPage = dataStructure.pages[i];
-    curSizeCalulator.calcPage(curPage, dataStructure.initSize.width, dataStructure.initSize.height)
-    for (let j = 0; j < curPage.layers.length; j++) {
-      let curCanvas = curPage.layers[j];
-      for (let k = 0; k < curCanvas.subLayers.length; k++) {
-        let curSubCanvas = curCanvas.subLayers[k];
-        for (let l = 0; l < curSubCanvas.widgets.length; l++) {
-          allWidgets.push(curSubCanvas.widgets[l])
-          curSizeCalulator.calcWidget(curSubCanvas.widgets[l]);
+  getSize() {
+    let size = 0;
+    let {width, height, type} = this;
+    switch (type) {
+      case ARGB8888:
+        size = width * height * 4;
+        if (size % 8 !== 0) {
+          size += (8 - size % 8);
         }
+        break;
+      case RGB565:
+        size = width * height * 2;
+        if (size % 8 !== 0) {
+          size += (8 - size % 8);
+        }
+        break;
+      case DXT1:
+        if (width % 4 !== 0) {
+          width += (4 - width % 4);
+        }
+        if (height % 4 !== 0) {
+          height += (4 - height % 4);
+        }
+        size = width * height / 2;
+        break;
+      case DXT5:
+        if (width % 4 !== 0) {
+          width += (4 - width % 4);
+        }
+        if (height % 4 !== 0) {
+          height += (4 - height % 4);
+        }
+        size = width * height;
+        break;
+      case ALPH4:
+        if (width % 4 !== 0) {
+          width += (4 - width % 4);
+        }
+        if (height % 4 !== 0) {
+          height += (4 - height % 4);
+        }
+        size = width * height;
+        break;
+      default:
+        break;
+    }
+    return size;
+  }
+}
+
+
+// 纹理资源计算类
+class TextureSizeCalculator {
+  constructor() {
+    this.texture = [];
+    this.totalSize = 0;
+  }
+
+  _parsePage(page, w, h, format = 'normal') {
+    const {texture} = this;
+    const {backgroundImage = ''} = page;
+    const suffixArr = backgroundImage.split('.');
+    const suffix = suffixArr[suffixArr.length - 1].toLowerCase();
+
+    if (suffix === BMP) {
+      if (format === FORMAT_NORMAL) {
+        texture.push(new Texture(w, h, RGB565));
+      } else if (format === FORMAT_DXT3) {
+        texture.push(new Texture(w, h, DXT1))
       }
+    } else if (suffix === PNG) {
+      if (format === FORMAT_NORMAL) {
+        texture.push(new Texture(w, h, ARGB8888))
+      } else if (format === FORMAT_DXT3) {
+        texture.push(new Texture(w, h, DXT5));
+      }
+    }
+
+  }
+
+  _parseWidget(widget, format = 'normal') {
+
+    let {type = ''} = widget;
+    type = type.toLowerCase();
+    switch (type) {
+      case 'myanimation':
+        this._parseAnimation(widget, format);
+        break;
+      case 'mynum':
+      case 'mydatetime':
+        this._parseNumText(widget, format);
+        break;
+      default:
+        this._parseNormalWidget(widget, format);
+        break;
+    }
+
+  }
+
+  _parseAnimation(widget, format = 'normal') {
+    const {texture} = this;
+    const {texList = [], info: {width, height}} = widget;
+    const suffixs = [];
+    if (!texList) {
+      return;
+    }
+    texList.forEach(tex => {
+      const {slices = []} = tex;
+      slices.forEach(slice => {
+        const {imgSrc = ''} = slice;
+        if (!!imgSrc) {
+          const suffixArr = imgSrc.split('.');
+          suffixs.push(suffixArr[suffixArr.length - 1])
+        }
+      })
+    });
+
+    if (format === FORMAT_NORMAL) {
+      suffixs.forEach(suffix => {
+        if (suffix === BMP) {
+          texture.push(new Texture(width, height, RGB565));
+        } else if (suffix === PNG) {
+          texture.push(new Texture(width, height, RGB565));
+        }
+      })
+    } else if (format === FORMAT_DXT3) {
+      suffixs.forEach(suffix => {
+        if (suffix === BMP) {
+          texture.push(new Texture(width, height, DXT1));
+        } else if (suffix === PNG) {
+          texture.push(new Texture(width, height, DXT1));
+        }
+      })
     }
   }
 
-  var fontList = getFontCollections(allWidgets)
-  for (var i = 0; i < fontList.length; i++) {
-    var curFont = fontList[i]
-    var curFontSize = curFont['font-size'] || 24
-    var width = 1.2 * Math.sqrt(128) * curFontSize
-    curSizeCalulator.addSize(width, width, 0.5)
+  _parseNumText(widget, format = 'normal') {
+    const {texture} = this;
+    const {info: {fontSize}} = widget;
+    if (format === FORMAT_NORMAL) {
+      for (let i = 0; i < 95; i++) {
+        texture.push(new Texture(fontSize, fontSize, ALPH4));
+      }
+    } else if (format === FORMAT_DXT3) {
+      for (let i = 0; i < 95; i++) {
+        texture.push(new Texture(fontSize, fontSize, ALPH4));
+      }
+    }
+
   }
 
-  return curSizeCalulator.convertTotalSize()
+  _parseNormalWidget(widget, format = 'normal') {
+    const {texture} = this;
+    const {texList = [], info: {width, height}} = widget;
+    if (!texList) {
+      return;
+    }
+
+    const suffixs = [];
+
+    texList.forEach(tex => {
+      const {slices = []} = tex;
+      slices.forEach(slice => {
+        const {imgSrc = ''} = slice;
+        if (!!imgSrc) {
+          const suffixArr = imgSrc.split('.');
+          suffixs.push(suffixArr[suffixArr.length - 1])
+        }
+      })
+    });
+
+    if (format === FORMAT_NORMAL) {
+      suffixs.forEach(suffix => {
+        if (suffix === BMP) {
+          texture.push(new Texture(width, height, RGB565));
+        } else if (suffix === PNG) {
+          texture.push(new Texture(width, height, ARGB8888));
+        }
+      })
+    } else if (format === FORMAT_DXT3) {
+      suffixs.forEach(suffix => {
+        if (suffix === BMP) {
+          texture.push(new Texture(width, height, DXT1));
+        } else if (suffix === PNG) {
+          texture.push(new Texture(width, height, DXT5));
+        }
+      })
+    }
+
+  }
+
+
+  load(project, format = 'normal') {
+    const {pages = [], initSize: {width, height}} = project;
+    // 遍历
+    pages.forEach((page) => {
+      this._parsePage(page, width, height, format);
+
+      const {layers = []} = page;
+
+      layers.forEach((layer) => {
+        const {subLayers = []} = layer;
+
+        subLayers.forEach((subLayer) => {
+          const {widgets = []} = subLayer;
+
+          widgets.forEach((widget) => {
+            this._parseWidget(widget, format = 'normal');
+          })
+
+        })
+      })
+    });
+
+    return this
+  }
+
+
+  calcSize() {
+    const {texture} = this;
+    this.totalSize = 0;
+    for (let i = 0, il = texture.length; i < il; i++) {
+      this.totalSize += texture[i].getSize();
+    }
+    return Math.ceil(this.totalSize / 1024 / 1024);
+  }
+
 }
+
 
 // 计算配置文件大小
 const calcConfigSize = function (project) {
   return new CfgSizeCalculator().load(project).calcSize();
-}
+};
 
-export { calcProjectSize, calcConfigSize }
+const calcTextureSize = function (project, type) {
+  return new TextureSizeCalculator().load(project, type).calcSize();
+};
+
+export {calcTextureSize, calcConfigSize}

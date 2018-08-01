@@ -14,7 +14,7 @@ import styles from './index.less';
 import projectImg from '../../assets/project.png'
 
 // utils
-import { calcProjectSize, calcConfigSize } from '../../utils/utils';
+import { calcTextureSize, calcConfigSize } from '../../utils/utils';
 
 const { TabPane } = Tabs;
 const FormItem = Form.Item;
@@ -40,7 +40,7 @@ class Analysis extends PureComponent {
 
     cfgFlashSize: 64,    //kb
     configSize: 0,
-    widgetCalssCfgSize: 0,
+    widgetClassCfgSize: 0,
     textureSize: 0,
     otherSize: 0,
   }
@@ -73,7 +73,7 @@ class Analysis extends PureComponent {
       ...resourceSize,
       ...configSize,
     })
-  }
+  };
 
   // 解析工程基本信息
   parseBasicInfo = () => {
@@ -175,7 +175,7 @@ class Analysis extends PureComponent {
   parsePieData = () => {
     const { project } = this.props;
     const content = JSON.parse(project.content);
-    const total = calcProjectSize(content);
+    const total = calcTextureSize(content);
     return {
       resourceSize: parseInt(total, 10),
     };
@@ -188,7 +188,7 @@ class Analysis extends PureComponent {
     const result = calcConfigSize(content);
     return {
       configSize: result.total,
-      widgetCalssCfgSize: result.widgetCalssCfgSize,
+      widgetClassCfgSize: result.widgetClassCfgSize,
       textureSize: result.textureSize,
       otherSize: result.otherSize,
     }
@@ -210,7 +210,7 @@ class Analysis extends PureComponent {
   }
 
   render() {
-    const { resourceSize, resFlashSize, cfgFlashSize, configSize, widgetCalssCfgSize, textureSize, otherSize } = this.state;
+    const { resourceSize, resFlashSize, cfgFlashSize, configSize, widgetClassCfgSize, textureSize, otherSize } = this.state;
 
     const resourcesData = [
       {
@@ -226,7 +226,7 @@ class Analysis extends PureComponent {
     const configeData = [
       {
         x: '控件配置',
-        y: widgetCalssCfgSize,
+        y: widgetClassCfgSize,
       },
       {
         x: '纹理配置',
@@ -345,7 +345,7 @@ class Analysis extends PureComponent {
               loading={this.state.loading}
               bordered={false}
               className={styles.salesCard}
-              title="生成后资源所占空间"
+              title="生成后纹理大小(Texture.acf)"
               bodyStyle={{ padding: 24 }}
               style={{ marginTop: 24, minHeight: 509 }}
             >
@@ -379,7 +379,7 @@ class Analysis extends PureComponent {
               loading={this.state.loading}
               bordered={false}
               className={styles.salesCard}
-              title="生成后配置文件所占空间"
+              title="生成后配置文件大小(ConfigData.acf)"
               bodyStyle={{ padding: 24 }}
               style={{ marginTop: 24, minHeight: 509 }}
             >
@@ -419,4 +419,4 @@ function mapStateToProps({ global, loading }) {
   }
 }
 
-export default connect(mapStateToProps)(Analysis); 
+export default connect(mapStateToProps)(Analysis);
