@@ -1188,6 +1188,7 @@ ideServices
                         syncSublayer(fabWidget);
                     },initiator);
                 }else if(_newWidget.type===Type.MyTexNum){
+                    console.log(_newWidget);
                     fabric.MyTexNum.fromLevel(_newWidget,function (fabWidget) {
                         _self.currentFabLayerIdList = [fabWidget.id];
                         subLayerNode.add(fabWidget);
@@ -3717,6 +3718,43 @@ ideServices
                 _successCallback&&_successCallback(currentOperate);
             };
 
+            /**
+             * 切换数字进制
+             * 切换16进制的 进制符，大小写
+             * @author tang
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeNumSystem = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+
+                if(_option.numSystem){//改进制
+                    selectObj.level.info.numSystem=_option.numSystem;
+                    arg.numSystem=_option.numSystem;
+                }
+                if(_option.markingMode){//16进制 0x标识
+                    selectObj.level.info.hexControl.markingMode=_option.markingMode;
+                    arg.markingMode=_option.markingMode;
+                }
+                if(_option.transformMode){//16进制 大小写
+                    selectObj.level.info.hexControl.transformMode=_option.transformMode;
+                    arg.transformMode=_option.transformMode;
+                }
+                selectObj.target.fire('changeNumSystem',arg);
+            };
+
+            //数字字体
             this.ChangeAttributeTexNumContent = function(_option,_successCallback){
                 var currentOperate = SaveCurrentOperate();
                 var selectObj=_self.getCurrentSelectObject();
@@ -3838,6 +3876,42 @@ ideServices
                 var selectObj = _self.getCurrentSelectObject();
                 selectObj.level.info.bindBit=_option.bindBit;
                 _successCallback&&_successCallback();
+            };
+            //bit重复检测
+            this.CheckBindBit = function (level, selectTag) {
+                var isRepetitive=false;
+                var bindBit = level.info.bindBit;
+
+                _.forEach(project.pages,function(page){
+                    var layers=page.layers;
+                    _.forEach(layers,function(layer){
+                        var subLayers=layer.subLayers;
+                        _.forEach(subLayers,function(subLayer){
+                            var widgets=subLayer.widgets;
+                            _.forEach(widgets,function(widget){
+                                if(widget.type=='MySwitch'&&widget.id!=level.id){
+
+                                    if(selectTag!=undefined){//切换tag时检测bit
+                                        if(widget.info.bindBit==bindBit){
+                                            if(widget.tag==selectTag){
+                                                isRepetitive=true;
+                                                return;
+                                            }
+                                        }
+                                    }else{
+                                        if(widget.tag==level.tag){//设置bit时检测tag
+                                            if(widget.info.bindBit==bindBit){
+                                                isRepetitive=true;
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        })
+                    })
+                });
+                return isRepetitive;
             };
 
             //改变字体样式，适用于开关控件，图层控件

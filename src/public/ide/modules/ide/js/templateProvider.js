@@ -599,6 +599,12 @@ ideServices
                 numOfDigits:3,//数字的位数，最小1，最大未定
                 overFlowStyle:'0',//指数字大于最大值时是否继续显示,0不显示，1显示
 
+                numSystem:'0',//数字进制，0是默认十进制，1为16进制
+                hexControl:{
+                    markingMode:'0', //0x标识 0为无 1为有
+                    transformMode:'0'//大小写 0为小写 1为大写
+                },
+
                 align:'center',//数字对齐方式
                 arrange:'horizontal',//数字方向，垂直vertical，水平horizontal
                 spacing:spacing,//数字之间的间距，默认为-10
@@ -651,7 +657,13 @@ ideServices
                 overFlowStyle:'0',//指数字大于最大值时是否继续显示,0不显示，1显示
                 align:'center',//数字对齐方式
                 numValue:1,
-                enableAnimation:false //显示模式标志，false:无动画 true:有动画
+                enableAnimation:false, //显示模式标志，false:无动画 true:有动画
+
+                numSystem:'0',//数字进制，0是默认十进制，1为16进制
+                hexControl:{
+                    markingMode:'0', //0x标识 0为无 1为有
+                    transformMode:'0'//大小写 0为小写 1为大写
+                }
             };
             var slices = [];
             for(var i=0,il=13;i<il;i++){
@@ -668,6 +680,15 @@ ideServices
                     slices[i].name = '-';
                 }
             }
+            var hexTex = ['x','a','b','c','d','e','f','A','B','C','D','E','F'];
+            for(var i=0;i<hexTex.length;i++){
+                var n=i+13;
+                slices[n] = {};
+                slices[n].imgSrc = '';
+                slices[n].color = 'rgba(120,120,120,1)';
+                slices[n].name = hexTex[i];
+            }
+
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,

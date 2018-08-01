@@ -2962,6 +2962,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxFontWidth=level.info.maxFontWidth;
             this.spacing = (level.info.spacing===undefined)?(level.info.spacing=Math.ceil(-this.fontSize/3)):level.info.spacing;//兼容旧的数字控件
             this.paddingRatio = level.info.paddingRatio;
+            //数字进制
+            this.numSystem = level.info.numSystem;
+            this.markingMode = level.info.hexControl.markingMode;
+            this.transformMode = level.info.hexControl.transformMode;
 
             var maxWidth = parseInt(self.fontSize);//+
             self.maxFontWidth = maxWidth;
@@ -3097,6 +3101,42 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeNumSystem', function(arg){
+                var _callback=arg.callback;
+                var level=arg.level;
+                if(arg.numSystem){
+                    self.numSystem=arg.numSystem;
+                    if(self.markingMode=='1'){
+                        self.numSystem=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                        level.info.numOfDigits=self.numOfDigits;
+                    }
+                }
+                if(arg.markingMode){
+                    self.markingMode=arg.markingMode;
+                    self.markingMode=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                    level.info.numOfDigits=self.numOfDigits;
+                }
+                if(arg.transformMode){
+                    self.transformMode=arg.transformMode;
+                }
+
+                var maxWidth = parseInt(self.fontSize);
+                self.maxFontWidth = maxWidth;
+                level.info.maxFontWidth = maxWidth;
+                var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
+                var paddingX = Math.ceil(maxWidth*self.paddingRatio);
+                width+=paddingX*2;
+                if(self.decimalCount!=0){
+                    width +=0.5*maxWidth+self.spacing;
+                }
+                var height = self.fontSize*1.2;
+                self.set({width:width,height:height});
+
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3152,6 +3192,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     //配置正负号
                     if((this.symbolMode=='1')&&(negative)){
                         tempNumValue='-'+tempNumValue;
+                    }
+                    //16进制转换
+                    if(this.numSystem=='1'){
+                        tempNumValue=parseInt(tempNumValue).toString(16);
+                        if(this.transformMode=='1'){
+                            tempNumValue=tempNumValue.toUpperCase();
+                        }
+                        if(this.markingMode=='1'){
+                            tempNumValue='0x'+tempNumValue;
+                        }
                     }
 
                     drawNumByCharacter(ctx,tempNumValue,this.align,this.width,this.fontSize,this.decimalCount,this.spacing);
@@ -3285,10 +3335,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.characterW = level.info.characterW;
             this.characterH = level.info.characterH;
 
+            //数字进制
+            this.numSystem = level.info.numSystem;
+            this.markingMode = level.info.hexControl.markingMode;
+            this.transformMode = level.info.hexControl.transformMode;
+
 
             //初始化数字字符
             this.numObj = [];
-            for(var i=0,il=13;i<il;i++){
+            for(var i=0,il=26;i<il;i++){
                 this.numObj[i] = {};
                 this.numObj[i].color = slices[i].color;
                 this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
@@ -3299,7 +3354,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var slices=arg.level.texList[0].slices;
                 var _callback=arg.callback;
 
-                for(var i=0,il=13;i<il;i++){
+                for(var i=0,il=26;i<il;i++){
                     self.numObj[i] = {};
                     self.numObj[i].color = slices[i].color;
                     self.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
@@ -3360,6 +3415,39 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            //数字进制
+            this.on('changeNumSystem',function(arg){
+                var _callback=arg.callback;
+                var level=arg.level;
+                if(arg.numSystem){
+                    self.numSystem=arg.numSystem;
+                    if(self.markingMode=='1'){
+                        self.numSystem=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                        level.info.numOfDigits=self.numOfDigits;
+                    }
+                }
+                if(arg.markingMode){
+                    self.markingMode=arg.markingMode;
+                    self.markingMode=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                    level.info.numOfDigits=self.numOfDigits;
+                }
+                if(arg.transformMode){
+                    self.transformMode=arg.transformMode;
+                }
+
+                if(self.numOfDigits&&self.characterW){
+                    //加入符号宽度
+                    var width = self.symbolMode=='0'?(self.numOfDigits*self.characterW):((self.numOfDigits+1)*self.characterW);
+                    //设置高度
+                    var height = self.characterH;
+                    self.set({width:width,height:height});
+                }
+
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3423,6 +3511,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         tempNumValue='-'+tempNumValue;
                     }
 
+                    if(this.numSystem=='1'){
+                        tempNumValue=parseInt(tempNumValue).toString(16);
+                        if(this.transformMode=='1'){
+                            tempNumValue=tempNumValue.toUpperCase();
+                        }
+                        if(this.markingMode=='1'){
+                            tempNumValue='0x'+tempNumValue;
+                        }
+                    }
                     //console.log('keke',this.characterW,"Y",this.characterH);
                     drawTexNumByCharacter(ctx,tempNumValue,this.align,this.width,this.characterW,this.characterH,this.decimalCount,this.numObj);
 
@@ -3531,6 +3628,45 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     break;
                 case '-':
                     drawNum(12,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'x':
+                    drawNum(13,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'a':
+                    drawNum(14,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'b':
+                    drawNum(15,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'c':
+                    drawNum(16,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'd':
+                    drawNum(17,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'e':
+                    drawNum(18,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'f':
+                    drawNum(19,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'A':
+                    drawNum(20,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'B':
+                    drawNum(21,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'C':
+                    drawNum(22,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'D':
+                    drawNum(23,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'E':
+                    drawNum(24,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'F':
+                    drawNum(25,characterW,height,numObj,xCoordinate,ctx);
                     break;
 
             }
