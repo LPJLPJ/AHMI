@@ -313,7 +313,6 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 });
             });
             $scope.currentChosenIdx += 6;
-            console.log($scope.action.commands);
             $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
         }
         ;

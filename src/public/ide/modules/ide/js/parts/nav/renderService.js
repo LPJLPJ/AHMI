@@ -308,7 +308,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             // var imgName = widget.id.split('.').join('-');
             // var outputFilename = imgName +'-'+ index+'.png';
 
-            var outputFilename = makeOutputFilenameFromId(page.id,0,'jpg')
+            var outputFilename = makeOutputFilenameFromId(page.id,0,'png')
 
             // console.log('dstDir',dstDir,'outputFilename',outputFilename);
             var outpath = path.join(dstDir,outputFilename);

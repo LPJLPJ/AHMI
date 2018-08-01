@@ -182,6 +182,17 @@
 .dengModel-body .modelPart{
     margin-bottom: 10px;
 }
+
+.dengModel-body .addTimerWrap{
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+}
+
+.dengModel-body .addTimerWrap button{
+    margin: 0 auto;
+}
+
 .dengModel-body .modal-title input{
     height: 32px;
     font-size: 12px;
