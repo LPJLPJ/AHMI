@@ -1102,6 +1102,15 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
 
     //选择tag，并将其绑定到当前对象上
     function selectedTagFun() {
+        var selectObject = ProjectService.getCurrentSelectObject();
+        //bit重复检测
+        if(selectObject.type=="MySwitch"){
+            if(ProjectService.CheckBindBit(selectObject.level,$scope.selectedTagObj.tagName)){
+                $scope.selectedTagObj.tagName = selectObject.level.tag;
+                toastr.warning('选择的tag上bit与当前设置重复');
+                return;
+            }
+        }
         $scope.component.selectedTag = $scope.selectedTagObj.tagName;
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);

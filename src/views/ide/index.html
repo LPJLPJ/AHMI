@@ -3401,6 +3401,13 @@
                                             <select class="form-control" ng-model="chosenCmd[0]"
                                                     ng-options="op as op.symbol for op in ops track by op.symbol" ng-change="changeTagShowState()"></select>
                                         </div>
+                                        <div class="form-group addTimerWrap">
+                                            <select class="form-control" ng-model="shortcutTimer">
+                                                <option ng-repeat="timer in timerTags"
+                                                        value="{{timer}}">{{timer}}</option>
+                                            </select>
+                                            <button class="btn btn-default" ng-click="shortcutAddTimer()">一键添加定时器</button>
+                                        </div>
                                     </td>
 
                                     <td class="my-action-td">

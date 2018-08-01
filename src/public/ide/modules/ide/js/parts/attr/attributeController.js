@@ -2735,7 +2735,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if ($scope.component.object.level.info.bindBit == initObject.level.info.bindBit) {
                     return;
                 }
-                if(checkBindBit($scope.component.object.level.info.bindBit)){
+                if(ProjectService.CheckBindBit($scope.component.object.level)){
                     toastr.warning('bit重复');
                     restore();
                     return;
@@ -2755,28 +2755,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 })
             }
         };
-
-        function checkBindBit(bindBit){
-            var isRepetitive=false;
-            _.forEach($scope.project.pages,function(page){
-                var layers=page.layers;
-                _.forEach(layers,function(layer){
-                    var subLayers=layer.subLayers;
-                    _.forEach(subLayers,function(subLayer){
-                        var widgets=subLayer.widgets;
-                        _.forEach(widgets,function(widget){
-                            if(widget.type=='MySwitch'){
-                                if(bindBit==widget.info.bindBit){
-                                    isRepetitive=true;
-                                    return;
-                                }
-                            }
-                        })
-                    })
-                })
-            });
-            return isRepetitive;
-        }
 
         /**
          * 输入初始值

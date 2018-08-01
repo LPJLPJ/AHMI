@@ -3877,6 +3877,42 @@ ideServices
                 selectObj.level.info.bindBit=_option.bindBit;
                 _successCallback&&_successCallback();
             };
+            //bit重复检测
+            this.CheckBindBit = function (level, selectTag) {
+                var isRepetitive=false;
+                var bindBit = level.info.bindBit;
+
+                _.forEach(project.pages,function(page){
+                    var layers=page.layers;
+                    _.forEach(layers,function(layer){
+                        var subLayers=layer.subLayers;
+                        _.forEach(subLayers,function(subLayer){
+                            var widgets=subLayer.widgets;
+                            _.forEach(widgets,function(widget){
+                                if(widget.type=='MySwitch'&&widget.id!=level.id){
+
+                                    if(selectTag!=undefined){//切换tag时检测bit
+                                        if(widget.info.bindBit==bindBit){
+                                            if(widget.tag==selectTag){
+                                                isRepetitive=true;
+                                                return;
+                                            }
+                                        }
+                                    }else{
+                                        if(widget.tag==level.tag){//设置bit时检测tag
+                                            if(widget.info.bindBit==bindBit){
+                                                isRepetitive=true;
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        })
+                    })
+                });
+                return isRepetitive;
+            };
 
             //改变字体样式，适用于开关控件，图层控件
             this.ChangeAttributeFontStyle=function(_option,_successCallback){
