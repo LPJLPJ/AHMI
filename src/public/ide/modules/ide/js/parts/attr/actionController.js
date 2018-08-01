@@ -262,6 +262,11 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
 
         //增加新指令
         $scope.addNewCmd = function () {
+            if($scope.action.trigger==''){
+                toastr.error('未选择触发方式！');
+                return;
+            }
+
             $scope.action.commands.splice($scope.currentChosenIdx + 1, 0, _.cloneDeep(blankCmd));
             $scope.currentChosenIdx += 1;
             $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
@@ -270,9 +275,6 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 pass:true,
                 tooltip:''
             });
-            if($scope.action.trigger==''){
-                toastr.error('未选择触发方式！');
-            }
 
             $scope.$broadcast('ResetTagChoose');
         };
@@ -282,6 +284,39 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.action.commands.splice(index,1);
             $scope.currentChosenIdx -= 1;
         };
+
+        //快捷添加定时器
+        $scope.shortcutTimer = $scope.timerTags?$scope.timerTags[0]:'';
+        $scope.shortcutAddTimer = function (){
+            if($scope.action.trigger==''){
+                toastr.error('未选择触发方式！');
+                return;
+            }
+            if($scope.shortcutTimer==''){
+                toastr.error('未选择定时器！');
+                return;
+            }
+            var defaultTimers=[
+                {name: "SET_TIMER_START", symbol: "setTimerStart", value:"0"},
+                {name: "SET_TIMER_STOP", symbol: "setTimerStop", value:""},
+                {name: "SET_TIMER_STEP", symbol: "setTimerStep", value:"1"},
+                {name: "SET_TIMER_INTERVAL", symbol: "setTimerInterval", value:""},
+                {name: "SET_TIMER_CURVAL", symbol: "setTimerCurVal", value:"0"},
+                {name: "SET_TIMER_MODE", symbol: "setTimerMode", value:""}
+            ];
+            _.forEach(defaultTimers,function(timer){
+                var customTimer = [{name:timer.name,symbol:timer.symbol}, {tag:$scope.shortcutTimer, value:''}, {tag:'', value:timer.value}];
+                $scope.action.commands.push(customTimer);
+                $scope.validateArr.push({
+                    pass:true,
+                    tooltip:''
+                });
+            });
+            $scope.currentChosenIdx += 6;
+            console.log($scope.action.commands);
+            $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
+        }
+        ;
 
         //保存
         $scope.save = function (th) {
