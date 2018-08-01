@@ -321,7 +321,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.arrange=level.info.arrange;
             this.cursor=level.info.cursor;
             this.thresholdModeId=level.info.thresholdModeId||'1';
-            this.threshold1=level.info.tlhreshold1||null;
+            this.threshold1=level.info.threshold1||null;
             this.threshold2=level.info.threshold2||null;
 
             this.backgroundColor=level.texList[0].slices[0].color;
@@ -337,8 +337,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }else if(this.progressModeId=='3'){
                 this.color1=level.texList[1].slices[0].color;
                 this.color2=level.texList[2].slices[0].color;
+                this.progressImageSrc1 = level.texList[1].slices[0].imgSrc;
+                this.progressImageSrc2 = level.texList[2].slices[0].imgSrc;
                 if(this.thresholdModeId=='2'){
                     this.color3=level.texList[3].slices[0].color;
+                    this.progressImageSrc3 = level.texList[3].slices[0].imgSrc;
                 }
             }
             if(this.cursor=='1'){
@@ -377,8 +380,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(progressModeId=='3'){
                     self.color1=level.texList[1].slices[0].color;
                     self.color2=level.texList[2].slices[0].color;
+                    self.progressImageSrc1 = level.texList[1].slices[0].imgSrc;
+                    self.progressImageSrc2 = level.texList[2].slices[0].imgSrc;
                     if(self.thresholdModeId=='2'){
                         self.color3=level.texList[3].slices[0].color;
+                        self.progressImageSrc3 = level.texList[3].slices[0].imgSrc;
                     }
                 }
                 if(cursor=='1'){
@@ -422,8 +428,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(self.progressModeId=='3'){
                     self.color1=level.texList[1].slices[0].color;
                     self.color2=level.texList[2].slices[0].color;
+                    self.progressImageSrc1 = level.texList[1].slices[0].imgSrc;
+                    self.progressImageSrc2 = level.texList[2].slices[0].imgSrc;
                     if(self.thresholdModeId=='2'){
                         self.color3=level.texList[3].slices[0].color;
+                        self.progressImageSrc3 = level.texList[3].slices[0].imgSrc;
                     }
                 }
                 if(self.cursor=='1'){
@@ -445,6 +454,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.thresholdModeId=arg.thresholdModeId;
                     if(self.thresholdModeId=='2'){
                         self.color3=arg.color3;
+                        self.progressImageSrc3 = arg.progressImageSrc3 
                     }
                     console.log('thresholdModeId',arg.thresholdModeId);
                 }else if(arg.hasOwnProperty('threshold1')){
@@ -542,6 +552,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(this.progressModeId=='2'){
                     //脚本进度条，啥也不画！
                 }else if(this.progressModeId=='3'){
+                    var progressImageElement = null
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,
@@ -560,8 +571,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             if(this.threshold1!=null){
                                 if(this.progressValueOri<this.threshold1){
                                     ctx.fillStyle=this.color1;
+                                    progressImageElement = this.progressImageSrc1
                                 }else if(this.progressValueOri>=this.threshold1){
                                     ctx.fillStyle=this.color2;
+                                    progressImageElement = this.progressImageSrc2
                                 }
                             }else{
                                 ctx.fillStyle=this.null;
@@ -570,14 +583,24 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         }else if(this.thresholdModeId=='2'){
                             if(this.progressValueOri<this.threshold1){
                                 ctx.fillStyle=this.color1;
+                                progressImageElement = this.progressImageSrc1
                             }else if(this.progressValueOri>=this.threshold1&&this.progressValueOri<this.threshold2){
                                 ctx.fillStyle=this.color2;
+                                progressImageElement = this.progressImageSrc2
                             }else if(this.progressValueOri>=this.threshold2){
                                 ctx.fillStyle=this.color3;
+                                progressImageElement = this.progressImageSrc3
                             }else{
                                 ctx.fillStyle=null;
+                                progressImageElement = null
                             }
                             ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+                        }
+                        if (progressImageElement){
+                            if(this.progressValue !=0 ){
+                                progressImageElement = ResourceService.getResourceFromCache(progressImageElement)
+                                ctx.drawImage(progressImageElement, 0, 0,progressImageElement.width*this.progressValue,progressImageElement.height,-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+                            }
                         }
                     }else{
                         if(this.cursorImageElement){
@@ -587,24 +610,39 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             if(this.threshold1!=null){
                                 if(this.progressValueOri<this.threshold1){
                                     ctx.fillStyle=this.color1;
+                                    progressImageElement = this.progressImageSrc1
                                 }else if(this.progressValueOri>=this.threshold1){
                                     ctx.fillStyle=this.color2;
+                                    progressImageElement = this.progressImageSrc2
                                 }
                             }else{
                                 ctx.fillStyle=this.null;
                             }
                             ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            
                         }else if(this.thresholdModeId=='2'){
                             if(this.progressValueOri<this.threshold1){
                                 ctx.fillStyle=this.color1;
+                                progressImageElement = this.progressImageSrc1
                             }else if(this.progressValueOri>=this.threshold1&&this.progressValueOri<this.threshold2){
                                 ctx.fillStyle=this.color2;
+                                progressImageElement = this.progressImageSrc2
                             }else if(this.progressValueOri>=this.threshold2){
                                 ctx.fillStyle=this.color3;
+                                progressImageElement = this.progressImageSrc3
                             }else{
                                 ctx.fillStyle=null;
+                                progressImageElement = null
                             }
                             ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                        }
+
+                        if (progressImageElement){
+                            if(this.progressValue !=0 ){
+                                progressImageElement = ResourceService.getResourceFromCache(progressImageElement)
+                                ctx.drawImage(progressImageElement,0,progressImageElement.height*(1-this.progressValue),progressImageElement.width,progressImageElement.height*this.progressValue, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            }
+                                
                         }
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
