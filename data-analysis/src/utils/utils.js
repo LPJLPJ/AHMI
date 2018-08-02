@@ -81,7 +81,6 @@ class CfgSizeCalculator {
   }
 
   load(project) {
-    // console.log('project', project);
     const {pages = [], customTags = [], timerTags = []} = project;
 
     let allPage = [];
@@ -197,7 +196,6 @@ class CfgSizeCalculator {
             break;
         }
 
-        // console.log('widget:', type, 'texture:', count - oldCount);
       });
 
       count += allPage.length;
@@ -361,7 +359,7 @@ class Texture {
         if (height % 4 !== 0) {
           height += (4 - height % 4);
         }
-        size = width * height;
+        size = width * height / 2;
         break;
       default:
         break;
@@ -370,19 +368,44 @@ class Texture {
   }
 }
 
+/**
+ * 工具函数，检查数组中是否存在某一项
+ * @param arr
+ * @param obj
+ */
+
+function checkDup(arr, obj) {
+  return arr.some(item => {
+    return item === obj;
+  })
+}
+
 
 // 纹理资源计算类
 class TextureSizeCalculator {
   constructor() {
     this.texture = [];
     this.totalSize = 0;
+    this.fonts = [];
+    this.images = [];
+    this.colors = [];
   }
 
   _parsePage(page, w, h, format = 'normal') {
-    const {texture} = this;
+    const {texture, images} = this;
     const {backgroundImage = ''} = page;
     const suffixArr = backgroundImage.split('.');
     const suffix = suffixArr[suffixArr.length - 1].toLowerCase();
+
+
+    const imgFlag = '' + backgroundImage + w + h;
+
+
+    if (checkDup(images, imgFlag)) {
+      return;
+    }
+    images.push(imgFlag);
+
 
     if (suffix === BMP) {
       if (format === FORMAT_NORMAL) {
@@ -397,6 +420,7 @@ class TextureSizeCalculator {
         texture.push(new Texture(w, h, DXT5));
       }
     }
+
 
   }
 
@@ -420,8 +444,9 @@ class TextureSizeCalculator {
   }
 
   _parseAnimation(widget, format = 'normal') {
-    const {texture} = this;
+    const {texture, images} = this;
     const {texList = [], info: {width, height}} = widget;
+
     const suffixs = [];
     if (!texList) {
       return;
@@ -430,7 +455,14 @@ class TextureSizeCalculator {
       const {slices = []} = tex;
       slices.forEach(slice => {
         const {imgSrc = ''} = slice;
+
         if (!!imgSrc) {
+          const imgFlag = '' + imgSrc + width + height;
+          if (checkDup(images, imgFlag)) {
+            return;
+          }
+          images.push(imgFlag);
+
           const suffixArr = imgSrc.split('.');
           suffixs.push(suffixArr[suffixArr.length - 1])
         }
@@ -457,36 +489,63 @@ class TextureSizeCalculator {
   }
 
   _parseNumText(widget, format = 'normal') {
-    const {texture} = this;
-    const {info: {fontSize}} = widget;
+    const paddingRatio = 1.2;
+    const {texture, fonts} = this;
+    const {info: {fontFamily, fontSize, fontBold, fontItalic}} = widget;
+
+    const fontStr = '\\' + fontFamily + '-' + fontSize + '-' + fontBold + '-' + (fontItalic || 'null') + '.png';
+    if (checkDup(fonts, fontStr)) {
+      return;
+    }
+    fonts.push(fontStr);
+
+    const width = Math.ceil(paddingRatio * fontSize);
+    const height = width;
+
     if (format === FORMAT_NORMAL) {
       for (let i = 0; i < 95; i++) {
-        texture.push(new Texture(fontSize, fontSize, ALPH4));
+        texture.push(new Texture(width, height, ALPH4));
       }
     } else if (format === FORMAT_DXT3) {
       for (let i = 0; i < 95; i++) {
-        texture.push(new Texture(fontSize, fontSize, ALPH4));
+        texture.push(new Texture(width, height, ALPH4));
       }
     }
 
   }
 
   _parseNormalWidget(widget, format = 'normal') {
-    const {texture} = this;
-    const {texList = [], info: {width, height}} = widget;
+    const {texture, images, colors} = this;
+    const {texList = [], info: {width, height}, type} = widget;
     if (!texList) {
       return;
     }
+
 
     const suffixs = [];
 
     texList.forEach(tex => {
       const {slices = []} = tex;
       slices.forEach(slice => {
-        const {imgSrc = ''} = slice;
+        const {imgSrc = '', color} = slice;
         if (!!imgSrc) {
+          const imgFlag = '' + imgSrc + width + height;
+          if (checkDup(images, imgFlag)) {
+            return;
+          }
+          images.push(imgFlag);
+
           const suffixArr = imgSrc.split('.');
           suffixs.push(suffixArr[suffixArr.length - 1])
+        } else if (type.toLowerCase() !== 'myscripttrigger') {
+          const colorFlag = '' + color + width + height;
+          if (checkDup(colors, colorFlag)) {
+            return;
+          }
+          colors.push(colorFlag);
+          suffixs.push('png');
+        } else {
+          console.log('type', type);
         }
       })
     });
