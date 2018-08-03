@@ -34,7 +34,6 @@ login.get = function(req, res){
 
 login.logout = function(req, res){
 	req.session.user = null
-    // console.log('logout',req.session.user)
 	res.redirect('/user/login')
 };
 

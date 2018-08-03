@@ -1,10 +1,10 @@
 // lib
-import React, { PureComponent } from 'react';
-import { connect } from 'dva';
+import React, {PureComponent} from 'react';
+import {connect} from 'dva';
 
 // component
-import { Card, Tabs, Row, Col, Avatar, Form, Radio } from 'antd';
-import { Bar, Pie } from '../../components/Charts';
+import {Card, Tabs, Row, Col, Avatar, Form, Radio} from 'antd';
+import {Bar, Pie} from '../../components/Charts';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 // style
@@ -14,9 +14,9 @@ import styles from './index.less';
 import projectImg from '../../assets/project.png'
 
 // utils
-import { calcTextureSize, calcConfigSize } from '../../utils/utils';
+import {calcTextureSize, calcConfigSize} from '../../utils/utils';
 
-const { TabPane } = Tabs;
+const {TabPane} = Tabs;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
@@ -77,7 +77,7 @@ class Analysis extends PureComponent {
 
   // 解析工程基本信息
   parseBasicInfo = () => {
-    const { project } = this.props;
+    const {project} = this.props;
     const title = project.name;
     const resolution = project.resolution;
     const content = JSON.parse(project.content);
@@ -117,7 +117,7 @@ class Analysis extends PureComponent {
 
   // 解析柱状图数据
   parseBarData = () => {
-    const { project } = this.props;
+    const {project} = this.props;
 
     const content = JSON.parse(project.content);
     const barDataWidgets = [];
@@ -132,6 +132,9 @@ class Analysis extends PureComponent {
       pageIndex++;
       let widgetsCnt = 0;
       let resourcesCnt = 0;
+      if (!!page.backgroundImage) {
+        resourcesCnt++;
+      }
       layers = page.layers;
       layers.forEach((layer) => {
         subLayers = layer.subLayers;
@@ -173,7 +176,7 @@ class Analysis extends PureComponent {
 
   // 解析资源饼图数据
   parsePieData = () => {
-    const { project } = this.props;
+    const {project} = this.props;
     const content = JSON.parse(project.content);
     const total = calcTextureSize(content);
     return {
@@ -183,7 +186,7 @@ class Analysis extends PureComponent {
 
   // 解析配置文件饼图数据
   parseCfgPieData = () => {
-    const { project } = this.props;
+    const {project} = this.props;
     const content = JSON.parse(project.content);
     const result = calcConfigSize(content);
     return {
@@ -210,7 +213,7 @@ class Analysis extends PureComponent {
   }
 
   render() {
-    const { resourceSize, resFlashSize, cfgFlashSize, configSize, widgetClassCfgSize, textureSize, otherSize } = this.state;
+    const {resourceSize, resFlashSize, cfgFlashSize, configSize, widgetClassCfgSize, textureSize, otherSize} = this.state;
 
     const resourcesData = [
       {
@@ -285,15 +288,15 @@ class Analysis extends PureComponent {
     );
 
     return (
-      <PageHeaderLayout content={pageHeaderContent} extraContent={extraContent} >
-        <Card loading={this.state.loading} bordered={false} bodyStyle={{ padding: 0 }} >
+      <PageHeaderLayout content={pageHeaderContent} extraContent={extraContent}>
+        <Card loading={this.state.loading} bordered={false} bodyStyle={{padding: 0}}>
           <div className={styles.salesCard}>
-            <Tabs defaultActiveKey="widgets" size="large" tabBarStyle={{ marginBottom: 24 }} >
+            <Tabs defaultActiveKey="widgets" size="large" tabBarStyle={{marginBottom: 24}}>
               <TabPane tab="控件" key="widgets">
                 <Row>
                   <Col xl={16} lg={12} md={12} sm={24} xs={24}>
                     <div className={styles.salesBar}>
-                      <Bar height={295} title="控件在页面中的分布" data={this.state.barDataWidgets} />
+                      <Bar height={295} title="控件在页面中的分布" data={this.state.barDataWidgets}/>
                     </div>
                   </Col>
                   <Col xl={8} lg={12} md={12} sm={24} xs={24}>
@@ -312,11 +315,11 @@ class Analysis extends PureComponent {
                   </Col>
                 </Row>
               </TabPane>
-              <TabPane tab="资源" key="resources" >
+              <TabPane tab="资源" key="resources">
                 <Row>
                   <Col xl={16} lg={12} md={12} sm={24} xs={24}>
                     <div className={styles.salesBar}>
-                      <Bar height={295} title="资源在页面中的引用分布" data={this.state.barDataResources} />
+                      <Bar height={295} title="资源在页面中的引用分布" data={this.state.barDataResources}/>
                     </div>
                   </Col>
                   <Col xl={8} lg={12} md={12} sm={24} xs={24}>
@@ -346,8 +349,8 @@ class Analysis extends PureComponent {
               bordered={false}
               className={styles.salesCard}
               title="生成后纹理大小(Texture.acf)"
-              bodyStyle={{ padding: 24 }}
-              style={{ marginTop: 24, minHeight: 509 }}
+              bodyStyle={{padding: 24}}
+              style={{marginTop: 24, minHeight: 509}}
             >
               <Form layout="inline">
                 <FormItem label="flash大小">
@@ -380,8 +383,8 @@ class Analysis extends PureComponent {
               bordered={false}
               className={styles.salesCard}
               title="生成后配置文件大小(ConfigData.acf)"
-              bodyStyle={{ padding: 24 }}
-              style={{ marginTop: 24, minHeight: 509 }}
+              bodyStyle={{padding: 24}}
+              style={{marginTop: 24, minHeight: 509}}
             >
               <Form layout="inline">
                 <FormItem label="flash大小">
@@ -412,7 +415,7 @@ class Analysis extends PureComponent {
   }
 }
 
-function mapStateToProps({ global, loading }) {
+function mapStateToProps({global, loading}) {
   return {
     project: global.project,
     loading: loading,

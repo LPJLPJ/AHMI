@@ -19,7 +19,7 @@ export default class GlobalHeader extends PureComponent {
 
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <MenuItem key='logou'>
+        <MenuItem key='logout'>
           <Icon type="logout" />退出登录
         </MenuItem>
       </Menu>

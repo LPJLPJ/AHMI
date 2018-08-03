@@ -1,5 +1,5 @@
-import { notification } from 'antd';
-import { queryProject } from '../services/global';
+import {notification} from 'antd';
+import {queryProject, logout} from '../services/global';
 
 export default {
 
@@ -12,8 +12,8 @@ export default {
   },
 
   subscriptions: {
-    setup({ dispatch, history }) {
-      const { pathname = "" } = window.location;
+    setup({dispatch, history}) {
+      const {pathname = ""} = window.location;
       const paths = pathname.split('/');
       dispatch({
         type: 'save',
@@ -28,10 +28,9 @@ export default {
   },
 
   effects: {
-    *fetch({ payload }, { call, put, select }) {
+    * fetch({payload}, {call, put, select}) {
       const projectId = yield select(state => state.global.projectId);
       const response = yield call(queryProject, projectId);
-      console.log('response', response);
       if (response.data) {
         yield put({
           type: 'save',
@@ -56,8 +55,11 @@ export default {
         ...state, collapsed: !state.collapsed
       }
     },
-    save(state, { payload }) {
-      return { ...state, ...payload };
+    save(state, {payload}) {
+      return {...state, ...payload};
+    },
+    logout() {
+      window.location.href = '/user/logout';
     },
   },
 
