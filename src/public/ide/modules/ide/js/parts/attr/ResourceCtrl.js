@@ -29,6 +29,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 uploadingArray:[],
                 files:[],
                 deleteFile:deleteFile,
+                downloadFile:downloadFile,
                 toggleOperation:toggleOperation,
                 basicUrl:'',
                 resources:[],
@@ -115,6 +116,17 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             }
         }
     }
+
+    /**
+     * 下载资源
+     * @author tang
+     */
+    function downloadFile(index){
+        var file = _.cloneDeep($scope.component.top.files)[index];
+        var projectId = $scope.project.projectId;
+        ResourceService.downloadFile(file,projectId);
+    }
+
 
     /**
      * 批量操作函数

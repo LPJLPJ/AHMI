@@ -136,7 +136,6 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
     };
 
     $scope.disableColorInput = function(slice,e){
-        console.log(slice,e)
         if(slice.imgSrc){
             slice.color='rgba(0,0,0,0)';
         }else{
@@ -245,6 +244,21 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
             $uibModalInstance.dismiss('cancel');
         });
 
+    };
+
+    $scope.downloadFile = function (index) {
+        var imgSrc=$scope.tex.slices[index].imgSrc;
+        if(imgSrc!=''){
+            var img=ResourceService.getResourceByUrl(imgSrc);
+            if(img!=null){
+                var projectId = ProjectService.getProjectId();
+                ResourceService.downloadFile(img,projectId);
+            }else{
+                toastr.warning('未找到图片');
+            }
+        }else{
+            toastr.warning('未使用图片资源');
+        }
     };
 
 

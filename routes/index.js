@@ -221,6 +221,9 @@ router.route('/project/:id/downloadLocalProject')
 
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
+//обтьвйт╢
+router.route('/project/:id/downloadFile')
+    .get(projectInfo.downloadFile);
 
 
 router.route('/project/:id/savedatacompress')

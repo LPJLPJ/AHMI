@@ -37,14 +37,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                 page: {
                     enterImage: enterBackgroundImage,
-                    selectImage: 'demo20.png'
+                    selectImage: 'demo20.png',
+                    downloadFile:downloadFile
                 },
 
                 layer: {
                     enterShowSubLayer: enterShowSubLayer,
                     selectModel: null,
                     enterImage: enterBackgroundImage,
-                    selectImage:''
+                    selectImage:'',
+                    downloadFile:downloadFile
                 },
                 subLayer: {
                     enterImage: enterBackgroundImage,
@@ -1294,6 +1296,20 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             ProjectService.ChangeAttributeBackgroundImage(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage', oldOperate);
             })
+        }
+
+        function downloadFile(imgSrc){
+            if(imgSrc==''){
+                toastr.warning('未使用资源');
+                return;
+            }
+            var img = ResourceService.getResourceByUrl(imgSrc);
+            if(img!=null){
+                ResourceService.downloadFile(img,$scope.project.projectId);
+            }else{
+                toastr.warning('图片未找到');
+            }
+
         }
 
         function enterInterval(e) {

@@ -809,7 +809,7 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title" style="width: 100%">背景图片(禁止使用带透明区域的图片)</span>
+                            <span class="my-attr-title dengPage-title" style="width: 100%">背景图片(禁止使用带透明区域的图片) <span class="iconfont bgiDownload" ng-click="component.page.downloadFile(component.page.selectImage)">&#xe666;</span></span>
 
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-model="component.page.selectImage" ng-change="component.page.enterImage($event)">
@@ -907,14 +907,14 @@
                                    type="number">
                         </div>
 
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title">背景图</span>
+                        <!--<div class="my-attr-item lg">
+                            <span class="my-attr-title dengPage-title" style="width: 100%">背景图 <span class="iconfont bgiDownload" ng-click="component.layer.downloadFile(component.layer.selectImage)">&#xe666;</span></span>
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-model="component.layer.selectImage" ng-change="component.layer.enterImage($event)">
                                 <option ng-repeat="image in component.images track by $index" value="{{image.src}}">{{image.name}}
                                 </option>
                             </select>
-                        </div>
+                        </div>-->
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">显示</span>
@@ -3248,7 +3248,9 @@
                                                  height="100px"/>
                                         </div>
                                     </td>
-                                    <td><span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span>
+                                    <td>
+                                        <span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span>
+                                        <span ng-click="downloadFile($index)" class="iconfont" style="font-size: 22px">&#xe666;</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -3678,6 +3680,7 @@
                             </td>
                             <td><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
                                 <span class="iconfont img-option" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
+                                <span class="iconfont img-option" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px">&#xe666;</span>
                                 <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                     <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
                                 </label>
