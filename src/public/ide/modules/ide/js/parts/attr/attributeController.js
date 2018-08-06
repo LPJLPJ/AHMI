@@ -2751,11 +2751,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if ($scope.component.object.level.info.bindBit == initObject.level.info.bindBit) {
                     return;
                 }
-                if(ProjectService.CheckBindBit($scope.component.object.level)){
-                    toastr.warning('bit重复');
-                    restore();
-                    return;
-                }
                 if ($scope.component.object.level.info.bindBit < 0 || $scope.component.object.level.info.bindBit > 31) {
                     toastr.warning('超出范围');
                     restore();

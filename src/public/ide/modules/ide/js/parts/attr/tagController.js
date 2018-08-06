@@ -898,6 +898,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
     $scope.tag = tag;
     $scope.type = type;
     $scope.showForceEditBtn = false;
+    showBindBit();
 
     //保存
     $scope.save = function (th) {
@@ -1012,6 +1013,36 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
         return false;
     }
 
+    function showBindBit(){
+        var bits=[];
+        $scope.bindBits=[];
+        ProjectService.getProjectCopyTo($scope);
+        _.forEach($scope.project.pages,function(page){
+            var layers=page.layers;
+            _.forEach(layers,function(layer){
+                var subLayers=layer.subLayers;
+                _.forEach(subLayers,function(subLayer){
+                    var widgets=subLayer.widgets;
+                    _.forEach(widgets,function(widget){
+                        if(widget.type=='MySwitch'){
+                            if(widget.tag&&widget.tag==$scope.tag.name){
+                                if(widget.info.bindBit){
+                                    $scope.bindBits.push(widget.info.bindBit)
+                                }
+                            }
+                        }
+                    })
+                })
+            })
+        });
+
+        for(var i=0;i<bits.length;i++){
+            if($scope.bindBits.indexOf(bits[i]) == -1){
+                $scope.bindBits.push(bits[i]);
+            }
+        }
+    }
+
 }]);
 
 /**
@@ -1103,14 +1134,6 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
     //选择tag，并将其绑定到当前对象上
     function selectedTagFun() {
         var selectObject = ProjectService.getCurrentSelectObject();
-        //bit重复检测
-        if(selectObject.type=="MySwitch"){
-            if(ProjectService.CheckBindBit(selectObject.level,$scope.selectedTagObj.tagName)){
-                $scope.selectedTagObj.tagName = selectObject.level.tag;
-                toastr.warning('选择的tag上bit与当前设置重复');
-                return;
-            }
-        }
         $scope.component.selectedTag = $scope.selectedTagObj.tagName;
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);
