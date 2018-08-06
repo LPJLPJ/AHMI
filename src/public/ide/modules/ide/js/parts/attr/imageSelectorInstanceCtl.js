@@ -34,7 +34,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
             initConfigure(false,false,2,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyProgress:
-            if((widgetInfo.objInfo.progressModeId==='1'||widgetInfo.objInfo.progressModeId==='3')&&(widgetInfo.index==1||widgetInfo.index==2||widgetInfo.index==3)){
+            if((widgetInfo.objInfo.progressModeId==='1'/*||widgetInfo.objInfo.progressModeId==='3'*/)&&(widgetInfo.index==1||widgetInfo.index==2||widgetInfo.index==3)){
                 initConfigure(false,false,1,widgetInfo.tex,true,true,false,false);
             }else{
                 initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
