@@ -3861,6 +3861,11 @@
                                         <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'"/>
                                     </fieldset>
 
+                                    <div ng-show="bindBits!=''" style="margin: 10px 0">
+                                        <label class="col-sm-4 tag-modal-label">已使用的bindBit</label>
+                                        <button class="btn btn-default" ng-repeat="bit in bindBits track by $index">{{bit}}</button>
+                                    </div>
+
                                     <fieldset>
                                         <label for="register"
                                                class="col-sm-4 tag-modal-label register-activate-label">启用寄存器</label>

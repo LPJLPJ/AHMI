@@ -52,7 +52,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 level.transition = AnimationService.getDefaultTransition();
             }
 
-            if (info.numSystem === undefined) {
+            if (info.numSystem === undefined||info.hexControl === undefined) {
                 info.numSystem = '0';
                 info.hexControl = {
                     markingMode:'0',
