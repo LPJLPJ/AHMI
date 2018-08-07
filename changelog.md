@@ -214,6 +214,7 @@ update:
 
 1.10.0
 add:
+    1. share project
 fix:
     1. subcanvas action bug
     2. local ver save as bug
