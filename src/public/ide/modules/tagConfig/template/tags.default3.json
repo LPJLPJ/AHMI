@@ -1,7 +1,79 @@
 [
     {
-        "name": "主题3_电压_数字",
-        "indexOfRegister": 301,
+        "name": "传递按键编码",
+        "indexOfRegister": 600,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "forbidden"
+    },
+    {
+        "name": "视频",
+        "indexOfRegister": 601,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "forbidden"
+    },
+    {
+        "name": "当前页面序号",
+        "indexOfRegister": 602,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "forbidden"
+    },
+    {
+        "name": "时钟变量年月日",
+        "indexOfRegister": 603,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "时钟变量时分秒",
+        "indexOfRegister": 604,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "蜂鸣器",
+        "indexOfRegister": 605,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "背光",
+        "indexOfRegister": 606,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "帧率",
+        "indexOfRegister": 607,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "system",
+        "bindMod": "default"
+    },
+    {
+        "name": "档位_图片集",
+        "indexOfRegister": 608,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -9,8 +81,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_电压_图片集",
-        "indexOfRegister": 302,
+        "name": "符号片",
+        "indexOfRegister": 609,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -18,8 +90,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_电压_进度条",
-        "indexOfRegister": 303,
+        "name": "文字报警",
+        "indexOfRegister": 610,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -27,8 +99,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_电压_仪表盘",
-        "indexOfRegister": 304,
+        "name": "小计里程",
+        "indexOfRegister": 611,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -36,8 +108,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_电流_数字",
-        "indexOfRegister": 305,
+        "name": "总里程",
+        "indexOfRegister": 612,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -45,8 +117,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_电流_图片集",
-        "indexOfRegister": 306,
+        "name": "遮盖",
+        "indexOfRegister": 613,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -54,8 +126,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_电流_进度条",
-        "indexOfRegister": 307,
+        "name": "车门状态",
+        "indexOfRegister": 614,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -63,8 +135,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_电流_仪表盘",
-        "indexOfRegister": 308,
+        "name": "车速_文字",
+        "indexOfRegister": 615,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -72,8 +144,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_剩余电量_数字",
-        "indexOfRegister": 309,
+        "name": "车速_图片集",
+        "indexOfRegister": 616,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -81,8 +153,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_剩余电量_图片集",
-        "indexOfRegister": 310,
+        "name": "车速_进度条",
+        "indexOfRegister": 617,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -90,8 +162,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_剩余电量_进度条",
-        "indexOfRegister": 311,
+        "name": "车速_仪表盘",
+        "indexOfRegister": 618,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -99,8 +171,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_剩余电量_仪表盘",
-        "indexOfRegister": 312,
+        "name": "电压_文字",
+        "indexOfRegister": 619,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -108,8 +180,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_续航里程_数字",
-        "indexOfRegister": 313,
+        "name": "电压_图片集",
+        "indexOfRegister": 620,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -117,8 +189,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_续航里程_图片集",
-        "indexOfRegister": 314,
+        "name": "电压_进度条",
+        "indexOfRegister": 621,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -126,8 +198,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_续航里程_进度条",
-        "indexOfRegister": 315,
+        "name": "电压_仪表盘",
+        "indexOfRegister": 622,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -135,8 +207,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_续航里程_仪表盘",
-        "indexOfRegister": 316,
+        "name": "电流_文字",
+        "indexOfRegister": 623,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -144,8 +216,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_转速_数字",
-        "indexOfRegister": 317,
+        "name": "电流_图片集",
+        "indexOfRegister": 624,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -153,8 +225,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_转速_图片集",
-        "indexOfRegister": 318,
+        "name": "电流_进度条",
+        "indexOfRegister": 625,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -162,8 +234,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_转速_进度条",
-        "indexOfRegister": 319,
+        "name": "电流_仪表盘",
+        "indexOfRegister": 626,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -171,8 +243,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_转速_仪表盘",
-        "indexOfRegister": 320,
+        "name": "剩余电量_文字",
+        "indexOfRegister": 627,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -180,8 +252,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_车速_数字",
-        "indexOfRegister": 321,
+        "name": "剩余电量_图片集",
+        "indexOfRegister": 628,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -189,8 +261,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_车速_图片集",
-        "indexOfRegister": 322,
+        "name": "剩余电量_进度条",
+        "indexOfRegister": 629,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -198,8 +270,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_车速_进度条",
-        "indexOfRegister": 323,
+        "name": "剩余电量_仪表盘",
+        "indexOfRegister": 630,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -207,8 +279,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_车速_仪表盘",
-        "indexOfRegister": 324,
+        "name": "续航里程-数字",
+        "indexOfRegister": 631,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -216,8 +288,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_温度_数字",
-        "indexOfRegister": 325,
+        "name": "续航里程-图片集",
+        "indexOfRegister": 632,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -225,8 +297,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_温度_图片集",
-        "indexOfRegister": 326,
+        "name": "续航里程-进度条",
+        "indexOfRegister": 633,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -234,8 +306,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_温度_进度条",
-        "indexOfRegister": 327,
+        "name": "续航里程-仪表盘",
+        "indexOfRegister": 634,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -243,8 +315,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_温度_仪表盘",
-        "indexOfRegister": 328,
+        "name": "转速_文字",
+        "indexOfRegister": 635,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -252,8 +324,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_文字报警",
-        "indexOfRegister": 329,
+        "name": "转速_图片集",
+        "indexOfRegister": 636,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -261,8 +333,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_小记里程",
-        "indexOfRegister": 330,
+        "name": "转速_进度条",
+        "indexOfRegister": 637,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -270,8 +342,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_总里程",
-        "indexOfRegister": 331,
+        "name": "转速_仪表盘",
+        "indexOfRegister": 638,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -279,8 +351,8 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_遮盖",
-        "indexOfRegister": 332,
+        "name": "温度_文字",
+        "indexOfRegister": 639,
         "register": true,
         "writeOrRead": "true",
         "value": 0,
@@ -288,8 +360,35 @@
         "bindMod": "default"
     },
     {
-        "name": "主题3_车门状态",
-        "indexOfRegister": 333,
+        "name": "温度_图片集",
+        "indexOfRegister": 640,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "温度_进度条",
+        "indexOfRegister": 641,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "温度_仪表盘",
+        "indexOfRegister": 642,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "动画",
+        "indexOfRegister": 643,
         "register": true,
         "writeOrRead": "true",
         "value": 0,

@@ -91,11 +91,14 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     openProject: openProject,
                     generateDataFile: generateDataFile,
                     play: play,
+                    showActionVisualization:showActionVisualization,
                     openPanel: openPanel,
                     openShare: openShare,
+                    openValidate:openValidate,
                     openCANPanel: openCANPanel,
                     runSimulator: runSimulator,
                     closeSimulator: closeSimulator,
+                    closeActionVisualizer:closeActionVisualizer,
                     saveProject: saveProject.bind(null, null, true),
                     saveProjectAs: saveProjectAs,
                     showLeft: showLeft,
@@ -107,10 +110,14 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 },
                 simulator: {
                     show: false
+                },
+                actionVisualization:{
+                    show:false
                 }
             };
 
         }
+
 
         function initProject() {
             ProjectService.getProjectTo($scope);
@@ -811,6 +818,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultTexNum();
             } else if (_index === 15) {
                 newWidget = TemplateProvider.getDefaultTexTime();
+            } else if(_index === 16) {
+                newWidget = TemplateProvider.getDefaultAlphaImg();
             }
             else {
                 return;
@@ -916,7 +925,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
          * 生成符合格式的数据结构
          */
 
-        function generateDataFile(format) {
+        function generateDataFile(format,physicalPixelRatio) {
             if (format == 'local' || format == 'localCompatible') {
                 var curScope = {};
                 var postFun = function () {
@@ -984,7 +993,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 })
 
             }else{
-                generateData(format);
+                generateData(format,physicalPixelRatio);
                 if (window) {
                     if (window.spinner) {
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
@@ -1031,11 +1040,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             }
         }
 
-        function generateData(format) {
+        function generateData(format,physicalPixelRatio) {
             var temp = {};
             ProjectService.getProjectCopyTo(temp);
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
+            temp.project.physicalPixelRatio = physicalPixelRatio
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
@@ -1219,6 +1229,17 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         }
 
+        function showActionVisualization(){
+            var temp = {};
+            ProjectService.getProjectCopyTo(temp);
+            temp.project = ProjectTransformService.transDataFile(temp.project,{rawAction:true});
+            temp.project.tagList = TagService.getAllTags();
+            temp.project.timers = TagService.getTimerNum();
+
+            window.rawProject = temp.project;
+            $scope.component.actionVisualization.show = true
+        }
+
         function closeSimulator() {
 
             $scope.component.simulator.show = false;
@@ -1227,6 +1248,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function runSimulator() {
             // console.log(window.runSimulator);
+        }
+
+        function closeActionVisualizer() {
+            $scope.component.actionVisualization.show = false;
         }
 
 
@@ -1271,7 +1296,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 // console.log('new action');
                 // console.log(newAction);
                 //process save
-                generateDataFile(result.format);
+                generateDataFile(result.format,result.physicalPixelRatio);
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
             });
@@ -1301,6 +1326,27 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
             modalInstance.result.then(function (result) {
                 generateDataFile(result.format);
+            }, function () {
+
+            });
+        }
+
+        function openValidate() {
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'validateModal.html',
+                controller: 'validateModalCtl',
+                scope: $scope,
+                size: 'md',
+                resolve: {
+                    // id: function () {
+                    //     return $scope.project.projectId
+                    // }
+                }
+            });
+
+            modalInstance.result.then(function (result) {
+                //
             }, function () {
 
             });
@@ -1554,6 +1600,7 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
             name: '压缩'
         }
     ];
+    $scope.verticalPixelRatio = 1
     var localFormat = {
         type: 'local',
         name: '本地'
@@ -1580,7 +1627,8 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
     $scope.generateFormat = 'normal';
     $scope.ok = function () {
         $uibModalInstance.close({
-            format: $scope.generateFormat
+            format: $scope.generateFormat,
+            physicalPixelRatio:'1:'+($scope.verticalPixelRatio||1)
         });
     };
 
@@ -1658,6 +1706,58 @@ ide.controller('shareModalCtl', ['$rootScope', '$scope', '$uibModalInstance', '$
     $scope.cancel = function () {
         $uibModalInstance.dismiss($scope.shareInfo.shared);
     };
+}]);
+
+
+ide.controller('validateModalCtl', ['$rootScope', '$scope', '$uibModalInstance', function ($rootScope, $scope, $uibModalInstance) {
+    $scope.validateResult = {
+        canShow:false,
+        name:'',
+        generateTime:'',
+        hash:'xxx',
+        valid:''
+    }
+    $scope.validateZipFile = validateZipFile
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+
+    function validateZipFile($files) {
+        if($files.length){
+            var curFile = $files[0]
+            if(curFile && curFile.type){
+                //filename
+                $scope.validateResult.canShow = false
+                $scope.validateResult.name = curFile.name
+                var matches = curFile.name.match(/_([0-9|a-f]+)\./)
+                if(matches&&matches[1]){
+                    var expectedHash = matches[1]
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function(event) {
+                    var binary = event.target.result;
+                    var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(binary)).toString();
+
+                    $scope.$apply(function () {
+                        $scope.validateResult.hash = md5
+                        if(expectedHash){
+                            $scope.validateResult.valid = (md5 === expectedHash)
+                        }else{
+                            $scope.validateResult.valid = ''
+                        }
+                        $scope.validateResult.canShow = true
+                    });
+                };
+
+                reader.readAsBinaryString(curFile);
+            }
+        }
+
+
+    }
 }]);
 
 

@@ -37,12 +37,39 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             if (info.enableAnimation === undefined) {
                 info.enableAnimation = false;
             }
+            if (info.numSystem === undefined) {
+                info.numSystem = '0';
+                info.hexControl = {
+                    markingMode:'0',
+                    transformMode:'0'
+                }
+            }
         },
         texNum: function () {
             var level = arguments[0];
             var info = level.info;
             if (level.transition === undefined) {
                 level.transition = AnimationService.getDefaultTransition();
+            }
+
+            if (info.numSystem === undefined||info.hexControl === undefined) {
+                info.numSystem = '0';
+                info.hexControl = {
+                    markingMode:'0',
+                    transformMode:'0'
+                }
+            }
+
+            var slices=level.texList[0].slices;
+            if(slices.length<26){
+                var hexTex = ['x','a','b','c','d','e','f','A','B','C','D','E','F'];
+                for(var i=0;i<hexTex.length;i++){
+                    var n=i+13;
+                    slices[n] = {};
+                    slices[n].imgSrc = '';
+                    slices[n].color = 'rgba(120,120,120,1)';
+                    slices[n].name = hexTex[i];
+                }
             }
         },
         dateTime: function () {
@@ -164,30 +191,18 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                     var translate = animation.animationAttrs && animation.animationAttrs.translate;
                     var scale = animation.animationAttrs && animation.animationAttrs.scale;
                     var temp, key;
-                    if (translate && translate.dstPos && (typeof translate.dstPos.x === 'number')) {
+                    if (translate && translate.dstPos ) {
                         for (key in translate) {
                             temp = translate[key].x;
-                            translate[key].x = {
-                                value: temp || 0,
-                                tag: ''
-                            };
+                            translate[key].x = temp || 0
                             temp = translate[key].y;
-                            translate[key].y = {
-                                value: temp || 0,
-                                tag: ''
-                            }
+                            translate[key].y = temp || 0
                         }
                         for (key in scale) {
                             temp = scale[key].x;
-                            scale[key].x = {
-                                value: temp,
-                                tag: ''
-                            };
+                            scale[key].x = temp||1
                             temp = scale[key].y;
-                            scale[key].y = {
-                                value: temp,
-                                tag: ''
-                            }
+                            scale[key].y = temp||1
                         }
                     }
                     if (animation.timingFun === undefined) {
@@ -254,10 +269,9 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
-        var tags, timers;
+        var tags, timers ,tagClasses;
 
         project = arguments[0];
-        console.log('haha',project);
 
         pages = project.pages || [];
         pages.forEach(function (page) {
@@ -282,20 +296,39 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tags = project.customTags;
-        tags.forEach(function (tag) {
+        var pattern = /SysTmr_/;
+        tags.forEach(function (tag,index) {
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
+            if(pattern.test(tag.name)){
+                tags.splice(index,1);
+            }
         });
 
-        timers = project.customTags;
+        timers = project.timerTags;
+        var tmr=[];
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
+            if(pattern.test(timer.name)){
+                tmr.push(timer)
+            }
         });
+        project.timerTags = tmr;
 
-        console.log('keke',project);
+        tagClasses = project.tagClasses;
+        if (!tagClasses){
+            tagClasses = [{
+                name:'全部',
+                type:'system',
+                tagArray:[]
+            }]
+        }
+        if(tagClasses[0].name == '全部'||tagClasses[0].name == 'tags'){
+            tagClasses[0].name = '变量';
+        }
     }
 
     //检查工程版本是否过时

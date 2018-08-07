@@ -34,7 +34,7 @@
             //console.log('initing stage contrller')
             $scope.component={
                 out:{
-                    toolShow:false
+                    toolShow:true
                 },
                 canvas:{
                     node:null,

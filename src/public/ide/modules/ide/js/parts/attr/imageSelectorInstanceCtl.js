@@ -25,73 +25,74 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
     $scope.canInputText = false;
     $scope.canAddNewSlice = false;
+    $scope.canBatchAddImg = false;
     $scope.disableEditImg = false;
     $scope.disableEditColor = false;
     $scope.sliceNum = 0;
     switch (widgetInfo.type){
         case Type.MyButton:
-            initConfigure(false,false,2,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,2,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyProgress:
-            if((widgetInfo.objInfo.progressModeId==='1'||widgetInfo.objInfo.progressModeId==='3')&&(widgetInfo.index==1||widgetInfo.index==2||widgetInfo.index==3)){
-                initConfigure(false,false,1,widgetInfo.tex,true,true,false);
+            if((widgetInfo.objInfo.progressModeId==='1'/*||widgetInfo.objInfo.progressModeId==='3'*/)&&(widgetInfo.index==1||widgetInfo.index==2||widgetInfo.index==3)){
+                initConfigure(false,false,1,widgetInfo.tex,true,true,false,false);
             }else{
-                initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+                initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             }
             if(widgetInfo.tex.name==='光标纹理'){
-                initConfigure(false,false,1,widgetInfo.tex,true,false,true);
+                initConfigure(false,false,1,widgetInfo.tex,true,false,true,false);
             }
             break;
         case Type.MySlide:
-            initConfigure(true,true,2,widgetInfo.tex,false,false,false);
+            initConfigure(true,true,2,widgetInfo.tex,false,false,false,false);
             break;
         case Type.MyNumber:
-            initConfigure(false,false,13,widgetInfo.tex,false,false,false);
+            initConfigure(false,false,13,widgetInfo.tex,false,false,false,false);
             break;
         case Type.MyDashboard:
-            initConfigure(false,false,2,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,2,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyTextArea:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyNum:
-            initConfigure(false,false,1,widgetInfo.tex,false,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,false,false,false,false);
             break;
         case Type.MyOscilloscope:
-            initConfigure(false,false,2,widgetInfo.tex,false,false,false);
+            initConfigure(false,false,2,widgetInfo.tex,false,false,false,false);
             break;
         case Type.MyKnob:
-            initConfigure(false,false,2,widgetInfo.tex,false,false,false);
+            initConfigure(false,false,2,widgetInfo.tex,false,false,false,false);
             break;
         case Type.MyImage:
-            initConfigure(false,false,1,widgetInfo.tex,false,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,false,false,false,false);
             break;
         case Type.MySwitch:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyRotateImg:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MySlideBlock:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyAnimation:
-            initConfigure(true,false,1,widgetInfo.tex,false,false,false);
+            initConfigure(true,false,1,widgetInfo.tex,false,false,false,true);
             break;
         case Type.MyTexNum:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyDateTime:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyButtonGroup:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyTexTime:
-            initConfigure(false,false,1,widgetInfo.tex,true,false,false);
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         default:
-            initConfigure(true,false,1,widgetInfo.tex,false,false,false);
+            initConfigure(true,false,1,widgetInfo.tex,false,false,false,false);
             break;
     }
 
@@ -135,7 +136,6 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
     };
 
     $scope.disableColorInput = function(slice,e){
-        console.log(slice,e)
         if(slice.imgSrc){
             slice.color='rgba(0,0,0,0)';
         }else{
@@ -246,9 +246,24 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
     };
 
+    $scope.downloadFile = function (index) {
+        var imgSrc=$scope.tex.slices[index].imgSrc;
+        if(imgSrc!=''){
+            var img=ResourceService.getResourceByUrl(imgSrc);
+            if(img!=null){
+                var projectId = ProjectService.getProjectId();
+                ResourceService.downloadFile(img,projectId);
+            }else{
+                toastr.warning('未找到图片');
+            }
+        }else{
+            toastr.warning('未使用图片资源');
+        }
+    };
 
 
-    function initConfigure(_canAddNewSlice,_canInputText,_sliceNum,_tex,_disableEditName,_disableEditImg,_disableEditColor){
+
+    function initConfigure(_canAddNewSlice,_canInputText,_sliceNum,_tex,_disableEditName,_disableEditImg,_disableEditColor,_canBatchAddImg){
         $scope.canAddNewSlice = _canAddNewSlice;
         $scope.canInputText = _canInputText;
         $scope.sliceNum = _sliceNum;
@@ -256,6 +271,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
         $scope.disableEditName = _disableEditName;
         $scope.disableEditImg = _disableEditImg;
         $scope.disableEditColor = _disableEditColor;
+        $scope.canBatchAddImg = _canBatchAddImg;
     }
 
     //edit by lixiang

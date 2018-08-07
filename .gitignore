@@ -15,9 +15,15 @@ src/public/learn/
 
 src/public/blog/media
 src/public/ide/modules/ide/min-js/
+src/public/resources/
 
 src/public/ide/modules/ide/js/parts/simulator/
 
-public/
+/public
 
-views/
+/views
+
+
+template/
+
+legacy

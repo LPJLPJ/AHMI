@@ -10,7 +10,7 @@ var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
 var math = require('mathjs');
-
+var StringConverter = require('./StringConverter')
 var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev') {
@@ -117,6 +117,14 @@ module.exports = React.createClass({
         // this.state.tagList = data.tagList
         // this.setState({tagList: data.tagList})
         // this.state.tagList = data.tagList;
+        // data.tagList.push({
+        //     name:'stringTest',
+        //     valueType:1,
+        //     value:StringConverter.convertStrToUint8Array('hello').slice(0,32),
+        //     register:true,
+        //     indexOfRegister:3,
+        //     type:'custom'
+        // })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
         console.log('tagList loaded', data.tagList, this.state.tagList);
@@ -504,12 +512,13 @@ module.exports = React.createClass({
             return null;
         }
     },
+    //get num value
     getValueByTagName: function (name, defaultValue) {
         var curTag = this.findTagByName(name);
         if (curTag && curTag.value != undefined) {
-            return Number(curTag.value);
+            return this.getTagTrueValue(curTag);
         } else if (defaultValue) {
-            return Number(defaultValue);
+            return defaultValue;
         } else {
             return null
         }
@@ -1469,6 +1478,9 @@ module.exports = React.createClass({
                 case 'MyAnimation':
                     this.drawAnimation(curX, curY, widget, options, cb);
                     break;
+                case 'MyAlphaImg':
+                    this.drawAlphaImg(curX, curY, widget, options, cb);
+                    break;
             }
 
         }
@@ -1568,6 +1580,9 @@ module.exports = React.createClass({
                 break;
             case 'MyAnimation':
                 this.paintAnimation(curX, curY, widget, options, cb);
+                break;
+            case 'MyAlphaImg':
+                this.paintAlphaImg(curX,curY,widget,options,cb);
                 break;
         }
 
@@ -2069,9 +2084,10 @@ module.exports = React.createClass({
                 case '3':
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
                     var drawColor = this.confirmOneColor(widget, curProgress);
+                    var drawImg = this.confirmOneImage(widget,curProgress)
                     switch (widget.info.arrange) {
                         case 'vertical':
-                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, null, drawColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, drawImg, drawColor);
                             if (cursor) {
                                 var cursorSlice = widget.texList[widget.texList.length - 1].slices[0];
                                 this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY);
@@ -2079,7 +2095,7 @@ module.exports = React.createClass({
                             break;
                         case 'horizontal':
                         default:
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, null, drawColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, drawImg, drawColor);
                             if (cursor) {
                                 var cursorSlice = widget.texList[widget.texList.length - 1].slices[0];
                                 this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color);
@@ -2277,6 +2293,35 @@ module.exports = React.createClass({
             }
         }
         return drawColor;
+    },
+    confirmOneImage: function (widget, curProgress) {
+        var progressValue = parseInt(curProgress);
+        var img1 = widget.texList[1].slices[0].imgSrc,
+            img2 = widget.texList[2].slices[0].imgSrc,
+            thresholdModeId = widget.info.thresholdModeId,
+            threshold1 = widget.info.threshold1,
+            threshold2 = widget.info.threshold2;
+        if (thresholdModeId == '2') {
+            var img3 = widget.texList[3].slices[0].imgSrc;
+        }
+        ;
+        var img = null
+        if (thresholdModeId == '1') {
+            if (progressValue < threshold1) {
+                img = img1;
+            } else if (progressValue >= threshold2) {
+                img = img2;
+            }
+        } else if (thresholdModeId == '2') {
+            if (progressValue < threshold1) {
+                img = img1;
+            } else if (progressValue >= threshold1 && progressValue < threshold2) {
+                img = img2;
+            } else if (progressValue >= threshold2) {
+                img = img3;
+            }
+        }
+        return img;
     },
     transColorToArray: function (color) {
         //rgba to array
@@ -2864,6 +2909,12 @@ module.exports = React.createClass({
         var curWidth = widget.info.width;
         var curHeight = widget.info.height;
 
+        var hexMode = {
+            numSystem: widget.info.numSystem,
+            markingMode: widget.info.hexControl.markingMode,
+            transformMode: widget.info.hexControl.transformMode
+        };
+
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
@@ -2892,7 +2943,7 @@ module.exports = React.createClass({
             if (!enableAnimation || (enableAnimation && widget.animateTimerId == 0)) {
 
 
-                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode ,hexMode)
 
                 //drawbackground
                 var bgTex = {
@@ -2918,11 +2969,11 @@ module.exports = React.createClass({
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
 
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
@@ -2940,11 +2991,11 @@ module.exports = React.createClass({
 
                 } else {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
@@ -3077,6 +3128,12 @@ module.exports = React.createClass({
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
+        //16进制
+        var hexMode = {
+            numSystem: widget.info.numSystem,
+            markingMode: widget.info.hexControl.markingMode,
+            transformMode: widget.info.hexControl.transformMode
+        };
 
         var tempcanvas = this.refs.tempcanvas;
 
@@ -3094,7 +3151,7 @@ module.exports = React.createClass({
             if (!enableAnimation || (enableAnimation && widget.animateTimerId == 0)) {
 
 
-                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                 // console.log('tempNumValue',tempNumValue)
                 this.paintStyledTexNum(widget, tempNumValue, curX, curY, curX, curY, curWidth, curHeight)
 
@@ -3113,11 +3170,11 @@ module.exports = React.createClass({
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
 
 
@@ -3133,11 +3190,11 @@ module.exports = React.createClass({
 
                 } else {
                     if (changeDirection < 0) {
-                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        newTempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        tempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     } else {
-                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
-                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode)
+                        tempNumValue = this.generateStyleString(widget.animateOldValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
+                        newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
 
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
@@ -3225,6 +3282,45 @@ module.exports = React.createClass({
                     break;
                 case '-':
                     curTexSlice = widget.texList[0].slices[12];
+                    break;
+                case 'x':
+                    curTexSlice = widget.texList[0].slices[13];
+                    break;
+                case 'a':
+                    curTexSlice = widget.texList[0].slices[14];
+                    break;
+                case 'b':
+                    curTexSlice = widget.texList[0].slices[15];
+                    break;
+                case 'c':
+                    curTexSlice = widget.texList[0].slices[16];
+                    break;
+                case 'd':
+                    curTexSlice = widget.texList[0].slices[17];
+                    break;
+                case 'e':
+                    curTexSlice = widget.texList[0].slices[18];
+                    break;
+                case 'f':
+                    curTexSlice = widget.texList[0].slices[19];
+                    break;
+                case 'A':
+                    curTexSlice = widget.texList[0].slices[20];
+                    break;
+                case 'B':
+                    curTexSlice = widget.texList[0].slices[21];
+                    break;
+                case 'C':
+                    curTexSlice = widget.texList[0].slices[22];
+                    break;
+                case 'D':
+                    curTexSlice = widget.texList[0].slices[23];
+                    break;
+                case 'E':
+                    curTexSlice = widget.texList[0].slices[24];
+                    break;
+                case 'F':
+                    curTexSlice = widget.texList[0].slices[25];
                     break;
 
             }
@@ -3321,7 +3417,7 @@ module.exports = React.createClass({
         // tempCtx.fillText(tempNumValue,0,)
         tempCtx.restore()
     },
-    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode) {
+    generateStyleString: function (curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode) {
         var negative = false;
         if (curValue < 0) {
             negative = true;
@@ -3373,6 +3469,16 @@ module.exports = React.createClass({
         } else if (negative) {
             symbol = '-';
             tempNumValue = symbol + tempNumValue;
+        }
+
+        if (hexMode && hexMode.numSystem == '1') {
+            tempNumValue = parseInt(tempNumValue).toString(16);
+            if (hexMode.transformMode == '1') {
+                tempNumValue = tempNumValue.toUpperCase();
+            }
+            if (hexMode.markingMode == '1') {
+                tempNumValue = '0x' + tempNumValue;
+            }
         }
 
         return tempNumValue
@@ -3475,7 +3581,7 @@ module.exports = React.createClass({
             var minCoverAngle = widget.info.minCoverAngle;
             var maxCoverAngle = widget.info.maxCoverAngle;
 
-            // var curArc = widget.info.value;
+            //var curArc = widget.info.value;
 
             var curDashboardTagValue = widget.currentValue || 0;
             if (curDashboardTagValue > maxValue) {
@@ -3488,8 +3594,8 @@ module.exports = React.createClass({
             var clockwise = widget.info.clockwise;// == '1' ? 1 : -1;
             var pointerLength = widget.info.pointerLength;
             var pointerWidth, pointerHeight;
-            // pointerWidth = pointerLength / Math.sqrt(2);
-            // pointerHeight = pointerLength / Math.sqrt(2);
+            //pointerWidth = pointerLength / Math.sqrt(2);
+            //pointerHeight = pointerLength / Math.sqrt(2);
             pointerWidth = widget.info.pointerImgWidth;
             pointerHeight = widget.info.pointerImgHeight;
 
@@ -3514,7 +3620,7 @@ module.exports = React.createClass({
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                     }
                     //draw pointer
-                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
                     //draw circle
                     // var circleTex = widget.texList[2].slices[0]
                     // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -3529,7 +3635,7 @@ module.exports = React.createClass({
                     var lightStripTex = widget.texList[2].slices[0];
                     this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
                     //draw pointer
-                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
 
                     //draw circle
                     // var circleTex = widget.texList[3].slices[0]
@@ -3547,7 +3653,7 @@ module.exports = React.createClass({
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                     }
                     //draw pointer
-                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                    this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
                     //draw circle
                     // var circleTex = widget.texList[2].slices[0]
                     // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -3564,7 +3670,7 @@ module.exports = React.createClass({
                         this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
                         //draw pointer
 
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
                     } else if (curArc < 0) {
                         var bgTex = widget.texList[0].slices[0];
                         if (widget.backgroundModeId === '0') {
@@ -3574,7 +3680,7 @@ module.exports = React.createClass({
                         var lightStripTex = widget.texList[2].slices[0];
                         this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
                         //draw pointer
-                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle);
+                        this.drawRotateElem(curX, curY, width, height, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], null, null, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
                     }
                 } else if (widget.dashboardModeId == '2') {
                     var lightStripTex = widget.texList[0].slices[0];
@@ -3606,6 +3712,7 @@ module.exports = React.createClass({
         this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
         widget.oldValue = curArc;
     },
+
     paintRotateImg: function (curX, curY, widget, options, cb) {
 
         var width = widget.info.width;
@@ -3618,8 +3725,50 @@ module.exports = React.createClass({
             // var curArc = widget.info.value;
             var curArc = widget.curArc;
 
-            this.drawRotateElem(curX, curY, width, height, width, height, curArc + initValue, widget.texList[0].slices[0], -0.5, -0.5, widget.subType);
+            this.drawRotateElem(curX, curY, width, height, width, height, curArc + initValue, widget.texList[0].slices[0], -0.5, -0.5, widget.subType,null,null,false,this.pixelRatio);
 
+
+        }
+
+        cb && cb();
+
+    },
+    drawAlphaImg: function (curX, curY, widget, options, cb) {
+        var lowAlarm = widget.info.lowAlarmValue;
+        var highAlarm = widget.info.highAlarmValue;
+        var minValue = widget.info.minValue;
+        var maxValue = widget.info.maxValue;
+        var curValue = this.getValueByTagName(widget.tag, 0) ;
+        if (curValue > maxValue) {
+            curValue = maxValue
+        } else if (curValue < minValue) {
+            curValue = minValue;
+        }
+        widget.curValue = curValue;
+        this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
+        widget.oldValue = curValue;
+    },
+    paintAlphaImg: function (curX, curY, widget, options, cb) {
+        var offctx = this.offctx
+        var width = widget.info.width;
+        var height = widget.info.height;
+        if (widget.texList) {
+
+            //pointer
+
+            //var initValue = widget.info.initValue;
+            // var curArc = widget.info.value;
+            var curValue = widget.curValue||0;
+            var maxValue = widget.info.maxValue||0
+            var minValue = widget.info.minValue||0
+
+
+            var curAlpha = Number((curValue-minValue)/(maxValue-minValue))||0
+            curAlpha = this.limitValueBetween(curAlpha,0,1)
+            offctx.save()
+            offctx.globalAlpha = curAlpha
+            this.drawBg(curX,curY,width,height,widget.texList[0].slices[0].imgSrc,widget.texList[0].slices[0].color,offctx)
+            offctx.restore()
 
         }
 
@@ -3890,7 +4039,7 @@ module.exports = React.createClass({
         }
         return alarms
     },
-    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle) {
+    drawRotateElem: function (x, y, w, h, elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle,keepSize,verticalPixelScale) {
         var transXratio = transXratio || 0;
         var transYratio = transYratio || 0;
         var offcanvas = this.refs.offcanvas;
@@ -3912,6 +4061,10 @@ module.exports = React.createClass({
         }
 
         offctx.translate(x + 0.5 * w, y + 0.5 * h);
+        if(verticalPixelScale){
+            offctx.scale(1,1.0/verticalPixelScale)
+        }
+
         offctx.rotate(Math.PI * arc / 180);
         offctx.translate(transXratio * elemWidth, transYratio * elemHeight);
 
@@ -3925,10 +4078,13 @@ module.exports = React.createClass({
             var imageList = this.state.imageList;
             for (var i = 0; i < imageList.length; i++) {
                 if (imageList[i].id == image) {
-                    // console.log(image);
+                    var imgElement=imageList[i].content;
                     // offctx.drawImage(imageList[i].content,0,0,w,h,x,y,w,h);
-                    offctx.drawImage(imageList[i].content, 0, 0, elemWidth, elemHeight);
-                    // offctx.drawImage(imageList[i].content,x,y,w,h)
+                    if(keepSize){
+                        offctx.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height);
+                    }else{
+                        offctx.drawImage(imageList[i].content,x,y,w,h)
+                    }
                     break;
                 }
             }
@@ -4602,6 +4758,13 @@ module.exports = React.createClass({
         var ratioW = originalW / clientRect.width;
         var ratioH = originalH / clientRect.height;
         var x = Math.round(e.clientX - clientRect.left);
+        var y = Math.round(e.clientY - clientRect.top);var originalW = e.target.width;
+        var originalH = e.target.height;
+
+        var clientRect = e.target.getBoundingClientRect()
+        var ratioW = originalW / clientRect.width;
+        var ratioH = originalH / clientRect.height;
+        var x = Math.round(e.clientX - clientRect.left);
         var y = Math.round(e.clientY - clientRect.top);
         if (ratioW && ratioH) {
             x = x * ratioW
@@ -4854,13 +5017,47 @@ module.exports = React.createClass({
     setTagByName: function (name, value) {
         var tag = this.findTagByName(name)
         if (tag) {
-            tag.value = value
+            this.setTagByType(tag,value)
             this.setState({tag: tag})
+        }
+    },
+    setTagByType:function (tag,_value) {
+        if(tag){
+            switch (tag.valueType){
+                case 1:
+                    //str
+                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding||StringConverter.supportedEncodings['utf-8']).slice(0,32)
+                    break;
+                default:
+                    //num
+                    tag.value = Number(_value)||0
+
+            }
+        }
+    },
+    getTagTrueValue:function (tag) {
+        if(tag){
+            switch (tag.valueType){
+                case 0:
+                    //num
+                    return Number(tag.value)||0
+                case 1:
+                    //str
+                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
+                default:
+                    console.log('tag type unsupported')
+            }
         }
     },
     setTagByTag: function (tag, value) {
         if (tag) {
-            tag.value = value;
+            this.setTagByType(tag,value)
+            this.setState({tag: tag})
+        }
+    },
+    setTagByTagRawValue:function (tag, rawValue) {
+        if (tag) {
+            tag.value = rawValue
             this.setState({tag: tag})
         }
     },
@@ -4903,9 +5100,9 @@ module.exports = React.createClass({
         } else {
             if (param) {
                 if (param.tag) {
-                    value = Number(this.getValueByTagName(param.tag));
+                    value = this.getValueByTagName(param.tag);
                 } else {
-                    value = Number(param.value);
+                    value = param.value;
                 }
             } else {
                 value = 0;
@@ -4914,7 +5111,31 @@ module.exports = React.createClass({
         // console.log(value,param,(typeof param));
         return value;
     },
-    process: function (cmds, index) {
+    getParamType:function (param) {
+        //0: num 1:tagNum 2:tagStr
+        if ((typeof param) === 'number'){
+            return 0
+        }else{
+            if (param.tag){
+                var tag = this.findTagByName(param.tag)
+                if(tag.valueType == 1){
+                    return 2
+                }else{
+                    return 1
+                }
+            }else{
+                return 0
+            }
+        }
+    },
+    convertParamValueToStr:function (pValue) {
+      if (typeof pValue === 'string'||typeof pValue === 'number'){
+          return ''+pValue
+      }else{
+          return StringConverter.convertUint8ArrayToStr(pValue,StringConverter.supportedEncodings['utf-8'])
+      }
+    },
+    process: function (cmds,index) {
         var cmdsLength = cmds.length;
         if (index >= cmdsLength) {
             return;
@@ -4980,7 +5201,14 @@ module.exports = React.createClass({
                 var targetTag = this.findTagByName(param1.tag);
 
                 if (targetTag) {
-                    var nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
+                    var nextValue
+                    if(targetTag.valueType == 1){
+                        //tagStr
+                        nextValue = ''+this.getTagTrueValue(targetTag) + this.convertParamValueToStr(this.getParamValue(param2));
+                    }else{
+                        //tagNum
+                        nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
+                    }
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null, {
                         updatedTagName: param1.tag
@@ -5094,26 +5322,26 @@ module.exports = React.createClass({
 
                 if (targetTag) {
                     // targetTag.value = parseInt(param2);
-                    this.setTagByTag(targetTag, Number(this.getParamValue(param2)))
-                    this.draw(null, {
-                        updatedTagName: param1.tag
+                    this.setTagByTag(targetTag, this.getParamValue(param2))
+                    this.draw(null,{
+                        updatedTagName:param1.tag
                     });
                 }
                 break;
             //compare
             case 'EQ':
-                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
-                var secondValue = Number(this.getParamValue(param2));
-                if (firstValue == secondValue) {
+                var firstValue = this.getParamValue(param1)
+                var secondValue = this.getParamValue(param2)
+                if ((typeof firstValue === typeof secondValue )&& firstValue == secondValue){
                     nextStep.step = 2;
                 } else {
                     nextStep.step = 1;
                 }
                 break;
             case 'NEQ':
-                var firstValue = Number(this.getValueByTagName(param1.tag, 0));
-                var secondValue = Number(this.getParamValue(param2));
-                if (firstValue != secondValue) {
+                var firstValue = this.getParamValue(param1)
+                var secondValue = this.getParamValue(param2);
+                if ((typeof firstValue !== typeof secondValue )|| firstValue != secondValue){
                     nextStep.step = 2;
                 } else {
                     nextStep.step = 1;
@@ -5294,6 +5522,82 @@ module.exports = React.createClass({
                 })
                 break;
 
+            case 'SET_STR':
+
+                var targetTag = this.findTagByName(param1.tag);
+
+                if (targetTag) {
+                    // targetTag.value = parseInt(param2);
+                    this.setTagByTag(targetTag, this.getParamValue(param2))
+                    this.draw(null,{
+                        updatedTagName:param1.tag
+                    });
+                }
+                break;
+
+            case 'CONCAT_STR':
+
+                var targetTag = this.findTagByName(param1.tag);
+
+                if (targetTag) {
+                    var nextValue
+                    if(targetTag.valueType == 1){
+                        //tagStr
+                        nextValue = ''+this.getTagTrueValue(targetTag) + this.convertParamValueToStr(this.getParamValue(param2));
+                    }else{
+                        //tagNum
+                        nextValue = Number(targetTag.value) + Number(this.getParamValue(param2));
+                    }
+                    this.setTagByTag(targetTag, nextValue)
+                    this.draw(null, {
+                        updatedTagName: param1.tag
+                    });
+                }
+
+                break;
+            case 'GET_STR_LEN':
+                var targetTag = this.findTagByName(param1.tag);
+                var param2Tag = this.findTagByName(param2.tag);
+                if (targetTag&&param2Tag&&param2Tag.valueType ==1) {
+                    // targetTag.value = parseInt(param2);
+                    var param2Str = this.convertParamValueToStr(this.getParamValue(param2))
+                    this.setTagByTag(targetTag, param2Str.length)
+                    this.draw(null,{
+                        updatedTagName:param1.tag
+                    });
+                };
+                break;
+            case 'DEL_STR_FROM_TAIL':
+                var targetTag = this.findTagByName(param1.tag);
+                var deleteLen = Number(this.getParamValue(param2))
+                if (targetTag&&targetTag.valueType==1) {
+                    // targetTag.value = parseInt(param2);
+                    var targetStr = this.getParamValue(param1)
+                    var oldLen = targetStr.length
+                    var newLen = oldLen - deleteLen
+                    newLen = newLen<0?0:newLen
+                    this.setTagByName(param1.tag,targetStr.slice(0,newLen))
+                    this.draw(null,{
+                        updatedTagName:param1.tag
+                    });
+                };
+                break;
+            case 'DEL_STR_FROM_HEAD':
+                var targetTag = this.findTagByName(param1.tag);
+                var deleteLen = Number(this.getParamValue(param2))
+                if (targetTag&&targetTag.valueType==1) {
+                    // targetTag.value = parseInt(param2);
+                    var targetStr = this.getParamValue(param1)
+                    newLen = newLen<0?0:newLen
+                    this.setTagByTag(targetTag,targetStr.slice(deleteLen))
+                    this.draw(null,{
+                        updatedTagName:param1.tag
+                    });
+                };
+                break;
+            default:
+                console.log('unsupported cmd: ',op)
+
         }
         //handle timer
         // if (timerFlag != -1) {
@@ -5333,7 +5637,7 @@ module.exports = React.createClass({
                 if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
                     //read
                     updatedTagNames.push(tag.name);
-                    this.setTagByTag(tag, register.value);
+                    this.setTagByTagRawValue(tag, register.value);
                 }
             }
             //update

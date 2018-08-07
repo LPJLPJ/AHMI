@@ -18,6 +18,7 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"开机动画",icon:"&#xe633"},
         {name:"图层数字",icon:"&#xe675"},
         {name:"图层时间",icon:"&#xe655"},
+        {name:"透明图层",icon:"&#xe6e0;"}
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;

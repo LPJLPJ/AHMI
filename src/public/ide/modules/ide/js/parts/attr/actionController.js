@@ -71,6 +71,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             case Type.MyScriptTrigger:
             case Type.MySlideBlock:
             case Type.MyTexNum:
+            case Type.MyAlphaImg:
                 $scope.showActionPanel = true;
                 break;
             case Type.MySlide:
@@ -97,7 +98,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
          * 监听属性Attribute的改变
          */
         $scope.$on('AttributeChanged', function () {
-            console.log('action changed')
+            //console.log('action changed')
             readActionInfo();
         });
 
@@ -189,20 +190,24 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
  * action 模态窗口控制器
  */
     .controller('ActionInstanceCtrl',['$scope', '$uibModalInstance','ProjectService', 'action','triggers','tags','timerTags','actionNames','OperationService', function ($scope, $uibModalInstance,ProjectService, action,triggers,tags,timerTags,actionNames,OperationService) {
-        //$scope.ops = ['GOTO','SET','INC','DEC'];
 
         var blankCmd = [{name:'',symbol:''}, {tag:'', value:''}, {tag:'', value:''}];
+
         $scope.ops = OperationService.getOperations();
 
         $scope.tags=_.map(tags.filter(function(item){
             return item.bindMod=='default';
 
         }),'name');
+
         $scope.timerTags = _.map(timerTags,function(timerTags){
-          return timerTags.name;
+            return timerTags.name;
         });
+
         $scope.action = action;
+
         $scope.triggers = triggers;
+
         $scope.actionNames = actionNames;
 
         $scope.currentChosenIdx = $scope.action.commands.length-1;
@@ -213,6 +218,15 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         }
 
         $scope.showCustomTags = true;
+
+        $scope.validateArr = $scope.action.commands.map(function(cmd){
+            return {
+                pass:true,
+                tooltip:''
+            }
+        });
+
+
         $scope.changeTagShowState = function(){
             var operation = $scope.chosenCmd[0].symbol;
             if(operation.indexOf('setTimer')!==-1){
@@ -242,17 +256,27 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
 
+            $scope.$broadcast('ResetTagChoose');
             //console.log('chosenCmd',$scope.chosenCmd);
         };
 
         //增加新指令
         $scope.addNewCmd = function () {
+            if($scope.action.trigger==''){
+                toastr.error('未选择触发方式！');
+                return;
+            }
+
             $scope.action.commands.splice($scope.currentChosenIdx + 1, 0, _.cloneDeep(blankCmd));
             $scope.currentChosenIdx += 1;
             $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
-            if($scope.action.trigger==''){
-                toastr.error('未选择触发方式！');
-            }
+
+            $scope.validateArr.push({
+                pass:true,
+                tooltip:''
+            });
+
+            $scope.$broadcast('ResetTagChoose');
         };
 
         //删除指令
@@ -261,18 +285,44 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.currentChosenIdx -= 1;
         };
 
+        //快捷添加定时器
+        $scope.shortcutTimer = $scope.timerTags==''?'':$scope.timerTags[0];
+          $scope.shortcutAddTimer = function (){
+            if($scope.action.trigger==''){
+                toastr.error('未选择触发方式！');
+                return;
+            }
+            if($scope.shortcutTimer==''){
+                toastr.error('未添加定时器！');
+                return;
+            }
+            var defaultTimers=[
+                {name: "SET_TIMER_START", symbol: "setTimerStart", value:"0"},
+                {name: "SET_TIMER_STOP", symbol: "setTimerStop", value:""},
+                {name: "SET_TIMER_STEP", symbol: "setTimerStep", value:"1"},
+                {name: "SET_TIMER_INTERVAL", symbol: "setTimerInterval", value:""},
+                {name: "SET_TIMER_CURVAL", symbol: "setTimerCurVal", value:"0"},
+                {name: "SET_TIMER_MODE", symbol: "setTimerMode", value:""}
+            ];
+            _.forEach(defaultTimers,function(timer){
+                var customTimer = [{name:timer.name,symbol:timer.symbol}, {tag:$scope.shortcutTimer, value:''}, {tag:'', value:timer.value}];
+                $scope.action.commands.push(customTimer);
+                $scope.validateArr.push({
+                    pass:true,
+                    tooltip:''
+                });
+            });
+            $scope.currentChosenIdx += 6;
+            $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
+        }
+        ;
+
         //保存
         $scope.save = function (th) {
-            //add by tang
-            var cmd=th.action.commands;
-            for(var i=0;i<cmd.length;i++){
-                var symbol=cmd[i][0].symbol;
-                var tag=cmd[i][1].tag||cmd[i][1].value;
-                var val=cmd[i][2].tag||cmd[i][2].value;
-                if(symbol===""){
-                    alert("禁止使用空指令");
-                    return;
-                }
+
+            if(!validateCmds($scope.action.commands,tags)){
+                toastr.error('指令有误，请根据提示检查');
+                return;
             }
 
             //判断是否和初始一样
@@ -293,11 +343,12 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         };
 
         var restoreValue=$scope.action.title;
+
         var validation=true;
+
         //保存旧值
         $scope.store=function(th){
             restoreValue=th.action.title;
-
         };
 
         //恢复旧值
@@ -320,6 +371,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             toastr.info('修改成功');
             restoreValue=th.action.title;
         };
+
         //验证重名
         function duplicate(th){
             var tempArray=$scope.actionNames;
@@ -350,13 +402,99 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 useTag:true
             }
         ];
+
         //tagSelect 回调
         $scope.actionFunction=function(index){
             $scope.chosenCmd[index+1].tag=$scope.selectedTagObjArray[index].tagName;
         };
+
         //启用变量
         $scope.usetagSwitch=function(index){
             $scope.selectedTagObjArray[index].tagName='';
             $scope.actionFunction(index);
         };
+
+
+        /**
+         * 对所有的指令在保存前进行一次校验
+         * @param cmds 所有指令
+         * @param tags  所有tag
+         * @returns {boolean} 是否通过检查
+         */
+        function validateCmds(cmds,tags){
+            var errTooltip = {
+                SET_STR:"操作数1必须是变量，且类型为'字符串'型",
+                CONCAT_STR:"操作数1必须是变量，且类型为'字符串'型",
+                DEL_STR_FROM_TAIL:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
+                DEL_STR_FROM_HEAD:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
+                GET_STR_LEN:"操作数1必须是变量，且类型为'数字'型,操作数2必须是变量，且类型为'字符串'型",
+                EMPTY:"操作符不能为空",
+                NOT_NUMBER:"操作数2的值必须为数字类型"
+            };
+            var getTagValueType = function(tagName){
+                for(var i=0,il=tags.length;i<il;i++){
+                    if(tags[i].name===tagName){
+                        return tags[i].valueType;
+                    }
+                }
+                return -1;
+            };
+            var validateArr = $scope.validateArr;
+            var pass = true;
+            cmds.forEach(function(cmd,index){
+                if(cmd[0].name===""){
+                    validateArr[index].pass = false;
+                    validateArr[index].tooltip = errTooltip['EMPTY'];
+                    pass = false;
+                    return;
+                }
+                var value = cmd[2].value;
+                if(value!=''&&!Number(value)){
+                    validateArr[index].pass = false;
+                    validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
+                    pass = false;
+                    return;
+                }
+                switch(cmd[0].name){
+                    case 'SET_STR':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['SET_STR'];
+                            pass = false;
+                        }
+                        break;
+                    case 'CONCAT_STR':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['SET_STR'];
+                            pass = false;
+                        }
+                        break;
+                    case 'DEL_STR_FROM_TAIL':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1||(cmd[2].tag&&getTagValueType(cmd[2].tag)!==0)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['DEL_STR_FROM_TAIL'];
+                            pass = false;
+                        }
+                        break;
+                    case 'DEL_STR_FROM_HEAD':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1||(cmd[2].tag&&getTagValueType(cmd[2].tag)!==0)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['DEL_STR_FROM_TAIL'];
+                            pass = false;
+                        }
+                        break;
+                    case 'GET_STR_LEN':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==0||(cmd[2].tag&&getTagValueType(cmd[2].tag)!==1)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['DEL_STR_FROM_TAIL'];
+                            pass = false;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+            return pass;
+        }
     }]);

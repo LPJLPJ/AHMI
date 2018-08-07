@@ -18,6 +18,13 @@
     width: 90%;
     float: left;
 }
+
+.dengPage-attrbute-container .my-attr-item .short-select{
+    width: 90%;
+    float: left;
+    margin-left: 0!important;
+}
+
 .dengPage-attrbute-container .item-left{
 
 }
@@ -80,6 +87,12 @@
 
 .dengPage-attrbute-container .my-attr-title{
     width: 40px;
+}
+
+.dengPage-attrbute-container .my-attr-title .bgiDownload{
+    float: right;
+    font-size: 15px;
+    cursor: pointer
 }
 
 .dengPage-attrbute-container .my-attr-item .dengPage-color-input{
@@ -175,6 +188,17 @@
 .dengModel-body .modelPart{
     margin-bottom: 10px;
 }
+
+.dengModel-body .addTimerWrap{
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+}
+
+.dengModel-body .addTimerWrap button{
+    margin: 0 auto;
+}
+
 .dengModel-body .modal-title input{
     height: 32px;
     font-size: 12px;
@@ -653,7 +677,7 @@
     border-radius: 4px;
     padding:10px;
     width: 100%;
-    min-width: 250px;
+    /*min-width: 250px;*/
     vertical-align: middle
 }
 

@@ -1,0 +1,9 @@
+<li data-folder='<%= JSON.stringify(folder) %>' class="folderPanel" title="项目名称:<%= folder.name %>&#10创建作者:<%= folder.author %>&#10创建时间:<%= folder.createTime %>&#10修改时间:<%= folder.lastModifiedTime %>">
+    <div class="img">
+        <i class="folderDelete iconfont createIcon">&#xe607;</i>
+        <a href="#"><img src='<%= "../../public/login/assets/img/folder.png" %>'/></a>
+    </div>
+    <p class="text folderInfo">
+        <span><%= folder.name %></span>
+    </p>
+</li>

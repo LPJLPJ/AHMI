@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css" type="text/css" />
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
     <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="/public/login/assets/css/style.css" rel="stylesheet"/>
     <link rel="stylesheet" href="../../public/login/assets/css/personalProject.css" type="text/css" />
     <link rel="stylesheet" href="../../public/login/assets/css/jquery.contextMenu.min.css" type="text/css" />
     <link rel="stylesheet" href="../../public/ide/modules/templateCenter/templateCenter.css" />
@@ -17,6 +18,7 @@
     <script src="../../public/login/assets/js/ejs_production.js"></script>
     <script src="../../public/login/assets/js/personalProject.js"></script>
     <script src="../../public/login/assets/js/templates.js"></script>
+    <script src="../../public/login/assets/js/compatibilityCheck.js"></script>
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
 
 
@@ -66,6 +68,26 @@
             </div>
         </div>
     </div>
+
+    <!--项目删除-->
+    <div class="modal fade" id="deleteFolderModal" tabindex="-1" role="dialog" aria-labelledby="deleteFolderLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="deleteFolderLabel">确认删除?</h4>
+                </div>
+                <div class="modal-body">
+                    <h4 style="color: red;text-align: center">删除项目将会删除该项目中所有的工程！</h4>
+                </div>
+                <div class="modal-footer">
+                    <button id="deleteFolderConfirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="template-modal" tabindex="-1" role="dialog" aria-labelledby="template-modal">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -83,7 +105,7 @@
     </div>
     <div class="main filedragOverflow" id="filedrag">
         <div class="top" ng-click="console.log('123')">
-            <span calss="pro">工程项目</span>
+            <button id="addFolder" class="createPro btn addFolder" data-toggle="modal" data-target="#myFolderModal"><span class="iconfont icon">&#xe606;</span> 创建项目</button>
             <!--（<em class="var">2</em> )-->
             <!--<span class="pro2">-->
                 <!--<input type="text" placeholder="项目名搜索" name="name" />-->
@@ -108,7 +130,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="job">
-                                <span class="modal-label col-lg-2">名称</span><input id="basicinfo-title" type="text" autocomplete="off" placeholder="项目名称" class="modal_input col-lg-10" />
+                                <span class="modal-label col-lg-2">名称</span><input id="basicinfo-title" type="text" autocomplete="off" placeholder="工程名称" class="modal_input col-lg-10" />
                             </div>
                             <div class="job">
                                 <span class="modal-label col-lg-2">作者</span><input id="basicinfo-author" type="text" placeholder="" class="modal_input col-lg-10" />
@@ -140,6 +162,10 @@
                                     <option value="">---</option>
                                 </select>
                             </div>
+                            <div class="job compatibility-container">
+                                <span class="modal-label col-lg-8">一体化软件兼容性</span>
+                                <div class="compatibility-show col-lg-12"></div>
+                            </div>
                             <div class="job">
                                 <span class="modal-label col-lg-2">模板</span>
                                 <select id="basicinfo-template" class="col-lg-10 modal_input" value="">
@@ -166,8 +192,31 @@
                             <!--</div>-->
                         </div>
                         <div class="modal-footer">
-                            <button id="modal-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建项目</button>
+                            <button id="modal-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
                             <button id="modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="myFolderModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myFolderLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myFolderLabel">项目选项</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="job">
+                                <span class="modal-label col-lg-2">名称</span><input id="folder-title" type="text" autocomplete="off" placeholder="项目名称" class="modal_input col-lg-10" />
+                            </div>
+                            <div class="job">
+                                <span class="modal-label col-lg-2">作者</span><input id="folder-author" type="text" placeholder="" class="modal_input col-lg-10" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="folder-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
+                            <button id="folder-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                         </div>
                     </div>
                 </div>
@@ -177,18 +226,33 @@
                 <li id="addproject" class="addproject">
                     <a href="#">
                         <div class="img1 btn btn-primary btn-lg"  data-toggle="modal" data-target="#myModal">
-                            <i class="iconfont">&#xe606;</i>
+                            <i class="iconfont createIcon">&#xe606;</i>
                         </div>
                     </a>
-                    <p class="text">创建项目</p>
+                    <p class="text">创建工程</p>
                 </li>
                 <!-- 识别符 勿删 -->
                 <!-- webProFlag -->
+
+                <!--项目列表 add by tang-->
+                <%for(var f=0;f<folders.length;f++){%>
+                    <li data-folder='<%= JSON.stringify(folders[f].folderInfo) %>' class="folderPanel" title="项目名称:<%= folders[f].folderInfo.name %>&#10创建作者:<%= folders[f].folderInfo.author %>&#10创建时间:<%= folders[f].folderInfo.createTime %>&#10修改时间:<%= folders[f].folderInfo.lastModifiedTime %>">
+                        <div class="img">
+                            <i class="folderDelete iconfont createIcon">&#xe607;</i>
+                            <a href="#"><img src='<%= "../../public/login/assets/img/folder.png" %>'/></a>
+                        </div>
+                        <p class="text folderInfo">
+                            <span><%= folders[f].folderInfo.name %></span>
+                        </p>
+                    </li>
+                <%}%>
+
+                <!--工程列表-->
                 <%for(var i=0;i<projects.length;i++){%>
                 <!--<li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  context-menu="component.menuOptions"  class="projectpanel" title="创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">-->
-                <li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel" title="创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
+                <li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel" title="工程名称:<%=projects[i].projectInfo.name%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
                     <div class="img">
-                        <i class="projectdelete iconfont">&#xe607;</i>
+                        <i class="projectdelete iconfont createIcon">&#xe607;</i>
                         <a href="#"><img src=<%= projects[i].thumbnail||"../../public/login/assets/img/pro_1.png" %> /></a>
                         <!--<div class="img_bot">-->
                         <!--<div class="img_bg">haha</div>-->
@@ -317,6 +381,8 @@
             </div>
         </div>
     </div>
+
+
 
     <script>
 //        for local

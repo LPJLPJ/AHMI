@@ -422,6 +422,9 @@ ideServices
                     if (page.backgroundImage){
                         names.push(page.backgroundImage);
                     }
+                    if (page.matte&&page.matte.info.backgroundImg){
+                        names.push(page.matte.info.backgroundImg);
+                    }
                     _.forEach(page.layers,function (layer) {
                         _.forEach(layer.subLayers,function (subLayer) {
                             if (subLayer.backgroundImage){
@@ -432,7 +435,6 @@ ideServices
                                     _.forEach(tex.slices,function (slice) {
                                         if (slice.imgSrc){
                                             names.push(slice.imgSrc);
-
                                         }
                                     })
                                 })
@@ -1186,10 +1188,23 @@ ideServices
                         syncSublayer(fabWidget);
                     },initiator);
                 }else if(_newWidget.type===Type.MyTexNum){
+                    console.log(_newWidget);
                     fabric.MyTexNum.fromLevel(_newWidget,function (fabWidget) {
                         _self.currentFabLayerIdList = [fabWidget.id];
                         subLayerNode.add(fabWidget);
                         subLayerNode.renderAll.bind(subLayerNode)();
+                        syncSublayer(fabWidget);
+                    },initiator);
+                }else if(_newWidget.type===Type.MyAlphaImg){
+                    fabric.MyAlphaImg.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
                         syncSublayer(fabWidget);
                     },initiator);
                 }
@@ -2047,8 +2062,8 @@ ideServices
 
                     //currentSubLayer.proJsonStr=JSON.stringify(subLayerNode.toJSON());
                 }
+                //console.log(project);
                 return _.cloneDeep(project);
-
             };
 
             this.LoadCurrentOperate = function (_operate, _successCallback,_errCallback) {
@@ -2062,7 +2077,7 @@ ideServices
                 //project=_operate;
                 TagService.syncCustomTags(project.customTags);
                 TagService.syncTimerTags(project.timerTags);
-                TagService.setTimerNum(project.timers);
+                TagService.setTimerNum(project.timerTags.length||0);
                 TagService.syncTagClasses(project.tagClasses);
 
                 _cleanPageHashKey();
@@ -3703,6 +3718,43 @@ ideServices
                 _successCallback&&_successCallback(currentOperate);
             };
 
+            /**
+             * 切换数字进制
+             * 切换16进制的 进制符，大小写
+             * @author tang
+             * @param _option
+             * @param _successCallback
+             * @constructor
+             */
+            this.ChangeNumSystem = function(_option,_successCallback){
+                var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function(){
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,function(){
+                            _successCallback&&_successCallback(currentOperate);
+                        });
+                    }
+                };
+
+                if(_option.numSystem){//改进制
+                    selectObj.level.info.numSystem=_option.numSystem;
+                    arg.numSystem=_option.numSystem;
+                }
+                if(_option.markingMode){//16进制 0x标识
+                    selectObj.level.info.hexControl.markingMode=_option.markingMode;
+                    arg.markingMode=_option.markingMode;
+                }
+                if(_option.transformMode){//16进制 大小写
+                    selectObj.level.info.hexControl.transformMode=_option.transformMode;
+                    arg.transformMode=_option.transformMode;
+                }
+                selectObj.target.fire('changeNumSystem',arg);
+            };
+
+            //数字字体
             this.ChangeAttributeTexNumContent = function(_option,_successCallback){
                 var currentOperate = SaveCurrentOperate();
                 var selectObj=_self.getCurrentSelectObject();
@@ -4383,6 +4435,14 @@ ideServices
                         selectObj.target.fire('changeInitValue',arg);
                     }
 
+                    if(selectObj.type==Type.MyAlphaImg){
+                        arg={
+                            maxValue:_option.maxValue,
+                            callback:_successCallback
+                        };
+                        selectObj.target.fire('changeInitValue',arg);
+                    }
+
                 }
                 if (_option.hasOwnProperty('minValue')){
                     selectObj.level.info.minValue=_option.minValue;
@@ -4411,6 +4471,14 @@ ideServices
                         selectObj.target.fire('ChangeAttributeOscilloscope',arg);
                     }
                     if(selectObj.type==Type.MySlideBlock){
+                        arg={
+                            minValue:_option.minValue,
+                            callback:_successCallback
+                        }
+                        selectObj.target.fire('changeInitValue',arg);
+                    }
+
+                    if(selectObj.type==Type.MyAlphaImg){
                         arg={
                             minValue:_option.minValue,
                             callback:_successCallback
@@ -5350,6 +5418,9 @@ ideServices
                         break;
                     case 'MyTexTime':
                         node.add(new fabric.MyTexTime(dataStructure,initiator));
+                        break;
+                    case 'MyAlphaImg':
+                        fabric.MyAlphaImg.fromLevel(dataStructure, addFabWidget, initiator);
                         break;
                     default :
                         console.error('not match widget in _addFabricObjInCanvasNode!');

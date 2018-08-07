@@ -37,14 +37,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                 page: {
                     enterImage: enterBackgroundImage,
-                    selectImage: 'demo20.png'
+                    selectImage: 'demo20.png',
+                    downloadFile:downloadFile
                 },
 
                 layer: {
                     enterShowSubLayer: enterShowSubLayer,
                     selectModel: null,
                     enterImage: enterBackgroundImage,
-                    selectImage:''
+                    selectImage:'',
+                    downloadFile:downloadFile
                 },
                 subLayer: {
                     enterImage: enterBackgroundImage,
@@ -146,6 +148,25 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         {id: '0', name: '溢出不显示'},
                         {id: '1', name: '溢出显示'}
                     ],
+                    numSystem: '0',
+                    numSystems: [
+                        {id: '0', name: '十进制'},
+                        {id: '1', name: '十六进制'}
+                    ],
+                    markingModes: [
+                        {id: '0', name: '无标识模式'},
+                        {id: '1', name: '标识模式'}
+                    ],
+                    transformModes: [
+                        {id: '0', name: '小写模式'},
+                        {id: '1', name: '大写模式'}
+                    ],
+                    hexControl:{
+                        markingMode:'0',
+                        transformMode:'0',
+                        enterMarkingMode:enterMarkingMode,
+                        enterTransformMode:enterTransformMode
+                    },
                     changeNumOfDigits: changeNumOfDigits,
                     changeDecimalCount: changeDecimalCount,
                     enterNumMode: enterNumMode,
@@ -155,7 +176,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                     enterNumValue: enterNumValue,
                     changeNumAlign: changeNumAlign,
-                    enterArrange: enterArrange
+                    enterArrange: enterArrange,
+                    //16进制
+                    enterNumSystem:enterNumSystem
                 },
                 texNum: {
                     numModeId: '0',//目前无用
@@ -179,6 +202,28 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         {id: '0', name: '溢出不显示'},
                         {id: '1', name: '溢出显示'}
                     ],
+
+                    numSystem: '0',
+                    numSystems: [
+                        {id: '0', name: '十进制'},
+                        {id: '1', name: '十六进制'}
+                    ],
+                    markingModes: [
+                        {id: '0', name: '无标识模式'},
+                        {id: '1', name: '标识模式'}
+                    ],
+                    transformModes: [
+                        {id: '0', name: '小写模式'},
+                        {id: '1', name: '大写模式'}
+                    ],
+                    hexControl:{
+                        markingMode:'0',
+                        transformMode:'0',
+                        enterMarkingMode:enterMarkingMode,
+                        enterTransformMode:enterTransformMode
+                    },
+                    enterNumSystem:enterNumSystem,
+
                     changeNumOfDigits: changeNumOfDigits,
                     changeDecimalCount: changeDecimalCount,
                     enterNumMode: enterNumMode,
@@ -216,6 +261,10 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 //旋转
                 rotateImg: {
+                    enterInitValue: enterInitValue
+                },
+                //alpha
+                alphaImg: {
                     enterInitValue: enterInitValue
                 },
                 dateTime: {
@@ -442,7 +491,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.info.enableAnimation = false;
                         //     $scope.component.progress.enableAnimationModeId = '1'
                         // } else
-                        if ($scope.component.object.level.info.enableAnimation === false) {
+                        if (!$scope.component.object.level.info.enableAnimation||$scope.component.object.level.info.enableAnimation === false) {
                             $scope.component.progress.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation === true) {
                             $scope.component.progress.enableAnimationModeId = '0'
@@ -529,6 +578,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         $scope.component.num.frontZeroMode = $scope.component.object.level.info.frontZeroMode;
                         $scope.component.num.overFlowStyle = $scope.component.object.level.info.overFlowStyle;
                         $scope.component.num.arrangeModel = $scope.component.object.level.info.arrange;
+                        $scope.component.num.numSystem = $scope.component.object.level.info.numSystem;
+                        $scope.component.num.hexControl.markingMode = $scope.component.object.level.info.hexControl.markingMode;
+                        $scope.component.num.hexControl.transformMode = $scope.component.object.level.info.hexControl.transformMode;
                         if ((typeof $scope.component.object.level.transition) != 'object') {
                             ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
                             $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
@@ -560,6 +612,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         $scope.component.texNum.frontZeroMode = $scope.component.object.level.info.frontZeroMode;
                         $scope.component.texNum.overFlowStyle = $scope.component.object.level.info.overFlowStyle;
                         $scope.component.texNum.arrangeModel = $scope.component.object.level.info.arrange;
+                        $scope.component.texNum.numSystem = $scope.component.object.level.info.numSystem;
+                        $scope.component.texNum.hexControl.markingMode = $scope.component.object.level.info.hexControl.markingMode;
+                        $scope.component.texNum.hexControl.transformMode = $scope.component.object.level.info.hexControl.transformMode;
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
                         if ($scope.component.object.level.info.enableAnimation == false) {
                             $scope.component.texNum.enableAnimationModeId = '1'
@@ -1243,6 +1298,20 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             })
         }
 
+        function downloadFile(imgSrc){
+            if(imgSrc==''){
+                toastr.warning('未使用资源');
+                return;
+            }
+            var img = ResourceService.getResourceByUrl(imgSrc);
+            if(img!=null){
+                ResourceService.downloadFile(img,$scope.project.projectId);
+            }else{
+                toastr.warning('图片未找到');
+            }
+
+        }
+
         function enterInterval(e) {
             if (e.keyCode == 13) {
                 //判断输入是否合法
@@ -1493,6 +1562,76 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             ProjectService.ChangeAttributeArrange(option, function () {
                 $scope.$emit('ChangeCurrentPage', oldOperate);
 
+            })
+        }
+
+        /**
+         * 改变数字进制
+         * 数字控件和图层数字
+         * @param e
+         */
+        function enterNumSystem(){
+            var selectObj = ProjectService.getCurrentSelectObject();
+            var selectSystem = null;
+
+            if(selectObj.type=='MyNum'){
+                if($scope.component.object.level.info.decimalCount!=0||$scope.component.num.frontZeroMode!=0){
+                    $scope.component.num.numSystem='0';
+                    toastr.warning('小数和前导0模式下不能切换成16进制');
+                    return;
+                }
+                selectSystem=$scope.component.num.numSystem
+            }else if(selectObj.type=='MyTexNum'){
+                if($scope.component.object.level.info.decimalCount!=0||$scope.component.texNum.frontZeroMode!=0){
+                    $scope.component.texNum.numSystem='0';
+                    toastr.warning('小数和前导0模式下不能切换成16进制');
+                    return;
+                }
+                selectSystem=$scope.component.texNum.numSystem
+            }
+
+            var option={
+                numSystem:selectSystem
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeNumSystem(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+        }
+        //0x标识
+        function enterMarkingMode(){
+            var selectObj = ProjectService.getCurrentSelectObject();
+            var selectMarking = null;
+            if(selectObj.type=='MyNum'){
+                selectMarking=$scope.component.num.hexControl.markingMode;
+            }else if(selectObj.type=='MyTexNum'){
+                selectMarking=$scope.component.texNum.hexControl.markingMode;
+            }
+
+            var option={
+                markingMode:selectMarking
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeNumSystem(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            });
+        }
+        //大小写转换
+        function enterTransformMode(){
+            var selectObj = ProjectService.getCurrentSelectObject();
+            var selectTransform = null;
+            if(selectObj.type=='MyNum'){
+                selectTransform = $scope.component.num.hexControl.transformMode;
+            }else if(selectObj.type=='MyTexNum'){
+                selectTransform = $scope.component.texNum.hexControl.transformMode;
+            }
+
+            var option={
+                transformMode:selectTransform
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeNumSystem(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
             })
         }
 
@@ -2612,7 +2751,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if ($scope.component.object.level.info.bindBit == initObject.level.info.bindBit) {
                     return;
                 }
-                ;
                 if ($scope.component.object.level.info.bindBit < 0 || $scope.component.object.level.info.bindBit > 31) {
                     toastr.warning('超出范围');
                     restore();

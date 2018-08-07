@@ -47,7 +47,6 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     //导入tags事件
     $scope.$on('syncTagSuccess', function (event, data) {
-        console.log('syncTagSuccess', data);
         data = data || [];
         data.map(function (item) {
             addTagToTagClass(item, $scope.component.curTagClassName);
@@ -504,7 +503,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 }
             }
         }
-
+        TagService.deleteTag(name);
+        $scope.$emit('ChangeCurrentTags');
     }
 
     //点击list里的自定义tag名称，将其先显示编辑面板上。
@@ -619,6 +619,9 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         if (canTimerNumChange($scope.component.timerNum)){
             TagService.setTimerNum($scope.component.timerNum);
             TagService.setTimerTags($scope.component.timerNum);
+            $scope.component.timerNum=TagService.getTimerNum();
+            $scope.component.allTimerTags=TagService.getAllTimerTags();
+            $scope.$emit('ChangeCurrentTags');
         }
 
     }
@@ -809,6 +812,81 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             }]
         });
     }
+
+    $scope.customTagList=function(){
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'customPreset.html',
+            scope: $scope,//指定父scope
+            size: 'md',
+            resolve: {
+                curTagClass: function () {
+                    return $scope.component.curTagClass;
+                }
+            },
+            controller: ['$scope', '$uibModalInstance', '$http', 'TagService', 'curTagClass', function ($scope, $uibModalInstance, $http, TagService, curTagClass) {
+                $scope.batchSelectList=[];
+
+                $http({
+                    method: 'get',
+                    url: '/public/ide/modules/tagConfig/template/tags.default.json'
+                }).success(function (data) {
+                    $scope.defaultTags=data;
+                }).error(function (err) {
+                    console.log(err)
+                });
+
+                $scope.selectCustomTag=function(i){
+                    if($scope.batchSelectList[i]==null){
+                        $scope.batchSelectList[i]=true;
+                    }else{
+                        $scope.batchSelectList[i]=!$scope.batchSelectList[i];
+                    }
+                };
+                $scope.selectAll=function(){//全选
+                    for(var i=0;i<$scope.defaultTags.length;i++){
+                        $scope.batchSelectList[i]=true;
+                    }
+                };
+                $scope.invertSelect=function(){//反选
+                    for(var i=0;i<$scope.defaultTags.length;i++){
+                        if($scope.batchSelectList[i]==null){
+                            $scope.batchSelectList[i]=true;
+                        }else{
+                            $scope.batchSelectList[i]=!$scope.batchSelectList[i];
+                        }
+                    }
+                };
+                $scope.stopProp=function(e){//阻止点击冒泡
+                    e.stopPropagation();
+                };
+
+                $scope.ok = function () {
+                    var selectTags=[];
+                    for(var i=0;i<$scope.defaultTags.length;i++){
+                        if($scope.batchSelectList[i]){
+                            selectTags.push($scope.defaultTags[i]);
+                        }
+                    }
+
+                    if(!selectTags||selectTags==''){
+                        alert('未选择tag');
+                        return;
+                    }
+                    TagService.syncTagFromRemote(selectTags, curTagClass, $scope.overlay, function () {
+                        $scope.$emit('syncTagSuccess', selectTags);
+                        $uibModalInstance.close();
+                    });
+                    $uibModalInstance.close();
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss();
+                };
+            }]
+        });
+    }
+
 }]);
 
 /**
@@ -820,6 +898,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
     $scope.tag = tag;
     $scope.type = type;
     $scope.showForceEditBtn = false;
+    showBindBit();
 
     //保存
     $scope.save = function (th) {
@@ -866,7 +945,6 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
 
 
     $scope.forceSave = function (th) {
-
 
         var shouldForceEdit = false
         if (index !== -1) {
@@ -933,6 +1011,36 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
             return true;
         }
         return false;
+    }
+
+    function showBindBit(){
+        var bits=[];
+        $scope.bindBits=[];
+        ProjectService.getProjectCopyTo($scope);
+        _.forEach($scope.project.pages,function(page){
+            var layers=page.layers;
+            _.forEach(layers,function(layer){
+                var subLayers=layer.subLayers;
+                _.forEach(subLayers,function(subLayer){
+                    var widgets=subLayer.widgets;
+                    _.forEach(widgets,function(widget){
+                        if(widget.type=='MySwitch'){
+                            if(widget.tag&&widget.tag==$scope.tag.name){
+                                if(widget.info.bindBit){
+                                    $scope.bindBits.push(widget.info.bindBit)
+                                }
+                            }
+                        }
+                    })
+                })
+            })
+        });
+
+        for(var i=0;i<bits.length;i++){
+            if($scope.bindBits.indexOf(bits[i]) == -1){
+                $scope.bindBits.push(bits[i]);
+            }
+        }
     }
 
 }]);
@@ -1015,6 +1123,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyVideo:
             case Type.MyAnimation:
             case Type.MyTexNum:
+            case Type.MyAlphaImg:
                 $scope.component.showTagPanel = true;
                 break;
             default:
@@ -1024,6 +1133,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
 
     //选择tag，并将其绑定到当前对象上
     function selectedTagFun() {
+        var selectObject = ProjectService.getCurrentSelectObject();
         $scope.component.selectedTag = $scope.selectedTagObj.tagName;
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);

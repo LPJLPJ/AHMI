@@ -246,8 +246,62 @@ update:
 
 1.10.3
 add:
-    1.dashboard add no-background mode
-    2.middleWareService to process project data
+    1. dashboard add no-background mode
+    2. middleWareService to process project data
+    3. alpha image
+    4. add tag change
+    5. 增加蒙板、开机动画批量插入、子图层复制粘贴、右下方图层菜单拖拽操作
+    6. template Center
+    7. SXIntro
+    8. show estimateFileSize
+    9. tag manage
+    10. 帧率tag
+    11. mask
+    12. IDE multi version
+    13. absolute position
+   
 fix:
+    1. files can't compress
+    2. tags bug
 update:
-    1.pointer of dashboard support rect image and not render in generate
+    1. pointer of dashboard support rect image and not render in generate
+    2. mv public/view to src/public src/view
+    3. gulp file
+    4. compress all html css js
+    5. render page, render slieblock, remove pointer render
+
+
+1.10.4
+add:
+fix:
+    1. fix middleWareService bug
+update:
+    1. all compress
+
+1.10.5
+add:
+    1. tag string support
+    2. project category
+    3. resources.html
+    4. compatibility check
+    5. download localIDE, sim_gen_all
+    6. data-analysis
+    7. action visualization
+    8. physical pixel ratio simulation support
+   
+fix:
+    1. upload zip file bug
+    2. timer count
+    3. git ignore
+    4. delete resources bug
+update:
+    1. gulp dev watch
+    2. local ide generate hash zip file
+    3. add zip file validator
+    4. newbie guide
+    5. tagString default encoding:utf-8
+    6. tag list chart
+    7. render pure color pointer for dashboard
+    8. gulp watch:modified
+    9. action visualization: scale, collapse
+    10. upload file.zip with md5 hash

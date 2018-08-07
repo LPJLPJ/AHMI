@@ -783,6 +783,9 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             $scope.$broadcast('PageNodeChanged');
         });
 
+        $scope.$on('ChangeCurrentTags', function (event) {
+            $scope.$broadcast('TagsChanged');
+        })
 
         function reOpenProject(event, pid) {
             $scope.ide.loaded = false;
@@ -848,7 +851,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //tags tbc
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);
-            TagService.setTimerNum(globalProject.timers);
+            TagService.setTimerNum(globalProject.timerTags.length||0);
             TagService.syncTagClasses(globalProject.tagClasses);
             NavModalCANConfigService.setCANId(globalProject.CANId);
         }
@@ -936,6 +939,15 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 attrArr = [],//属性名数组
                 pageNode = new fabric.Canvas('c'),
                 subLayerNode = new fabric.Canvas('c1', {renderOnAddRemove: false});
+            var projectId = window.location.pathname.split('/')[2];
+            var replaceProjectId = function (url) {
+                if (!url) {
+                    return url;
+                }
+                var urlArr = url.split('/');
+                urlArr[2] = projectId;
+                return urlArr.join('/');
+            };
 
             //fix basic data structure
             newData.thumbnail = '';
@@ -970,6 +982,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 pageNode.setWidth(tempContentObj.initSize.width);
                 pageNode.setHeight(tempContentObj.initSize.height);
                 pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                page.originBackgroundImage = replaceProjectId(page.originBackgroundImage);
+                page.backgroundImage = page.originBackgroundImage;
                 // pageNode.clear();
                 if (page.canvasList !== undefined) {
                     page.selected = (index === 0) ? true : false
@@ -1035,6 +1049,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                         if (tex.slices && (tex.slices instanceof Array)) {
                                             tex.slices.forEach(function (slice, index) {
                                                 if (slice.hasOwnProperty('originSrc')) {
+                                                    slice.originSrc = replaceProjectId(slice.originSrc);
                                                     slice.imgSrc = slice.originSrc;
                                                     delete slice.originSrc;
                                                 }

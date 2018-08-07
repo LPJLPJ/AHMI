@@ -20,6 +20,7 @@
     <script src="../../public/ide/tools/js/ruler.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
 
+    <script src="../../public/libs/md5.js"></script>
 
     <script src="../../public/ide/lib/angular.min.js"></script>
     <script src="../../public/ide/lib/angular-animate.min.js"></script>
@@ -53,8 +54,13 @@
 
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
-    <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.js"></script>
-
+    <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.min.js"></script>
+    <!--encoding-->
+    <script>
+        window.TextEncoder = window.TextDecoder = null;
+    </script>
+    <script src="../../public/ide/lib/text-encoding/encoding-indexes.js"></script>
+    <script src="../../public/ide/lib/text-encoding/encoding.js"></script>
 
 
 
@@ -133,8 +139,14 @@
         function imgdragstart() {
             return false;
         }
+        $(function(){
+            document.body.style.overflowY='scroll';
+        })
     </script>
     <style>
+        body{
+            overflow-y: hidden;
+        }
         .rotating{
             animation:rotate-icon 2s linear infinite;
         }
@@ -189,7 +201,7 @@
             <li role="presentation" ng-repeat="nav in component.nav.navs track by $index"
                 ng-class="{true:'active',false:'inactive'}[component.nav.currentNav==$index]"
                 ng-click="component.nav.changeNav($index)"><a href="#">{{nav.name}}</a></li>
-            <li class="inactive pull-right"><a ng-href={{local?"/views/login/personalProject.html":"/private/space"}} target="_blank">个人空间</a></li>
+            <li class="inactive pull-right"><a ng-href="{{local?'/views/login/personalProject.html':'/private/space'}}" target="_blank">个人空间</a></li>
         </ul>
         <!--<ul class="nav nav-tabs my-nav-tabs pull-right">-->
 
@@ -259,7 +271,6 @@
                                     </div>
                                 </div>
 
-                                <!--控件拉伸 tang-->
                                 <div class="form-group projectScale">
                                     <label class="control-label">图层、控件尺寸拉伸：</label>
                                     <input type="checkbox" ng-model="isPulling"/>
@@ -270,7 +281,7 @@
                                         <input type="number" class="form-control col-sm-4" id="pullingWidth" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
                                     </div>
                                     <div class="form-group row">
-                                        <label for="pullingHeight" class="col-sm-2">宽度比例 1:</label>
+                                        <label for="pullingHeight" class="col-sm-2">高度比例 1:</label>
                                         <input type="number" class="form-control col-sm-4" id="pullingHeight" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
                                     </div>
                                 </div>
@@ -301,7 +312,10 @@
                         class="iconfont icon">&#xe60f;</span><span class="caption">生成</span>
                 </a>
                 <a ng-click="component.tool.openShare()" class="my-cmd-item" ng-class="">
-                    <span class="iconfont icon">&#xe60f;</span><span class="caption">分享</span>
+                    <span class="iconfont icon">&#xe7c5;</span><span class="caption">分享</span>
+                </a>
+                <a ng-click="component.tool.openValidate()" class="my-cmd-item" ng-class="">
+                    <span class="iconfont icon">&#xe664;</span><span class="caption">校验</span>
                 </a>
                 <script type="text/ng-template" id="navModal.html">
                     <div class="modal-header">
@@ -310,6 +324,9 @@
                     <div class="modal-body dengModel-body">
                         <div class="modal-title form-group modelPart">
                             <select class="form-control dengModel-trigger" ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                            <div class="pixelratio-wrapper" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                                <span>像素宽高比：</span><span>1 : </span><div class="pixelratio-input-wrapper"><input type="number" class="form-control" ng-model="verticalPixelRatio"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -332,6 +349,36 @@
                             <div class='sharedKey' ng-show="shareInfo.shared">密码：{{shareInfo.sharedKey}}</div>
                             <div class='sharedKey' ng-show="shareInfo.shared">只读密码：{{shareInfo.readOnlySharedKey}}</div>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
+                    </div>
+                </script>
+                <script type="text/ng-template" id="validateModal.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">验证生成压缩包</h3>
+                    </div>
+                    <div class="modal-body dengModel-body">
+
+                        <span class="modal-dragzone"  ngf-drag-over-class="‘modal-dragzone-accept’"  ngf-drop='validateZipFile($files)'>
+
+                            拖拽或上传生成压缩包以验证
+                            <input type='file' class="modal-dragzone-input" ngf-select='validateZipFile($files)'  />
+
+                        </span>
+                        <!--<span class="modal-uploadfile-wrapper" >-->
+                            <!---->
+                            <!--点击上传以验证-->
+                        <!--</span>-->
+                        <div class="modal-validate-wrapper" ng-show="validateResult.canShow">
+                            <span class="modal-validate-info modal-zip-name" >{{'名称：'+validateResult.name}}</span>
+                            <!--<span class="modal-validate-info modal-zip-generate-time" >{{'生成时间：'+validateResult.generateTime}}</span>-->
+                            <span class="modal-validate-info modal-zip-hash" >{{'hash：'+validateResult.hash}}</span>
+                            <span class="modal-validate-info " ng-class="{'modal-validate-valid':validateResult.valid===true,'modal-validate-invalid':validateResult.valid===false}">{{'合法性：'+(validateResult.valid?'合法':(validateResult.valid===false?'不合法':'未知'))}}</span>
+                        </div>
+
+
+
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
@@ -435,8 +482,11 @@
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61a;</span><span class="caption">字体颜色</span></a>-->
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61d;</span><span class="caption">上标</span></a>-->
                 <!--<a ng-click="" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe61c;</span><span class="caption">下标</span></a>-->
+                <a ng-click="component.tool.showActionVisualization()" class="my-cmd-item runProject" ng-class=""><span
+                        class="iconfont icon">&#xe620;</span><span class="caption">动作可视化</span></a>
                 <a ng-click="component.tool.play()" class="my-cmd-item runProject" ng-class=""><span
                         class="iconfont icon">&#xe620;</span><span class="caption">运行</span></a>
+
             </div>
 
 
@@ -451,6 +501,18 @@
                     </div>
                 </div>
                 <div id="simulator-container">
+                </div>
+            </div>
+            <div id="actionVisualization-wrapper" style="" ng-show="component.actionVisualization.show">
+                <div class="navbar navbar-default" style="text-align:center">
+                    <div class="nav">
+                        <button id="actionVisualization-play" type="button" class=" btn btn-default navbar-btn">分析</button>
+                        <button id="actionVisualization-close" type="button" class=" btn btn-default navbar-btn offProject"
+                                ng-click="component.tool.closeActionVisualizer()">关闭
+                        </button>
+                    </div>
+                </div>
+                <div id="action-visualizer">
                 </div>
             </div>
 
@@ -700,7 +762,7 @@
                         </div>
 
                         <div class="my-attr-item lg" style="margin-top: 20px" ng-controller="ResourceCtrl">
-                            <a href="javascript:;" class="my-upload" style="width: 100%;text-align: center">
+                            <a href="javascript:;" class="btn btn-default my-upload" style="width: 100%;text-align: center">
                                 <maskform></maskform>
                                 上传模具框图片<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                             </a>
@@ -747,7 +809,7 @@
                         </div>
 
                         <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title" style="width: 100%">背景图片(禁止使用带透明区域的图片)</span>
+                            <span class="my-attr-title dengPage-title" style="width: 100%">背景图片(禁止使用带透明区域的图片) <span class="iconfont bgiDownload" ng-click="component.page.downloadFile(component.page.selectImage)">&#xe666;</span></span>
 
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-model="component.page.selectImage" ng-change="component.page.enterImage($event)">
@@ -845,14 +907,14 @@
                                    type="number">
                         </div>
 
-                        <div class="my-attr-item lg">
-                            <span class="my-attr-title dengPage-title">背景图</span>
+                        <!--<div class="my-attr-item lg">
+                            <span class="my-attr-title dengPage-title" style="width: 100%">背景图 <span class="iconfont bgiDownload" ng-click="component.layer.downloadFile(component.layer.selectImage)">&#xe666;</span></span>
                             <select class="form-control my-attr-number-input form-control dengPage-input"
                                     ng-model="component.layer.selectImage" ng-change="component.layer.enterImage($event)">
                                 <option ng-repeat="image in component.images track by $index" value="{{image.src}}">{{image.name}}
                                 </option>
                             </select>
-                        </div>
+                        </div>-->
 
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">显示</span>
@@ -1767,6 +1829,37 @@
                                    type="number"
                                    disabled>
                         </div>
+
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">数字进制</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.num.numSystem"
+                                    ng-change="component.num.enterNumSystem()">
+                                <option ng-repeat="numSystem in component.num.numSystems" value="{{numSystem.id}}">
+                                    {{numSystem.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item" ng-show="component.num.numSystem=='1'">
+                            <span class="my-attr-title">进制符(0x)</span>
+                            <select class="my-attr-number-input form-control short-select"
+                                    ng-model="component.num.hexControl.markingMode"
+                                    ng-change="component.num.hexControl.enterMarkingMode()">
+                                <option ng-repeat="markingMode in component.num.markingModes" value="{{markingMode.id}}">
+                                    {{markingMode.name}}
+                                </option>
+                            </select>
+                        </div><div class="my-attr-item" ng-show="component.num.numSystem=='1'">
+                            <span class="my-attr-title">大小写</span>
+                            <select class="my-attr-number-input form-control short-select"
+                                    ng-model="component.num.hexControl.transformMode"
+                                    ng-change="component.num.hexControl.enterTransformMode()">
+                                <option ng-repeat="transformMode in component.num.transformModes" value="{{transformMode.id}}">
+                                    {{transformMode.name}}
+                                </option>
+                            </select>
+                        </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">最小值</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -1808,6 +1901,7 @@
                         </div><div class="my-attr-item">
                             <span class="my-attr-title">小数位数</span>
                             <input class="my-attr-number-input form-control short-input"
+                                   ng-disabled="component.num.numSystem=='1'"
                                    ng-model="component.object.level.info.decimalCount"
                                    ng-keypress="component.num.changeDecimalCount($event)"
                                    ng-blur="component.restore()"
@@ -1849,6 +1943,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">符号</span>
                             <select class="my-attr-number-input form-control"
+                                    ng-disabled="component.num.numSystem=='1'"
                                     ng-model="component.num.symbolMode"
                                     ng-change="component.num.enterSymbolMode()">
                                 <option ng-repeat="mode in component.num.symbolModes" value="{{mode.id}}">
@@ -1859,6 +1954,7 @@
                         <div class="my-attr-item lg">
                             <span class="my-attr-title">前导0</span>
                             <select class="my-attr-number-input form-control"
+                                    ng-disabled="component.num.numSystem=='1'"
                                     ng-model="component.num.frontZeroMode"
                                     ng-change="component.num.enterFrontZeroMode()">
                                 <option ng-repeat="mode in component.num.frontZeroModes" value="{{mode.id}}">
@@ -1945,6 +2041,36 @@
                                type="number">
                         </div>
 
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">数字进制</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-model="component.texNum.numSystem"
+                                    ng-change="component.texNum.enterNumSystem()">
+                                <option ng-repeat="numSystem in component.texNum.numSystems" value="{{numSystem.id}}">
+                                    {{numSystem.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="my-attr-item" ng-show="component.texNum.numSystem=='1'">
+                            <span class="my-attr-title">进制符(0x)</span>
+                            <select class="my-attr-number-input form-control short-select"
+                                    ng-model="component.texNum.hexControl.markingMode"
+                                    ng-change="component.texNum.hexControl.enterMarkingMode()">
+                                <option ng-repeat="markingMode in component.texNum.markingModes" value="{{markingMode.id}}">
+                                    {{markingMode.name}}
+                                </option>
+                            </select>
+                        </div><div class="my-attr-item" ng-show="component.texNum.numSystem=='1'">
+                        <span class="my-attr-title">大小写</span>
+                        <select class="my-attr-number-input form-control short-select"
+                                ng-model="component.texNum.hexControl.transformMode"
+                                ng-change="component.texNum.hexControl.enterTransformMode()">
+                            <option ng-repeat="transformMode in component.texNum.transformModes" value="{{transformMode.id}}">
+                                {{transformMode.name}}
+                            </option>
+                        </select>
+                    </div>
+
                         <div class="my-attr-item">
                             <span class="my-attr-title">宽度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2019,6 +2145,7 @@
                             <span class="my-attr-title">小数位数</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.decimalCount"
+                                   ng-disabled="component.texNum.numSystem=='1'"
                                    ng-keypress="component.texNum.changeDecimalCount($event)"
                                    ng-blur="component.restore()"
                                    type="number">
@@ -2066,6 +2193,7 @@
                             <span class="my-attr-title">前导0</span>
                             <select class="my-attr-number-input form-control"
                                     ng-model="component.texNum.frontZeroMode"
+                                    ng-disabled="component.texNum.numSystem=='1'"
                                     ng-change="component.texNum.enterFrontZeroMode()">
                                 <option ng-repeat="mode in component.texNum.frontZeroModes" value="{{mode.id}}">
                                     {{mode.name}}
@@ -2453,6 +2581,87 @@
                                    ng-model="component.object.level.info.initValue"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.rotateImg.enterInitValue($event)"/>
+                        </div>
+                    </div>
+
+                    <div ng-show="component.object.type=='MyAlphaImg'&&!myMask">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">名称</span>
+                            <input class="my-attr-number-input form-control"
+                                   type="text"
+                                   ng-model="component.object.level.name"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterName($event)">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.left"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.top"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterY($event)"
+                               type="number">
+                    </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                    </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">高度</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="component.object.level.info.height"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterHeight($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">最小值</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.minValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMinValue($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">最大值</span>
+                        <input class="my-attr-number-input form-control short-input"
+                               ng-model="component.object.level.info.maxValue"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.enterMaxValue($event)"
+                               type="number">
+                    </div>
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">初始值</span>
+                            <input type="number"
+                                   class="my-attr-number-input form-control"
+                                   ng-model="component.object.level.info.initValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.alphaImg.enterInitValue($event)"/>
                         </div>
                     </div>
 
@@ -3032,14 +3241,16 @@
                                     </select></td>
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
-                                               ng-model="slice.color" ng-disabled="disableEditColor"/></td>
+                                               ng-model="slice.color" ng-disabled="slice.imgSrc!==''"/></td>
                                     <td>
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
                                                  height="100px"/>
                                         </div>
                                     </td>
-                                    <td><span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span>
+                                    <td>
+                                        <span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont">&#xe646;</span>
+                                        <span ng-click="downloadFile($index)" class="iconfont" style="font-size: 22px">&#xe666;</span>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -3057,7 +3268,7 @@
                                 <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlicePrev()">
                                     向上插入
                                 </button>
-                                <button type="button" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
+                                <button type="button" ng-show="canBatchAddImg" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
                                     批量插入
                                 </button>
                             </span>
@@ -3119,13 +3330,14 @@
                                             value="{{tagClass.name}}">{{tagClass.name}}
                                     </option>
                                 </select>
-                                <input type="checkbox" ng-model="component.showRegValidTagsFlag" ng-click="component.showRegValidTags()" class=" my-tagSelect-input">
-                                    <span class="my-tagSelect-span-right">寄存器</span>
+                                <!--<input type="checkbox" ng-model="component.showRegValidTagsFlag" ng-click="component.showRegValidTags()" class=" my-tagSelect-input">
+                                    <span class="my-tagSelect-span-right">寄存器</span>-->
                             </div>
                             <div >
                                 <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()"
                                         class="form-control my-tagSelect-tagSelect">
-                                    <option value="">---</option>
+                                    <option value="{{selectedTag.tagName}}" ng-if="selectedTag.tagName" style="color: red">{{selectedTag.tagName||'----'}}</option>
+                                    <option value="">----</option>
                                     <option ng-repeat="customTag in component.curTagArray"
                                             value="{{customTag.name}}">{{customTag.name}}
                                     </option>
@@ -3191,6 +3403,13 @@
                                             <select class="form-control" ng-model="chosenCmd[0]"
                                                     ng-options="op as op.symbol for op in ops track by op.symbol" ng-change="changeTagShowState()"></select>
                                         </div>
+                                        <div class="form-group addTimerWrap">
+                                            <select class="form-control" ng-model="shortcutTimer">
+                                                <option ng-repeat="timer in timerTags"
+                                                        value="{{timer}}">{{timer}}</option>
+                                            </select>
+                                            <button class="btn btn-default" ng-click="shortcutAddTimer()">一键添加定时器</button>
+                                        </div>
                                     </td>
 
                                     <td class="my-action-td">
@@ -3198,18 +3417,14 @@
                                             <span>操作数1</span>
                                             <div class="my-action-div-main">
                                                 <div>
-                                                    <span class="my-action-span">启用变量</span>
-                                                    <input type="checkbox" ng-model='selectedTagObjArray[0].useTag' ng-click="usetagSwitch(0)" class="my-action-check-box">
-                                                </div>
-                                                <div ng-show="selectedTagObjArray[0].useTag">
                                                     <span  class="my-action-span my-action-span-width">变量</span>
                                                     <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
                                                 </div>
-                                                <div ng-show="!selectedTagObjArray[0].useTag">
+                                                <!--<div ng-show="!selectedTagObjArray[0].useTag">
                                                     <span  class="my-action-span my-action-span-width">值</span>
                                                     <input class="form-control modelPart my-action-input-value" type="text"
                                                            ng-model="chosenCmd[1].value"/>
-                                                </div>
+                                                </div>-->
                                             </div>
 
 
@@ -3250,6 +3465,7 @@
                                         <td class="col-xs-1">操作</td>
                                         <td class="col-xs-1">操作数1</td>
                                         <td class="col-xs-1">操作数2</td>
+                                        <td class="col-xs-1">删除</td>
                                         <td class="col-xs-1"></td>
                                     </tr>
                                     </thead>
@@ -3262,8 +3478,13 @@
                                         <td><p>{{cmd[2].tag||cmd[2].value}}</p></td>
                                         <td><i class="iconfont" ng-click="deleteCmd($index)">
                                             &#xe627;</i></td>
-                                        <!--<td><img src="../../public/ide/modules/ide/img-web/icon_close.png"-->
-                                                 <!--ng-click="deleteCmd($index)"></td>-->
+                                        <td>
+                                            <span class="label label-danger"
+                                                  ng-show="!validateArr[$index].pass"
+                                                  tooltip-placement="top"
+                                                  uib-tooltip="{{validateArr[$index].tooltip}}"
+                                                  style="cursor: pointer;">!</span>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -3275,6 +3496,8 @@
                             <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                         </div>
                     </script>
+
+                    <!--<div style="position: absolute;" id="action-visualizer"></div>-->
 
                 </div>
 
@@ -3366,13 +3589,13 @@
 
                     <div ng-show="component.top.showDel">
                     <form ref='uploadForm' encType='multipart/form-data'>
-                        <a href="javascript:;" class="my-upload">
+                        <a href="javascript:;" class="btn btn-default my-upload">
                             <filereadform>
 
                             </filereadform>
                             上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
                         </a>
-                        <button class="my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
+                        <button class="btn btn-default my-upload pull-right" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
                         <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
                         <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
                     </form>
@@ -3406,13 +3629,15 @@
                     </div>
                     <div ng-hide="component.top.showDel">
                         <div class="my-button-bar" >
-                            <span class="my-sel" >全选 </span>
-                            <input type="checkbox" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
-                            <span><button class="my-upload" ng-click="component.top.oppSelect()">反选</button></span>
-
+                            <label>
+                                <input type="checkbox" class="my-sel-checkbox" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
+                                <span class="my-sel" >全选 </span>
+                            </label>
+                            <span>
+                                <button class="btn btn-default my-upload" ng-click="component.top.oppSelect()">反选</button></span>
                             <span class="my-flout-right">
-                                <button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>
-                                <button class="my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>
+                                <button class="btn btn-default my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>
+                                <button class="btn btn-default my-upload"ng-click="component.top.toggleOperation('cancel')">取消</button>
                             </span>
                             <!--<span>&nbsp&nbsp&nbsp&nbsp</span>-->
                             <!--<button class="my-upload" ng-click="component.top.toggleOperation('delete')">删除</button>-->
@@ -3455,6 +3680,7 @@
                             </td>
                             <td><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
                                 <span class="iconfont img-option" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
+                                <span class="iconfont img-option" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px">&#xe666;</span>
                                 <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                     <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
                                 </label>
@@ -3544,15 +3770,13 @@
                                     </div>
                                 </div>
                                 <h5>主题:</h5>
-                                <div class="row" style="margin-bottom: 10px">
+                                <div class="row" style="margin-bottom: 20px">
                                     <div class="col-xs-3">
                                         <label class="radio-inline">
                                             <input type="radio" name="tagsOptions" value="tags_default" ng-model="selectedTagId">
                                             <a href="/tags/preview?id=default" target="_blank">预设</a>
                                         </label>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-xs-3">
                                         <label class="radio-inline">
                                             <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
@@ -3571,13 +3795,10 @@
                                             <a href="/tags/preview?id=default3" target="_blank">主题3</a>
                                         </label>
                                     </div>
-                                    <div class="col-xs-3">
-                                        <label class="radio-inline">
-                                            <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
-                                            <a href="/tags/preview?id=default4" target="_blank">主题4</a>
-                                        </label>
-                                    </div>
                                 </div>
+
+                                <h5 style="cursor: pointer" ng-click="cancel()"><a ng-click="customTagList()">自定义选择导入</a></h5>
+
                             </div>
                             <div class="modal-footer">
                                 <button class="btn btn-primary"
@@ -3587,6 +3808,47 @@
                                 <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
                             </div>
                         </script>
+                        <script type="text/ng-template" id="customPreset.html">
+                            <div class="modal-header">
+                                <h3 class="modal-title" style="margin-bottom: 5px">预设tag列表<small></small></h3>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>选择</th>
+                                            <th>#</th>
+                                            <th>变量名称</th>
+                                            <th>是否启用寄存器</th>
+                                            <th>寄存器号</th>
+                                            <th>变量类型</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="tag in defaultTags track by $index" ng-click="selectCustomTag($index)" style="cursor: pointer">
+                                            <td><input type="checkbox" ng-model="batchSelectList[$index]" class="form-group" ng-click="stopProp($event)"/></td>
+                                            <td>{{$index}}</td>
+                                            <td>{{tag.name}}</td>
+                                            <td>{{tag.register?"是":"否"}}</td>
+                                            <td>{{tag.indexOfRegister}}</td>
+                                            <td>{{tag.type==='custom'?'自定义':'系统'}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <span class="my-but-left">
+                                    <button class="btn btn-success" ng-click="selectAll()">全选</button>
+                                    <button class="btn btn-success" ng-click="invertSelect()">反选</button>
+                                </span>
+                                <button class="btn btn-primary"
+                                        type="button"
+                                        ng-disabled="disableBtn"
+                                        ng-click="ok()">确定</button>
+                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
+
                         <script type="text/ng-template" id="tagModal.html">
                             <div class="modal-header">
                                 <h3 class="modal-title">变量</h3>
@@ -3598,6 +3860,11 @@
                                         <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
                                         <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'"/>
                                     </fieldset>
+
+                                    <div ng-show="bindBits!=''" style="margin: 10px 0">
+                                        <label class="col-sm-4 tag-modal-label">已使用的bindBit</label>
+                                        <button class="btn btn-default" ng-repeat="bit in bindBits track by $index">{{bit}}</button>
+                                    </div>
 
                                     <fieldset>
                                         <label for="register"
@@ -4062,6 +4329,7 @@
 </script>
 <!--<script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
+<script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/actionVisualization/actionVisualizer.bundle.js"></script>
 <script type="text/javascript" src="../../public/general/js/versionTag.js"></script>
 </body>
 </html>

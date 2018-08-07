@@ -7,6 +7,7 @@ var uploadFile = require('./uploadFile');
 var getCaptcha = require('./getCaptcha');
 var getUsers = require('./getUsers');
 var route_space = require('./route_space');
+var folder_space = require('./folder_space');
 var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
@@ -188,6 +189,9 @@ router.route('/project/:id/editor')
 router.route('/project/:id/visualization')
     .get(projectInfo.getProjectTreeById);
 
+router.route('/project/:id/data-analysis')
+    .get(projectInfo.renderDataAnalysis);
+
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent);
 
@@ -217,6 +221,9 @@ router.route('/project/:id/downloadLocalProject')
 
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
+//ÏÂÔØ×ÊÔ´
+router.route('/project/:id/downloadFile')
+    .get(projectInfo.downloadFile);
 
 
 router.route('/project/:id/savedatacompress')
@@ -231,6 +238,22 @@ router.route('/project/create')
     .post(projectInfo.createProject);
 router.route('/project/delete')
     .post(projectInfo.deleteProject);
+router.route('/project/moveToClass')
+    .post(projectInfo.updateProject);
+
+
+//project class   add by tang
+router.route('/folder/create')
+    .post(projectInfo.createFolder);
+router.route('/folder/update')
+    .post(projectInfo.updateFolder);
+router.route('/folder/delete')
+    .post(projectInfo.deleteFolder);
+router.route('/folder/getFolderList')
+    .get(projectInfo.getFolderList);
+router.route('/folder/:id/space')
+    .get(folder_space);
+
 
 //CAN project
 router.route('/CANProject/create')
@@ -418,6 +441,9 @@ router.route('/blog/post/deleteComment')
 router.route('/download/index.html')
     .get(DownloadRouter.getDownloadPage)
 
+router.route('/download/resources.html')
+    .get(DownloadRouter.getResourcesDownloadPage)
+
 router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
 
@@ -425,6 +451,12 @@ router.route('/download/pcclient/latest')
 router.route('/tags/preview')
     .get(route_tag.getDefault);
 
+
+// router.route('/project/data-analysis')
+//     .get(function(req, res){
+//         console.log('data-analysis');
+//         res.sendFile(path.join(__dirname,'..','public','data-analysis','index.html'))
+//     });
 
 
 //router.route('*')

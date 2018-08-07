@@ -321,7 +321,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.arrange=level.info.arrange;
             this.cursor=level.info.cursor;
             this.thresholdModeId=level.info.thresholdModeId||'1';
-            this.threshold1=level.info.tlhreshold1||null;
+            this.threshold1=level.info.threshold1||null;
             this.threshold2=level.info.threshold2||null;
 
             this.backgroundColor=level.texList[0].slices[0].color;
@@ -337,8 +337,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }else if(this.progressModeId=='3'){
                 this.color1=level.texList[1].slices[0].color;
                 this.color2=level.texList[2].slices[0].color;
+                this.progressImageSrc1 = level.texList[1].slices[0].imgSrc;
+                this.progressImageSrc2 = level.texList[2].slices[0].imgSrc;
                 if(this.thresholdModeId=='2'){
                     this.color3=level.texList[3].slices[0].color;
+                    this.progressImageSrc3 = level.texList[3].slices[0].imgSrc;
                 }
             }
             if(this.cursor=='1'){
@@ -377,8 +380,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(progressModeId=='3'){
                     self.color1=level.texList[1].slices[0].color;
                     self.color2=level.texList[2].slices[0].color;
+                    self.progressImageSrc1 = level.texList[1].slices[0].imgSrc;
+                    self.progressImageSrc2 = level.texList[2].slices[0].imgSrc;
                     if(self.thresholdModeId=='2'){
                         self.color3=level.texList[3].slices[0].color;
+                        self.progressImageSrc3 = level.texList[3].slices[0].imgSrc;
                     }
                 }
                 if(cursor=='1'){
@@ -422,14 +428,20 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(self.progressModeId=='3'){
                     self.color1=level.texList[1].slices[0].color;
                     self.color2=level.texList[2].slices[0].color;
+                    self.progressImageSrc1 = level.texList[1].slices[0].imgSrc;
+                    self.progressImageSrc2 = level.texList[2].slices[0].imgSrc;
                     if(self.thresholdModeId=='2'){
                         self.color3=level.texList[3].slices[0].color;
+                        self.progressImageSrc3 = level.texList[3].slices[0].imgSrc;
                     }
                 }
                 if(self.cursor=='1'){
                     var length=level.texList.length;
                     self.cursorColor=level.texList[length-1].slices[0].color;
                     self.cursorImageElement=ResourceService.getResourceFromCache(level.texList[length-1].slices[0].imgSrc);
+                }else {
+                    self.cursorColor = 'rgba(0,0,0,0)';
+                    self.cursorImageElement = null;
                 }
 
 
@@ -442,6 +454,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.thresholdModeId=arg.thresholdModeId;
                     if(self.thresholdModeId=='2'){
                         self.color3=arg.color3;
+                        self.progressImageSrc3 = arg.progressImageSrc3 
                     }
                     console.log('thresholdModeId',arg.thresholdModeId);
                 }else if(arg.hasOwnProperty('threshold1')){
@@ -539,6 +552,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }else if(this.progressModeId=='2'){
                     //脚本进度条，啥也不画！
                 }else if(this.progressModeId=='3'){
+                    var progressImageElement = null
                     ctx.fillStyle=this.backgroundColor;
                     ctx.fillRect(
                         -this.width / 2,
@@ -557,8 +571,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             if(this.threshold1!=null){
                                 if(this.progressValueOri<this.threshold1){
                                     ctx.fillStyle=this.color1;
+                                    progressImageElement = this.progressImageSrc1
                                 }else if(this.progressValueOri>=this.threshold1){
                                     ctx.fillStyle=this.color2;
+                                    progressImageElement = this.progressImageSrc2
                                 }
                             }else{
                                 ctx.fillStyle=this.null;
@@ -567,14 +583,24 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         }else if(this.thresholdModeId=='2'){
                             if(this.progressValueOri<this.threshold1){
                                 ctx.fillStyle=this.color1;
+                                progressImageElement = this.progressImageSrc1
                             }else if(this.progressValueOri>=this.threshold1&&this.progressValueOri<this.threshold2){
                                 ctx.fillStyle=this.color2;
+                                progressImageElement = this.progressImageSrc2
                             }else if(this.progressValueOri>=this.threshold2){
                                 ctx.fillStyle=this.color3;
+                                progressImageElement = this.progressImageSrc3
                             }else{
                                 ctx.fillStyle=null;
+                                progressImageElement = null
                             }
                             ctx.fillRect(-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+                        }
+                        if (progressImageElement){
+                            if(this.progressValue !=0 ){
+                                progressImageElement = ResourceService.getResourceFromCache(progressImageElement)
+                                ctx.drawImage(progressImageElement, 0, 0,progressImageElement.width*this.progressValue,progressImageElement.height,-this.width / 2, -this.height / 2,this.width*this.progressValue,this.height);
+                            }
                         }
                     }else{
                         if(this.cursorImageElement){
@@ -584,24 +610,39 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             if(this.threshold1!=null){
                                 if(this.progressValueOri<this.threshold1){
                                     ctx.fillStyle=this.color1;
+                                    progressImageElement = this.progressImageSrc1
                                 }else if(this.progressValueOri>=this.threshold1){
                                     ctx.fillStyle=this.color2;
+                                    progressImageElement = this.progressImageSrc2
                                 }
                             }else{
                                 ctx.fillStyle=this.null;
                             }
                             ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            
                         }else if(this.thresholdModeId=='2'){
                             if(this.progressValueOri<this.threshold1){
                                 ctx.fillStyle=this.color1;
+                                progressImageElement = this.progressImageSrc1
                             }else if(this.progressValueOri>=this.threshold1&&this.progressValueOri<this.threshold2){
                                 ctx.fillStyle=this.color2;
+                                progressImageElement = this.progressImageSrc2
                             }else if(this.progressValueOri>=this.threshold2){
                                 ctx.fillStyle=this.color3;
+                                progressImageElement = this.progressImageSrc3
                             }else{
                                 ctx.fillStyle=null;
+                                progressImageElement = null
                             }
                             ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                        }
+
+                        if (progressImageElement){
+                            if(this.progressValue !=0 ){
+                                progressImageElement = ResourceService.getResourceFromCache(progressImageElement)
+                                ctx.drawImage(progressImageElement,0,progressImageElement.height*(1-this.progressValue),progressImageElement.width,progressImageElement.height*this.progressValue, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
+                            }
+                                
                         }
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -1182,6 +1223,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                     ctx.restore();
                 }
+
                 if (this.pointerImageElement){
                     ctx.save();
                     var sqrt2 = Math.sqrt(2);
@@ -1192,7 +1234,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         angleOfPointer=-angleOfPointer;
                     }
                     angleOfPointer=angleOfPointer+45;
-                    //ctx.rotate((this.value+45+this.offsetValue)*Math.PI/180);
                     if(!(this.minCoverAngle==this.maxCoverAngle)){
                         var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                         var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
@@ -1218,12 +1259,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.fillRect(
                         0,
                         0,
-                        pointerImgWidth,
-                        pointerImgHeight
+                        this.width/2,
+                        this.width/2
                     );
-
                     ctx.drawImage(this.pointerImageElement, 0, 0,this.pointerImageElement.width/this.scaleX,this.pointerImageElement.height/this.scaleY);
-
                     ctx.restore();
                 }
                 //将图片超出canvas的部分裁剪
@@ -2004,6 +2043,109 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyDateTime(level, object));
     };
     fabric.MyDateTime.async = true;
+
+
+    //my alpha img
+    //rotateImg
+    fabric.MyAlphaImg = fabric.util.createClass(fabric.Object, {
+        type: Type.MyAlphaImg,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.backgroundColor=level.texList[0].slices[0].color;
+            this.minValue=level.info.minValue||0;
+            this.maxValue=level.info.maxValue||0;
+            this.initValue=level.info.initValue||0;
+
+
+            this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            if (this.imageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.backgroundColor=tex.slices[0].color;
+
+                self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            this.on('changeInitValue',function(arg){
+                var _callback=arg.callback;
+
+                if(arg.hasOwnProperty('initValue')){
+                    self.initValue=arg.initValue;
+                }else if(arg.hasOwnProperty('maxValue')){
+                    self.maxValue=arg.maxValue;
+                }else if(arg.hasOwnProperty('minValue')){
+                    self.minValue=arg.minValue;
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                // ctx.rotate((Math.PI/180)*this.initValue);
+                ctx.save()
+                var curAlpha= Number((this.initValue - this.minValue) /(this.maxValue-this.minValue))||0
+                if(curAlpha<0){
+                    curAlpha = 0
+                }else if(curAlpha>1){
+                    curAlpha = 1
+                }
+
+                ctx.globalAlpha = curAlpha
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.imageElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                ctx.restore()
+            }
+            catch(err){
+                ctx.restore()
+                console.log('错误描述',err);
+                toastr.warning('渲染透明图出错');
+            }
+        }
+    });
+    fabric.MyAlphaImg.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyAlphaImg(level, option));
+    };
+    fabric.MyAlphaImg.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                imageElement:this.imageElement,
+                backgroundColor:this.backgroundColor
+            });
+        }
+    })(fabric.MyAlphaImg.prototype.toObject);
+    fabric.MyAlphaImg.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyAlphaImg(level, object));
+    };
+    fabric.MyAlphaImg.async = true;
+
 
     /**
      * 按字符串渲染时间控件
@@ -2858,6 +3000,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxFontWidth=level.info.maxFontWidth;
             this.spacing = (level.info.spacing===undefined)?(level.info.spacing=Math.ceil(-this.fontSize/3)):level.info.spacing;//兼容旧的数字控件
             this.paddingRatio = level.info.paddingRatio;
+            //数字进制
+            this.numSystem = level.info.numSystem;
+            this.markingMode = level.info.hexControl.markingMode;
+            this.transformMode = level.info.hexControl.transformMode;
 
             var maxWidth = parseInt(self.fontSize);//+
             self.maxFontWidth = maxWidth;
@@ -2993,6 +3139,42 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeNumSystem', function(arg){
+                var _callback=arg.callback;
+                var level=arg.level;
+                if(arg.numSystem){
+                    self.numSystem=arg.numSystem;
+                    if(self.markingMode=='1'){
+                        self.numSystem=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                        level.info.numOfDigits=self.numOfDigits;
+                    }
+                }
+                if(arg.markingMode){
+                    self.markingMode=arg.markingMode;
+                    self.markingMode=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                    level.info.numOfDigits=self.numOfDigits;
+                }
+                if(arg.transformMode){
+                    self.transformMode=arg.transformMode;
+                }
+
+                var maxWidth = parseInt(self.fontSize);
+                self.maxFontWidth = maxWidth;
+                level.info.maxFontWidth = maxWidth;
+                var width = self.symbolMode=='0'?(self.numOfDigits*(maxWidth+self.spacing)-self.spacing):((self.numOfDigits+1)*(maxWidth+self.spacing)-self.spacing);
+                var paddingX = Math.ceil(maxWidth*self.paddingRatio);
+                width+=paddingX*2;
+                if(self.decimalCount!=0){
+                    width +=0.5*maxWidth+self.spacing;
+                }
+                var height = self.fontSize*1.2;
+                self.set({width:width,height:height});
+
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3048,6 +3230,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     //配置正负号
                     if((this.symbolMode=='1')&&(negative)){
                         tempNumValue='-'+tempNumValue;
+                    }
+                    //16进制转换
+                    if(this.numSystem=='1'){
+                        tempNumValue=parseInt(tempNumValue).toString(16);
+                        if(this.transformMode=='1'){
+                            tempNumValue=tempNumValue.toUpperCase();
+                        }
+                        if(this.markingMode=='1'){
+                            tempNumValue='0x'+tempNumValue;
+                        }
                     }
 
                     drawNumByCharacter(ctx,tempNumValue,this.align,this.width,this.fontSize,this.decimalCount,this.spacing);
@@ -3181,10 +3373,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.characterW = level.info.characterW;
             this.characterH = level.info.characterH;
 
+            //数字进制
+            this.numSystem = level.info.numSystem;
+            this.markingMode = level.info.hexControl.markingMode;
+            this.transformMode = level.info.hexControl.transformMode;
+
 
             //初始化数字字符
             this.numObj = [];
-            for(var i=0,il=13;i<il;i++){
+            for(var i=0,il=26;i<il;i++){
                 this.numObj[i] = {};
                 this.numObj[i].color = slices[i].color;
                 this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
@@ -3195,7 +3392,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var slices=arg.level.texList[0].slices;
                 var _callback=arg.callback;
 
-                for(var i=0,il=13;i<il;i++){
+                for(var i=0,il=26;i<il;i++){
                     self.numObj[i] = {};
                     self.numObj[i].color = slices[i].color;
                     self.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
@@ -3256,6 +3453,39 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            //数字进制
+            this.on('changeNumSystem',function(arg){
+                var _callback=arg.callback;
+                var level=arg.level;
+                if(arg.numSystem){
+                    self.numSystem=arg.numSystem;
+                    if(self.markingMode=='1'){
+                        self.numSystem=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                        level.info.numOfDigits=self.numOfDigits;
+                    }
+                }
+                if(arg.markingMode){
+                    self.markingMode=arg.markingMode;
+                    self.markingMode=='1'?self.numOfDigits+=2:self.numOfDigits-=2;
+                    level.info.numOfDigits=self.numOfDigits;
+                }
+                if(arg.transformMode){
+                    self.transformMode=arg.transformMode;
+                }
+
+                if(self.numOfDigits&&self.characterW){
+                    //加入符号宽度
+                    var width = self.symbolMode=='0'?(self.numOfDigits*self.characterW):((self.numOfDigits+1)*self.characterW);
+                    //设置高度
+                    var height = self.characterH;
+                    self.set({width:width,height:height});
+                }
+
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3319,6 +3549,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         tempNumValue='-'+tempNumValue;
                     }
 
+                    if(this.numSystem=='1'){
+                        tempNumValue=parseInt(tempNumValue).toString(16);
+                        if(this.transformMode=='1'){
+                            tempNumValue=tempNumValue.toUpperCase();
+                        }
+                        if(this.markingMode=='1'){
+                            tempNumValue='0x'+tempNumValue;
+                        }
+                    }
                     //console.log('keke',this.characterW,"Y",this.characterH);
                     drawTexNumByCharacter(ctx,tempNumValue,this.align,this.width,this.characterW,this.characterH,this.decimalCount,this.numObj);
 
@@ -3427,6 +3666,45 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     break;
                 case '-':
                     drawNum(12,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'x':
+                    drawNum(13,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'a':
+                    drawNum(14,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'b':
+                    drawNum(15,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'c':
+                    drawNum(16,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'd':
+                    drawNum(17,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'e':
+                    drawNum(18,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'f':
+                    drawNum(19,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'A':
+                    drawNum(20,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'B':
+                    drawNum(21,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'C':
+                    drawNum(22,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'D':
+                    drawNum(23,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'E':
+                    drawNum(24,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case 'F':
+                    drawNum(25,characterW,height,numObj,xCoordinate,ctx);
                     break;
 
             }
