@@ -1726,7 +1726,7 @@ ide.controller('validateModalCtl', ['$rootScope', '$scope', '$uibModalInstance',
     function validateZipFile($files) {
         if($files.length){
             var curFile = $files[0]
-            if(curFile && curFile.type && curFile.type === 'application/zip'){
+            if(curFile && curFile.type){
                 //filename
                 $scope.validateResult.canShow = false
                 $scope.validateResult.name = curFile.name
