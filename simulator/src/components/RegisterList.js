@@ -5,16 +5,29 @@ var React = require('react');
 module.exports = React.createClass({
     getInitialState: function () {
         return {
-
+            registers:[]
         };
     },
     handleValueInputChange: function (key, e) {
-        this.props.handleRegisterChange(key, Number(e.target.value));
+        // this.props.handleRegisterChange(key, Number(e.target.value));
+        var registers = this.state.registers;
+        registers[key].value = e.target.value;
+        this.setState({registers:registers})
+    },
+    componentWillReceiveProps:function (newProps) {
+        this.setState({registers:newProps.registers})
+    },
+    handleInputKeyRelease:function (key, e) {
+        if (e.keyCode == 13){
+            //enter
+            this.props.handleRegisterChange(key, Number(e.target.value)||0);
+            e.target.blur();
+        }
     },
     render: function () {
         // console.log('curRegisters',this.props.registers);
         return (
-            <div className='tag-table-wrapper col-md-3'>
+            <div className='tag-table-wrapper'>
                 <table className='tag-table table table-responsive'>
                     <thead className='tag-table-header'>
                     <tr className='tag-table-row'>
@@ -34,7 +47,8 @@ module.exports = React.createClass({
                                     <td className='tag-table-col'>
                                         <input className='value' name={registerKey} type='text'
                                                value={register.value}
-                                               onChange={this.handleValueInputChange.bind(this, registerKey)}/>
+                                               onChange={this.handleValueInputChange.bind(this, registerKey)}
+                                               onKeyUp={this.handleInputKeyRelease.bind(this,registerKey)} />
                                     </td>
                                 </tr>
                             );

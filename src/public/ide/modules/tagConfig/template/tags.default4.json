@@ -1,0 +1,299 @@
+[
+    {
+        "name": "主题4_电压_数字",
+        "indexOfRegister": 401,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_电压_图片集",
+        "indexOfRegister": 402,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_电压_进度条",
+        "indexOfRegister": 403,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_电压_仪表盘",
+        "indexOfRegister": 404,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_电流_数字",
+        "indexOfRegister": 405,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_电流_图片集",
+        "indexOfRegister": 406,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_电流_进度条",
+        "indexOfRegister": 407,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_电流_仪表盘",
+        "indexOfRegister": 408,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_剩余电量_数字",
+        "indexOfRegister": 409,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_剩余电量_图片集",
+        "indexOfRegister": 410,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_剩余电量_进度条",
+        "indexOfRegister": 411,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_剩余电量_仪表盘",
+        "indexOfRegister": 412,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_续航里程_数字",
+        "indexOfRegister": 413,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_续航里程_图片集",
+        "indexOfRegister": 414,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_续航里程_进度条",
+        "indexOfRegister": 415,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_续航里程_仪表盘",
+        "indexOfRegister": 416,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_转速_数字",
+        "indexOfRegister": 417,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_转速_图片集",
+        "indexOfRegister": 418,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_转速_进度条",
+        "indexOfRegister": 419,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_转速_仪表盘",
+        "indexOfRegister": 420,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_车速_数字",
+        "indexOfRegister": 421,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_车速_图片集",
+        "indexOfRegister": 422,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_车速_进度条",
+        "indexOfRegister": 423,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_车速_仪表盘",
+        "indexOfRegister": 424,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_温度_数字",
+        "indexOfRegister": 425,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_温度_图片集",
+        "indexOfRegister": 426,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_温度_进度条",
+        "indexOfRegister": 427,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_温度_仪表盘",
+        "indexOfRegister": 428,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_文字报警",
+        "indexOfRegister": 429,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_小记里程",
+        "indexOfRegister": 430,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_总里程",
+        "indexOfRegister": 431,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_遮盖",
+        "indexOfRegister": 432,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    },
+    {
+        "name": "主题4_车门状态",
+        "indexOfRegister": 433,
+        "register": true,
+        "writeOrRead": "true",
+        "value": 0,
+        "type": "custom",
+        "bindMod": "default"
+    }
+]

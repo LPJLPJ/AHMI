@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+/*¸¨ÖúÏß*/
+#rulerX {
+    background: url("../../../images/ruler/ruler_h.png") repeat-x;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+}
+
+#rulerY {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    background: url("../../../images/ruler/ruler_v.png") repeat-y;
+}
+
+#rulerX, #rulerY {
+    display: none;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.rulerNumX {
+    top: 0;
+}
+
+.rulerNumY {
+    width: 10px;
+    left: 3px;
+    line-height: 8px;
+    word-wrap: break-word;
+}
+
+.rulerNumX, .rulerNumY {
+    position: absolute;
+    font: 10px Arial;
+    color: #333333;
+}
+
+.lineX {
+    width: 100%;
+    height: 3px;
+    background: url("../../../images/ruler/line_h.png") repeat-x left top;
+    position: absolute;
+    left: 0;
+    cursor: url("../../../images/ruler/cur_move_h.cur"), move;
+    z-index: 999;
+}
+
+.lineY {
+    height: 100%;
+    width: 3px;
+    background: url("../../../images/ruler/line_v.png") repeat-y left top;
+    position: absolute;
+    top: 0;
+    cursor: url("../../../images/ruler/cur_move_v.cur"), move;
+    z-index: 999;
+}
+
+.xNum {
+    position: absolute;
+    top: -5px;
+    right: -20px;
+    width: 20px;
+    height: 10px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 10px;
+    font-size: 10px;
+    color: red;
+}
+
+#canvasContent {
+    position: relative;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#dotLineX, #dotLineY {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    z-index: 999;
+}
+
+#dotLineX {
+    width: 100%;
+    height: 3px;
+    background: url("../../../images/ruler/line_dot.png") repeat-x left top;
+}
+
+#dotLineY {
+    height: 100%;
+    width: 3px;
+    background: url("../../../images/ruler/line_dot.png") repeat-y left top;
+}
+
+#coordNum {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+    padding: 2px 5px;
+    color: red;
+    font-size: 10px;
+    z-index: 999;
+}
+
+/*Ä£¾ß¿ò*/
+#mask {
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(0,0,0,.6);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 998;
+    display: none;
+}
+
+#maskWrap {
+    width: inherit;
+    height: inherit;
+    cursor: move;
+    z-index: 888;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.maskCoor {
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(0,0,0,.6);
+    position: absolute;
+    z-index: 999;
+}

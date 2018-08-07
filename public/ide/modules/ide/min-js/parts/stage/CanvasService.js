@@ -1,1 +1,0 @@
-ideServices.service("CanvasService",[function(){var e=null;this.setPageNode=function(n){e=n},this.getPageNode=function(){return e};var n=null;this.setSubLayerNode=function(e){n=e},this.getSubLayerNode=function(){return n};var t=null;this.setOffCanvas=function(e){t=e},this.getOffCanvas=function(){return t}}]);

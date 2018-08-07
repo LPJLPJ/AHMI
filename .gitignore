@@ -8,4 +8,16 @@ temp/
 release/
 log/
 .idea/
+.db/
 
+src/views/learn/
+src/public/learn/
+
+src/public/blog/media
+src/public/ide/modules/ide/min-js/
+
+src/public/ide/modules/ide/js/parts/simulator/
+
+public/
+
+views/

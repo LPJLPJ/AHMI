@@ -3,6 +3,7 @@
  */
 var ProjectModel = require('../db/models/ProjectModel')
 var UserModel = require('../db/models/UserModel')
+var TemplateModel = require('../db/models/TemplateModel')
 var projectRoute = {}
 var _ = require('lodash')
 var fs = require('fs')
@@ -14,10 +15,17 @@ var MyZip = require('../utils/MyZip');
 var mkdir = require('mkdir-p');
 var Canvas = require('canvas');
 var archiver = require('archiver');
+var crypto = require('crypto');
+
+var FileLoader = require('../utils/fileLoader')
+var VersionManager = require('../utils/versionManager')
+VersionManager.getAllVersions()
+
 var Font = Canvas.Font;
 //rendering
 var Renderer = require('../utils/render/renderer');
 var fse = require('fs-extra');
+var moment = require('moment');
 projectRoute.getAllProjects=function(req, res){
     ProjectModel.fetch(function(err, projects){
         if (err){
@@ -27,10 +35,132 @@ projectRoute.getAllProjects=function(req, res){
     })
 }
 
-projectRoute.getProjectById = function (req, res) {
-    var projectId = req.params.id
-    var userId = req.session.user&&req.session.user.id;
+function generateUserKey(projectId,sharedKey,cb) {
+    var hash = crypto.createHash('sha256');
 
+
+    hash.update(projectId+sharedKey);
+    var data = hash.digest('hex').slice(0,5)
+    cb && cb(data)
+
+
+}
+
+function hasValidKey(user,projectId,sharedKey,cb) {
+    if (user && user.sharedKey){
+        generateUserKey(projectId,sharedKey,function (data) {
+            if (data === user.sharedKey){
+                cb && cb(true)
+            }else{
+                cb && cb(false)
+            }
+        })
+    }else{
+        cb && cb(false)
+    }
+}
+
+
+function checkAccessPriviledge(project,sessionUser,cb) {
+    var userId = sessionUser.id
+    if (userId){
+        if (project.userId == userId){
+            //own
+            cb && cb(null,'own')
+        }else{
+            //check share
+            if (!!project.shared){
+                //check all rights sharedKey
+                hasValidKey(sessionUser,project._id,project.sharedKey,function (result) {
+                    if (result){
+                        cb && cb(null,'shareOK')
+                    }else{
+                        hasValidKey(sessionUser,project._id,project.readOnlySharedKey,function (result) {
+                            if (result){
+                                cb && cb(null,'shareOKReadOnly')
+                            }else{
+                                cb && cb(null,'shareLogin')
+                            }
+                        })
+                    }
+                })
+            }else{
+                cb && cb(null,'forbidden')
+            }
+        }
+    }else{
+        cb && cb(null,'unLogin')
+    }
+
+}
+
+projectRoute.checkSharedKey = function (req, res) {
+    var projectId = req.params.id
+    var sharedKey = req.body.sharedKey
+    var userId = req.session.user&&req.session.user.id;
+    if (userId&&projectId){
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+            if (!project){
+                errHandler(res,500,'empty project')
+            }else{
+                if (project.shared && (project.sharedKey==sharedKey||project.readOnlySharedKey==sharedKey)){
+                    //valid key
+                    generateUserKey(projectId,sharedKey,function (data) {
+                        req.session.user.sharedKey = data
+                        res.end('ok')
+                    })
+                }else{
+                    //invalid key or not shared
+                    errHandler(res,500,'invalid key')
+                }
+            }
+
+        })
+    }else{
+        errHandler(res,500,'error')
+    }
+};
+function addVersionQueryFunc(ideVersion) {
+    return function (url) {
+        return url+'?ideVersion='+ideVersion
+        // return url+'?ideVersion=1.10.1'
+    }
+}
+function renderIDEEditorPageWithResources(res,ideVersion) {
+    var versionScripts  = ''
+
+    if (ideVersion){
+        var curAddVersionQueryFunc = addVersionQueryFunc(ideVersion)
+        versionScripts = VersionManager.versionScripts[ideVersion]
+        var frontScriptDOMs = FileLoader.generateFiles((versionScripts.frontScripts||[]).map(curAddVersionQueryFunc))
+        var rearScriptsDOMs = FileLoader.generateFiles((versionScripts.rearScripts||[]).map(curAddVersionQueryFunc))
+
+        res.render('../legacy/'+ideVersion+'/views/ide/index.html',{
+            frontScripts:frontScriptDOMs,
+            rearScripts:rearScriptsDOMs
+        })
+
+        // res.render('../legacy/'+ideVersion+'/views/ide/index.html')
+    }else{
+        res.render('ide/index.html')
+    }
+
+
+
+
+}
+
+projectRoute.getProjectById = function (req, res) {
+    var projectId = req.params.id;
+    var userId = req.session.user&&req.session.user.id;
+    var ideVersion = req.query.ideVersion
+    console.log(ideVersion)
+    if(req.session.user){
+        req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
+    }
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -40,22 +170,96 @@ projectRoute.getProjectById = function (req, res) {
             if(!project){
                 errHandler(res,500,'project is null');
             }else if (project.userId == userId){
-                res.render('ide/index.html')
-            }else{
+                // res.render('ide/index.html')
+                renderIDEEditorPageWithResources(res,ideVersion)
+            }else if(!userId){
                 res.render('login/login.html',{
                     title:'重新登录'
                 });
+            }else{
+                //user logged in, but not project owner
+                if (!!project.shared){
+                    hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
+                        if (result){
+                            res.render('ide/index.html')
+                        }else{
+                            hasValidKey(req.session.user,projectId,project.readOnlySharedKey,function (result) {
+                                if(req.session.user){
+                                    req.session.user.readOnlyState = result;//+ save readOnly state in session
+                                }
+                                if (result){
+                                    res.render('ide/index.html')
+                                }else{
+                                    res.render('ide/share.html',{
+                                        title:project.name,
+                                        share:true
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }else{
+                    res.render('ide/share.html',{
+                        title:'没有权限',
+                        share:false
+                    });
+                }
             }
-
         })
     }else{
         errHandler(res,500,'error')
     }
+};
 
-}
+projectRoute.getProjectTreeById = function(req,res){
+    var projectId = req.params.id;
+    var userId = req.session&&req.session.user&&req.session.user.id;
+    if(!userId){
+        res.render('login/login.html',{
+            title:'重新登录'
+        })
+    }else{
+        ProjectModel.findById(projectId,function(err,project){
+            if(err){
+                errHandler(res,500,'error')
+            }else{
+                if(!project){
+                    errHandler(res,500,'project is null');
+                }else if (project.userId == userId){
+                    res.render('ide/projectTree.html')
+                }else{
+                    if (!!project.shared){
+                        hasValidKey(req.session.user,projectId,project.sharedKey,function (result) {
+                            if (result){
+                                res.render('ide/projectTree.html')
+                            }else{
+                                hasValidKey(req.session.user,projectId,project.readOnlySharedKey,function (result) {
+                                    if (result){
+                                        res.render('ide/projectTree.html')
+                                    }else{
+                                        res.render('ide/share.html',{
+                                            title:project.name,
+                                            share:true
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                    }else{
+                        res.render('ide/share.html',{
+                            title:'没有权限',
+                            share:false
+                        });
+                    }
+                }
+            }
+        })
+    }
+};
 
 projectRoute.getProjectContent = function (req, res) {
     var projectId = req.params.id
+    var v = req.query.v
     if (projectId && projectId!=''){
         ProjectModel.findById(projectId,function (err, project) {
             if (err) {
@@ -63,7 +267,130 @@ projectRoute.getProjectContent = function (req, res) {
                 errHandler(res,500,'error')
             }
             //console.log(project)
+            if (v in project.backups){
+                project.content = project.backups[v].content||''
+            }
+            project.backups = [];
+            // console.log('readonly state in session',req.session.user.readOnlyState);
+            project.readOnlyState = !!req.session.user.readOnlyState;
             res.end(JSON.stringify(project))
+        })
+    }else{
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+}
+
+projectRoute.updateShare = function (req, res) {
+
+    var projectId = req.params.id
+    var shareState = !!req.body.share
+    var userId = req.session.user&&req.session.user.id;
+
+    if (projectId && projectId!=''){
+        ProjectModel.findById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+            //console.log(project)
+            if (project && project.userId == userId){
+                //user own project
+                var shareInfo = {}
+                if (shareState) {
+                    shareInfo = {
+                        shared: true,
+                        sharedKey:parseInt(Math.random()*9000+1000)
+                    }
+                    var readOnlySharedKey
+                    do {
+                        readOnlySharedKey = parseInt(Math.random()*9000+1000)
+                    }while (readOnlySharedKey == shareInfo.shardKey)
+                    shareInfo.readOnlySharedKey = readOnlySharedKey
+                }else {
+                    shareInfo = {
+                        shared: false,
+                        sharedKey:'',
+                        readOnlySharedKey:''
+                    }
+                }
+
+                ProjectModel.updateShare(projectId,shareInfo,function (err,newProject) {
+                    if (err){
+                        errHandler(res,500,JSON.stringify(err))
+                    }else{
+
+                        res.end(JSON.stringify(shareInfo))
+                    }
+                })
+            }else{
+                errHandler(res,500,'forbidden')
+            }
+        })
+
+
+    }else{
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+}
+
+
+projectRoute.getShareInfo = function (req, res) {
+    var projectId = req.params.id
+    var userId = req.session.user&&req.session.user.id;
+    if (projectId && projectId!=''){
+
+        ProjectModel.findById(projectId,function (err,_project) {
+            if (err){
+                errHandler(res,500,JSON.stringify(err))
+            }else{
+                if (userId==_project.userId){
+                    res.end(JSON.stringify({
+                        own:true,
+                        shared:_project.shared,
+                        sharedKey:_project.sharedKey,
+                        readOnlySharedKey:_project.readOnlySharedKey
+                    }))
+                }else{
+                    res.end(JSON.stringify({
+                        own:false,
+                        shared:_project.shared,
+                        sharedKey:'',
+                        readOnlySharedKey:''
+                    }))
+                }
+
+            }
+        })
+
+    }else{
+        //console.log(projectId)
+        errHandler(res,500,'error')
+    }
+
+}
+
+projectRoute.getBackupList = function (req, res) {
+    var projectId = req.params.id
+    if (projectId && projectId!=''){
+        ProjectModel.findBackupsById(projectId,function (err, project) {
+            if (err) {
+                errHandler(res,500,'error')
+            }
+            var backups = project.backups,
+                backupList = [],
+                item;
+            if(backups){
+                for(var i=0,il=backups.length;i<il;i++){
+                    item = {};
+
+                    item.date = moment(backups[i].time).format("YYYY-MM-DD HH:mm");
+                    // item.thumbnail = backups[i].thumbnail;
+                    // console.log("backups[i].lastModifiedTime",backups[i].lastModifiedTime)
+                    backupList.push(item);
+                }
+            }
+            res.end(JSON.stringify(backupList));
         })
     }else{
         //console.log(projectId)
@@ -76,55 +403,101 @@ projectRoute.createProject = function (req, res) {
 
     if (req.session.user){
         //user exists
-        data.userId = req.session.user.id
-        var newProject = new ProjectModel(data)
-        newProject.save(function (err) {
-            if (err){
-                console.log('project save error',err)
-                //res.status(500).end('save error')
-                errHandler(res,500,'save error');
-            }
-            //create project directory
-            var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources')
-            fs.stat(targetDir, function (err, stats) {
-                if (stats&&stats.isDirectory&&stats.isDirectory()){
+        data.userId = req.session.user.id;
+        if (!data.template||data.template === 'defaultTemplate'){
+            var newProject = new ProjectModel(data);
+            newProject.save(function (err) {
+                if (err){
+                    console.log('project save error',err);
+                    //res.status(500).end('save error')
+                    errHandler(res,500,'save error');
+                }
+                //create project directory
+                var targetDir = path.join(__dirname,'../project/',String(newProject._id),'resources');
+                fse.ensureDir(targetDir,function(err){
+                    if (err){return errHandler(res,500,JSON.stringify(err))}
+                    cpDefaultTemplates(newProject._id,function (err) {
+                        if (err){return errHandler(res,500,JSON.stringify(err))}
 
-                    //copy template
-                    cpTemplates('defaultTemplate',path.join(targetDir,'template',function (err) {
-                        //exists
-                        var newProjectInfo = _.cloneDeep(newProject)
-                        delete newProjectInfo.content;
-                        res.end(JSON.stringify(newProjectInfo))
-                    }));
+                        res.end(JSON.stringify(getProjectInfo(newProject)))
+                    });
+                })
 
-
-
+            })
+        }else{
+            //generate from template
+            TemplateModel.findById(data.template,function(err,template){
+                if(err){
+                    errHandler(res,500,'find template err');
+                }
+                else if(!template){
+                    errHandler(res,500,'project is null');
                 }else{
-                    //create new directory
-                    //console.log('create new directory',targetDir);
-                    mkdir(targetDir, function (err) {
-                        if (err){
-                            console.log('mk error')
-                            errHandler(res, 500,'mkdir error')
-                        }else{
-                            console.log('ok')
-                            //copy template
-                            cpTemplates('defaultTemplate',path.join(targetDir,'template'),function (err) {
-                                var newProjectInfo = _.cloneDeep(newProject)
-                                delete newProjectInfo.content;
-                                res.end(JSON.stringify(newProjectInfo))
-                            });
-                        }
+                    //console.log('find project');
+                    var copyProject = copyProject = _.cloneDeep(data)
 
-                    })
+                    copyProject.thumbnail = _.cloneDeep(template.thumbnail);
+                    copyProject.content = _.cloneDeep(template.content);
+
+
+                    if(data.resolution!=template.resolution){
+                        copyProject.content=saveAsReset(data.resolution,template.resolution,copyProject.content);
+                    }
+
+                    var newProject = new ProjectModel(copyProject);
+                    var newId = newProject._id;
+                    if(newProject.content){
+                        newProject.content=newProject.content.replace(/template\/[0-9a-f]+?\/resources/g,'project/'+newId+'/resources');
+                    }
+                    newProject.save(function(err){
+                        if(err){
+                            errHandler(res,500,'save new project err')
+                        }else{
+                            //console.log('save new project success');
+                            var targetDir = path.join(__dirname,'../project/',String(newProject._id));
+                            var srcDir = path.join(__dirname,'../template/',data.template);
+                            fse.ensureDir(targetDir,function(err){
+                                if(err){
+                                    console.log(err);
+                                    errHandler(res,500,'ensureDir err');
+                                }else{
+                                    //console.log('make dir success');
+                                    fse.copy(srcDir,targetDir,function(err){
+                                        if(err){
+                                            console.log(err);
+                                            errHandler(res,500,'copy project folder err')
+                                        }else{
+                                            //console.log('copy dir success');
+                                            res.end(JSON.stringify(getProjectInfo(newProject)))
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    });
                 }
             })
+        }
 
-
-        })
     }else{
         res.status(500).end('not login')
     }
+}
+
+
+function getProjectInfo(newProject) {
+    var info = {};
+    info._id = newProject._id;
+    info.userId = newProject.userId;
+    info.resolution = newProject.resolution;
+    info.name = newProject.name;
+    info.thumbnail = newProject.thumbnail;
+    info.template = newProject.template;
+    info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
+    info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
+    info.supportTouch = newProject.supportTouch;
+    info.author = newProject.author;
+    return info
 }
 
 
@@ -261,55 +634,100 @@ projectRoute.saveProject = function (req, res) {
                 if(!project){
                     errHandler(res,500,'project is null');
                 }else{
-                    var curProjectContent = req.body.project
-                    if (curProjectContent){
-                        project.content = JSON.stringify(curProjectContent)
-                        project.save(function (err) {
-                            if (err){
-                                console.log(err)
-                                errHandler(res, 500, 'project resave error')
-                            }else{
+                    checkAccessPriviledge(project,req.session.user||{},function (err,access) {
+                        if (err){
+                            errHandler(res,500,JSON.stringify(err))
+                        }else{
+                            switch (access){
+                                case 'own':
+                                case 'shareOK':
+                                    var curProjectContent = req.body.project
+                                    if (curProjectContent){
+                                        //backup last content
+                                        var backups = project.backups||[]
+                                        if (backups.length>=5){
+                                            backups.shift()
+                                        }
+                                        project.content = JSON.stringify(curProjectContent)
+                                        backups.push({time:new Date(),content:project.content})
+                                        project.save(function (err) {
+                                            if (err){
+                                                console.log(err)
+                                                errHandler(res, 500, 'project resave error')
+                                            }else{
+                                                res.end('ok');
 
-                                res.end('ok')
-                                //delete files
-                                var resourceList = curProjectContent.resourceList;
-                                var resourceNames = resourceList.map(function(res){
-                                    return res.id;
-                                })
-                                //console.log(resourceNames);
-                                var url = path.join(__dirname,'../project',projectId,'resources');
-                                fs.readdir(url, function (err, files) {
-                                    if (err){
-                                        console.log(err)
-                                    }
-                                    //console.log(files)
-                                    if (files && files.length){
-
-                                        var diffResources = _.difference(files,resourceNames);
-                                        // console.log(diffResources)
-                                        // for (var i=0;i<diffResources.length;i++){
-                                        //     fs.unlink(path.join(url,diffResources[i]));
-                                        // }
-
-                                        //filter
-                                        diffResources.map(function (dFile) {
-                                            var dFilePath = path.join(url,dFile);
-                                            // console.log(dFilePath)
-                                            fs.stat(dFilePath,function (err,stats) {
-                                                // console.log(stats)
-                                                if (stats && stats.isFile()){
-                                                    fs.unlink(dFilePath);
+                                                //delete other maskFiles , just keep one pic .
+                                                if(curProjectContent.mask){
+                                                    var baseUrl = path.join(__dirname,'../project/',projectId,'mask');
+                                                    var mask = curProjectContent.mask.src.split("/");
+                                                    var maskFile=mask[mask.length-1];
+                                                    fs.readdir(baseUrl,function(err,files){
+                                                        if(!err){
+                                                            files.forEach(function(fileName){
+                                                                if(fileName!==maskFile){
+                                                                    var url=path.join(baseUrl,fileName);
+                                                                    fs.unlink(url,function(){})
+                                                                }
+                                                            })
+                                                        }
+                                                    });
                                                 }
-                                            })
-                                        });
-                                    }
-                                })
 
+
+                                                //delete files
+                                                // var resourceList = curProjectContent.resourceList;
+                                                var resourceList = []
+                                                project.backups.forEach(function (backup) {
+                                                    var c = JSON.parse(backup.content)
+                                                    if (c){
+                                                        var curList = c.resourceList||[]
+                                                        resourceList = resourceList.concat(curList)
+                                                    }
+                                                })
+                                                var resourceNames = resourceList.map(function(res){
+                                                    return res.id;
+                                                })
+                                                //console.log(resourceNames);
+                                                var url = path.join(__dirname,'../project',projectId,'resources');
+                                                fs.readdir(url, function (err, files) {
+                                                    if (err){
+                                                        console.log(err)
+                                                    }
+                                                    //console.log(files)
+                                                    if (files && files.length){
+
+                                                        var diffResources = _.difference(files,resourceNames);
+                                                        // console.log(diffResources)
+                                                        // for (var i=0;i<diffResources.length;i++){
+                                                        //     fs.unlink(path.join(url,diffResources[i]));
+                                                        // }
+
+                                                        //filter
+                                                        diffResources.map(function (dFile) {
+                                                            var dFilePath = path.join(url,dFile);
+                                                            // console.log(dFilePath)
+                                                            fs.stat(dFilePath,function (err,stats) {
+                                                                // console.log(stats)
+                                                                if (stats && stats.isFile()){
+                                                                    fs.unlink(dFilePath);
+                                                                }
+                                                            })
+                                                        });
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }else{
+                                        errHandler(res,500,'project save error')
+                                    }
+                                    break
+                                default:
+                                    errHandler(res,500,'forbidden to save')
                             }
-                        })
-                    }else{
-                        errHandler(res,500,'project save error')
-                    }
+                        }
+                    })
+
                 }
 
             }
@@ -323,65 +741,219 @@ projectRoute.saveProject = function (req, res) {
 projectRoute.saveProjectAs = function(req,res){
     var projectId = req.params.id;
     var data = req.body;
+    var userId = req.session.user&&req.session.user.id;
     //console.log('receive request');
-    if(projectId!=''){
-        ProjectModel.findById(projectId,function(err,project){
-            if(err){
-                errHandler(res,500,'find project err');
-            }
-            else if(!project){
-                errHandler(res,500,'project is null');
-            }else{
-                //console.log('find project');
-                var copyProject = {};
-                copyProject.name = _.cloneDeep(project.name);
-                copyProject.userId = _.cloneDeep(project.userId);
-                copyProject.author = _.cloneDeep(project.author);
-                copyProject.resolution = _.cloneDeep(project.resolution);
-                copyProject.type = _.cloneDeep(project.type);
-                copyProject.template = _.cloneDeep(project.template);
-                copyProject.supportTouch = _.cloneDeep(project.supportTouch);
-                copyProject.curSize = _.cloneDeep(project.curSize);
-                copyProject.thumbnail = _.cloneDeep(project.thumbnail);
-                copyProject.content = _.cloneDeep(project.content);
-
-                copyProject.name = data.saveAsName?(data.saveAsName):(copyProject.name+"副本");
-                copyProject.author = data.saveAsAuthor?(data.saveAsAuthor):(copyProject.author);
-                var newProject = new ProjectModel(copyProject);
-                var newId = newProject._id;
-                if(newProject.content){
-                    newProject.content=newProject.content.replace(/project\/[\S]+?\/resources/g,'project/'+newId+'/resources');
+    if(req.session.user){
+        if(projectId!=''){
+            ProjectModel.findById(projectId,function(err,project){
+                if(err){
+                    errHandler(res,500,'find project err');
                 }
-                newProject.save(function(err){
-                    if(err){
-                        errHandler(res,500,'save new project err')
-                    }else{
-                        //console.log('save new project success');
-                        var targetDir = path.join(__dirname,'../project/',String(newProject._id));
-                        var srcDir = path.join(__dirname,'../project/',projectId);
-                        fse.ensureDir(targetDir,function(err){
-                            if(err){
-                                console.log(err);
-                                errHandler(res,500,'ensureDir err');
-                            }else{
-                                //console.log('make dir success');
-                                fse.copy(srcDir,targetDir,function(err){
-                                    if(err){
-                                        console.log(err);
-                                        errHandler(res,500,'copy project folder err')
-                                    }else{
-                                        //console.log('copy dir success');
-                                        res.send('ok');
-                                    }
-                                })
-                            }
-                        })
+                else if(!project){
+                    errHandler(res,500,'project is null');
+                }else{
+                    //console.log('find project');
+                    var copyProject = {};
+                    copyProject.name = _.cloneDeep(project.name);
+                    copyProject.userId = _.cloneDeep(userId);
+                    copyProject.author = _.cloneDeep(project.author);
+                    copyProject.resolution = _.cloneDeep(project.resolution);
+                    copyProject.type = _.cloneDeep(project.type);
+                    copyProject.template = _.cloneDeep(project.template);
+                    copyProject.supportTouch = _.cloneDeep(project.supportTouch);
+                    copyProject.curSize = _.cloneDeep(project.curSize);
+                    copyProject.thumbnail = _.cloneDeep(project.thumbnail);
+                    copyProject.content = _.cloneDeep(project.content);
+
+                    copyProject.name = data.saveAsName?(data.saveAsName):(copyProject.name+"副本");
+                    copyProject.author = data.saveAsAuthor?(data.saveAsAuthor):(copyProject.author);
+                    //改变另存为分辨率 重新设置大小
+                    if(data.saveAsResolution){
+                        copyProject.content=saveAsReset(data.saveAsResolution,copyProject.resolution,copyProject.content);
+                        copyProject.resolution=data.saveAsResolution;
                     }
-                });
-            }
-        })
+
+                    if(data.pullingRatio){
+                        copyProject.content=resolutionPulling(copyProject.content,data.pullingRatio);
+                    }
+
+                    var newProject = new ProjectModel(copyProject);
+                    var newId = newProject._id;
+                    if(newProject.content){
+                        newProject.content=newProject.content.replace(/project\/[\S]+?\/resources/g,'project/'+newId+'/resources');
+                    }
+                    newProject.save(function(err){
+                        if(err){
+                            errHandler(res,500,'save new project err')
+                        }else{
+                            //console.log('save new project success');
+                            var targetDir = path.join(__dirname,'../project/',String(newProject._id));
+                            var srcDir = path.join(__dirname,'../project/',projectId);
+                            fse.ensureDir(targetDir,function(err){
+                                if(err){
+                                    console.log(err);
+                                    errHandler(res,500,'ensureDir err');
+                                }else{
+                                    //console.log('make dir success');
+                                    fse.copy(srcDir,targetDir,function(err){
+                                        if(err){
+                                            console.log(err);
+                                            errHandler(res,500,'copy project folder err')
+                                        }else{
+                                            //console.log('copy dir success');
+                                            res.send('ok');
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    });
+                }
+            })
+        }
+    }else{
+        res.status(500).end('not login')
     }
+
 };
+
+//另存为重新设置项目及其内部控件大小
+function saveAsReset(newResolution,oldResolution,content){
+    var widthProportion=(newResolution.split("*")[0])/(oldResolution.split("*")[0]);
+    var heightProportion=(newResolution.split("*")[1])/(oldResolution.split("*")[1]);
+    var content=JSON.parse(content);
+    for(var a in content.pages){
+        if(content.pages[a].layers){
+            for(var b in content.pages[a].layers){
+                var layerInfo=content.pages[a].layers[b].info;
+                layerInfo.width=Math.round(layerInfo.width*widthProportion);
+                layerInfo.height=Math.round(layerInfo.height*heightProportion);
+                layerInfo.left=Math.round(layerInfo.left*widthProportion);
+                layerInfo.top=Math.round(layerInfo.top*heightProportion);
+                if(content.pages[a].layers[b].subLayers){
+                    for(var c in content.pages[a].layers[b].subLayers){
+                        for(var d in content.pages[a].layers[b].subLayers[c].widgets){
+                            var type=content.pages[a].layers[b].subLayers[c].widgets[d].type;
+                            var widgetInfo=content.pages[a].layers[b].subLayers[c].widgets[d].info;
+
+                            widgetInfo.width=Math.round(widgetInfo.width*widthProportion);
+                            widgetInfo.height=Math.round(widgetInfo.height*heightProportion);
+                            widgetInfo.left=Math.round(widgetInfo.left*widthProportion);
+                            widgetInfo.top=Math.round(widgetInfo.top*heightProportion);
+                            if(type=="MyButton"||type=='MyTextArea') {
+                                widgetInfo.fontSize=Math.round(widgetInfo.fontSize*widthProportion);
+                            }
+                            if(type=='MyTexNum'||type=='MyTexTime'){
+                                widgetInfo.characterW=Math.round(widgetInfo.characterW*widthProportion);
+                                widgetInfo.characterH=Math.round(widgetInfo.characterH*heightProportion);
+                            }
+                            //added by LH in 2017/12/20
+                            if(type=='MyTexTime'){
+                                widgetInfo.characterW=Math.round(widgetInfo.characterW*widthProportion);
+                                widgetInfo.characterH=Math.round(widgetInfo.characterH*heightProportion);
+                            }
+                            if(type=="MyDateTime"||type=='MyNum'){
+                                widgetInfo.fontSize = Math.round(widgetInfo.fontSize*widthProportion);
+                                widgetInfo.maxFontWidth = Math.round(widgetInfo.maxFontWidth*widthProportion);
+                                widgetInfo.spacing = Math.round((widgetInfo.spacing||0)*widthProportion);
+                            }
+                            if(type=="MyDashboard"){
+                                widgetInfo.pointerLength=Math.round(widgetInfo.pointerLength*widthProportion);
+                            }
+
+                        }
+                    }
+                }
+                if(content.pages[a].layers[b].showSubLayer){
+                    for(var h in content.pages[a].layers[b].showSubLayer.widgets){
+                        var type1=content.pages[a].layers[b].showSubLayer.widgets[h].type;
+                        var showWidgetInfo=content.pages[a].layers[b].showSubLayer.widgets[h].info;
+
+                        showWidgetInfo.width=Math.round(showWidgetInfo.width*widthProportion);
+                        showWidgetInfo.height=Math.round(showWidgetInfo.height*heightProportion);
+                        showWidgetInfo.left=Math.round(showWidgetInfo.left*widthProportion);
+                        showWidgetInfo.top=Math.round(showWidgetInfo.top*heightProportion);
+                        if(type1=="MyButton"||type1=='MyTextArea') {
+                            showWidgetInfo.fontSize=Math.round(showWidgetInfo.fontSize*widthProportion);
+                        }
+                        if(type1=='MyTexNum'||type=='MyTexTime'){
+                            showWidgetInfo.characterW=Math.round(showWidgetInfo.characterW*widthProportion);
+                            showWidgetInfo.characterH=Math.round(showWidgetInfo.characterH*heightProportion);
+                        }
+                        if(type1=="MyDateTime"||type1=='MyNum'){
+                            showWidgetInfo.fontSize = Math.round(showWidgetInfo.fontSize*widthProportion);
+                            showWidgetInfo.maxFontWidth = Math.round(showWidgetInfo.maxFontWidth*widthProportion);
+                        }
+                        if(type1=="MyDashboard"){
+                            showWidgetInfo.pointerLength=Math.round(showWidgetInfo.pointerLength*widthProportion);
+                        }
+                    }
+                }
+                //修改动画
+                if(content.pages[a].layers[b].animations){
+                    for(var x in content.pages[a].layers[b].animations){
+                        var translate=content.pages[a].layers[b].animations[x].animationAttrs.translate;
+
+                        translate.srcPos.x=Math.round(translate.srcPos.x*widthProportion);
+                        translate.srcPos.y=Math.round(translate.srcPos.y*heightProportion);
+                        translate.dstPos.x=Math.round(translate.dstPos.x*widthProportion);
+                        translate.dstPos.y=Math.round(translate.dstPos.y*heightProportion);
+                    }
+                }
+            }
+        }
+    }
+    return JSON.stringify(content);
+}
+//控件拉伸 add by tang
+function resolutionPulling(content,pullingRatio){
+    var newContent=JSON.parse(content);
+    var widthRatio = pullingRatio.widthRatio;
+    var heightRatio = pullingRatio.heightRatio;
+
+    _.forEach(newContent.pages,function(page){//page
+        if(page.layers){
+            _.forEach(page.layers,function(layer){//layer
+                var layerInfo=layer.info;
+                console.log(layerInfo.top,layerInfo.height);
+
+                layerInfo.left+=-Math.round((layerInfo.width*(widthRatio-1))/2);
+                layerInfo.top+=-Math.round((layerInfo.height*(heightRatio-1))/2);
+                layerInfo.width=Math.round(layerInfo.width*widthRatio);
+                layerInfo.height=Math.round(layerInfo.height*heightRatio);
+                //console.log(layerInfo.left,layerInfo.width);
+                console.log(layerInfo.top,layerInfo.height);
+
+                if(layer.subLayers){//sublayer
+                    _.forEach(layer.subLayers,function(subLayer){
+
+                        if(subLayer.widgets){//widget
+                            _.forEach(subLayer.widgets,function(widget){
+                                var widgetInfo=widget.info;
+                                widgetInfo.left+=-Math.round((widgetInfo.width*(widthRatio-1))/2);
+                                widgetInfo.top+=-Math.round((widgetInfo.height*(heightRatio-1))/2);
+                                widgetInfo.width=Math.round(widgetInfo.width*widthRatio);
+                                widgetInfo.height=Math.round(widgetInfo.height*heightRatio);
+                            })
+                        }
+                    })
+                }
+
+                if(layer.showSubLayer){//show
+                    _.forEach(layer.showSubLayer.widgets,function(widget){
+                        var widgetInfo=widget.info;
+                        widgetInfo.left+=-Math.round((widgetInfo.width*(widthRatio-1))/2);
+                        widgetInfo.top+=-Math.round((widgetInfo.height*(heightRatio-1))/2);
+                        widgetInfo.width=Math.round(widgetInfo.width*widthRatio);
+                        widgetInfo.height=Math.round(widgetInfo.height*heightRatio);
+                    })
+                }
+            })
+        }
+    });
+
+    return JSON.stringify(newContent);
+}
 
 projectRoute.saveThumbnail = function (req, res) {
     var projectId = req.params.id;
@@ -539,12 +1111,12 @@ projectRoute.generateLocalProject = function(req, res){
                 tempPro.supportTouch = project.supportTouch;
                 tempPro.resolution = project.resolution;
                 tempPro._id = project._id;
-                tempPro.createdTime = project.createTime;
-                tempPro.lastModifiedTime = project.lastModifiedTime;
+                tempPro.createTime = new Date().toLocaleString();
+                tempPro.lastModifiedTime = new Date().toLocaleString();
                 //check and change resource url
                 var transformSrc = function(key,value){
                     //console.log('key');
-                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'){
+                    if(key=='src'||key=='imgSrc'||key=='backgroundImage'||key=='backgroundImg'){
                         if(typeof(value)=='string'&&value!=''){
                             try{
                                 if(value.indexOf('http')==-1){
@@ -569,18 +1141,18 @@ projectRoute.generateLocalProject = function(req, res){
                         }
                     }
                     return value;
-                }
-                var contentObj = JSON.parse(project.content);
-                contentNewJSON = JSON.stringify(contentObj,transformSrc);
-                tempPro.content = contentNewJSON;
-
+                };
                 try{
+                    var contentObj = JSON.parse(project.content);
+                    contentNewJSON = JSON.stringify(contentObj,transformSrc);
+                    tempPro.content = contentNewJSON;
                     fs.writeFileSync(filePath,JSON.stringify(tempPro,null));
                     //generate localpro zip
                     var zipName = '/'+projectId+'.zip';
                     var targetUrl = path.join(__dirname,'../project/',projectId,zipName);
                     var srcResourcesFolderUrl = path.join(__dirname,'../project/',projectId,'resources/');
-                    var srcJsonUrl = path.join(__dirname,'../project/',projectId,'/project.json'); 
+                    var srcMaskFolderUrl = path.join(__dirname,'../project/',projectId,'mask/');
+                    var srcJsonUrl = path.join(__dirname,'../project/',projectId,'/project.json');
                     var output = fs.createWriteStream(targetUrl);
                     var archive = archiver('zip', {
                                 store: true 
@@ -595,6 +1167,11 @@ projectRoute.generateLocalProject = function(req, res){
                     });
                     archive.pipe(output);
                     archive.directory(srcResourcesFolderUrl,'/resources');
+
+                    if(contentObj.mask){
+                        archive.directory(srcMaskFolderUrl,'/mask');
+                    }
+
                     archive.file(srcJsonUrl,{ name: 'project.json' });
                     archive.finalize();
                 }catch(e){
@@ -686,11 +1263,39 @@ function fontFile(name,baseUrl,id) {
 
 
 //cp templates
-function cpTemplates(templateName,dstDir,cb) {
+function cpTemplates(templateName,newProjectId,cb) {
+    if (templateName){
+        if (templateName==='defaultTemplate'){
+            cpDefaultTemplates(newProjectId,cb)
+        }else{
+            //custom template
+            var srcDir = path.join(__dirname,'../template/',String(templateName),'resources')
+            var dstDir = path.join(__dirname,'../project/',String(newProjectId),'resources');
+            fse.copy(srcDir,dstDir,function (err) {
+                if (err){
+                    console.log(err);
+                    cb && cb(err);
+                }else{
+                    cb && cb();
+                }
+            })
+        }
+    }else{
+        //no template
+        cb && cb()
+    }
+
+}
+
+
+//cp default templates
+function cpDefaultTemplates(newProjectId,cb) {
+    var templateName = 'defaultTemplate'
     var srcDir = path.join(__dirname,'../public/templates/',templateName,'defaultResources');
+    var dstDir = path.join(__dirname,'../project/',String(newProjectId),'resources','template');
     fse.copy(srcDir,dstDir,function (err) {
-        console.log(err);
         if (err){
+            console.log(err);
             cb && cb(err);
         }else{
             cb && cb();

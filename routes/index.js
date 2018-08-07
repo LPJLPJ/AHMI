@@ -11,6 +11,9 @@ var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
 var DownloadRouter = require('./routeDownload');
+var VersionManager = require('../utils/versionManager');
+var route_tag = require('./route_tags');
+var templateRoute = require('./templateRoute')
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -112,6 +115,9 @@ router.route('/user/login')
 router.route('/user/loginAPI')
 .post(loginAPI.post);
 
+router.route('/user/logininfo')
+    .get(loginAPI.getLoginInfo)
+
 //logout
 router.route('/user/logout')
 .get(route_login.logout);
@@ -121,6 +127,7 @@ router.route('/private/*')
     .all(sessionTouch);
 router.route('/private/space')
 .get(route_space);
+
 
 //router.route('/private/info')
 //    .get(route_personalInfo)
@@ -138,6 +145,11 @@ router.route('/api/refreshlogin')
     .get(function (req, res) {
        res.end('ok');
     });
+
+router.route('/api/versions')
+    .get(function (req, res) {
+        res.end(JSON.stringify(VersionManager.versions||[]))
+    })
 
 //captcha
 router.route('/captcha')
@@ -167,11 +179,24 @@ router.route('/project/*')
 router.route('/project/:id/basicinfo')
     .post(projectInfo.updateProject);
 
+router.route('/project/:id/backuplist')
+    .get(projectInfo.getBackupList);
+
 router.route('/project/:id/editor')
     .get(projectInfo.getProjectById);
 
+router.route('/project/:id/visualization')
+    .get(projectInfo.getProjectTreeById);
+
 router.route('/project/:id/content')
     .get(projectInfo.getProjectContent);
+
+router.route('/project/:id/share')
+    .get(projectInfo.getShareInfo)
+    .post(projectInfo.updateShare)
+
+router.route('/project/:id/sharedkey')
+    .post(projectInfo.checkSharedKey)
 
 router.route('/project/:id/save')
     .put(projectInfo.saveProject);
@@ -235,6 +260,10 @@ router.route('/CANProject/:id/downloadCANFile')
 router.route('/project/:id/upload')
     .post(uploadFile.uploadProjectFile);
 
+//add by tang   mask upload
+router.route('/project/:id/mask')
+    .post(uploadFile.uploadMask);
+
 router.route('/project/:id/generatetex')
     .post(uploadFile.uploadTex);
 
@@ -249,6 +278,30 @@ router.route('/project/:id/resources/template/:rid')
 
 router.route('/project/:id/deleteresource/:rid')
     .delete(uploadFile.deleteResource);
+
+
+//template center
+router.route('/templatecenter')
+    .get(templateRoute.getTemplateCenter)
+
+//templates
+router.route('/templates/center')
+    .get(templateRoute.getTemplatesForCenter)
+
+router.route('/templates/user/ids')
+    .get(templateRoute.getUserTemplateIds)
+
+router.route('/templates/user/infos')
+    .get(templateRoute.getUserTemplateInfos)
+
+router.route('/templates/new')
+    .post(templateRoute.saveNewTemplate)
+
+router.route('/templates/collect')
+    .post(templateRoute.collectTemplate)
+
+router.route('/templates/uncollect')
+    .post(templateRoute.uncollectTemplate)
 
 
 router.route('/mail/sendverifymail')
@@ -369,6 +422,8 @@ router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
 
 
+router.route('/tags/preview')
+    .get(route_tag.getDefault);
 
 
 
