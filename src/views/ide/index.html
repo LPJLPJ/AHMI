@@ -490,7 +490,7 @@
             </div>
 
 
-            <div id="simulator-wrapper" style="" ng-show="component.simulator.show">
+            <div id="simulator-wrapper"  ng-show="component.simulator.show">
                 <div class="navbar navbar-default" style="text-align:center">
                     <div class="nav">
                         <button id="play" type="button" class=" btn btn-default navbar-btn"
@@ -503,7 +503,7 @@
                 <div id="simulator-container">
                 </div>
             </div>
-            <div id="actionVisualization-wrapper" style="" ng-show="component.actionVisualization.show">
+            <div id="actionVisualization-wrapper"  ng-show="component.actionVisualization.show">
                 <div class="navbar navbar-default" style="text-align:center">
                     <div class="nav">
                         <button id="actionVisualization-play" type="button" class=" btn btn-default navbar-btn">分析</button>
@@ -3717,7 +3717,7 @@
                         <span class="my-attr-title xiangPage-title">标签</span>
                         <div class="my-tag-tag-calss-div-pad">
                             <select class="form-control xiangPage-selected my-tag-tag-calss-select"
-                                    ng-model="component.curTagClassName" ng-click="component.changeCurTagClass()">{{component.curTagClassName}}
+                                    ng-model="component.curTagClassName" ng-change="component.changeCurTagClass()">{{component.curTagClassName}}
                                 <option ng-repeat="classItem in component.tagClasses track by $index" value="{{classItem.name}}" >{{classItem.name}}</option>
                             </select>
                             <button type="button"  ng-click="component.editTagClass()" class="btn btn-default">标签管理</button>
