@@ -1027,7 +1027,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
                         if(widget.type=='MySwitch'){
                             if(widget.tag&&widget.tag==$scope.tag.name){
                                 if(widget.info.bindBit){
-                                    $scope.bindBits.push(widget.info.bindBit)
+                                    bits.push(widget.info.bindBit)
                                 }
                             }
                         }
@@ -1041,6 +1041,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
                 $scope.bindBits.push(bits[i]);
             }
         }
+        $scope.bindBits.sort(function(a,b){return a-b});
     }
 
 }]);

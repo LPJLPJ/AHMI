@@ -448,8 +448,9 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                     pass = false;
                     return;
                 }
-                var value = cmd[2].value;
-                if(value!=''&&Number(value)==NaN){
+                var value = Number(cmd[2].value);
+                var reg =/^(\-|\+)?\d+(\.\d+)?$/;
+                if(value!=''&&!reg.test(value)){
                     validateArr[index].pass = false;
                     validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
                     pass = false;
