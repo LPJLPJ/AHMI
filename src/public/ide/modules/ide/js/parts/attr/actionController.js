@@ -449,7 +449,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                     return;
                 }
                 var value = cmd[2].value;
-                if(value!=''&&!Number(value)){
+                if(value!=''&&Number(value)==NaN){
                     validateArr[index].pass = false;
                     validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
                     pass = false;
