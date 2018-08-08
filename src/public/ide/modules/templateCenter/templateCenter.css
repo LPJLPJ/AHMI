@@ -25,6 +25,12 @@
     float:right;
 }
 
+.template-tools-delete-wrapper{
+    padding:0 1em;
+    display: inline-block;
+    float:right;
+}
+
 .template-tools-search{
     /*border-radius: 2px;*/
 }
@@ -98,4 +104,8 @@
 .template-info-title{
     font-size:1.5em;
     font-weight: bold;
+}
+
+.template-panel-selected{
+    background-color: aqua;
 }

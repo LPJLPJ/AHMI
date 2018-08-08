@@ -107,6 +107,11 @@ TemplateSchema.statics = {
             .remove({_id:_projectId})
             .exec(cb)
     },
+    deleteByIds:function(_ids,cb){
+        return this
+            .remove({_id:{$in:_ids}})
+            .exec(cb)
+    },
     incById:function (templateId,cb) {
         return this
             .update({_id:templateId},{$inc: { collected: 1 }})
