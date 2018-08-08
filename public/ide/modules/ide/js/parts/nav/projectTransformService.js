@@ -121,42 +121,8 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
         var minReturnButtonSize = Math.ceil(0.05*Math.min(sysCanvas.w,sysCanvas.h))
 
         var returnButtonImgSrc = '/public/images/returnButton/returnIcon.png'
-        // var returnButtonData = {
-        //     type:'widget',
-        //     subType:'MyReturnButton',
-        //     buttonModeId:'0',
-        //     info :{
-        //         width:minReturnButtonSize,
-        //         height: minReturnButtonSize,
-        //         left: sysCanvas.w-minReturnButtonSize-defaultMargin, top: defaultMargin,
-        //         originX: 'center', originY: 'center',
-        //         arrange:true,
-        //
-        //         text:'',
-        //         fontFamily:"宋体",
-        //         fontSize:20,
-        //         fontColor:'rgba(0,0,0,1)',
-        //         fontBold:"100",
-        //         fontItalic:'',
-        //     },
-        //     texList:[{
-        //         name:'按钮纹理',
-        //         currentSliceIdx:0,
-        //         slices:[{
-        //             color:'rgba(255,0,0,0)',
-        //             imgSrc:returnButtonImgSrc,
-        //             name:'按下前'
-        //         },{
-        //             color:'rgba(0,255,0,0)',
-        //             imgSrc:returnButtonImgSrc,
-        //             name:'按下后'
-        //         },{
-        //             color:'rgba(244,244,244,0.3)',
-        //             imgSrc:'',
-        //             name:'高亮'
-        //         }]
-        //     }]
-        // }
+
+        var pageLength = rawProject.pages.length;
         var returnButtonData = {
             "info": {
                 width:minReturnButtonSize,
@@ -278,7 +244,7 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     "newAction": false
                 }
             ],
-            "id": "0.0.0.1",
+            "id": ""+pageLength+".0.0.1",
             "type": "widget",
             "wId": 1
         }
