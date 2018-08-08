@@ -360,7 +360,7 @@
                     </div>
                     <div class="modal-body dengModel-body">
 
-                        <span class="modal-dragzone" ngf-accept="'application/zip'" ngf-drag-over-class="{pattern: 'application/zip', accept:'modal-dragzone-accept', reject:'modal-dragzone-reject', delay:100}"  ngf-drop='validateZipFile($files)'>
+                        <span class="modal-dragzone"  ngf-drag-over-class="‘modal-dragzone-accept’"  ngf-drop='validateZipFile($files)'>
 
                             拖拽或上传生成压缩包以验证
                             <input type='file' class="modal-dragzone-input" ngf-select='validateZipFile($files)'  />

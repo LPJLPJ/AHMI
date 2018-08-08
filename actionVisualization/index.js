@@ -522,7 +522,7 @@ class ActionVisualizer extends React.Component{
         let link = e.target
         if(link){
             let dataUrl = this.viewWindow.rootView.layer.toDataURL()
-            link.href = URL.createObjectURL(dataURIToBlob(dataUrl));
+            link.href = dataUrl
             link.download = '动作可视化.png'
         }
 
