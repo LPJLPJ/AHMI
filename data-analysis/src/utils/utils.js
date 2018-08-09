@@ -386,26 +386,22 @@ class TextureSizeCalculator {
   constructor() {
     this.texture = [];
     this.totalSize = 0;
-    this.fonts = [];
-    this.images = [];
-    this.colors = [];
+    this.fonts = []; // 记录所有的字体，防止重复
+    this.images = []; // 记录所有控件图片，防止重复
   }
 
+  /**
+   * 私有方法，解析页面
+   * @param page
+   * @param w
+   * @param h
+   * @param format
+   */
   _parsePage(page, w, h, format = 'normal') {
-    const {texture, images} = this;
+    const {texture} = this;
     const {backgroundImage = ''} = page;
     const suffixArr = backgroundImage.split('.');
     const suffix = suffixArr[suffixArr.length - 1].toLowerCase();
-
-
-    const imgFlag = '' + backgroundImage + w + h;
-
-
-    if (checkDup(images, imgFlag)) {
-      return;
-    }
-    images.push(imgFlag);
-
 
     if (suffix === BMP) {
       if (format === FORMAT_NORMAL) {
@@ -424,6 +420,11 @@ class TextureSizeCalculator {
 
   }
 
+  /**
+   * 私有方法，解析控件
+   * @param widget
+   * @param format
+   */
   _parseWidget(widget, format = 'normal') {
 
     let {type = ''} = widget;
@@ -436,6 +437,8 @@ class TextureSizeCalculator {
       case 'mydatetime':
         this._parseNumText(widget, format);
         break;
+      case 'myscripttrigger':
+        break;
       default:
         this._parseNormalWidget(widget, format);
         break;
@@ -443,6 +446,11 @@ class TextureSizeCalculator {
 
   }
 
+  /**
+   * 私有方法，解析动画控件的纹理
+   * @param widget
+   * @param format
+   */
   _parseAnimation(widget, format = 'normal') {
     const {texture, images} = this;
     const {texList = [], info: {width, height}} = widget;
@@ -488,6 +496,12 @@ class TextureSizeCalculator {
     }
   }
 
+  /**
+   * 私有方法，解析使用了数字字符的控件纹理
+   * @param widget
+   * @param format
+   * @private
+   */
   _parseNumText(widget, format = 'normal') {
     const paddingRatio = 1.2;
     const {texture, fonts} = this;
@@ -514,13 +528,22 @@ class TextureSizeCalculator {
 
   }
 
+  /**
+   * 私有方法，解析普通控件中的纹理
+   * @param widget
+   * @param format
+   * @private
+   */
   _parseNormalWidget(widget, format = 'normal') {
-    const {texture, images, colors} = this;
-    const {texList = [], info: {width, height}, type} = widget;
+    const {texture, images} = this;
+    const {
+      texList = [],
+      info: {width, height, text = '', fontFamily = '', fontSize = '', fontColor = '', fontBold = '', fontItalic = ''}
+    } = widget;
+
     if (!texList) {
       return;
     }
-
 
     const suffixs = [];
 
@@ -528,25 +551,17 @@ class TextureSizeCalculator {
       const {slices = []} = tex;
       slices.forEach(slice => {
         const {imgSrc = '', color} = slice;
-        if (!!imgSrc) {
-          const imgFlag = '' + imgSrc + width + height;
-          if (checkDup(images, imgFlag)) {
-            return;
-          }
-          images.push(imgFlag);
 
-          const suffixArr = imgSrc.split('.');
-          suffixs.push(suffixArr[suffixArr.length - 1])
-        } else if (type.toLowerCase() !== 'myscripttrigger') {
-          const colorFlag = '' + color + width + height;
-          if (checkDup(colors, colorFlag)) {
-            return;
-          }
-          colors.push(colorFlag);
-          suffixs.push('png');
-        } else {
-          console.log('type', type);
+        const imgFlag = '' + imgSrc + color + width + height + text + fontFamily + fontSize + fontColor + fontBold + fontItalic;
+        if (checkDup(images, imgFlag)) {
+          console.log('dup');
+          return;
         }
+        images.push(imgFlag);
+
+        const suffixArr = imgSrc.split('.');
+        suffixs.push(suffixArr[suffixArr.length - 1])
+
       })
     });
 
@@ -570,7 +585,7 @@ class TextureSizeCalculator {
 
   }
 
-
+  // 加载工程
   load(project, format = 'normal') {
     const {pages = [], initSize: {width, height}} = project;
     // 遍历
@@ -596,9 +611,10 @@ class TextureSizeCalculator {
     return this
   }
 
-
+  // 计算
   calcSize() {
     const {texture} = this;
+    console.log('haha', this.images);
     this.totalSize = 0;
     for (let i = 0, il = texture.length; i < il; i++) {
       this.totalSize += texture[i].getSize();
