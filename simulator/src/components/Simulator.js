@@ -2084,9 +2084,10 @@ module.exports = React.createClass({
                 case '3':
                     this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
                     var drawColor = this.confirmOneColor(widget, curProgress);
+                    var drawImg = this.confirmOneImage(widget,curProgress)
                     switch (widget.info.arrange) {
                         case 'vertical':
-                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, null, drawColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, drawImg, drawColor);
                             if (cursor) {
                                 var cursorSlice = widget.texList[widget.texList.length - 1].slices[0];
                                 this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY);
@@ -2094,7 +2095,7 @@ module.exports = React.createClass({
                             break;
                         case 'horizontal':
                         default:
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, null, drawColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, drawImg, drawColor);
                             if (cursor) {
                                 var cursorSlice = widget.texList[widget.texList.length - 1].slices[0];
                                 this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color);
@@ -2292,6 +2293,35 @@ module.exports = React.createClass({
             }
         }
         return drawColor;
+    },
+    confirmOneImage: function (widget, curProgress) {
+        var progressValue = parseInt(curProgress);
+        var img1 = widget.texList[1].slices[0].imgSrc,
+            img2 = widget.texList[2].slices[0].imgSrc,
+            thresholdModeId = widget.info.thresholdModeId,
+            threshold1 = widget.info.threshold1,
+            threshold2 = widget.info.threshold2;
+        if (thresholdModeId == '2') {
+            var img3 = widget.texList[3].slices[0].imgSrc;
+        }
+        ;
+        var img = null
+        if (thresholdModeId == '1') {
+            if (progressValue < threshold1) {
+                img = img1;
+            } else if (progressValue >= threshold2) {
+                img = img2;
+            }
+        } else if (thresholdModeId == '2') {
+            if (progressValue < threshold1) {
+                img = img1;
+            } else if (progressValue >= threshold1 && progressValue < threshold2) {
+                img = img2;
+            } else if (progressValue >= threshold2) {
+                img = img3;
+            }
+        }
+        return img;
     },
     transColorToArray: function (color) {
         //rgba to array

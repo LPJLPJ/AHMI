@@ -379,6 +379,25 @@ ideServices
             return resourceUrl;
         };
 
+        this.getResourceByUrl = function (url) {
+            for(var i=0;i<globalResources.length;i++){
+                if(globalResources[i].src==url){
+                    return globalResources[i];
+                }
+            }
+            return null;
+        };
+        //资源下载
+        this.downloadFile = function (file,projectId) {
+            var fileId = file.id;
+            var fileName = file.name;
+            var data={
+                fileId:fileId,
+                fileName:fileName,
+                projectId:projectId
+            };
+            window.location.href = '/project/' + JSON.stringify(data) + '/downloadFile';
+        };
 
         this.setMaskUrl = function(url){
             maskUrl = url;

@@ -1138,6 +1138,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
          * @param _successCallback
          */
         function addWidgetInCurrentSubLayer(dataStructure, node, _successCallback) {
+            preProcessWidget(dataStructure);
             var initiator = {
                 width: dataStructure.info.width,
                 height: dataStructure.info.height,
@@ -1216,8 +1217,46 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     console.error('not match widget in preprocess!');
                     break;
             }
-
         };
+        /**
+         * 在绘制生成proJsonStr之前的兼容处理
+         * @param widget
+         */
+        function preProcessWidget(widget) {
+            switch (widget.type) {
+                case 'MyTexNum':
+                    if (widget.info.numSystem === undefined || widget.info.hexControl === undefined) {
+                        widget.info.numSystem = '0';
+                        widget.info.hexControl = {
+                            markingMode: '0',
+                            transformMode: '0'
+                        }
+                    }
+                    var slices = widget.texList[0].slices;
+                    if (slices.length < 26) {
+                        var hexTex = ['x', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'];
+                        for (var i = 0; i < hexTex.length; i++) {
+                            var n = i + 13;
+                            slices[n] = {};
+                            slices[n].imgSrc = '';
+                            slices[n].color = 'rgba(120,120,120,1)';
+                            slices[n].name = hexTex[i];
+                        }
+                    }
+                    break;
+                case 'MyNum':
+                    if (widget.info.numSystem === undefined || widget.info.hexControl === undefined) {
+                        widget.info.numSystem = '0';
+                        widget.info.hexControl = {
+                            markingMode: '0',
+                            transformMode: '0'
+                        }
+                    }
+                    break;
+                default :
+                    break;
+            }
+        }
 
         /**
          * 初始化socket

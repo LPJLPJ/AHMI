@@ -37,14 +37,15 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                 page: {
                     enterImage: enterBackgroundImage,
-                    selectImage: 'demo20.png'
+                    selectImage: 'demo20.png',
+                    downloadFile:downloadFile
                 },
 
                 layer: {
                     enterShowSubLayer: enterShowSubLayer,
                     selectModel: null,
-                    enterImage: enterBackgroundImage,
-                    selectImage:''
+                    selectImage:'',
+                    downloadFile:downloadFile
                 },
                 subLayer: {
                     enterImage: enterBackgroundImage,
@@ -445,7 +446,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
                         // }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
-                        $scope.component.layer.selectImage=$scope.component.object.level.backgroundImage;
                         break;
                     case Type.MyPage:
                         //调整Page的背景图
@@ -1263,10 +1263,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     currentPage.backgroundColor = $scope.component.object.level.backgroundColor;
                     currentPage.proJsonStr = pageNode.toJSON();
                 });
-            }else if($scope.component.object.type == Type.MyLayer){
-
-                selectImage = $scope.component.layer.selectImage;
-
             } else if ($scope.component.object.type == Type.MySubLayer) {
                 selectImage = $scope.component.subLayer.selectImage;
                 if (selectImage == '/public/images/blank.png') {
@@ -1294,6 +1290,20 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             ProjectService.ChangeAttributeBackgroundImage(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage', oldOperate);
             })
+        }
+
+        function downloadFile(imgSrc){
+            if(imgSrc==''){
+                toastr.warning('未使用资源');
+                return;
+            }
+            var img = ResourceService.getResourceByUrl(imgSrc);
+            if(img!=null){
+                ResourceService.downloadFile(img,$scope.project.projectId);
+            }else{
+                toastr.warning('图片未找到');
+            }
+
         }
 
         function enterInterval(e) {
@@ -2733,11 +2743,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         function enterBindBit(e) {
             if (e.keyCode == 13) {
                 if ($scope.component.object.level.info.bindBit == initObject.level.info.bindBit) {
-                    return;
-                }
-                if(ProjectService.CheckBindBit($scope.component.object.level)){
-                    toastr.warning('bit重复');
-                    restore();
                     return;
                 }
                 if ($scope.component.object.level.info.bindBit < 0 || $scope.component.object.level.info.bindBit > 31) {

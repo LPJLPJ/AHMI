@@ -286,14 +286,14 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         };
 
         //快捷添加定时器
-        $scope.shortcutTimer = $scope.timerTags?$scope.timerTags[0]:'';
-        $scope.shortcutAddTimer = function (){
+        $scope.shortcutTimer = $scope.timerTags==''?'':$scope.timerTags[0];
+          $scope.shortcutAddTimer = function (){
             if($scope.action.trigger==''){
                 toastr.error('未选择触发方式！');
                 return;
             }
             if($scope.shortcutTimer==''){
-                toastr.error('未选择定时器！');
+                toastr.error('未添加定时器！');
                 return;
             }
             var defaultTimers=[
@@ -319,17 +319,6 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
 
         //保存
         $scope.save = function (th) {
-            //add by tang
-            // var cmd=th.action.commands;
-            // for(var i=0;i<cmd.length;i++){
-            //     var symbol=cmd[i][0].symbol;
-            //     var tag=cmd[i][1].tag||cmd[i][1].value;
-            //     var val=cmd[i][2].tag||cmd[i][2].value;
-            //     if(symbol===""){
-            //         alert("禁止使用空指令");
-            //         return;
-            //     }
-            // }
 
             if(!validateCmds($scope.action.commands,tags)){
                 toastr.error('指令有误，请根据提示检查');
@@ -439,7 +428,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 DEL_STR_FROM_TAIL:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
                 DEL_STR_FROM_HEAD:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
                 GET_STR_LEN:"操作数1必须是变量，且类型为'数字'型,操作数2必须是变量，且类型为'字符串'型",
-                EMPTY:"操作符不能为空"
+                EMPTY:"操作符不能为空",
+                NOT_NUMBER:"操作数2的值必须为数字类型"
             };
             var getTagValueType = function(tagName){
                 for(var i=0,il=tags.length;i<il;i++){
@@ -455,6 +445,14 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 if(cmd[0].name===""){
                     validateArr[index].pass = false;
                     validateArr[index].tooltip = errTooltip['EMPTY'];
+                    pass = false;
+                    return;
+                }
+                var value = Number(cmd[2].value);
+                var reg =/^(\-|\+)?\d+(\.\d+)?$/;
+                if(value!=''&&!reg.test(value)){
+                    validateArr[index].pass = false;
+                    validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
                     pass = false;
                     return;
                 }

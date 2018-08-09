@@ -89,6 +89,12 @@
     width: 40px;
 }
 
+.dengPage-attrbute-container .my-attr-title .bgiDownload{
+    float: right;
+    font-size: 15px;
+    cursor: pointer
+}
+
 .dengPage-attrbute-container .my-attr-item .dengPage-color-input{
     height: 28px;
     text-align: center;

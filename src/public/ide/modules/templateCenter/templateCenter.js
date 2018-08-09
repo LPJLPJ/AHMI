@@ -99,7 +99,6 @@ $(function () {
             type:'get',
             url:'/templates/user/ids',
             success:function (data) {
-                console.log(data)
                 data = JSON.parse(data)||[]
                 cb && cb(data)
 
@@ -120,7 +119,6 @@ $(function () {
             type:'get',
             url:templateListUrl,
             success:function (data) {
-                console.log(data)
                 data = JSON.parse(data)||[]
                 renderTemplateList(data)
             },
@@ -155,7 +153,7 @@ $(function () {
                 templateId:id
             },
             success:function (data) {
-                console.log(data)
+                
                 deleteFromSet(id,userTemplateIds)
                 cb && cb()
             },error:function (err) {

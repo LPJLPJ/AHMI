@@ -823,8 +823,8 @@ $(function(){
                     return false;
                 }
                 //是否含有非法字符
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—]/)){
-                    toastr.error('名称和作者只能包含：汉字、英文、数字、下划线_、英文破折号-、中文破折号—');
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—|.|(|)]/)){
+                    toastr.error('名称和作者只能包含：汉字、英文、数字、下划线_、英文破折号-、中文破折号—、英文()、小数点.');
                     return false;
                 }
             }

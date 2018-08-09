@@ -805,3 +805,8 @@ a,a:hover{
 .pixelratio-input-wrapper{
     display:inline-block;
 }
+
+.my-object-label .markLogo{
+    font-size: 16px;
+    font-weight: 900;
+}

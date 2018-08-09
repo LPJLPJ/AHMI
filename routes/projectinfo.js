@@ -1449,6 +1449,40 @@ projectRoute.getUserType = function (req, res) {
     }
 };
 
+//下载资源
+projectRoute.downloadFile = function (req,res) {
+    var data = req.params.id;
+    if(data!=''){
+        data = JSON.parse(data);
+        var projectId = data.projectId;
+        var fileId = data.fileId;
+        var fileOldName = data.fileName;
+
+        if(projectId&&fileId){
+            var fileUrl = path.join(__dirname,'../project',String(projectId),'resources',String(fileId));
+
+            var formatName = fileId.substring(fileId.lastIndexOf('.'),fileId.length);
+            var fileName = fileId.substring(0,fileId.lastIndexOf('.'));
+            //文件名+(原始名)+格式名
+            var newFile = fileName+'('+fileOldName+')'+formatName;
+
+            res.download(fileUrl,newFile, function (err) {
+                if (err){
+                    errHandler(res,500,err);
+                }else{
+
+                }
+            })
+        }else{
+            errHandler(res,500,'fileId error')
+        }
+    }else{
+        errHandler(res,500,'fileId error')
+    }
+
+
+};
+
 
 //分类操作 add by tang
 projectRoute.createFolder = function (req, res) {
