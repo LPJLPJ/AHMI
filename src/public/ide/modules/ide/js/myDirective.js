@@ -1,14 +1,15 @@
-//自定义指令 create in 2018/4/4 by LH
+// 自定义指令
 
 
 
-
-//指令：含有标签和启用寄存器筛选的变量选择
-//参数：bind和actionFunction
-//bind：含有tagName属性的对象，与selectedTag双向绑定
-//actionFunction：当selectedTag中的tagName发上变化时要执行的父作用域里的函数
-//示例：<tag-select bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
-//create in 2018/4/4 by LH
+/**
+ * 指令：含有标签和启用寄存器筛选的变量选择
+ * 参数：bind和actionFunction
+ * bind：含有tagName属性的对象，与selectedTag双向绑定
+ * actionFunction：当selectedTag中的tagName发上变化时要执行的父作用域里的函数
+ * 示例：<tag-select bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
+ * create in 2018/4/4 by LH
+ */
 ide.directive("tagSelect", function() {
     return {
         restrict: 'E',
@@ -18,9 +19,12 @@ ide.directive("tagSelect", function() {
             selectedTag:"=?bind",
             action:"&?actionFunction"
         }
-};
+    };
 });
 
+/**
+ * tag管理控制器
+ */
 ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope, TagService,$timeout) {
     $scope.component = {
         allCustomTags: null,
@@ -134,3 +138,34 @@ ide.controller('TagSelect', ['$scope', 'TagService','$timeout', function ($scope
         $scope.selectedTag.tagName='';
     }
 }]);
+
+/**
+ * switch开关指令-组件
+ * 内部status与外部数据相绑定,status 有两种状态 on  off
+ */
+ide.directive('mySwitchButton', function () {
+    return {
+        restrict: "EA",
+        template: "<div id='btn' class='switch-button switch-button-close' ng-click='clickHandler()'><span class='switch-flag'></span></div>",
+        scope: {
+            insideStatus: '=status',
+        },
+        replace: true,
+        link: function ($scope, $element) {
+            function init() {
+                ($scope.insideStatus === 'on') ? $element.removeClass('switch-button-close') : $element.addClass('switch-button-close')
+            }
+
+            init();
+            $scope.clickHandler = function () {
+                if ($scope.insideStatus === 'on') {
+                    $scope.insideStatus = 'off';
+                    $element.addClass('switch-button-close')
+                } else if ($scope.insideStatus === 'off') {
+                    $scope.insideStatus = 'on';
+                    $element.removeClass('switch-button-close')
+                }
+            };
+        }
+    }
+});

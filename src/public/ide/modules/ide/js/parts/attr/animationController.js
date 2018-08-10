@@ -81,7 +81,7 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
                 animation:true,
                 templateUrl:'animationPanelModal.html',
                 controller:'AnimationInstanceCtrl',
-                size:'middle',
+                size:'lg',
                 resolve:{
                     animation:function(){
                         return targetAnimation;
@@ -109,33 +109,33 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 
 }])
 
-    .controller('AnimationInstanceCtrl',['$scope','$uibModalInstance','ProjectService','animation','animationNames',function($scope,$uibModalInstance,ProjectService,animation,animationNames){
-        $scope.animation=animation;
-        $scope.animationNames=animationNames;
+    .controller('AnimationInstanceCtrl',['$scope', '$uibModalInstance', 'TagService', 'ProjectService', 'animation', 'animationNames',function($scope, $uibModalInstance, TagService, ProjectService, animation, animationNames){
+        $scope.animation = animation;
+        $scope.animationNames = animationNames;
+        $scope.tags = TagService.getAllCustomTags();
         $scope.checkDuration = function (e) {
-            if($scope.animation.duration<0){
+            if ($scope.animation.duration < 0) {
                 toastr.error('持续时间必须大于0s');
-                $scope.animation.duration=0;
-            }else if($scope.animation.duration>5000){
+                $scope.animation.duration = 0;
+            } else if ($scope.animation.duration > 5000) {
                 toastr.error('持续时间不能大于5s');
-                $scope.animation.duration=5000;
+                $scope.animation.duration = 5000;
             }
         };
         $scope.confirm = function (th) {
-            //add by tang
             var scaleX=$scope.animation.animationAttrs.scale.srcScale.x,scaleY=$scope.animation.animationAttrs.scale.srcScale.y;
             if(scaleX<0||scaleY<0){
                 alert("缩放倍率禁止使用负数");
                 return;
             }
-
-            if(th.animation.newAnimation===false){
-                if (th.animation.title===restoreValue){
+            fixData($scope.animation, $scope.switchButtons);
+            if (th.animation.newAnimation === false) {
+                if (th.animation.title === restoreValue) {
                     $uibModalInstance.close($scope.animation);
                     return;
                 }
             }
-            if(validation&&duplicate(th)){
+            if (validation && duplicate(th)) {
                 $uibModalInstance.close($scope.animation);
             }
 
@@ -145,39 +145,39 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             $uibModalInstance.dismiss();
         };
 
-        var restoreValue=$scope.animation.title;
-        var validation=true;
+        var restoreValue = $scope.animation.title;
+        var validation = true;
         //保存旧值
-        $scope.store=function(th){
-            restoreValue=th.animation.title;
-
+        $scope.store = function (th) {
+            restoreValue = th.animation.title;
         };
 
         //恢复旧值
         $scope.restore = function (th) {
-            th.animation.title=restoreValue;
+            th.animation.title = restoreValue;
         };
 
         //验证新值
-        $scope.enterName=function(th){
+        $scope.enterName = function (th) {
             //判断是否和初始一样
-            if (th.animation.title===restoreValue){
+            if (th.animation.title === restoreValue) {
                 return;
             }
             //输入有效性检测
-            validation=ProjectService.inputValidate(th.animation.title);
-            if(!validation||!duplicate(th)){
+            validation = ProjectService.inputValidate(th.animation.title);
+            if (!validation || !duplicate(th)) {
                 $scope.restore(th);
                 return;
             }
             toastr.info('修改成功');
-            restoreValue=th.animation.title;
+            restoreValue = th.animation.title;
         };
+
         //验证重名
-        function duplicate(th){
-            var tempArray=$scope.animationNames;
-            for(var i=0;i<tempArray.length;i++){
-                if(th.animation.title===tempArray[i]){
+        function duplicate(th) {
+            var tempArray = $scope.animationNames;
+            for (var i = 0; i < tempArray.length; i++) {
+                if (th.animation.title === tempArray[i]) {
                     toastr.info('重复的动画名');
                     return false;
                 }
@@ -186,10 +186,64 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
         }
 
         //验证enter键
-        $scope.enterPress=function(e,th){
-            if (e.keyCode==13){
+        $scope.enterPress = function (e, th) {
+            if (e.keyCode == 13) {
                 $scope.enterName(th);
             }
         };
+
+
+        //edit by lx
+        var translate = animation.animationAttrs.translate;
+        var scale = animation.animationAttrs.scale;
+
+        //switch button 的状态，共八个开关，每个开关两种状态
+        $scope.switchButtons = {
+            srcPos: {
+                x: (translate.srcPos.x.tag !== '') ? 'on' : 'off',
+                y: (translate.srcPos.y.tag !== '') ? 'on' : 'off'
+            },
+            dstPos: {
+                x: (translate.dstPos.x.tag !== '') ? 'on' : 'off',
+                y: (translate.dstPos.y.tag !== '') ? 'on' : 'off'
+            },
+            srcScale: {
+                x: (scale.srcScale.x.tag !== '') ? 'on' : 'off',
+                y: (scale.srcScale.y.tag !== '') ? 'on' : 'off',
+            },
+            dstScale: {
+                x: (scale.dstScale.x.tag !== '') ? 'on' : 'off',
+                y: (scale.dstScale.y.tag !== '') ? 'on' : 'off',
+            }
+        };
+
+        $scope.timingFuns = ['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'];
+
+        //修正数据，将为绑定tag的属性置空,将绑定了tag的属性的value置0
+        function fixData(animation, switchButtons) {
+            var animationAttrs = animation.animationAttrs;
+            var translate = animationAttrs.translate;
+            var scale = animationAttrs.scale;
+            for (var key in switchButtons) {
+                switch (key) {
+                    case 'srcPos':
+                        (switchButtons[key].x === 'on') ? (translate[key].x.value = 0) : (translate[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (translate[key].y.value = 0) : (translate[key].y.tag = "");
+                        break;
+                    case 'dstPos':
+                        (switchButtons[key].x === 'on') ? (translate[key].x.value = 0) : (translate[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (translate[key].y.value = 0) : (translate[key].y.tag = "");
+                        break;
+                    case 'srcScale':
+                        (switchButtons[key].x === 'on') ? (scale[key].x.value = 1) : (scale[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (scale[key].y.value = 1) : (scale[key].y.tag = "");
+                        break;
+                    case 'dstScale':
+                        (switchButtons[key].x === 'on') ? (scale[key].x.value = 1) : (scale[key].x.tag = "");
+                        (switchButtons[key].y === 'on') ? (scale[key].y.value = 1) : (scale[key].y.tag = "");
+                        break;
+                }
+            }
+        }
 
 }]);

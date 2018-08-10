@@ -2,32 +2,57 @@
  * Created by lixiang on 2016/10/19.
  */
 ideServices.service('AnimationService',['ProjectService','Type',function(ProjectService,Type){
-    function Animation(title,id,srcX,srcY,srcScaleX,srcScaleY,xTranslate,yTranslate,xScale,yScale,duration){
-        this.title=title;
-        this.id=id;
-        this.animationAttrs={
-            translate:{
-                srcPos:{
-                    x:srcX,
-                    y:srcY
+    function Animation(title, id, srcX, srcY, srcScaleX, srcScaleY, dstX, dstY, dstXScale, dstYScale, duration) {
+        this.title = title;
+        this.id = id;
+        this.animationAttrs = {
+            translate: {
+                srcPos: {
+                    x: {
+                        value: srcX,
+                        tag: ''
+                    },
+                    y: {
+                        value: srcY,
+                        tag: ''
+                    }
                 },
-                dstPos:{
-                    x:xTranslate,
-                    y:yTranslate
+                dstPos: {
+                    x: {
+                        value: dstX,
+                        tag: ''
+                    },
+                    y: {
+                        value: dstY,
+                        tag: ''
+                    }
                 }
             },
-            scale:{
-                srcScale:{
-                    x:srcScaleX,
-                    y:srcScaleY
+            scale: {
+                srcScale: {
+                    x: {
+                        value: srcScaleX,
+                        tag: ''
+                    },
+                    y: {
+                        value: srcScaleY,
+                        tag: ''
+                    }
                 },
-                dstScale:{
-                    x:xScale,
-                    y:yScale
+                dstScale: {
+                    x: {
+                        value: dstXScale,
+                        tag: ''
+                    },
+                    y: {
+                        value: dstYScale,
+                        tag: ''
+                    }
                 }
             }
         };
-        this.duration=duration;
+        this.duration = duration;
+        this.timingFun = '';
     }
 
     function Transition(name,show,duration){
@@ -65,8 +90,8 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
         cb&&cb();
     };
 
-    this.getNewAnimation=function(){
-        return _.cloneDeep(tempAnimation);
+    this.getNewAnimation = function () {
+        return new Animation('动画', null, 0, 0, 1, 1, 0, 0, 1, 1, 1000);
     };
 
     this.updateAnimationByIndex=function(animation,index,cb){
@@ -87,14 +112,14 @@ ideServices.service('AnimationService',['ProjectService','Type',function(Project
             sCB&&sCB();
             return true;
         }
-    }
+    };
 
     this.getAllTransititon=function(){
         return _.cloneDeep(transition);
-    }
+    };
 
-    this.getDefaultTransition=function(){
-        return noTransition;
-    }
+    this.getDefaultTransition = function () {
+        return new Transition('NO_TRANSITION', '无动画', 0);
+    };
 
 }]);
