@@ -968,7 +968,6 @@ module.exports = React.createClass({
         }
     },
     paint: function () {
-        // console.log('painting')
         //timer for fps
         var shouldTestFPS;
         if (this.shouldTestFPS == undefined) {
@@ -989,7 +988,7 @@ module.exports = React.createClass({
         var ctx = canvas.getContext('2d');
         if (this.currentDrawedProject) {
             offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-            var project = _.cloneDeep(this.currentDrawedProject);
+            var project = this.currentDrawedProject;    
 
             var page = project.pageList[(project&&project.curPageIdx)||0];
             if (page){
