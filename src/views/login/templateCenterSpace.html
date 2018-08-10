@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>IDE 管理</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
+
+    <!-- Custom styles for this template -->
+    <!-- <link href="/public/login/assets/css/style.css" rel="stylesheet"/> -->
+    <link rel="stylesheet" href="/public/ide/modules/templateCenter/templateCenter.css" />
+    <link href="../../public/login/assets/css/manageSpace2.css" rel="stylesheet">
+
+    
+
+    
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div header-main-logo>
+                <a class="navbar-brand" href="#">IDE管理系统</a>
+            </div>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">你好 : <%=userName%></a></li>
+                <li><a href="/">主页</a></li>
+                <li><a href="/user/logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li><a href="#">选项 <span class="sr-only">(current)</span></a></li>
+                <li><a href="/admin/manage/space">用户管理</a></li>
+                <li><a href="/admin/manage/releaseVersion">发布版本</a></li>
+                <li class="active"><a href="#">管理模板</a></li>
+                <!--<li><a href="#">流量统计</a></li>-->
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                <div class="content">
+                        <div class="row template-tools-wrapper">
+                            <div class="template-tools-filters-wrapper">
+                                <button class="btn btn-default btn-sm template-tools-filter template-tools-filter-new">最新</button>
+                                <button class="btn btn-default btn-sm template-tools-filter template-tools-filter-populate">最热</button>
+                            </div>
+                            <div class="template-tools-search-wrapper">
+                                <input class="template-tools-search form-control" placeholder="search" />
+                            </div>
+                            <div class="template-tools-delete-wrapper">
+                                <button class="btn btn-default btn-sm template-tools-delete" disabled>删除模板</button>
+                            </div>
+                        </div>
+                        <div class="templates-wrapper row">
+                    
+                        </div>
+                    </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">发布更新</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+              <label for="message-text" class="control-label">文件:</label>
+              <div class="row">
+                  <div class="col-md-offset-1 col-md-2">
+                      <label class="checkbox-inline">
+                          <input type="checkbox" id="checkboxPublic" value="publicFolder">public
+                      </label>
+                  </div>
+                  <div class="col-md-2">
+                      <label class="checkbox-inline">
+                          <input type="checkbox" id="checkboxViews" value="viewsFolder">views
+                      </label>
+                  </div>
+              </div>
+          </div>
+          <div class="form-group">
+              <label for="message-text" class="control-label">说明:</label>
+              <textarea class="form-control" id="message-text"></textarea>
+          </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="confirmReleaseBtn">确定</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="../../public/ide/lib/toastr/toastr.min.js"></script>
+<script src="../../public/login/assets/js/ejs_production.js"></script>
+
+
+<script src="/public/ide/modules/templateCenter/templateCenter.js"></script>
+<script src="/public/ide/modules/templateCenter/templateCenterDeleteTemplate.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,906 @@
+/*my-attr-item 最小模块 主要对属性中的span input 进行修改*/
+.dengPage-attrbute-container{
+    background-color: rgb(247,247,247);
+
+}
+
+.dengPage-attrbute-container .my-attr-item span{
+     margin: 0px 0%;
+     width: 80px;
+     font-size: 12px;
+}
+.dengPage-attrbute-container .my-attr-item input{
+    width: 100%;
+    height: 28px;
+    font-size: 12px;
+}
+.dengPage-attrbute-container .my-attr-item .short-input {
+    width: 90%;
+    float: left;
+}
+
+.dengPage-attrbute-container .my-attr-item .short-select{
+    width: 90%;
+    float: left;
+    margin-left: 0!important;
+}
+
+.dengPage-attrbute-container .item-left{
+
+}
+.dengPage-attrbute-container .my-attr-item select{
+    width: 100%;
+    height: 28px;
+    font-size: 12px;
+    margin-left: 10px;
+}
+.dengPage-attrbute-container .my-attr-item button{
+     width: 100%;
+     height: 28px;
+     font-size: 12px;
+ }
+/* tex-container  修改 属性 中的纹理模块*/
+.tex-container .my-attr-title{
+    margin: 0px 0px;
+    width: 60px;
+    font-size: 12px;
+}
+.tex-container ul{
+    list-style: none;
+    background-color: white;
+    padding-left: 0;
+}
+.tex-container li{
+    background-color: white;
+    border: 1px solid;
+    border-color: lightgrey;
+
+    font-size: 14px;
+    min-height: 25px;
+    padding-left: 10px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+
+    /*edit by lixang*/
+    border-radius: 4px;
+}
+.tex-container li div{
+    width: 60%;
+    font-size: 12px;
+    padding:0px 5px;
+    display: inline-block;
+}
+.tex-container li span{
+    font-size: 15px;
+    opacity: .5;
+    float: right;
+    margin-right: 7%;
+}
+.tex-container li span:hover{
+    opacity: 1;
+    cursor: default;
+}
+
+.dengPage-attrbute-container .my-attr-item .dengPage-title-input{
+    text-align: left;
+}
+
+.dengPage-attrbute-container .my-attr-title{
+    width: 40px;
+}
+
+.dengPage-attrbute-container .my-attr-title .bgiDownload{
+    float: right;
+    font-size: 15px;
+    cursor: pointer
+}
+
+.dengPage-attrbute-container .my-attr-item .dengPage-color-input{
+    height: 28px;
+    text-align: center;
+}
+
+.dengPage-attrbute-container .my-attr-item .dengPage-input{
+    width: calc( 100% - 0px);
+    height: 28px;
+}
+
+.dengPage-attrbute-container .my-attr-item .deng-bgTags span{
+    text-align: center;
+}
+.dengPage-attrbute-container .my-attr-item .deng-bgTags select{
+    height: 28px;
+    display: inline;
+    width: calc(100% - 45px);
+}
+
+.dengPage-attrbute-container .my-attr-number-input{
+    width: calc(100% - 40px);
+
+}
+
+
+
+.dengPage-attrbute-container .dengPage-addAction{
+    margin-left: 0px;
+    height: 28px;
+    font-size: 12px;
+    float: right;
+}
+
+.dengPage-attrbute-container .glyphicon{
+    display: block;
+    width: 15px;
+    top: -12px;
+}
+.dengPage-Action-Title{
+    margin-left: 20px;
+    font-size: 12px;
+    position: relative;
+    top: 4px;
+}
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist{
+    border: 0px solid;
+    border-color: lightgrey;
+    background-color: white;
+    max-height: 180px;
+    overflow: auto;
+    list-style: none;
+    padding-left: 0px;
+}
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li{
+    border: 1px solid;
+    border-color: lightgrey;
+    /*添加了圆角 lixiang*/
+    border-radius: 4px;
+
+    min-height: 25px;
+    padding-left: 10px;
+    padding-top: 3px;
+    padding-bottom: 0px;
+}
+
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li:hover{
+    background-color:#e0e0e0;
+}
+
+/*改用垃圾箱图片，并显示小手 lixiang*/
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li i{
+    background-color:transparent;
+    padding:0 5px;
+    float: right;
+    margin-right: 10px;
+    width: 28px;
+    opacity: .5;
+    cursor: pointer;
+}
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 125px;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li img:hover{
+    opacity: 1;
+}
+.dengModel-body .modelPart{
+    margin-bottom: 10px;
+}
+
+.dengModel-body .addTimerWrap{
+    padding: 10px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+}
+
+.dengModel-body .addTimerWrap button{
+    margin: 0 auto;
+}
+
+.dengModel-body .modal-title input{
+    height: 32px;
+    font-size: 12px;
+}
+
+.dengModel-body .modal-title span{
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.dengModel-body .modal-title .dengModel-trigger{
+    width: 125px;
+}
+
+.dengModel-body .projectScale .control-label{
+    vertical-align: -2px;
+}
+
+.dengModel-body .projectScale input{
+    outline: none;
+    vertical-align: middle;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.dengModel-body .dengModal-table span{
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.dengModel-body .dengModal-table td{
+    padding-left: 0;
+    padding-right: 16px;
+
+}
+
+.dengModel-body .dengModal-table tbody>tr>:nth-child(1){
+    width: 15%;
+}
+.dengModel-body .dengModal-table tbody>tr>:nth-child(2){
+    width: 30%;
+}
+.dengModel-body .dengModal-table tbody>tr>:nth-child(3){
+    width: 55%;
+    padding-right: 0px;
+}
+
+.dengModel-body .dengModal-table input{
+    font-size: 16px;
+}
+
+.dengModel-body .dengModal-table td select{
+    width: 100%;
+}
+
+
+.dengModel-body .dengModal-table-display{
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 0px;
+}
+.dengModel-body .add-option{
+    margin-top: 20px;
+}
+.dengModel-body .dengModal-table-display table{
+    margin-left: 10%;
+    margin-bottom: 0px;
+    width: 80%;
+}
+
+.dengModel-body .dengModal-table-display tr td{
+    padding-top: 6px;
+    padding-bottom: 5px;
+    width: 10%;
+    font-size: 14px;
+}
+.dengModel-body .dengModal-table-display tr>:nth-child(n){
+    padding-top: 6px;
+    padding-bottom: 5px;
+    width: 10%;
+    font-size: 14px;
+}
+
+.dengModel-body .dengModal-table-display tr>:nth-child(3) {
+    width: 25%;
+
+}
+.dengModel-body .dengModal-table-display tr>:nth-child(3) p{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 125px;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.dengModel-body .dengModal-table-display tr>:nth-child(4) {
+    width: 45%;
+}
+.dengModel-body .dengModal-table-display tr>:nth-child(4) p{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 325px;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.dengModel-body .dengModal-table-display tr>:nth-child(5) img{
+    background-color: transparent;
+    width: 20px;
+    opacity: .5;
+}
+.dengModel-body .dengModal-table-display tr>:nth-child(5) img:hover{
+    opacity: 1;
+}
+
+.deng-pannel-item{
+    background-color: rgb(247,247,247);
+}
+
+.deng-pannel-item span{
+    font-size: 12px;
+}
+.deng-pannel-item .dropdown button{
+    margin-bottom: 10px;
+    width: 100%;
+    height: 28px;
+    font-size: 14px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.deng-pannel-item .dropdown ul{
+    margin: 0;
+    padding: 0;
+}
+
+.deng-pannel-item .TimeCtrl input{
+    width: 100%;
+    height: 28px;
+    text-align: right;
+    padding: 0;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.deng-attr-item .tag-title-group{
+    margin-bottom: 0;
+}
+.deng-attr-item .tag-title-group input{
+    width: 100%;
+    height: 28px;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.deng-attr-item .input-group-btn{
+    padding-bottom: 10px;
+}
+.deng-attr-item .input-group-btn div{
+    top:0;
+    height: 28px;
+    width: 40px;
+    padding:0;
+}
+
+.deng-attr-item .input-group-btn button{
+    height: 28px;
+    width: 40px;
+    padding:0;
+    margin-left: 40px;
+}
+.deng-attr-item .input-group-btn .myCollapse{
+    height: 10px;
+    margin-top: -20px;
+}
+
+.deng-pannel-item .deng-tags button{
+    height: 28px;
+    font-size: 12px;
+    float: right;
+}
+.deng-pannel-item .deng-tags .addTag-container{
+    padding-bottom: 15px;
+}
+
+.deng-attr-item .listTable-container{
+    /*max-height: 280px;*/
+    /*overflow-y: auto;*/
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+.deng-attr-item .listTable{
+    width: 100%;
+    margin-bottom: 0;
+    font-size: 12px;
+}
+.deng-attr-item .listTable >tbody>tr{
+    /*border: 1px solid;*/
+    /*border-color: rgb(225,225,225);*/
+    /*border-top: 0px*/
+}
+
+/*edit by lixiang*/
+.deng-attr-item .listTable >tbody>tr:first-child{
+    background-color: #eee;
+}
+.deng-attr-item .listTable >tbody>tr:first-child span{
+    padding: 2px;
+    cursor: pointer;
+}
+.deng-attr-item .listTable >tbody>tr:first-child >td{
+    border-top: 0px;
+}
+
+
+.deng-attr-item .listTable >tbody>:first-child{
+    /*border: 1px solid;*/
+    /*border-color: rgb(225,225,225);*/
+}
+
+
+.deng-attr-item .listTable >tbody>tr:not(:first-child):hover{
+    background-color: #e0e0e0;
+}
+.deng-attr-item .listTable td{
+    vertical-align:middle;
+    padding: 4px;
+}
+.deng-attr-item .listTable td:nth-child(2) {
+    /*background: #cccc99;*/
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
+}
+.deng-attr-item .listTable td:not(:first-child) {
+    /*background: #cccc99;*/
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
+    text-align: center;
+}
+.deng-attr-item .listTable tr .tagName{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 125px;
+    width: 100px;
+    white-space: nowrap;
+}
+.deng-attr-item .listTable tr .tagReg{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 30px;
+    width: 30px;
+    /*white-space: nowrap;*/
+}
+.deng-attr-item .listTable tr .icon-close {
+    width:20px;
+    float: right;
+    opacity: .5;
+}
+.deng-attr-item .listTable tr .icon-close:hover{
+    opacity: 1;
+}
+
+.deng-attr-item .listTable td button{
+    padding: 0;
+    width: 20px;
+    font-size: 10px;
+    border: 0;
+    background-color: transparent;
+}
+.deng-attr-item .myRegister{
+    padding-top: 5px;
+}
+.deng-attr-item .myRegister label{
+    font-size: 12px;
+}
+.deng-attr-item .deng-register{
+    border: 1px solid;
+    padding: 5px 5px;
+}
+
+.deng-attr-item .deng-register .form-group{
+    margin-bottom: 5px;
+}
+
+.deng-attr-item .deng-register .form-group span{
+    margin-right: 8px;
+}
+
+.deng-attr-item .deng-register .form-group input{
+    margin-bottom: 0;
+    height: 28px;
+    width: calc(100% - 40px);
+    display: inline;
+}
+
+
+.my-img-table thead tr td{
+    font-size: 12px;
+    padding: 4px 8px;
+}
+
+.my-img-table thead tr>:nth-child(2){
+    min-width: 120px;
+}
+
+.my-img-table .img-info{
+    background-color: white;
+}
+.my-img-table .img-info:hover{
+    background-color: #e0e0e0;
+}
+.my-img-table .img-info td{
+    padding: 8px 8px;
+}
+.my-img-table tbody tr>:nth-child(1){
+    padding-left: 12px;
+    padding-right: 4px;
+}
+.my-img-table tbody tr>:nth-child(2) span{
+    color:lightslategrey;
+}
+
+.my-img-table .img-info .img-name{
+    background: transparent;
+}
+.my-img-table .img-info .img-option{
+    opacity: .8;
+    cursor: default;
+}
+.my-img-table .img-info .img-option:hover{
+    color: #0f0f0f;
+}
+
+.deng-tagModel .tag-modal-label{
+    font-size: 13px;
+    width: 100%;
+    padding-left: 0;
+}
+.deng-tagModel .col-sm-8{
+    margin-bottom: 10px;
+    height:28px;
+    font-size: 12px;
+}
+.deng-tagModel .radio{
+    font-size: 12px;
+}
+
+.deng-tagModel .register-activate-box{
+    margin-top: 0px;
+    margin-bottom:10px;
+    height: 28px;
+}
+.deng-bg-table {
+    max-height: 534px;
+    overflow: auto;
+}
+.deng-bg-table thead tr td{
+    font-size: 12px;
+}
+.deng-bg-table tr td {
+    padding: 8px 8px;
+}
+.deng-bg-table tr td input{
+    height: 28px;
+    font-size: 14px;
+}
+.deng-bg-table tr td select{
+    height: 28px;
+}
+
+
+.deng-bg-table tr>:nth-child(1){
+    width: 5%;
+}
+.deng-bg-table tr>:nth-child(2){
+    width: 18%;
+}
+.deng-bg-table tr>:nth-child(3){
+    width: 18%;
+}
+.deng-bg-table tr>:nth-child(4){
+    width: 18%;
+}
+.deng-bg-table tr>:nth-child(5){
+    width: 18%;
+}
+.deng-bg-table tr>:nth-child(6) span{
+    font-size: 30px;
+    opacity: .5;
+}
+.deng-bg-table tr>:nth-child(6) span:hover{
+    opacity: 1;
+    cursor: default;
+}
+
+.my-bottom-panel .my-layers-panel{
+    /*height: 386px;*/
+}
+
+/*last edtor: liuhuan 2017/8/17*/
+.my-row-left{
+    text-align: left;
+
+}
+.my-but-right{
+    float: right;
+}
+.my-but-left{
+    float: left;
+}
+.texRow:hover{ background-color:#f5f5f5;}
+
+.my-tagSelect-main-span{
+    margin-top:20px !important;
+}
+
+.my-tagSelect-span-left{
+    float: left;
+    width: auto !important;
+}
+
+.my-tagSelect-span-right{
+    float: right;
+    width: auto !important;
+    margin-right: 10px !important;
+}
+
+.my-tagSelect-input{
+    float:right;
+    height: 16px !important;
+    width: 16px !important;
+    margin: 6px 0 !important;
+}
+
+.my-tagSelect-select{
+    width: 50% !important;
+    float: left !important;
+}
+
+.my-tagSelect-main-div{
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding:10px;
+    width: 100%;
+    /*min-width: 250px;*/
+    vertical-align: middle
+}
+
+.my-tagSelect-div{
+    vertical-align: middle;
+    margin:0 0 40px 0;
+    padding-right:20px;
+    line-height: 28px
+}
+
+.my-tagSelect-tagSelect{
+    margin:0!important;
+    width: 100%!important;
+}
+
+.my-action-label{
+    float: left;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+    line-height: 32px
+}
+
+.my-action-input-width{
+    width: 30%;
+}
+
+.my-action-span{
+    float: left;
+    line-height: 32px;
+}
+.my-action-td{
+    width: 40% !important;
+    padding: 8px 20px !important;
+}
+.my-action-div-main{
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+.my-action-span-width{
+    width: 40px;
+}
+.my-action-tag-select{
+    width: 80%;
+    display: inline-block;
+}
+.my-action-check-box{
+    height: 16px;
+    width: 16px;
+    margin: 8px !important;
+}
+.my-action-input-value{
+    width: 250px;
+    margin: 0;
+    display: inline-block;
+}
+
+.my-tag-tag-calss-div{
+    width: 100%;
+    display: block
+}
+.my-tag-tag-calss-div-pad{
+    padding: 10px 0 20px 0
+}
+.my-tag-tag-calss-select{
+    display: inline-block;
+    width: 60% !important;
+}
+.my-tag-timer{
+    margin-bottom:20px;
+    vertical-align: middle;
+    line-height: 28px;
+}
+.my-tag-timer-main-div{
+    margin: 0 10px 10px 10px;
+    display: inline-block;
+    position: relative;
+    float:right;
+    line-height: 28px;
+}
+.my-tag-timer-div{
+    display: inline-block;
+    height: 28px;
+    border: 1px solid #ccc;
+    width: 28px;
+    text-align: center;
+    background-color: #eee;
+    float: left;
+}
+.my-tag-timer-input{
+    height: 28px !important;
+    margin: 0;
+    text-align: center !important;
+    display: inline-block;
+    width: 20% !important;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    float: left;
+}
+.my-tag-button-import{
+    margin-right: 10px
+}
+.my-tag-add-to-div{
+    max-height: 250px;
+    padding: 20px
+}
+.my-tag-add-to-td{
+    border-top: none !important;
+    padding: 5px !important;
+}
+.my-tag-edit-table{
+    text-align: center;
+    margin: 0
+}
+.my-tag-edit-tr{
+    width: 100%;
+    background-color: #eee
+}
+.my-tag-edit-td{
+    text-align: left;
+    padding-left: 30px !important;
+}
+.my-tag-edit-td-width{
+    width: 60%;
+}
+/*蒙板*/
+.switch-button{
+    margin:0 auto;
+    position: relative;
+    background: #008CEE;
+    width: 38px;
+    height: 20px;
+    cursor: pointer;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+    -webkit-transition:background-color 0.5s ease-in-out 0s;
+    -moz-transition:background-color 0.5s ease-in-out 0s;
+    transition:background-color 0.5s ease-in-out 0s;
+    -webkit-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    -moz-box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+    box-shadow:inset 2px 0 2px 1px rgba(0,0,0,0.1);
+}
+.switch-button .switch-flag{
+    display: block;
+    position: absolute;
+    width:20px;
+    height: 20px;
+    left:18px;
+    background: #fff;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius: 10px;
+    -webkit-transition:left 0.2s ease-in-out 0s;
+    -moz-transition:left 0.2s ease-in-out 0s;
+    transition: left 0.2s ease-in-out 0s;
+    -webkit-box-shadow:1px 0 1px 1px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:1px 0 1px 1px rgba(0,0,0,0.3);
+    box-shadow: 1px 0 1px 1px rgba(0,0,0,0.3);
+}
+.switch-button-close{
+    background:#eee;
+}
+.switch-button-close .switch-flag{
+    left:0px;
+}
+
+
+
+.my-matte{
+    margin-bottom: 10px;
+}
+.my-matte-wrap{
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    vertical-align: middle;
+    margin-top: 5px;
+}
+.my-matte-title{
+    text-align: center;
+    display: inline-block;
+    width: 50px;
+    margin: 0;
+}
+.my-matte-input,.my-matte-color{
+    width: calc(100% - 60px)!important;
+    height: 28px;
+    display: inline!important;
+}
+.my-matte-range{
+    width: calc(100% - 60px)!important;
+    height: 20px;
+    display: inline!important;
+    outline: none;
+    cursor: pointer;
+}
+.my-matte-color{
+    text-align: center;
+    cursor: pointer;
+}
+.my-matte-switch{
+    float: right;
+    margin-right: calc(100% - 120px);
+    line-height: normal;
+    width: 38px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/*批量选择*/
+.batch-select-table thead{
+    background-color: #eeeeee;
+}
+.batch-select-img{
+    width: 40px;
+    height: 40px;
+}
+.batch-select-table tbody tr:hover{
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+.batch-select-wrap{
+    height: 500px!important;
+    overflow-y: scroll;
+}
+.batch-select-table tbody tr td{
+    vertical-align: middle!important;
+}
+.batch-select-table thead tr th,.batch-select-table tbody tr td:not(:nth-of-type(2)){
+    text-align: center;
+}
+.batch-select-table tbody tr td:nth-of-type(2){
+    overflow: hidden!important;
+}
+
+/*拉伸*/
+.pullingWrap{
+    width: 100%;
+}
+
+.pullingWrap input,.customResolutionWrap input{
+    width: 20%!important;
+}
+
+.pullingWrap label,.customResolutionWrap label{
+    line-height: 32px;
+    padding-right: 0;
+}
+
+.layer-preview{
+    float: right;
+    margin-right: 20px;
+}

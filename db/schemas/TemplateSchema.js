@@ -62,10 +62,18 @@ TemplateSchema.statics = {
         }else if(filter === 'populate'){
             flag = flag.sort({'collected':-1})
         }
-        return flag
-            .skip(from)
-            .limit(limit)
-            .exec(cb)
+        if (limit){
+            return flag
+                .skip(from)
+                .limit(limit)
+                .exec(cb)
+        }else{
+            return flag
+                .skip(from)
+                // .limit(limit)
+                .exec(cb)
+        }
+
     },
     fetchUserTemplateInfos:function (ids,cb) {
         return this
@@ -97,6 +105,11 @@ TemplateSchema.statics = {
     deleteById: function (_projectId, cb) {
         return this
             .remove({_id:_projectId})
+            .exec(cb)
+    },
+    deleteByIds:function(_ids,cb){
+        return this
+            .remove({_id:{$in:_ids}})
             .exec(cb)
     },
     incById:function (templateId,cb) {

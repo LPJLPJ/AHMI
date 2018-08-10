@@ -8,6 +8,9 @@ var DownloadRouter = {};
 DownloadRouter.getDownloadPage  = function (req,res) {
     res.render('download/index.html')
 }
+DownloadRouter.getResourcesDownloadPage = function (req, res) {
+    res.render('download/resources.html')
+}
 DownloadRouter.downloadUpdate  = function (req,res) {
 
 }
