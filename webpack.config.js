@@ -14,11 +14,11 @@ module.exports = {
         //login:"./src/js/login.js",
         //personal:"./src/js/personal.js",
         // test:"./src/js/test.js",
-        simulator: path.join(__dirname,'src','js','simulator'),
+        simulator: path.join(__dirname,'simulator','src','js','simulator'),
         // simulator:"../public/ide/modules/ide/js/parts/simulator"
     },
     output: {
-        path: path.join(__dirname,'../src/public/ide/modules/ide/js/parts/simulator/'),
+        path: path.join(__dirname,'src/public/ide/modules/ide/js/parts/simulator/'),
         filename: "[name].bundle.js",
         publicPath: '/'
     },

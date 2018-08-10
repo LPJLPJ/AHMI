@@ -111,16 +111,18 @@ gulp.task('transferAllFiles',function () {
         .pipe(gulp.dest('public/ide/modules/ide/min-js'))
 });
 
+
+var widgetBaseUrl = './src/public/ide/modules/ide/js/'
 gulp.task('transWidgetCommands', function () {
-    var src = gulp.src(baseUrl + 'widgetModel/es6/widgetCommands.js')
-        .pipe(watch(baseUrl + 'widgetModel/es6/widgetCommands.js'))
+    var src = gulp.src(widgetBaseUrl + 'widgetModel/es6/widgetCommands.js')
+        //.pipe(watch(widgetBaseUrl + 'widgetModel/es6/widgetCommands.js'))
         .pipe(babel({
             presets: ['es2015']
         }));
-    if (NODE_ENV !== 'production') {
-        src = src.pipe(lec({eolc: eolc, encoding: 'utf-8'}))
-    }
-    return src.pipe(gulp.dest(baseUrl + 'widgetModel/'))
+    // if (NODE_ENV !== 'production') {
+    //     src = src.pipe(lec({eolc: eolc, encoding: 'utf-8'}))
+    // }
+    return src.pipe(gulp.dest(widgetBaseUrl + 'widgetModel/'))
 });
 
 
