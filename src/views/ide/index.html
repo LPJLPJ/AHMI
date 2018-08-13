@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/project-file.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-bootstrap/ui-bootstrap-csp.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-bootstrap-colorpicker/css/colorpicker.min.css">
+    <link rel="stylesheet" href="../../public/ide/lib/angular-ui-select/select.min.css">
 
 
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
@@ -38,6 +39,8 @@
     <script src="../../public/ide/lib/socket.io/socket.io.slim.js"></script>
     <script src="../../public/ide/lib/Font.min.js"></script>
     <script src="../../public/ide/lib/sxintro/SXIntro.bundle.js"></script>
+    <script src="../../public/ide/lib/angular-ui-select/select.min.js"></script>
+    <script src="../../public/ide/lib/angular-sanitize-1.5.10/angular-sanitize.min.js"></script>
     <!--<script src="../../public/ide/lib/sortable.js"></script>-->
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
@@ -3561,12 +3564,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.translate.srcPos.x.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.srcPos.x=='on'"
-                                            ng-model="animation.animationAttrs.translate.srcPos.x.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.srcPos.x=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.translate.srcPos.x.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.srcPos.x=='on'"
+                                               ng-model="animation.animationAttrs.translate.srcPos.x.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.srcPos.x"></my-switch-button>
@@ -3575,12 +3586,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.translate.dstPos.x.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.dstPos.x=='on'"
-                                            ng-model="animation.animationAttrs.translate.dstPos.x.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.dstPos.x=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.translate.dstPos.x.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.dstPos.x=='on'"
+                                               ng-model="animation.animationAttrs.translate.dstPos.x.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.dstPos.x"></my-switch-button>
@@ -3593,12 +3612,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.translate.srcPos.y.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.srcPos.y=='on'"
-                                            ng-model="animation.animationAttrs.translate.srcPos.y.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.srcPos.y=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.translate.srcPos.y.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.srcPos.y=='on'"
+                                               ng-model="animation.animationAttrs.translate.srcPos.y.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.srcPos.y"></my-switch-button>
@@ -3607,12 +3634,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.translate.dstPos.y.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.dstPos.y=='on'"
-                                            ng-model="animation.animationAttrs.translate.dstPos.y.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.dstPos.y=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.translate.dstPos.y.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.dstPos.y=='on'"
+                                               ng-model="animation.animationAttrs.translate.dstPos.y.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.dstPos.y"></my-switch-button>
@@ -3625,12 +3660,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.scale.srcScale.x.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.srcScale.x=='on'"
-                                            ng-model="animation.animationAttrs.scale.srcScale.x.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.srcScale.x=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.scale.srcScale.x.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.srcScale.x=='on'"
+                                               ng-model="animation.animationAttrs.scale.srcScale.x.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.srcScale.x"></my-switch-button>
@@ -3639,12 +3682,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.scale.dstScale.x.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.dstScale.x=='on'"
-                                            ng-model="animation.animationAttrs.scale.dstScale.x.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.dstScale.x=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.scale.dstScale.x.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.dstScale.x=='on'"
+                                               ng-model="animation.animationAttrs.scale.dstScale.x.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.dstScale.x"></my-switch-button>
@@ -3657,12 +3708,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.scale.srcScale.y.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.srcScale.y=='on'"
-                                            ng-model="animation.animationAttrs.scale.srcScale.y.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.srcScale.y=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.scale.srcScale.y.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.srcScale.y=='on'"
+                                               ng-model="animation.animationAttrs.scale.srcScale.y.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.srcScale.y"></my-switch-button>
@@ -3671,12 +3730,20 @@
                                     <input type="number"
                                            class="form-control"
                                            ng-model="animation.animationAttrs.scale.dstScale.y.value">
-                                    <select class="form-control"
-                                            ng-if="switchButtons.dstScale.y=='on'"
-                                            ng-model="animation.animationAttrs.scale.dstScale.y.tag"
-                                            ng-options="item.name as item.name for item in tags">
-                                        <option value="">--</option>
-                                    </select>
+                                    <!--<select class="form-control"-->
+                                            <!--ng-if="switchButtons.dstScale.y=='on'"-->
+                                            <!--ng-model="animation.animationAttrs.scale.dstScale.y.tag"-->
+                                            <!--ng-options="item.name as item.name for item in tags">-->
+                                        <!--<option value="">&#45;&#45;</option>-->
+                                    <!--</select>-->
+                                    <ui-select ng-show="switchButtons.dstScale.y=='on'"
+                                               ng-model="animation.animationAttrs.scale.dstScale.y.tag"
+                                               theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                            <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
                                 </div>
                                 <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
                                     <my-switch-button status="switchButtons.dstScale.y"></my-switch-button>

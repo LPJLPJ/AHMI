@@ -110,6 +110,55 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
 }])
 
     .controller('AnimationInstanceCtrl',['$scope', '$uibModalInstance', 'TagService', 'ProjectService', 'animation', 'animationNames',function($scope, $uibModalInstance, TagService, ProjectService, animation, animationNames){
+        $scope.country = {};
+        $scope.countries = [ // Taken from https://gist.github.com/unceus/6501985
+            {name: 'Afghanistan', code: 'AF'},
+            {name: 'Åland Islands', code: 'AX'},
+            {name: 'Albania', code: 'AL'},
+            {name: 'Algeria', code: 'DZ'},
+            {name: 'American Samoa', code: 'AS'},
+            {name: 'Andorra', code: 'AD'},
+            {name: 'Angola', code: 'AO'},
+            {name: 'Anguilla', code: 'AI'},
+            {name: 'Antarctica', code: 'AQ'},
+            {name: 'Antigua and Barbuda', code: 'AG'},
+            {name: 'Argentina', code: 'AR'},
+            {name: 'Armenia', code: 'AM'},
+            {name: 'Aruba', code: 'AW'},
+            {name: 'Australia', code: 'AU'},
+            {name: 'Austria', code: 'AT'},
+            {name: 'Azerbaijan', code: 'AZ'},
+            {name: 'Bahamas', code: 'BS'},
+            {name: 'Bahrain', code: 'BH'},
+            {name: 'Bangladesh', code: 'BD'},
+            {name: 'Barbados', code: 'BB'},
+            {name: 'Belarus', code: 'BY'},
+            {name: 'Belgium', code: 'BE'},
+            {name: 'Belize', code: 'BZ'},
+            {name: 'Benin', code: 'BJ'},
+            {name: 'Bermuda', code: 'BM'},
+            {name: 'Bhutan', code: 'BT'},
+            {name: 'Bolivia', code: 'BO'},
+            {name: 'Bosnia and Herzegovina', code: 'BA'},
+            {name: 'Botswana', code: 'BW'},
+            {name: 'Bouvet Island', code: 'BV'},
+            {name: 'Brazil', code: 'BR'},
+            {name: 'British Indian Ocean Territory', code: 'IO'},
+            {name: 'Brunei Darussalam', code: 'BN'},
+            {name: 'Bulgaria', code: 'BG'},
+            {name: 'Burkina Faso', code: 'BF'},
+            {name: 'Burundi', code: 'BI'},
+            {name: 'Cambodia', code: 'KH'},
+            {name: 'Cameroon', code: 'CM'},
+            {name: 'Canada', code: 'CA'},
+            {name: 'Cape Verde', code: 'CV'},
+            {name: 'Cayman Islands', code: 'KY'},
+            {name: 'Central African Republic', code: 'CF'},
+            {name: 'Chad', code: 'TD'},
+            {name: 'Chile', code: 'CL'},
+            {name: 'China', code: 'CN'}
+        ];
+
         $scope.animation = animation;
         $scope.animationNames = animationNames;
         $scope.tags = TagService.getAllCustomTags();
@@ -123,7 +172,8 @@ ide.controller('animationCtl',['$scope','ProjectService','Type','$uibModal','Ani
             }
         };
         $scope.confirm = function (th) {
-            var scaleX=$scope.animation.animationAttrs.scale.srcScale.x,scaleY=$scope.animation.animationAttrs.scale.srcScale.y;
+            var scaleX=$scope.animation.animationAttrs.scale.srcScale.x.value,
+                scaleY=$scope.animation.animationAttrs.scale.srcScale.y.value;
             if(scaleX<0||scaleY<0){
                 alert("缩放倍率禁止使用负数");
                 return;
