@@ -49,6 +49,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         ActionService.setActions(_actions);
         $scope.actions = ActionService.getAllActions();
         $scope.triggers = ActionService.getTriggers(ProjectService.getCurrentSelectObject().level.type);
+        $scope.tags = TagService.getAllCustomTags();
+        $scope.timerTags = TagService.getAllTimerTags();
 
 
         var currentSelectedObject = _.cloneDeep(ProjectService.getCurrentSelectObject().level);
