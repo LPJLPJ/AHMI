@@ -167,7 +167,7 @@ gulp.task('copyJStoMin',function () {
 gulp.task('compressHTML', function() {
     return gulp.src([srcBaseUrl+'**/*.html'],{base:srcBaseUrl})
         // .pipe(minifyejs())
-        .pipe(htmlmin({collapseWhitespace: true,removeComments: true,ignoreCustomFragments: [/{{.*?}}/,/<%.*?%>/]}))
+        .pipe(htmlmin({collapseWhitespace: true,removeComments: false,ignoreCustomFragments: [/{{.*?}}/,/<%.*?%>/]}))
         .pipe(gulp.dest('./'));
 });
 
