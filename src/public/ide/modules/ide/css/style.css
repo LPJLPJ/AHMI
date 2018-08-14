@@ -519,13 +519,13 @@ a,a:hover{
     height:calc(100% - 33px);
 }
 
-.ng-hide:not(.ng-hide-animate) {
-    /* this is just another form of hiding an element */
-    display: block!important;
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-}
+/*.ng-hide:not(.ng-hide-animate) {*/
+    /*!* this is just another form of hiding an element *!*/
+    /*display: block!important;*/
+    /*position: absolute;*/
+    /*top: -9999px;*/
+    /*left: -9999px;*/
+/*}*/
 
 .my-toggle-area{
     height: calc(100% - 30px);

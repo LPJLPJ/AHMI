@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/project-file.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-bootstrap/ui-bootstrap-csp.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-bootstrap-colorpicker/css/colorpicker.min.css">
+    <link rel="stylesheet" href="../../public/ide/lib/angular-ui-select/select.min.css">
 
 
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
@@ -38,6 +39,8 @@
     <script src="../../public/ide/lib/socket.io/socket.io.slim.js"></script>
     <script src="../../public/ide/lib/Font.min.js"></script>
     <script src="../../public/ide/lib/sxintro/SXIntro.bundle.js"></script>
+    <script src="../../public/ide/lib/angular-ui-select/select.min.js"></script>
+    <script src="../../public/ide/lib/angular-sanitize-1.5.10/angular-sanitize.min.js"></script>
     <!--<script src="../../public/ide/lib/sortable.js"></script>-->
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
@@ -3524,54 +3527,287 @@
                         <div class="modal-header">
                             <h3 class="modal-title">动画配置</h3>
                         </div>
-                        <div class="modal-body dengModel-body">
-                            <div class="modal-title form-group modelPart">
-                                <span class="my-attr-title  " >动画名称</span>
-                                <input class="width150px form-control time-input"
-                                       type="text"
-                                       ng-model="animation.title"
-                                       ng-focus="store(this)"
-                                       ng-blur="enterName(this)"
-                                       ng-keypress="enterPress($event,this)"><br>
-                                <span class="my-attr-title" >动画序号</span>
-                                <input class="width150px form-control time-input" type="text" ng-model="animation.id"><br>
-                                <span>动画类型</span>
-                                <table>
-                                    <tr>
-                                        <td><span class="move-and-zoom">平移</span></td><td><span class="move-and-zoom">缩放</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="object-position">起始位置</span></td><td><span class="object-position">起始大小</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="margin-left40px">X:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.srcPos.x"></td>
-                                        <td><span class="margin-left40px">W:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.srcScale.x"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="margin-left40px">Y:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.srcPos.y"></td>
-                                        <td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.srcScale.y"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="object-position">目标位置</span></td><td><span class="object-position">目标大小</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="margin-left40px">X:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.dstPos.x"></td>
-                                        <td><span class="margin-left40px">W:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.x"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><span class="margin-left40px">Y:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.translate.dstPos.y"></td>
-                                        <td><span class="margin-left40px">H:</span><input class="width150px form-control animation-input" type="number" ng-model="animation.animationAttrs.scale.dstScale.y"></td>
-                                    </tr>
-                                </table>
+                        <div class="modal-body lx-modal-body">
+
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">动画名称</div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <input class="form-control"
+                                           type="text"
+                                           ng-model="animation.title"
+                                           ng-focus="store(this)"
+                                           ng-blur="enterName(this)"
+                                           ng-keypress="enterPress($event,this)">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">动画序号</div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <input class="form-control" type="number" ng-model="animation.id">
+                                </div>
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">动画模式</div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <select class="form-control"
+                                            ng-model="advanceMode"
+                                            ng-change="toggleMode()">
+                                        <option value="normal">普通模式</option>
+                                        <option value="advance">高级模式</option>
+                                    </select>
+                                </div>
                             </div>
 
-
-
-
-                            <div class="modal-title form-group modelPart">
-                                <span>持续时间</span>
-                                <input class="width150px form-control time-input" type="number" ng-model="animation.duration" ng-blur="checkDuration()">ms
+                            <div class="row lx-margin-bottom-10">
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">动画类型</div>
                             </div>
+
+                            <div ng-if="advanceMode==='advance'">
+                                <div class="row lx-margin-bottom-10">
+                                    <div class="col-md-offset-1 col-sm-offset-1 col-xs-offset-1 col-md-3 col-sm-3 col-xs-3">起始位置/大小</div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">使用变量</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">终止位置/大小</div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">使用变量</div>
+                                </div>
+                                <!--column 1 pos x-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">X</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.srcPos.x.value">
+                                        <ui-select ng-show="switchButtons.srcPos.x=='on'"
+                                                   ng-model="animation.animationAttrs.translate.srcPos.x.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.srcPos.x"></my-switch-button>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.dstPos.x.value">
+                                        <ui-select ng-show="switchButtons.dstPos.x=='on'"
+                                                   ng-model="animation.animationAttrs.translate.dstPos.x.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.dstPos.x"></my-switch-button>
+                                    </div>
+                                </div>
+                                <!--column 2 pos y-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">Y</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.srcPos.y.value">
+                                        <ui-select class="my-ui-select"
+                                                   ng-show="switchButtons.srcPos.y=='on'"
+                                                   ng-model="animation.animationAttrs.translate.srcPos.y.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.srcPos.y"></my-switch-button>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.dstPos.y.value">
+                                        <ui-select ng-show="switchButtons.dstPos.y=='on'"
+                                                   ng-model="animation.animationAttrs.translate.dstPos.y.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.dstPos.y"></my-switch-button>
+                                    </div>
+                                </div>
+                                <!--column 3 scale x-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">W</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.srcScale.x.value">
+                                        <ui-select ng-show="switchButtons.srcScale.x=='on'"
+                                                   ng-model="animation.animationAttrs.scale.srcScale.x.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.srcScale.x"></my-switch-button>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.dstScale.x.value">
+                                        <ui-select ng-show="switchButtons.dstScale.x=='on'"
+                                                   ng-model="animation.animationAttrs.scale.dstScale.x.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.dstScale.x"></my-switch-button>
+                                    </div>
+                                </div>
+                                <!--column 4 scale y-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">H</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.srcScale.y.value">
+                                        <ui-select ng-show="switchButtons.srcScale.y=='on'"
+                                                   ng-model="animation.animationAttrs.scale.srcScale.y.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.srcScale.y"></my-switch-button>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.dstScale.y.value">
+                                        <ui-select ng-show="switchButtons.dstScale.y=='on'"
+                                                   ng-model="animation.animationAttrs.scale.dstScale.y.tag"
+                                                   theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="tag.name as tag in (tags | filter: $select.search)">
+                                                <span ng-bind-html="tag.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+                                    <div class="col-md-2 col-sm-3 col-xs-3 lx-margin-top-5">
+                                        <my-switch-button status="switchButtons.dstScale.y"></my-switch-button>
+                                    </div>
+                                </div>
+
+
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">持续时间</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.duration">
+                                        <span style="margin-left: 2px;font-weight:100">ms</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">时间曲线</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <select class="form-control"
+                                                ng-model="animation.timingFun"
+                                                ng-options="timingFun for timingFun in timingFuns">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div ng-if="advanceMode==='normal'">
+                                <div class="row lx-margin-bottom-10">
+                                    <div class="col-md-offset-1 col-sm-offset-1 col-xs-offset-1 col-md-3 col-sm-3 col-xs-3">起始位置/大小</div>
+                                    <div class="col-md-offset-2 col-md-3 col-sm-3 col-xs-3">目标位置/大小</div>
+                                </div>
+                                <!--column 1 pos x-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">X</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.srcPos.x">
+                                    </div>
+                                    <div class="col-md-offset-2 col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.dstPos.x">
+                                    </div>
+                                </div>
+                                <!--column 2 pos y-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">Y</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.srcPos.y">
+                                    </div>
+                                    <div class="col-md-offset-2 col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.translate.dstPos.y">
+                                    </div>
+                                </div>
+                                <!--column 3 scale x-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">W</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.srcScale.x">
+                                    </div>
+                                    <div class="col-md-offset-2 col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.dstScale.x">
+                                    </div>
+                                </div>
+                                <!--column 4 scale y-->
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">H</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.srcScale.y">
+                                    </div>
+                                    <div class="col-md-offset-2 col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.animationAttrs.scale.dstScale.y">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">持续时间</div>
+                                    <div class="col-md-3 col-sm-3 col-xs-3">
+                                        <input type="number"
+                                               class="form-control"
+                                               ng-model="animation.duration">
+                                        <span style="margin-left: 2px;font-weight:100">ms</span>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" type="button" ng-click="confirm(this)">保存</button>

@@ -40,8 +40,8 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             if (info.numSystem === undefined) {
                 info.numSystem = '0';
                 info.hexControl = {
-                    markingMode:'0',
-                    transformMode:'0'
+                    markingMode: '0',
+                    transformMode: '0'
                 }
             }
         },
@@ -52,19 +52,19 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 level.transition = AnimationService.getDefaultTransition();
             }
 
-            if (info.numSystem === undefined||info.hexControl === undefined) {
+            if (info.numSystem === undefined || info.hexControl === undefined) {
                 info.numSystem = '0';
                 info.hexControl = {
-                    markingMode:'0',
-                    transformMode:'0'
+                    markingMode: '0',
+                    transformMode: '0'
                 }
             }
 
-            var slices=level.texList[0].slices;
-            if(slices.length<26){
-                var hexTex = ['x','a','b','c','d','e','f','A','B','C','D','E','F'];
-                for(var i=0;i<hexTex.length;i++){
-                    var n=i+13;
+            var slices = level.texList[0].slices;
+            if (slices.length < 26) {
+                var hexTex = ['x', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'];
+                for (var i = 0; i < hexTex.length; i++) {
+                    var n = i + 13;
                     slices[n] = {};
                     slices[n].imgSrc = '';
                     slices[n].color = 'rgba(120,120,120,1)';
@@ -191,22 +191,49 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                     var translate = animation.animationAttrs && animation.animationAttrs.translate;
                     var scale = animation.animationAttrs && animation.animationAttrs.scale;
                     var temp, key;
-                    if (translate && translate.dstPos ) {
+                    if (translate && translate.dstPos) {
                         for (key in translate) {
                             temp = translate[key].x;
-                            translate[key].x = temp || 0
+                            if (!(temp instanceof Number)) {
+                                // translate[key].x = {
+                                //     value: temp,
+                                //     tag: ''
+                                // }
+                                translate[key].x = 0;
+                            }
                             temp = translate[key].y;
-                            translate[key].y = temp || 0
+                            if (!(temp instanceof Number)) {
+                                // translate[key].y = {
+                                //     value: temp,
+                                //     tag: ''
+                                // }
+                                translate[key].y = 0;
+                            }
                         }
                         for (key in scale) {
                             temp = scale[key].x;
-                            scale[key].x = temp||1
+                            if (!(temp instanceof Number)) {
+                                // scale[key].x = {
+                                //     value:temp,
+                                //     tag:''
+                                // }
+                                scale[key].x = 0;
+                            }
                             temp = scale[key].y;
-                            scale[key].y = temp||1
+                            if (!(temp instanceof Number)) {
+                                // scale[key].y = {
+                                //     value:temp,
+                                //     tag:''
+                                // }
+                                scale[key].y = 0;
+                            }
                         }
                     }
                     if (animation.timingFun === undefined) {
                         animation.timingFun = '';
+                    }
+                    if (animation.advanceMode === undefined) {
+                        animation.advanceMode = false;
                     }
                 })
 
@@ -269,7 +296,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
-        var tags, timers ,tagClasses;
+        var tags, timers, tagClasses;
 
         project = arguments[0];
 
@@ -297,36 +324,36 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
 
         tags = project.customTags;
         var pattern = /SysTmr_/;
-        tags.forEach(function (tag,index) {
+        tags.forEach(function (tag, index) {
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
-            if(pattern.test(tag.name)){
-                tags.splice(index,1);
+            if (pattern.test(tag.name)) {
+                tags.splice(index, 1);
             }
         });
 
         timers = project.timerTags;
-        var tmr=[];
+        var tmr = [];
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
-            if(pattern.test(timer.name)){
+            if (pattern.test(timer.name)) {
                 tmr.push(timer)
             }
         });
         project.timerTags = tmr;
 
         tagClasses = project.tagClasses;
-        if (!tagClasses){
+        if (!tagClasses) {
             tagClasses = [{
-                name:'全部',
-                type:'system',
-                tagArray:[]
+                name: '全部',
+                type: 'system',
+                tagArray: []
             }]
         }
-        if(tagClasses[0].name == '全部'||tagClasses[0].name == 'tags'){
+        if (tagClasses[0].name == '全部' || tagClasses[0].name == 'tags') {
             tagClasses[0].name = '变量';
         }
     }

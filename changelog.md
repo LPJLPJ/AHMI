@@ -319,3 +319,7 @@ update:
     11. tag bit overlap detection, add timer quickly
     12. texture.acf size calculation
     13. widget list icon
+    
+1.10.6
+add:
+    1.support dynamic Animation config. Animation normal mode compatible with old version
