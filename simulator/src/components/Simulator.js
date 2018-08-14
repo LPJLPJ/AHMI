@@ -904,10 +904,10 @@ module.exports = React.createClass({
         //         }
         //     }
         // };
-        var srcScale = (animationAttrs.scale && animationAttrs.scale.srcScale) || {x: 1, y: 1};
-        var dstScale = (animationAttrs.scale && animationAttrs.scale.dstScale) || {x: 1, y: 1};
-        var srcTranslate = (animationAttrs.translate && animationAttrs.translate.srcPos) || {x: 0, y: 0};
-        var dstTranslate = (animationAttrs.translate && animationAttrs.translate.dstPos) || {x: 0, y: 0};
+        var srcScale = (animationAttrs.scale&&animationAttrs.scale.srcScale&&this.getAnimationAtrr(animationAttrs.scale.srcScale))||{x:1,y:1};
+        var dstScale = (animationAttrs.scale&&animationAttrs.scale.dstScale&&this.getAnimationAtrr(animationAttrs.scale.dstScale))||{x:1,y:1};
+        var srcTranslate = (animationAttrs.translate&&animationAttrs.translate.srcPos&&this.getAnimationAtrr(animationAttrs.translate.srcPos))||{x:0,y:0};
+        var dstTranslate = (animationAttrs.translate&&animationAttrs.translate.dstPos&&this.getAnimationAtrr(animationAttrs.translate.dstPos))||{x:0,y:0};
         var type = target.type;
         var duration = (animation && animation.duration) || 1000;
         // console.log(scale,translate,duration)
@@ -1018,6 +1018,16 @@ module.exports = React.createClass({
 
         })
 
+    },
+    getAnimationAtrr:function (attr) {
+        var values = {}
+        for(var key in attr){
+            if (attr.hasOwnProperty(key)){
+                //own key
+                values[key] = this.getParamValue(attr[key])
+            }
+        }
+        return values
     },
     matrixMultiply: function (matrixArray) {
         var length = matrixArray.length
