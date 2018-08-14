@@ -97,6 +97,12 @@ router.route('/admin/manage/releaseInfo')
     .get(route_admin.getReleaseInfo);
 router.route('/admin/manage/release/update')
     .post(route_admin.releaseUpdate);
+
+router.route('/admin/manage/templatesSpace')
+.get(route_admin.getTemplateSpace);
+
+router.route('/admin/manage/templates/delete')
+.delete(route_admin.deleteTemplates);
 //user control
 //signup
 router.route('/user/signup')
@@ -221,7 +227,7 @@ router.route('/project/:id/downloadLocalProject')
 
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
-//ÏÂÔØ×ÊÔ´
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´
 router.route('/project/:id/downloadFile')
     .get(projectInfo.downloadFile);
 

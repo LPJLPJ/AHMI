@@ -2,6 +2,7 @@
  * Created by ChangeCheng on 2016/11/11.
  */
 var UserModel = require('../db/models/UserModel');
+var TemplateModel = require('../db/models/TemplateModel')
 var errHandler = require('../utils/errHandler');
 var fse = require('fs-extra');
 var path = require('path');
@@ -23,6 +24,68 @@ Route_admin.getManageSpace = function (req,res) {
 Route_admin.getReleaseVerSpace = function(req,res){
     res.render('login/releaseVerSpace.html',{userName:req.session.user.username});
 };
+
+Route_admin.getTemplateSpace = function(req,res){
+    res.render('login/templateCenterSpace.html',{userName:req.session.user.username});
+};
+
+Route_admin.deleteTemplates = function(req,res){
+    var ids = req.body.ids
+    if(ids && ids.length){
+        
+        TemplateModel.deleteByIds(ids,function(err){
+            if(err){
+                return errHandler(res,500,JSON.stringify(err))
+            }
+            //delete template folders
+            
+            res.end('ok')
+        })
+
+        var baseUrl = path.join(__dirname,'../template')
+        var count = ids.length
+        
+        var lastErr = null
+        var cb = function(){
+            if(lastErr){
+                return errHandler(res,500,JSON.stringify(err))
+            }
+            res.end('ok')
+        }
+        ids.forEach(function(id){
+            TemplateModel.deleteById(id,function(err){
+                if(err){
+                    count--
+                    lastErr = err
+                    if(count===0){
+                        cb()
+                    }
+                }else{
+                    fse.remove(path.join(baseUrl,id),function(err){
+                        if(err){
+                            count--
+                            lastErr = err
+                            if(count===0){
+                                cb()
+                            }
+                        }else{
+                            count--
+                            if(count===0){
+                                cb()
+                            }
+                        }
+                    })
+                }
+                
+                
+                
+            })
+        })
+
+    }else{
+        return errHandler(res,500,'invalid delete ids')
+    }
+}
 
 Route_admin.getUsers = function (req, res) {
     var from = parseInt(req.query.from)||0;

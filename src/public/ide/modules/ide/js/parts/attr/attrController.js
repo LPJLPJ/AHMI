@@ -34,7 +34,27 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
                 selectSubLayer:selectSubLayer,
                 selectWidget:selectWidget
             }
-        }
+        };
+
+        $scope.widgetIcon={
+            MySlide:"&#xe6e0;",
+            MySwitch:"&#xe64e;",
+            MyProgress:"&#xe62a;",
+            MyDashboard:"&#xe632;",
+            MyRotateImg:"&#xe64f;",
+            MyDateTime:"&#xe64d;",
+            MyNum:"&#xe631;",
+            MyTextArea:"&#xe62f;",
+            MyButton:"&#xe658;",
+            MySlideBlock:"&#xe77e;",
+            MyButtonGroup:"&#xe637;",
+            MyScriptTrigger:"&#xe7d0;",
+            MyVideo:"&#xe6ad;",
+            MyAnimation:"&#xe633",
+            MyTexNum:"&#xe675",
+            MyTexTime:"&#xe655",
+            MyAlphaImg:"&#xe6e0;"
+        };
     }
 
     function initProject(){

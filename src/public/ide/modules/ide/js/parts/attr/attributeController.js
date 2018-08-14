@@ -44,7 +44,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 layer: {
                     enterShowSubLayer: enterShowSubLayer,
                     selectModel: null,
-                    enterImage: enterBackgroundImage,
                     selectImage:'',
                     downloadFile:downloadFile
                 },
@@ -447,7 +446,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
                         // }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
-                        $scope.component.layer.selectImage=$scope.component.object.level.backgroundImage;
                         break;
                     case Type.MyPage:
                         //调整Page的背景图
@@ -1265,10 +1263,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     currentPage.backgroundColor = $scope.component.object.level.backgroundColor;
                     currentPage.proJsonStr = pageNode.toJSON();
                 });
-            }else if($scope.component.object.type == Type.MyLayer){
-
-                selectImage = $scope.component.layer.selectImage;
-
             } else if ($scope.component.object.type == Type.MySubLayer) {
                 selectImage = $scope.component.subLayer.selectImage;
                 if (selectImage == '/public/images/blank.png') {

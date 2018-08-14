@@ -490,7 +490,7 @@
             </div>
 
 
-            <div id="simulator-wrapper" style="" ng-show="component.simulator.show">
+            <div id="simulator-wrapper"  ng-show="component.simulator.show">
                 <div class="navbar navbar-default" style="text-align:center">
                     <div class="nav">
                         <button id="play" type="button" class=" btn btn-default navbar-btn"
@@ -503,7 +503,7 @@
                 <div id="simulator-container">
                 </div>
             </div>
-            <div id="actionVisualization-wrapper" style="" ng-show="component.actionVisualization.show">
+            <div id="actionVisualization-wrapper"  ng-show="component.actionVisualization.show">
                 <div class="navbar navbar-default" style="text-align:center">
                     <div class="nav">
                         <button id="actionVisualization-play" type="button" class=" btn btn-default navbar-btn">分析</button>
@@ -3242,7 +3242,7 @@
                                     <!--color-->
                                     <td><input class="form-control" colorpicker="rgba" type="text"
                                                ng-model="slice.color" ng-disabled="slice.imgSrc!==''"/></td>
-                                    <td>
+                                    <td style="background-color: #B0B0B0">
                                         <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                             <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
                                                  height="100px"/>
@@ -3717,7 +3717,7 @@
                         <span class="my-attr-title xiangPage-title">标签</span>
                         <div class="my-tag-tag-calss-div-pad">
                             <select class="form-control xiangPage-selected my-tag-tag-calss-select"
-                                    ng-model="component.curTagClassName" ng-click="component.changeCurTagClass()">{{component.curTagClassName}}
+                                    ng-model="component.curTagClassName" ng-change="component.changeCurTagClass()">{{component.curTagClassName}}
                                 <option ng-repeat="classItem in component.tagClasses track by $index" value="{{classItem.name}}" >{{classItem.name}}</option>
                             </select>
                             <button type="button"  ng-click="component.editTagClass()" class="btn btn-default">标签管理</button>
@@ -3861,10 +3861,10 @@
                                         <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'"/>
                                     </fieldset>
 
-                                    <div ng-show="bindBits!=''" style="margin: 10px 0">
+                                    <fieldset ng-show="bindBits!=''" style="margin: 10px 0">
                                         <label class="col-sm-4 tag-modal-label">已使用的bindBit</label>
                                         <button class="btn btn-default" ng-repeat="bit in bindBits track by $index">{{bit}}</button>
-                                    </div>
+                                    </fieldset>
 
                                     <fieldset>
                                         <label for="register"
@@ -4256,6 +4256,7 @@
                         <span class="my-object-label"
                               ng-click="component.bottom.selectPage(component.bottom.page.id)"
                               ng-class="{true:'selected'}[component.bottom.page.selected]">
+                            <i class="iconfont markLogo">&nbsp;&#xe668;</i>
                             {{component.bottom.page.name}}
                         </span>
                     </div>
@@ -4271,7 +4272,9 @@
                                     <i class="iconfont display-hidden" ng-click="toggleShow(layer.id)" ng-show="!layer.expand">&#xe721;</i>
                                 <span class="my-object-label"
                                       ng-class="{true:'selected'}[layer.selected]"
-                                      ng-click="component.bottom.selectLayer(layer)">{{layer.name}}</span>
+                                      ng-click="component.bottom.selectLayer(layer)">
+                                    <i class="iconfont markLogo">&nbsp;&#xe667;</i>
+                                    {{layer.name}}</span>
                                 </div>
                             </div>
 
@@ -4285,7 +4288,9 @@
                                                ng-show="!subLayer.expand">&#xe721;</i>
                                         <span class="my-object-label"
                                               ng-class="{true:'selected'}[subLayer.selected]"
-                                              ng-click="component.bottom.selectSubLayer(layer,subLayer)">{{subLayer.name}}</span>
+                                              ng-click="component.bottom.selectSubLayer(layer,subLayer)">
+                                            <i class="iconfont markLogo">&nbsp;&#xe6e0;</i>
+                                            {{subLayer.name}}</span>
                                         </div>
                                     </div>
 
@@ -4296,7 +4301,9 @@
                                                 <div class="my-levels-title" ng-class="{true:'selected'}[widget.selected]">
                                                 <span class="my-object-label"
                                                       ng-class="{true:'selected'}[widget.selected]"
-                                                      ng-click="component.bottom.selectWidget(layer,subLayer,widget)">{{widget.name}}
+                                                      ng-click="component.bottom.selectWidget(layer,subLayer,widget)">
+                                                    <span class="iconfont markLogo" widget-icon iconfont="{{widgetIcon[widget.type]}}">&nbsp;</span>
+                                                    {{widget.name}}
                                                 </span>
 
                                                 </div>

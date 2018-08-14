@@ -49,6 +49,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         ActionService.setActions(_actions);
         $scope.actions = ActionService.getAllActions();
         $scope.triggers = ActionService.getTriggers(ProjectService.getCurrentSelectObject().level.type);
+        $scope.tags = TagService.getAllCustomTags();
+        $scope.timerTags = TagService.getAllTimerTags();
 
 
         var currentSelectedObject = _.cloneDeep(ProjectService.getCurrentSelectObject().level);
@@ -448,8 +450,9 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                     pass = false;
                     return;
                 }
-                var value = cmd[2].value;
-                if(value!=''&&!Number(value)){
+                var value = Number(cmd[2].value);
+                var reg =/^(\-|\+)?\d+(\.\d+)?$/;
+                if(value!=''&&!reg.test(value)){
                     validateArr[index].pass = false;
                     validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
                     pass = false;
