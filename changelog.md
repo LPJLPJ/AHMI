@@ -288,12 +288,23 @@ add:
     6. data-analysis
     7. action visualization
     8. physical pixel ratio simulation support
+    9. num hexical display
+    10. resource download
+    11. multi-color progress with image
+    12. template remove at admin page
    
 fix:
     1. upload zip file bug
     2. timer count
     3. git ignore
     4. delete resources bug
+    5. timerTag
+    6. render page png bug
+    7. render slide switch bug
+    8. drag and drop validation bug
+    9. download actionV graph bug
+    10. cmd check bug
+    11. tag type switch css bug
 update:
     1. gulp dev watch
     2. local ide generate hash zip file
@@ -305,3 +316,6 @@ update:
     8. gulp watch:modified
     9. action visualization: scale, collapse
     10. upload file.zip with md5 hash
+    11. tag bit overlap detection, add timer quickly
+    12. texture.acf size calculation
+    13. widget list icon
