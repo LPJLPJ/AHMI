@@ -5,6 +5,18 @@
 ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (AnimationService, Type) {
     var IDEVersion = window.ideVersion;
 
+    var utils = {
+        isString:function (o) {
+            return Object.prototype.toString.call(o)==='[object String]';
+        },
+        isObject:function (o) {
+            return Object.prototype.toString.call(o)==='[object Object]'
+        },
+        isArray:function(o){
+            return Object.prototype.toString.call(o)==='[object Array]';
+        },
+    }
+
     /**
      * 单例模式，构建Inject对象
      * @type {Object}
@@ -188,47 +200,31 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             }
             if (layer.animations) {
                 layer.animations.map(function (animation) {
-                    var translate = animation.animationAttrs && animation.animationAttrs.translate;
-                    var scale = animation.animationAttrs && animation.animationAttrs.scale;
-                    var temp, key;
-                    if (translate && translate.dstPos) {
-                        for (key in translate) {
-                            temp = translate[key].x;
-                            if (!(temp instanceof Number)) {
-                                // translate[key].x = {
-                                //     value: temp,
-                                //     tag: ''
-                                // }
-                                translate[key].x = 0;
-                            }
-                            temp = translate[key].y;
-                            if (!(temp instanceof Number)) {
-                                // translate[key].y = {
-                                //     value: temp,
-                                //     tag: ''
-                                // }
-                                translate[key].y = 0;
-                            }
-                        }
-                        for (key in scale) {
-                            temp = scale[key].x;
-                            if (!(temp instanceof Number)) {
-                                // scale[key].x = {
-                                //     value:temp,
-                                //     tag:''
-                                // }
-                                scale[key].x = 0;
-                            }
-                            temp = scale[key].y;
-                            if (!(temp instanceof Number)) {
-                                // scale[key].y = {
-                                //     value:temp,
-                                //     tag:''
-                                // }
-                                scale[key].y = 0;
-                            }
-                        }
-                    }
+                    // var translate = animation.animationAttrs && animation.animationAttrs.translate;
+                    // var scale = animation.animationAttrs && animation.animationAttrs.scale;
+                    // var temp, key;
+                    // if (translate && translate.dstPos) {
+                    //     for (key in translate) {
+                    //         temp = translate[key].x;
+                    //         if (utils.isObject(temp)) {
+                    //             translate[key].x = 0;
+                    //         }
+                    //         temp = translate[key].y;
+                    //         if (utils.isObject(temp)) {
+                    //             translate[key].y = 0;
+                    //         }
+                    //     }
+                    //     for (key in scale) {
+                    //         temp = scale[key].x;
+                    //         if (utils.isObject(temp)) {
+                    //             scale[key].x = 0;
+                    //         }
+                    //         temp = scale[key].y;
+                    //         if (utils.isObject(temp)) {
+                    //             scale[key].y = 0;
+                    //         }
+                    //     }
+                    // }
                     if (animation.timingFun === undefined) {
                         animation.timingFun = '';
                     }
