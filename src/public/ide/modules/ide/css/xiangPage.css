@@ -115,6 +115,7 @@ div.wrapper-custom{
     font-weight: 100;
     position: absolute;
     left: 15px;
+    top:0px !important;
 }
 
 .lx-modal-body .ui-select-container .ui-select-toggle{

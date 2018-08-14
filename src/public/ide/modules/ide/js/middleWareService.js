@@ -194,39 +194,46 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                     if (translate && translate.dstPos) {
                         for (key in translate) {
                             temp = translate[key].x;
-                            if (temp instanceof Number) {
-                                translate[key].x = {
-                                    value: temp,
-                                    tag: ''
-                                }
+                            if (!(temp instanceof Number)) {
+                                // translate[key].x = {
+                                //     value: temp,
+                                //     tag: ''
+                                // }
+                                translate[key].x = 0;
                             }
                             temp = translate[key].y;
-                            if (temp instanceof Number) {
-                                translate[key].y = {
-                                    value: temp,
-                                    tag: ''
-                                }
+                            if (!(temp instanceof Number)) {
+                                // translate[key].y = {
+                                //     value: temp,
+                                //     tag: ''
+                                // }
+                                translate[key].y = 0;
                             }
                         }
                         for (key in scale) {
                             temp = scale[key].x;
-                            if(temp instanceof Number){
-                                scale[key].x = {
-                                    value:temp,
-                                    tag:''
-                                }
+                            if (!(temp instanceof Number)) {
+                                // scale[key].x = {
+                                //     value:temp,
+                                //     tag:''
+                                // }
+                                scale[key].x = 0;
                             }
                             temp = scale[key].y;
-                            if(temp instanceof Number){
-                                scale[key].y = {
-                                    value:temp,
-                                    tag:''
-                                }
+                            if (!(temp instanceof Number)) {
+                                // scale[key].y = {
+                                //     value:temp,
+                                //     tag:''
+                                // }
+                                scale[key].y = 0;
                             }
                         }
                     }
                     if (animation.timingFun === undefined) {
                         animation.timingFun = '';
+                    }
+                    if (animation.advanceMode === undefined) {
+                        animation.advanceMode = false;
                     }
                 })
 
