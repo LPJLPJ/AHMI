@@ -200,31 +200,31 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             }
             if (layer.animations) {
                 layer.animations.map(function (animation) {
-                    var translate = animation.animationAttrs && animation.animationAttrs.translate;
-                    var scale = animation.animationAttrs && animation.animationAttrs.scale;
-                    var temp, key;
-                    if (translate && translate.dstPos) {
-                        for (key in translate) {
-                            temp = translate[key].x;
-                            if (utils.isObject(temp)) {
-                                translate[key].x = 0;
-                            }
-                            temp = translate[key].y;
-                            if (utils.isObject(temp)) {
-                                translate[key].y = 0;
-                            }
-                        }
-                        for (key in scale) {
-                            temp = scale[key].x;
-                            if (utils.isObject(temp)) {
-                                scale[key].x = 0;
-                            }
-                            temp = scale[key].y;
-                            if (utils.isObject(temp)) {
-                                scale[key].y = 0;
-                            }
-                        }
-                    }
+                    // var translate = animation.animationAttrs && animation.animationAttrs.translate;
+                    // var scale = animation.animationAttrs && animation.animationAttrs.scale;
+                    // var temp, key;
+                    // if (translate && translate.dstPos) {
+                    //     for (key in translate) {
+                    //         temp = translate[key].x;
+                    //         if (utils.isObject(temp)) {
+                    //             translate[key].x = 0;
+                    //         }
+                    //         temp = translate[key].y;
+                    //         if (utils.isObject(temp)) {
+                    //             translate[key].y = 0;
+                    //         }
+                    //     }
+                    //     for (key in scale) {
+                    //         temp = scale[key].x;
+                    //         if (utils.isObject(temp)) {
+                    //             scale[key].x = 0;
+                    //         }
+                    //         temp = scale[key].y;
+                    //         if (utils.isObject(temp)) {
+                    //             scale[key].y = 0;
+                    //         }
+                    //     }
+                    // }
                     if (animation.timingFun === undefined) {
                         animation.timingFun = '';
                     }
