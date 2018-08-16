@@ -521,14 +521,17 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
         function refreshLoginStatus() {
             if (!window.local) {
+                var isLogin = true
                 setInterval(function () {
                     $http({
                         method: 'GET',
                         url: baseUrl + '/api/refreshlogin'
                     }).success(function (data) {
-                        console.log(data);
+                        if(!isLogin){
+                            toastr.info('重新登录成功')
+                        }
                     }).error(function (err) {
-                        console.log(err)
+                        toastr.warning('已退出登录或者已经离线')
                     });
                 }, 10 * 60 * 1000)
             }

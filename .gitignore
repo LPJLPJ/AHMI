@@ -9,6 +9,8 @@ release/
 log/
 .idea/
 .db/
+.scannerwork
+.sonarlint
 
 src/views/learn/
 src/public/learn/
