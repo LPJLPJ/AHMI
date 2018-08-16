@@ -515,7 +515,7 @@ module.exports = React.createClass({
     //get num value
     getValueByTagName: function (name, defaultValue) {
         var curTag = this.findTagByName(name);
-        if (curTag && curTag.value != undefined) {
+        if (curTag) {
             return this.getTagTrueValue(curTag);
         } else if (defaultValue) {
             return defaultValue;
@@ -5095,14 +5095,14 @@ module.exports = React.createClass({
         //     }
         //
         // }
-        if ((typeof param) === 'number') {
-            value = param;
+        if ((typeof param) === 'number'||(typeof param)==='string') {
+            value = Number(param);
         } else {
             if (param) {
                 if (param.tag) {
                     value = this.getValueByTagName(param.tag);
                 } else {
-                    value = param.value;
+                    value = Number(param.value);
                 }
             } else {
                 value = 0;
