@@ -515,7 +515,7 @@ module.exports = React.createClass({
     //get num value
     getValueByTagName: function (name, defaultValue) {
         var curTag = this.findTagByName(name);
-        if (curTag && curTag.value != undefined) {
+        if (curTag) {
             return this.getTagTrueValue(curTag);
         } else if (defaultValue) {
             return defaultValue;
