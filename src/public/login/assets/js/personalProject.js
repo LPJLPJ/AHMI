@@ -76,7 +76,7 @@ $(function(){
 
         try {
             stats = fs.statSync(localProjectDir);
-            statsCAN = fs.statSync(localCANProjectDir);
+            var statsCAN = fs.statSync(localCANProjectDir);
             if (!stats.isDirectory()){
                 mkdir.sync(localProjectDir);
             }
@@ -1092,7 +1092,7 @@ $(function(){
                         oldCANProject[key] = project[key];
                     }
                     fs.writeFileSync(CANProjectPath,JSON.stringify(oldCANProject));
-                    updateSuccess = true;
+                    var updateSuccess = true;
                     var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:project,thumbnail:null});
                     curPanel.replaceWith(html)
                 }else{
