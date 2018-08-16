@@ -5105,14 +5105,14 @@ module.exports = React.createClass({
         //     }
         //
         // }
-        if ((typeof param) === 'number') {
-            value = param;
+        if ((typeof param) === 'number'||(typeof param)==='string') {
+            value = Number(param);
         } else {
             if (param) {
                 if (param.tag) {
                     value = this.getValueByTagName(param.tag);
                 } else {
-                    value = param.value;
+                    value = Number(param.value);
                 }
             } else {
                 value = 0;
