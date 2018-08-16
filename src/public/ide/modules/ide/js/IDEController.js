@@ -994,15 +994,22 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     attrArr = ['canvasList', 'linkedAllWidgets'];
                     deleteObjAttr(page, attrArr);
                     if (page.actions) {
-                        page.actions.forEach(function (action) {
-                            if (action.commands) {
-                                var newCommands;
-                                newCommands = action.commands.map(function (command) {
-                                    return command.cmd;
-                                });
-                                action.commands = newCommands;
-                            }
-                        })
+                        if(page.originActions){
+                            // 1.10.6 生成工程会保存原始指令
+                            page.actions = page.originActions;
+                            delete page.originActions;
+                        }else{
+                            page.actions.forEach(function (action) {
+                                if (action.commands) {
+                                    var newCommands;
+                                    newCommands = action.commands.map(function (command) {
+                                        return command.cmd;
+                                    });
+                                    action.commands = newCommands;
+                                }
+                            })
+                        }
+
                     }
                     page.layers.forEach(function (layer, index) {
                         layer.subLayers = layer.subCanvasList;
@@ -1019,15 +1026,21 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                             subLayer.selected = false;
                             subLayer.url = '';
                             if (subLayer.actions) {
-                                subLayer.actions.forEach(function (action) {
-                                    if (action.commands) {
-                                        var newCommands;
-                                        newCommands = action.commands.map(function (command) {
-                                            return command.cmd;
-                                        });
-                                        action.commands = newCommands;
-                                    }
-                                })
+                                if(subLayer.originActions){
+                                    subLayer.actions = subLayer.originActions;
+                                    delete subLayer.originActions;
+                                }else{
+                                    subLayer.actions.forEach(function (action) {
+                                        if (action.commands) {
+                                            var newCommands;
+                                            newCommands = action.commands.map(function (command) {
+                                                return command.cmd;
+                                            });
+                                            action.commands = newCommands;
+                                        }
+                                    })
+                                }
+
                             }
                             subLayer.widgets.forEach(function (widget, index) {
                                 widget.type = widget.subType;
@@ -1037,15 +1050,21 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                 widget.expand = true;
                                 widget.selected = false;
                                 if (widget.actions) {
-                                    widget.actions.forEach(function (action) {
-                                        if (action.commands) {
-                                            var newCommands;
-                                            newCommands = action.commands.map(function (command) {
-                                                return command.cmd;
-                                            });
-                                            action.commands = newCommands;
-                                        }
-                                    })
+                                    if(widget.originActions){
+                                        widget.actions = widget.originActions;
+                                        delete widget.originActions;
+                                    }else{
+                                        widget.actions.forEach(function (action) {
+                                            if (action.commands) {
+                                                var newCommands;
+                                                newCommands = action.commands.map(function (command) {
+                                                    return command.cmd;
+                                                });
+                                                action.commands = newCommands;
+                                            }
+                                        })
+                                    }
+
                                 }
                                 if (widget.texList && (widget.texList instanceof Array)) {
                                     widget.texList.forEach(function (tex, index) {
