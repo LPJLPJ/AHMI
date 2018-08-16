@@ -347,6 +347,9 @@ body{
     overflow: auto
 }
 
+.templates-container{
+    min-height: 300px;
+}
 
 .templates-tools-getmore{
     float:right;

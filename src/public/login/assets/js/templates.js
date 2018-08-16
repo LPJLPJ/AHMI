@@ -92,11 +92,16 @@ $(function () {
 
     function renderTemplateList() {
         var templateStr = ""
-        templates = userTemplates||[]
+        var templates = userTemplates||[]
         templates.forEach(function (template) {
             templateStr += renderTemplate(template)
         })
-        $templates.html(templateStr)
+        if(templateStr){
+            $templates.html(templateStr+renderGetMoreTemplateButton())
+        }else{
+            $templates.html(renderGetMoreTemplateButton())
+        }
+        
     }
 
     function renderTemplate(template) {
@@ -113,11 +118,28 @@ $(function () {
             '</div>'
     }
 
+    function renderGetMoreTemplateButton(){
+        return '<div class="template-panel-wrapper " >'+
+                '<div class="template-panel" >' +
+                    '<div class="template-thumbnail-wrapper">' +
+                        '<div class="template-thumbnail-container">' +
+                            
+                            '<div class="template-thumbnail" style="vertical-align:middle;display:inline-block;">'+
+                                '<a class="template-more" href="/templatecenter" target="_blank" >'+
+                                    '<i class="iconfont" style="display:inline-block;font-size:80px;position:relative;top:50%;transform:translateY(-50%);">&#xe606;</i>'+
+                                '</a>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>' +
+                '</div>' +
+            '</div>'
+    }
+
 
     function renderOptionTemplateList() {
         var templateStr = ""
 
-        templates = [
+        var templates = [
         //     {
         //     _id:'defaultTemplate',
         //     name:'默认模板',
