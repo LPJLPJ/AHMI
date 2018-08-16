@@ -1045,6 +1045,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             ProjectService.getProjectCopyTo(temp);
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
+            temp.project.ideVersion = window.ideVersion;
             temp.project.physicalPixelRatio = physicalPixelRatio
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
             temp.project.basicUrl = ResourceService.getResourceUrl();
