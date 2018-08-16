@@ -311,7 +311,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
 
         var imgUrl;
-        if (img !== ''){
+        if (img &&img !== ''){
             //draw image
             imgUrl = path.join(srcRootDir,img);
             var targetImageObj = this.getTargetImage(imgUrl);
