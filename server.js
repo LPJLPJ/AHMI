@@ -195,6 +195,18 @@ if(!process.env.USING_HTTP){
  */
 var roomInfo = {};
 
+var serverRoomId = 'ideRoom'
+var serverRoom = []
+
+function addUserUniquely(arr,elem){
+    for(var i=0;i<arr.length;i++){
+        if(arr[i].id === elem.id){
+            return
+        }
+    }
+    arr.push(elem)
+}
+
 function initSocketIO(io,server){
     io = new socket(server);
     // console.log(io)
@@ -221,6 +233,30 @@ function initSocketIO(io,server){
             return;
         }
 
+        //enter server room
+        var checUinqueServer = serverRoom.every(function(item){
+            return item.id!==user.id;
+        });
+
+        if(checUinqueServer){
+            //add to server room
+            serverRoom.push(user)
+            socket.join(serverRoomId)
+            socket.to(serverRoomId).emit('serverRoom:enter',{id:user.id,username:user.username})
+
+            //broadcast
+            socket.on('serverRoom:newMsg',function(data){
+                // console.log(data)
+                UserModel.findById(user.id,function(err,_user){
+                    if(err){return console.log(err)}
+                    if(_user.type === 'admin'){
+                        io.in(serverRoomId).emit('serverRoom:newMsg',data)
+                    }
+                })
+                
+            })
+        }
+
         //create roomInfo
         if(!roomInfo[roomId]){
             roomInfo[roomId] = [];
@@ -232,6 +268,8 @@ function initSocketIO(io,server){
         if(checkUnique){
             //检查用户是否还未加入room，避免事件的重复绑定
             roomInfo[roomId].push(user);
+            
+            
 
             var usersForSend = roomInfo[roomId].map(function(item){
                 return {
@@ -255,9 +293,11 @@ function initSocketIO(io,server){
             }
             socket.to(roomId).emit('user:enter',userForSend);
 
+
             //监听断开连接事件
             socket.on('disconnect',function(){
                 //remove user from roomInfo
+                //console.log('disconnected start',serverRoom)
                 if(roomInfo[roomId]){
                     var roomItem = roomInfo[roomId];
                     for(var i=0,il=roomItem.length;i<il;i++){
@@ -275,6 +315,21 @@ function initSocketIO(io,server){
                 //leave
                 socket.leave(roomId);
 
+                if(checUinqueServer){
+                    //leave server room
+                    for(i=0;i<serverRoom.length;i++){
+                        if(serverRoom[i].id===user.id){
+                            serverRoom.splice(i,1)
+                            break
+                        }
+                    }
+                    socket.leave(serverRoomId)
+                    //broadcast to other user 
+                    socket.to(serverRoomId).emit('serverRoom:leave',{id:user.id,username:user.username})
+                }
+
+                //console.log('disconnected end',serverRoom)
+
                 //broadcast to other user leave msg
                 var userForSend={};
                 for(var key in user){
@@ -283,6 +338,8 @@ function initSocketIO(io,server){
                     }
                 }
                 socket.to(roomId).emit('user:leave',userForSend);
+
+                // socket.close()
             });
 
             //监听取消分享事件（关闭room）

@@ -282,19 +282,31 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         function loadFromContent(data, id) {
             //若是分享的工程，则需要开启socket
             // console.log('data.shared',data);
-            if (!!data.shared) {
-                if (!!data.readOnlyState) {
-                    //在分享状态下，并且以只读方式打开，不用打开socket进行排队
-                    toastr.options.closeButton = true;
-                    toastr.options.timeOut = 0;
-                    toastr.warning('注意：您无法执行保存工程操作', '只读模式');
-                    toastr.options.closeButton = close;
-                    toastr.options.timeOut = 1000;
-                } else if (!socketIOService.getSocket()) {
-                    initSocketIO(data.userId);
-                }
+            // if (!!data.shared) {
+            //     if (!!data.readOnlyState) {
+            //         //在分享状态下，并且以只读方式打开，不用打开socket进行排队
+            //         toastr.options.closeButton = true;
+            //         toastr.options.timeOut = 0;
+            //         toastr.warning('注意：您无法执行保存工程操作', '只读模式');
+            //         toastr.options.closeButton = close;
+            //         toastr.options.timeOut = 1000;
+            //     } else if (!socketIOService.getSocket()) {
+            //         initSocketIO(data.userId);
+            //     }
 
+            // }
+            if (!!data.shared&&!!data.readOnlyState) {
+                //在分享状态下，并且以只读方式打开，不用打开socket进行排队
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 0;
+                toastr.warning('注意：您无法执行保存工程操作', '只读模式');
+                toastr.options.closeButton = close;
+                toastr.options.timeOut = 1000;
+               
+            }else if (!socketIOService.getSocket()) {
+                initSocketIO(data.userId);
             }
+
             //change html title to name
             var name = data && data.name || '';
             document.title = '工程编辑-' + name;
@@ -1280,6 +1292,18 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             }
         }
 
+        var toastrOptsBackup = {}
+        function saveToastrOpts(){
+            toastrOptsBackup =  {
+                timeOut:toastr.options.timeOut,
+                extendedTimeOut:toastr.options.extendedTimeOut,
+                closeButton:toastr.options.closeButton
+            }
+        }
+        function restoreToastrOpts(){
+            Object.assign(toastr.options,toastrOptsBackup)
+        }
+
         /**
          * 初始化socket
          */
@@ -1288,9 +1312,26 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         var inCharge = false;
 
         function initSocketIO(ownerId) {
+            console.log('init socket io')
             socketIOService.createSocket('', function (data) {
 
                 console.log('you have connect');
+
+                socketIOService.on('serverRoom:enter',function(user){
+                    console.log('new user',user)
+                })
+
+                socketIOService.on('serverRoom:newMsg',function(msg){
+                    saveToastrOpts()
+                    toastr.options.closeButton = true
+                    toastr.options.timeOut = 0;
+                    toastr.options.extendedTimeOut = 0;
+                    toastr.warning(msg,'公告')
+                    restoreToastrOpts()
+                })
+
+
+                window.emitMsg = function(msg){socketIOService.emit('serverRoom:newMsg',msg)}
 
                 //capture current users in room
                 socketIOService.on('connect:success', function (allUsers, currentUser) {
@@ -1389,13 +1430,13 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
         $scope.$on('createSocketIO', function () {
             console.log('open share then create socketIO');
-            initSocketIO();
+            //initSocketIO();
         });
 
         $scope.$on('closeSocketIO', function () {
             console.log('close share then close socketIO');
             socketIOService.emit('room:close');
-            socketIOService.closeSocket();
+            // socketIOService.closeSocket();
         });
 
 
