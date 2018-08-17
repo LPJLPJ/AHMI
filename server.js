@@ -223,7 +223,7 @@ function initSocketIO(io,server){
         var user = session.user;
         var urlArr = (socket.request.headers.referer||'').split('/');
         var roomId = urlArr[urlArr.length-2];
-
+        
         if(!user){
             return
         }
@@ -237,7 +237,7 @@ function initSocketIO(io,server){
         var checUinqueServer = serverRoom.every(function(item){
             return item.id!==user.id;
         });
-
+        
         if(checUinqueServer){
             //add to server room
             serverRoom.push(user)
@@ -320,13 +320,15 @@ function initSocketIO(io,server){
                     for(i=0;i<serverRoom.length;i++){
                         if(serverRoom[i].id===user.id){
                             serverRoom.splice(i,1)
-                            break
+                            i--
                         }
                     }
-                    socket.leave(serverRoomId)
-                    //broadcast to other user 
-                    socket.to(serverRoomId).emit('serverRoom:leave',{id:user.id,username:user.username})
+                    
                 }
+
+                socket.leave(serverRoomId)
+                //broadcast to other user 
+                socket.to(serverRoomId).emit('serverRoom:leave',{id:user.id,username:user.username})
 
                 //console.log('disconnected end',serverRoom)
 
