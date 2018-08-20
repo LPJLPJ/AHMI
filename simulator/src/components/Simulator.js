@@ -204,7 +204,7 @@ module.exports = React.createClass({
 
 
         if (requiredResourceNum > 0) {
-            requiredResourceList.map(function (resource) {
+            requiredResourceList.forEach(function (resource) {
                 if (this.isIn(resource, imageList, 'id')) {
                     requiredResourceNum -= 1;
                     this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);

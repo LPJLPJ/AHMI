@@ -223,7 +223,7 @@ function initSocketIO(io,server){
         var user = session.user;
         var urlArr = (socket.request.headers.referer||'').split('/');
         var roomId = urlArr[urlArr.length-2];
-        
+        var id = socket.id
         if(!user){
             return
         }
@@ -235,14 +235,17 @@ function initSocketIO(io,server){
 
         //enter server room
         var checUinqueServer = serverRoom.every(function(item){
-            return item.id!==user.id;
+            return item.id!==id;
         });
         
         if(checUinqueServer){
             //add to server room
-            serverRoom.push(user)
+            serverRoom.push({
+                id:id,//socket id
+                username:user.username
+            })
             socket.join(serverRoomId)
-            socket.to(serverRoomId).emit('serverRoom:enter',{id:user.id,username:user.username})
+            socket.to(serverRoomId).emit('serverRoom:enter',{username:user.username})
 
             //broadcast
             socket.on('serverRoom:newMsg',function(data){
@@ -318,7 +321,7 @@ function initSocketIO(io,server){
                 if(checUinqueServer){
                     //leave server room
                     for(i=0;i<serverRoom.length;i++){
-                        if(serverRoom[i].id===user.id){
+                        if(serverRoom[i].id===id){
                             serverRoom.splice(i,1)
                             i--
                         }
@@ -328,7 +331,7 @@ function initSocketIO(io,server){
 
                 socket.leave(serverRoomId)
                 //broadcast to other user 
-                socket.to(serverRoomId).emit('serverRoom:leave',{id:user.id,username:user.username})
+                socket.to(serverRoomId).emit('serverRoom:leave',{username:user.username})
 
                 //console.log('disconnected end',serverRoom)
 
