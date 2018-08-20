@@ -250,7 +250,7 @@
                 <!--工程列表-->
                 <%for(var i=0;i<projects.length;i++){%>
                 <!--<li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  context-menu="component.menuOptions"  class="projectpanel" title="创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">-->
-                <li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel" title="工程名称:<%=projects[i].projectInfo.name%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
+                <li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel" title="工程名称:<%=projects[i].projectInfo.name%>&#10创建工具:<%=projects[i].projectInfo.originalSite%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
                     <div class="img">
                         <i class="projectdelete iconfont createIcon">&#xe607;</i>
                         <a href="#"><img src=<%= projects[i].thumbnail||"../../public/login/assets/img/pro_1.png" %> /></a>

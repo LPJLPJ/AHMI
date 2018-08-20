@@ -142,8 +142,8 @@ body{
     border-radius: 5px;
     position: relative;
 }
-.all ul li:hover,.img1:hover{
-    background: rgba(0,0,0,.03) !important;
+.projectpanel:hover,.img1:hover{
+    background: rgba(0,0,0,.03);
 }
 .createIcon{
     position: absolute;
@@ -277,6 +277,10 @@ body{
     outline: none;
     resize:vertical;
     /*line-height: 1.3em;*/
+}
+
+.panel-other-site:hover{
+    background-color: rgba(255,206,66,0.9);
 }
 
 .projectinfo span{

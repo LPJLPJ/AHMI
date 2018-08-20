@@ -12,6 +12,7 @@ var ProjectSchema = new mongoose.Schema({
     type:String,
     template:String,
     ideVersion:String,
+    originalSite:String,
     supportTouch:String,
     curSize:String,
     maxSize:String,
@@ -89,7 +90,7 @@ ProjectSchema.statics = {
             .remove({_id:_projectId})
             .exec(cb)
     },
-    findProInfo:function(_userId,_classId,cb){//add by tang  ¸ù¾ÝuserId£¬classId²éÕÒ(!classId||classId=='space')
+    findProInfo:function(_userId,_classId,cb){//add by tang  ï¿½ï¿½ï¿½ï¿½userIdï¿½ï¿½classIdï¿½ï¿½ï¿½ï¿½(!classId||classId=='space')
         return this
             .find({userId:_userId,"$or":[{classId: {$exists: false}},{classId:_classId}]},{content:0,backups:0})
             .sort({'createTime':-1})
