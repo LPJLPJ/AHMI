@@ -147,6 +147,10 @@ $(function(){
         }
     }
 
+    if(!local){
+        showOriginalSite()
+    }
+
     //versionOptions
     if(!local){
         var $versionSelector = $('#basicinfo-ideversion')
@@ -162,6 +166,20 @@ $(function(){
             },
             error:function (err) {
                 console.log(err)
+            }
+        })
+    }
+
+    //show original site
+    function showOriginalSite(){
+        $('.projectpanel').each(function(p){
+            var $p = $(this)
+            var ogSite = $p.data('project').originalSite
+            if(ogSite){
+                if(ogSite!==window.location.host){
+                    $p.addClass('panel-other-site')
+                }
+                //$p.addClass('panel-other-site')
             }
         })
     }
@@ -740,7 +758,7 @@ $(function(){
                 project.maxSize = 1024*1024*100;
                 var localprojectpath = path.join(localProjectDir,String(project._id));
                 var localresourcepath = path.join(localprojectpath,'resources');
-
+                project.originalSite = 'localIDE'
 
                 try {
                     mkdir.sync(localresourcepath);
@@ -755,6 +773,7 @@ $(function(){
 
 
             }else{
+                project.originalSite = window.location.host
                 $.ajax({
                     type:'POST',
                     url:'/project/create',

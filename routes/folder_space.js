@@ -17,13 +17,13 @@ module.exports=function(req,res){
                     name:folder.name,
                     id:folderId
                 };
-                //²éÕÒ·ÖÀàÖÐµÄ¹¤³Ì
+                //ï¿½ï¿½ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ÐµÄ¹ï¿½ï¿½ï¿½
                 ProjectModel.findProByClass(_user.id,folderId,function(err,projects){
                     if(err){
                         console.log(err);
                         errHandler(res,500,'error')
                     }else{
-                        var processedProjects = _.cloneDeep(projects).map(function (project) {
+                        var processedProjects = projects.map(function (project) {
                             var info = {};
                             info._id = project._id;
                             info.classId=project.classId;
@@ -32,6 +32,7 @@ module.exports=function(req,res){
                             info.name = project.name;
                             info.template = project.template;
                             info.ideVersion = project.ideVersion;
+                            info.originalSite = project.originalSite;
                             info.createTime = moment(project.createTime).format('YYYY-MM-DD HH:mm');
                             info.lastModifiedTime = moment(project.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                             info.supportTouch = project.supportTouch;
@@ -51,7 +52,7 @@ module.exports=function(req,res){
                 });
             }
         });
-    }else{//ÖØÐÂµÇÂ¼
+    }else{//ï¿½ï¿½ï¿½Âµï¿½Â¼
         res.redirect('/user/login');
     }
 };

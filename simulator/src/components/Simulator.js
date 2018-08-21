@@ -204,7 +204,7 @@ module.exports = React.createClass({
 
 
         if (requiredResourceNum > 0) {
-            requiredResourceList.map(function (resource) {
+            requiredResourceList.forEach(function (resource) {
                 if (this.isIn(resource, imageList, 'id')) {
                     requiredResourceNum -= 1;
                     this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
@@ -483,12 +483,24 @@ module.exports = React.createClass({
 
             if (pageUnloadIdx !== null) {
                 this.handleTargetAction(project.pageList[pageUnloadIdx], 'UnLoad')
+                //reset pageUnloadIdx translate
+                project.pageList[pageUnloadIdx].translate = null
+                project.pageList[pageUnloadIdx].transform = null
+                var unloadPageCanvasList = project.pageList[pageUnloadIdx].canvasList
+                if(unloadPageCanvasList&&unloadPageCanvasList.length){
+                    unloadPageCanvasList.forEach(function(uc){
+                        uc.translate = null
+                        uc.transform = null
+                    })
+                }
             }
+            
+
             project.curPageIdx = curPageIdx;
             var page = project.pageList[curPageIdx];
             this.state.curPageIdx = curPageIdx
 
-
+            
             this.drawPage(page, options);
             //update
             // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
@@ -515,7 +527,7 @@ module.exports = React.createClass({
     //get num value
     getValueByTagName: function (name, defaultValue) {
         var curTag = this.findTagByName(name);
-        if (curTag && curTag.value != undefined) {
+        if (curTag) {
             return this.getTagTrueValue(curTag);
         } else if (defaultValue) {
             return defaultValue;

@@ -552,6 +552,7 @@ function getProjectInfo(newProject) {
     info.name = newProject.name;
     info.thumbnail = newProject.thumbnail;
     info.template = newProject.template;
+    info.originalSite= newProject.originalSite;
     info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
     info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
     info.supportTouch = newProject.supportTouch;
