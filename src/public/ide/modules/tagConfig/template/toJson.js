@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 
-var defaultTags = [
+var defaultTags1 = [
     {
         name: '传递按键编码',                     //名称
         indexOfRegister: 1         //寄存器序号
@@ -182,7 +182,7 @@ var defaultTags = [
 ];
 
 
-var defaultTags1 = [
+var defaultTags2 = [
     {
         name: '传递按键编码',                     //名称
         indexOfRegister: 200         //寄存器序号
@@ -363,7 +363,7 @@ var defaultTags1 = [
 ];
 
 
-var defaultTags2 = [
+var defaultTags3 = [
     {
         name: '传递按键编码',                     //名称
         indexOfRegister: 400         //寄存器序号
@@ -544,7 +544,7 @@ var defaultTags2 = [
 ];
 
 
-var defaultTags3 = [
+var defaultTags4 = [
     {
         name: '传递按键编码',                     //名称
         indexOfRegister: 600         //寄存器序号
@@ -725,7 +725,7 @@ var defaultTags3 = [
 ];
 
 
-var tagsList = [defaultTags, defaultTags1, defaultTags2, defaultTags3, defaultTags4];
+var tagsList = [defaultTags1, defaultTags2, defaultTags3, defaultTags4];
 
 for (var i = 0, il = tagsList.length; i < il; i++) {
     tagsList[i].forEach(function (item) {
@@ -749,12 +749,6 @@ for (var i = 0, il = tagsList.length; i < il; i++) {
 }
 
 
-fs.writeFile('tags.default.json', JSON.stringify(defaultTags, null, 4), function (err) {
-    if (err)
-        throw err;
-    console.log('templates have saved!');
-});
-
 fs.writeFile('tags.default1.json', JSON.stringify(defaultTags1, null, 4), function (err) {
     if (err)
         throw err;
@@ -768,6 +762,12 @@ fs.writeFile('tags.default2.json', JSON.stringify(defaultTags2, null, 4), functi
 });
 
 fs.writeFile('tags.default3.json', JSON.stringify(defaultTags3, null, 4), function (err) {
+    if (err)
+        throw err;
+    console.log('templates have saved!');
+});
+
+fs.writeFile('tags.default4.json', JSON.stringify(defaultTags4, null, 4), function (err) {
     if (err)
         throw err;
     console.log('templates have saved!');

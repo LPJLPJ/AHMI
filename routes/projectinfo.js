@@ -27,6 +27,10 @@ var Font = Canvas.Font;
 var Renderer = require('../utils/render/renderer');
 var fse = require('fs-extra');
 var moment = require('moment');
+//tag excel
+var Excel = require('exceljs');
+var generateExcel = require('./generateTagExcel');
+
 projectRoute.getAllProjects = function (req, res) {
     ProjectModel.fetch(function (err, projects) {
         if (err) {
@@ -1485,7 +1489,7 @@ projectRoute.downloadFile = function (req,res) {
 };
 
 
-//分类操作 add by tang
+//分类操作
 projectRoute.createFolder = function (req, res) {
     var data = _.cloneDeep(req.body);
     data.userId = req.session.user.id;
@@ -1618,6 +1622,41 @@ projectRoute.getFolderList = function (req, res) {
     } else {
         res.status(500).end('not login')
     }
+};
+
+//生成tagExcel
+projectRoute.generateTagExcel = function(req,res){
+    var data = req.body;
+    var projectId = req.params.id;
+    var workbook = new Excel.Workbook();
+    var tagExcel = workbook.addWorksheet("tag");
+
+    generateExcel(tagExcel,data);
+
+    var fileUrl = path.join(__dirname,'../project',String(projectId),'tag.xlsx');
+    workbook.xlsx.writeFile(fileUrl)
+        .then(function(err){
+            if(err){
+                console.log(err);
+            }
+            res.end('ok');
+        });
+};
+
+projectRoute.downloadTagExcel = function (req,res){
+    var projectId = req.params.id;
+    var fileUrl = path.join(__dirname,'../project',String(projectId),'tag.xlsx');
+    res.download(fileUrl,'tag.xlsx', function (err) {
+        if (err){
+            errHandler(res,500,err);
+        }else{
+            fs.unlinkSync(fileUrl,function(err){
+                if(err){
+                    console.log(err)
+                }
+            })
+        }
+    })
 };
 
 module.exports = projectRoute;

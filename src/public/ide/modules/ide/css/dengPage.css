@@ -386,6 +386,19 @@
     padding-bottom: 15px;
 }
 
+.generate-excel-button{
+    margin-top: 10px;
+}
+
+.clearfix:after {
+    content: "";
+    height: 0;
+    line-height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
 .deng-attr-item .listTable-container{
     /*max-height: 280px;*/
     /*overflow-y: auto;*/

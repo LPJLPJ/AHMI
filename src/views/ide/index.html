@@ -3949,6 +3949,17 @@
             <!-- 变量栏-->
             <div class="my-panel-item deng-pannel-item" ng-show="component.top.currentNav==2">
                 <div ng-controller="TagCtrl">
+                    <script type="text/ng-template" id="generateExcel.html">
+                        <div class="modal-header">
+                            <h3 class="modal-title">确定生成ecxel？</h3>
+                        </div>
+                        <!--<div class="modal-body">-->
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" type="button" ng-click="ok()">确定</button>
+                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        </div>
+                    </script>
+
                     <div class="my-attr-item deng-tags my-tag-tag-calss-div">
                         <span class="my-attr-title xiangPage-title">标签</span>
                         <div class="my-tag-tag-calss-div-pad">
@@ -3976,17 +3987,19 @@
                         </div>
                     </div>
                     <div class="my-attr-item deng-attr-item lg deng-tags">
-                        <div class="addTag-container"  ng-show="component.timerTagShow==false">
+                        <div class="addTag-container clearfix"  ng-show="component.timerTagShow==false">
                             <span>tags</span>
                             <button type="button"
-                                    ng-click="component.addNewTag()"
-                                    class="btn btn-default">
-                                添加新Tag
+                                    ng-click="component.importTags()"
+                                    class="btn btn-default">导入tag
                             </button>
                             <button type="button"
-                                     ng-click="component.importTags()"
-                                     class="btn btn-default my-tag-button-import">导入tag
+                                    ng-click="component.addNewTag()"
+                                    class="btn btn-default my-tag-button-import">
+                                添加新Tag
                             </button>
+                            <div style="clear: both"></div>
+                            <button class="btn btn-default generate-excel-button" ng-click="component.generateExcel()">生成tag序号定义表</button>
                         </div>
                         <!--导入tags模板-->
                         <script type="text/ng-template" id="tagsImport.html">
@@ -4009,12 +4022,6 @@
                                 <div class="row" style="margin-bottom: 20px">
                                     <div class="col-xs-3">
                                         <label class="radio-inline">
-                                            <input type="radio" name="tagsOptions" value="tags_default" ng-model="selectedTagId">
-                                            <a href="/tags/preview?id=default" target="_blank">预设</a>
-                                        </label>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <label class="radio-inline">
                                             <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
                                             <a href="/tags/preview?id=default1" target="_blank">主题1</a>
                                         </label>
@@ -4029,6 +4036,12 @@
                                         <label class="radio-inline">
                                             <input type="radio" name="tagsOptions" value="tags_default3" ng-model="selectedTagId">
                                             <a href="/tags/preview?id=default3" target="_blank">主题3</a>
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
+                                            <a href="/tags/preview?id=default4" target="_blank">主题4</a>
                                         </label>
                                     </div>
                                 </div>
@@ -4094,7 +4107,7 @@
                                 <form class="deng-tagModel">
                                     <fieldset>
                                         <label for="tagName" class="col-sm-4 tag-modal-label" autocomplete="off">变量名称</label>
-                                        <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'"/>
+                                        <input id='tagName' type="text" ng-model="tag.name" class="form-control col-sm-8" maxlength="15" ng-disabled="tag.type!='custom'||tag.theme"/>
                                     </fieldset>
 
                                     <fieldset ng-show="bindBits!=''" style="margin: 10px 0">
@@ -4116,11 +4129,11 @@
                                         </label>
                                         <div class="radio" class="col-sm-8">
                                             <label>
-                                                <input type="radio" value="0" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
+                                                <input type="radio" value="0" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'||tag.theme">
                                                 数字
                                             </label>
                                             <label>
-                                                <input type="radio" value="1" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'">
+                                                <input type="radio" value="1" name="valueType" ng-model="tag.valueType" ng-disabled="tag.type!='custom'||tag.theme">
                                                 字符串
                                             </label>
                                         </div>
@@ -4128,8 +4141,8 @@
                                     <div class="register-option">
                                         <fieldset>
                                             <label for="indexOfRegister" class="col-sm-4 tag-modal-label">寄存器序号</label>
-                                            <input ng-disabled="!tag.register" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
-                                                   ng-model="tag.indexOfRegister" class="form-control col-sm-8" />
+                                            <input ng-disabled="!tag.register||tag.theme" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
+                                                   ng-model="tag.indexOfRegister" class="form-control col-sm-8"/>
                                         </fieldset>
                                     </div>
                                 </form>
