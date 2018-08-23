@@ -432,7 +432,7 @@ ideServices.service('TagService', [function () {
                                         case 'MyProgress':
                                             tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.progressValue,remake:widget.type};
                                             break;
-                                        case 'MyDashBoard':
+                                        case 'MyDashboard':
                                             tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.value,remake:widget.type};
                                             break;
                                         case 'MyRotateImg':
