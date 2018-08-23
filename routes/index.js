@@ -227,9 +227,14 @@ router.route('/project/:id/downloadLocalProject')
 
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
-//������Դ
+//download resources
 router.route('/project/:id/downloadFile')
     .get(projectInfo.downloadFile);
+//download tag Excel
+router.route('/project/:id/generateTagExcel')
+    .post(projectInfo.generateTagExcel);
+router.route('/project/:id/downloadTagExcel')
+    .get(projectInfo.downloadTagExcel);
 
 
 router.route('/project/:id/savedatacompress')

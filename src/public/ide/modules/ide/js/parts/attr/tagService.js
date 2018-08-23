@@ -388,4 +388,167 @@ ideServices.service('TagService', [function () {
             }
         }
     }
-}]);
+
+    /**
+     * 生成tag Excel所需的数据
+     * 查找控件中使用的tag,获取最大值、最小值、当前值。
+     * 再根据tag名对应到系统默认、自定义、主题的tag响应列表里。
+     * @author tang
+     * @param project
+     * @param defaultTags
+     * @param cb
+     */
+    this.processTagsData = function(project,defaultTags,cb){
+        var tagsData = getWidgetBindTag(project);
+        if(tagsData){
+            var finalTagsData = generateTagsList(tagsData,defaultTags);
+            cb(finalTagsData);
+        }else{
+            toastr.warning('暂无符合条件的tag');
+            return;
+        }
+
+    };
+
+    function getWidgetBindTag(project){
+        var tagsData = [];
+        _.forEach(project.pages,function(page){
+            var layers = page.layers;
+            if(layers&&layers.length){
+                _.forEach(layers,function(layer){
+                    var subLayers = layer.subLayers;
+                    _.forEach(subLayers,function(subLayer){
+                        var widgets = subLayer.widgets;
+                        if(widgets&&widgets.length){
+                            _.forEach(widgets,function(widget){
+                                if(widget.tag){
+                                    var info = widget.info;
+                                    var tag = widget.tag;
+                                    var tagData = '';
+                                    switch (widget.type){
+                                        case 'MyNum':
+                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.numValue,remake:widget.type};
+                                            break;
+                                        case 'MyProgress':
+                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.progressValue,remake:widget.type};
+                                            break;
+                                        case 'MyDashboard':
+                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.value,remake:widget.type};
+                                            break;
+                                        case 'MyRotateImg':
+                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.initValue,remake:widget.type};
+                                            break;
+                                        case 'MySlideBlock':
+                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.initValue,remake:widget.type};
+                                            break;
+                                        case 'MyTexNum':
+                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.numValue,remake:widget.type};
+                                            break;
+                                        case 'MyAlphaImg':
+                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.initValue,remake:widget.type};
+                                            break;
+                                        default :
+                                            break;
+                                    }
+                                    if(tagData!=''){
+                                        _.forEach(tags,function(tag){
+                                           if(tagData.name == tag.name){
+                                               tagData.indexOfRegister = tag.indexOfRegister;
+                                               if(tag.type == 'system'){
+                                                   tagData.type = tag.type;
+                                               }else if(tag.theme != undefined){
+                                                   tagData.type = tag.theme;
+                                               }else{
+                                                   tagData.type = 'custom';
+                                               }
+                                           }
+                                        });
+                                        tagsData.push(tagData);
+                                    }
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+        });
+
+        if(tagsData.length){
+            return tagsData;
+        }else{
+            return null;
+        }
+    }
+
+    function generateTagsList(tagsData,defaultTags){
+        //系统默认、自定义、主题 3类
+        var customTagsData = [];
+        tags.forEach(function(data){
+            if(data.type == 'custom'&&!data.theme){
+                customTagsData.push(data);
+            }
+        });
+        customTagsData = generateDefaultData(customTagsData);
+        var systemTagsData = generateDefaultData(sysTags);
+        var themeTagsData = defaultTags.map(function(defaultTag){
+            return generateDefaultData(defaultTag);
+        });
+
+        //已使用的tags 匹配到对应的分类中 并标记使用情况
+        _.forEach(tagsData,function(tagData){
+            if(tagData.type == 'system'){
+                generateFinalData(systemTagsData,tagData);
+            }else if(tagData.type == 'custom'){
+                generateFinalData(customTagsData,tagData);
+            }else{
+                _.forEach(themeTagsData,function(themeTagData){
+                    generateFinalData(themeTagData,tagData);
+                })
+            }
+        });
+
+        var finalSystemTags = [];
+        finalSystemTags.push(systemTagsData);
+        var finalCustomTags = [];
+        finalCustomTags.push(customTagsData);
+
+        return {
+            customTags:finalCustomTags,
+            systemTags:finalSystemTags,
+            themeTags:themeTagsData
+        };
+
+        function generateDefaultData(dataset){
+            return dataset.map(function(data){
+                return {
+                    name:data.name,
+                    indexOfRegister:data.indexOfRegister||'',
+                    min:"",
+                    max:"",
+                    value:"",
+                    remake:""
+                }
+            })
+        }
+
+        //若对应tag已使用则替换掉默认的，标记已使用。重复使用则在默认tag下再添加一条数据，标记重复。
+        function generateFinalData(data, checkData) {
+            var name = data.map(function (d) {
+                return d.name;
+            });
+            var n = name.lastIndexOf(checkData.name);
+
+            if (n >= 0) {
+                if (data[n].value === '') {
+                    checkData.mark = 'used';
+                    data.splice(n, 1, checkData);
+                } else {
+                    checkData.mark = 'repeat';
+                    data.splice(n + 1, 0, checkData);
+                }
+            }
+        }
+    }
+}
+
+]);
