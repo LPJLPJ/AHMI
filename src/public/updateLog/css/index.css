@@ -1,0 +1,149 @@
+*{
+    box-sizing: border-box;
+}
+body {
+    background-color: #f1f4f5;
+}
+
+.navbar-nav li a{
+    font-size: 16px;
+}
+
+.nav-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+}
+
+.nav-shadow {
+    margin: 0;
+    border: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.update-log-title {
+    z-index: 98;
+    text-align: center;
+    height: 70px;
+    width: 100%;
+    background-color: rgb(3, 57, 100);
+    color: white;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    font-weight: 200!important;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
+}
+
+.nav-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.update-log-title p {
+    line-height: 70px;
+    font-size: 25px;
+    font-weight: 200!important;
+}
+
+.update-log-body {
+    width: 80%;
+    margin-top: 120px;
+}
+
+.update-log-list{
+    list-style: none;
+    position: relative;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.update-log-list:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    content: "";
+    background-color: #e4eaec;
+}
+
+.update-log-list:after {
+    display: table;
+    content: "";
+}
+.update-log-list:after {
+    clear: both;
+}
+
+.update-log-list > .update-log-item {
+    position: relative;
+    display: block;
+    float: left;
+    width: 50%;
+    padding-right: 40px;
+    clear: left;
+}
+
+.update-log-list > .right-reverse{
+    float: right;
+    padding-right: 0;
+    padding-left: 40px;
+    clear: right;
+}
+
+.update-log-list > .update-log-item:not(:first-of-type){
+    margin-top: 90px;
+}
+
+.timeline-dot{
+    top: 0;
+    margin-top: 10px;
+    width: 14px;
+    height: 14px;
+    margin-right: -7px;
+    line-height: 14px;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    background-color: rgba(3, 57, 100,.8);
+    border-radius: 50%;
+}
+
+.right-reverse .timeline-dot {
+    right: auto;
+    left: 0;
+    margin-left: -8px;
+}
+
+.log-item-content{
+    float: left;
+    width: 100%;
+    overflow: hidden;
+    clear: left;
+}
+.log-item-wrap{
+    border-radius: 5px;
+    position: relative;
+    margin-bottom: 30px;
+    margin-right: 5px;
+    background-color: #fff;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, .2);
+}
+.log-item-body{
+    padding: 20px;
+    position: relative;
+}
+
+.log-item-scroll{
+    overflow: hidden;
+    max-height: 300px;
+}
+

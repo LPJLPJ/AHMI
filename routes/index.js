@@ -442,6 +442,10 @@ router.route('/blog/resources/deleteresource')
 router.route('/blog/*')
     .get(BlogRoute.getIndex)
 
+//updateLog
+router.route('/update-log/')
+    .get(BlogRoute.getLogIndex);
+
 //comment
 router.route('/blog/post/comment')
     .post(BlogRoute.postComment);

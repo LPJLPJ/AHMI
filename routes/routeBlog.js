@@ -669,4 +669,10 @@ BlogRoute.deleteComment = function(req,res){
     }
 }
 
+//更新日志
+BlogRoute.getLogIndex = function (req,res){
+    res.render('updateLog/index.html')
+};
+
+
 module.exports = BlogRoute;
