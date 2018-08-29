@@ -63,6 +63,9 @@ router.route('/user/checkUserType')
 //blog
 var BlogRoute = require('./routeBlog');
 
+//update log
+var UpdateLogRoute = require('./route_updateLog');
+
 // router.route('/userlist')
 // .get(function(req, res){
 // 	res.render('client/index.html')
@@ -443,8 +446,16 @@ router.route('/blog/*')
     .get(BlogRoute.getIndex)
 
 //updateLog
-router.route('/update-log/')
-    .get(BlogRoute.getLogIndex);
+router.route('/update-log/*')
+    .all(UserControl.admin);
+router.route('/update-log')
+    .get(UpdateLogRoute.getLogIndex);
+router.route('/update-log/release')
+    .get(UpdateLogRoute.releaseUpdateLog);
+router.route('/update-log/manage')
+    .get(UpdateLogRoute.getLogEditIndex);
+router.route('/update-log/delete')
+    .get(UpdateLogRoute.deleteUpdateLog);
 
 //comment
 router.route('/blog/post/comment')

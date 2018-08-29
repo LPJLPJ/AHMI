@@ -1,11 +1,12 @@
-*{
+* {
     box-sizing: border-box;
 }
+
 body {
     background-color: #f1f4f5;
 }
 
-.navbar-nav li a{
+.navbar-nav li a {
     font-size: 16px;
 }
 
@@ -20,10 +21,13 @@ body {
 .nav-shadow {
     margin: 0;
     border: 0;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.update-log-title {
+.nav-bottom {
+    position: static!important;
+}
+
+.update-log-headline {
     z-index: 98;
     text-align: center;
     height: 70px;
@@ -33,8 +37,8 @@ body {
     position: absolute;
     top: 50px;
     left: 0;
-    font-weight: 200!important;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
+    font-weight: 200 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .nav-fixed {
@@ -43,18 +47,19 @@ body {
     left: 0;
 }
 
-.update-log-title p {
+.update-log-headline p {
     line-height: 70px;
     font-size: 25px;
-    font-weight: 200!important;
+    font-weight: 200 !important;
 }
 
 .update-log-body {
     width: 80%;
     margin-top: 120px;
+    min-height: 600px;
 }
 
-.update-log-list{
+.update-log-list {
     list-style: none;
     position: relative;
     padding: 0;
@@ -76,6 +81,7 @@ body {
     display: table;
     content: "";
 }
+
 .update-log-list:after {
     clear: both;
 }
@@ -89,18 +95,18 @@ body {
     clear: left;
 }
 
-.update-log-list > .right-reverse{
+.update-log-list > .right-reverse {
     float: right;
     padding-right: 0;
     padding-left: 40px;
     clear: right;
 }
 
-.update-log-list > .update-log-item:not(:first-of-type){
+.update-log-list > .update-log-item:not(:first-of-type) {
     margin-top: 90px;
 }
 
-.timeline-dot{
+.timeline-dot {
     top: 0;
     margin-top: 10px;
     width: 14px;
@@ -113,8 +119,9 @@ body {
     color: #fff;
     text-align: center;
     cursor: pointer;
-    background-color: rgba(3, 57, 100,.8);
+    background-color: rgba(3, 57, 100, .8);
     border-radius: 50%;
+    box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
 .right-reverse .timeline-dot {
@@ -123,13 +130,14 @@ body {
     margin-left: -8px;
 }
 
-.log-item-content{
+.log-item-content {
     float: left;
     width: 100%;
     overflow: hidden;
     clear: left;
 }
-.log-item-wrap{
+
+.log-item-wrap {
     border-radius: 5px;
     position: relative;
     margin-bottom: 30px;
@@ -137,13 +145,77 @@ body {
     background-color: #fff;
     box-shadow: 2px 2px 3px rgba(0, 0, 0, .2);
 }
-.log-item-body{
+
+.log-item-body {
     padding: 20px;
     position: relative;
 }
 
-.log-item-scroll{
-    overflow: hidden;
-    max-height: 300px;
+.log-item-scroll {
+    overflow-y: auto;
+    height: 300px;
 }
+
+.log-item-scroll::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 10px;
+    background-color: rgba(217, 217, 217, 0.3);
+}
+
+.log-item-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(217, 217, 217, 0.3);
+    border-radius: 10px;
+    height: 10px;
+}
+
+.log-item-scroll::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(217, 217, 217, 0.3);
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.log-item-title{
+    font-size: 25px;
+    font-weight: 300;
+}
+.log-item-date{
+    color: rgb(3, 57, 100);
+    font-size: 15px;
+}
+
+.log-item-main p{
+    color: #5e7387;
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+.log-item-creator{
+    text-align: right;
+    margin-right: 20px;
+}
+.log-item-creator .log-item-author{
+    color: rgb(3, 57, 100);
+}
+.log-item-creator .author-name{
+    font-weight: 600;
+}
+
+/*发布日志*/
+.release-log-wrap{
+    padding: 20px;
+    margin: 10px auto;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+.log-type-bar{
+    color: red;
+}
+#log-content-list{
+    padding-left: 30px;
+}
+#confirm-release{
+    display: block;
+    margin: 20px auto;
+}
+
 

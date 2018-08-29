@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>发布更新日志</title>
+    <meta charset="UTF-8">
+    <title>ide-更新日志</title>
+    <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../public/blog/css/index.css">
+    <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="../../public/updateLog/css/index.css"/>
+    <script src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
+    <script src="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="../../public/updateLog/js/index.js"></script>
+</head>
+<body>
+<header>
+    <% include header.html %>
+</header>
+<div class="container-fluid">
+    <div class="release-log-wrap col-lg-12">
+        <div class="release-log-content">
+            <form class="form">
+                <div class="row">
+                    <label for="title">标题</label>
+                    <input type="text" id="title" class="form-control"/>
+                </div>
+                <div class="row">
+                    <label for="explain">说明</label>
+                    <textarea name="explain" id="explain" cols="50" rows="5" class="form-control"></textarea>
+                </div>
+                <div class="row">
+                    <div><label>具体内容条例</label></div>
+                    <div class="col-lg-1">
+                        <select name="type" id="log-content-type" class="form-control">
+                            <option>修复</option>
+                            <option>新增</option>
+                            <option>优化</option>
+                            <option>调整</option>
+                            <option>升级</option>
+                            <option>移除</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4">
+                        <input type="text" class="form-control" id="log-content-text"/>
+                    </div>
+                    <div class="col-lg-2">
+                        <button class="btn btn-default" id="add-log-content" type="button">添加</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <ol id="log-content-list">
+                    </ol>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container-fluid" style="width: 100%">
+        <button class="btn btn-success" id="confirm-release">确认发布</button>
+    </div>
+</div>
+</body>
+</html>
