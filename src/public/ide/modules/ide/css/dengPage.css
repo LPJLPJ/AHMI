@@ -92,7 +92,7 @@
 .dengPage-attrbute-container .my-attr-title .bgiDownload{
     float: right;
     font-size: 15px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .dengPage-attrbute-container .my-attr-item .dengPage-color-input{
@@ -792,7 +792,7 @@
     float: left;
 }
 .my-tag-button-import{
-    margin-right: 10px
+    margin-right: 5px
 }
 .my-tag-add-to-div{
     max-height: 250px;

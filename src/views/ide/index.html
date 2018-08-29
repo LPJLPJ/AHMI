@@ -3951,7 +3951,7 @@
                 <div ng-controller="TagCtrl">
                     <script type="text/ng-template" id="generateExcel.html">
                         <div class="modal-header">
-                            <h3 class="modal-title">确定生成ecxel？</h3>
+                            <h3 class="modal-title">确定生成Excel？</h3>
                         </div>
                         <!--<div class="modal-body">-->
                         <div class="modal-footer">
@@ -3989,17 +3989,16 @@
                     <div class="my-attr-item deng-attr-item lg deng-tags">
                         <div class="addTag-container clearfix"  ng-show="component.timerTagShow==false">
                             <span>tags</span>
+                            <button class="btn btn-default" ng-click="component.generateExcel()">导出tag</button>
                             <button type="button"
                                     ng-click="component.importTags()"
-                                    class="btn btn-default">导入tag
+                                    class="btn btn-default my-tag-button-import">导入tag
                             </button>
                             <button type="button"
                                     ng-click="component.addNewTag()"
                                     class="btn btn-default my-tag-button-import">
                                 添加新Tag
                             </button>
-                            <div style="clear: both"></div>
-                            <button class="btn btn-default generate-excel-button" ng-click="component.generateExcel()">生成tag序号定义表</button>
                         </div>
                         <!--导入tags模板-->
                         <script type="text/ng-template" id="tagsImport.html">
