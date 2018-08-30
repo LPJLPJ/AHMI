@@ -24,13 +24,13 @@ body {
 }
 
 .nav-bottom {
-    position: static!important;
+    position: static !important;
 }
 
 .update-log-headline {
     z-index: 98;
     text-align: center;
-    height: 70px;
+    height: 60px;
     width: 100%;
     background-color: rgb(3, 57, 100);
     color: white;
@@ -48,7 +48,7 @@ body {
 }
 
 .update-log-headline p {
-    line-height: 70px;
+    line-height: 60px;
     font-size: 25px;
     font-weight: 200 !important;
 }
@@ -174,48 +174,87 @@ body {
     border-radius: 10px;
 }
 
-.log-item-title{
+.log-item-title {
     font-size: 25px;
     font-weight: 300;
 }
-.log-item-date{
+
+.log-item-content-list{
+    padding-left: 30px;
+}
+
+.log-item-date {
     color: rgb(3, 57, 100);
     font-size: 15px;
 }
 
-.log-item-main p{
-    color: #5e7387;
-    font-size: 15px;
-    line-height: 1.2;
-}
-
-.log-item-creator{
+.log-item-creator {
     text-align: right;
     margin-right: 20px;
 }
-.log-item-creator .log-item-author{
+
+.log-item-creator .log-item-author {
     color: rgb(3, 57, 100);
 }
-.log-item-creator .author-name{
+
+.log-item-creator .author-name {
     font-weight: 600;
 }
 
+.log-item-explain>p{
+    text-indent:2em;
+    font-size: 15px;
+    line-height: 1.2;
+    color: #5e7387;
+}
+
 /*发布日志*/
-.release-log-wrap{
+.release-log-wrap {
     padding: 20px;
     margin: 10px auto;
     border: 1px solid #cccccc;
     border-radius: 5px;
 }
-.log-type-bar{
-    color: red;
+
+.log-type-bar {
+    background-color: rgba(255, 48, 48, .8);
+    margin-right: 10px;
+    border-radius: 2px;
+    padding: 0 5px;
+    color: white;
 }
-#log-content-list{
+
+#release-log-list {
     padding-left: 30px;
 }
-#confirm-release{
+
+#release-log-list > li {
+    font-size: 15px;
+}
+
+#confirm-release {
     display: block;
     margin: 20px auto;
+}
+
+.release-log-list-wrap {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    min-height: 110px;
+    background-color: white;
+}
+
+.release-form-item:not(:first-of-type) {
+    margin-top: 20px;
+}
+
+.delete-release-list {
+    color: red;
+    margin-left: 20px;
+    font-size: 20px;
+    cursor: pointer;
 }
 
 

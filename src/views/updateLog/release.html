@@ -20,38 +20,41 @@
 </header>
 <div class="container-fluid">
     <div class="release-log-wrap col-lg-12">
-        <div class="release-log-content">
-            <form class="form">
-                <div class="row">
-                    <label for="title">标题</label>
-                    <input type="text" id="title" class="form-control"/>
+        <div class="release-log-content" id="release-log-content">
+            <form class="form" name="release-log">
+                <div class="row release-form-item">
+                    <label for="release-log-title">标题</label>
+                    <input type="text" id="release-log-title" class="form-control" maxlength="50"/>
                 </div>
-                <div class="row">
-                    <label for="explain">说明</label>
-                    <textarea name="explain" id="explain" cols="50" rows="5" class="form-control"></textarea>
+                <div class="row release-form-item">
+                    <label for="release-log-explain">说明</label>
+                    <textarea name="explain" id="release-log-explain" cols="50" rows="5" maxlength="250" class="form-control"></textarea>
                 </div>
-                <div class="row">
-                    <div><label>具体内容条例</label></div>
-                    <div class="col-lg-1">
-                        <select name="type" id="log-content-type" class="form-control">
+                <div class="row release-form-item">
+                    <div><label>具体内容</label></div>
+                    <div class="col-lg-2">
+                        <select name="type" id="release-log-type" class="form-control">
                             <option>修复</option>
-                            <option>新增</option>
                             <option>优化</option>
+                            <option>新增</option>
                             <option>调整</option>
                             <option>升级</option>
                             <option>移除</option>
                         </select>
                     </div>
-                    <div class="col-lg-4">
-                        <input type="text" class="form-control" id="log-content-text"/>
+                    <div class="col-lg-6">
+                        <textarea name="log-content-text" id="release-log-content-text" cols="100" rows="3" class="form-control" maxlength="250"></textarea>
                     </div>
-                    <div class="col-lg-2">
-                        <button class="btn btn-default" id="add-log-content" type="button">添加</button>
+                    <div class="col-lg-4">
+                        <button class="btn btn-default" id="add-log-content" type="button" style="width: 100px">添加</button>
                     </div>
                 </div>
-                <div class="row">
-                    <ol id="log-content-list">
-                    </ol>
+                <div class="row release-form-item">
+                    <div class="col-lg-8">
+                        <div class="release-log-list-wrap">
+                            <ol id="release-log-list"></ol>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
