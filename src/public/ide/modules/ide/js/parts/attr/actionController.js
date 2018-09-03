@@ -450,14 +450,6 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                     pass = false;
                     return;
                 }
-                var value = Number(cmd[2].value);
-                var reg =/^(\-|\+)?\d+(\.\d+)?$/;
-                if(value!=''&&!reg.test(value)){
-                    validateArr[index].pass = false;
-                    validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
-                    pass = false;
-                    return;
-                }
                 switch(cmd[0].name){
                     case 'SET_STR':
                         if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1){
@@ -495,6 +487,15 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                         }
                         break;
                     default:
+                        var value = cmd[2].value;
+                        var tagName = cmd[2].tag;
+                        var reg =/^(\-|\+)?\d+(\.\d+)?$/;
+                        if(tagName===''&&value!==''&&!reg.test(value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
+                            pass = false;
+                            return;
+                        }
                         break;
                 }
             });
