@@ -8,16 +8,16 @@ UpdateLogRoute.releaseUpdateLog = function(req,res){
     res.render('updateLog/release.html')
 };
 
-UpdateLogRoute.changeUpdateLog = function(req,res){
-    res.render('change')
+UpdateLogRoute.saveUpdateLog = function(req,res){
+    var data = req.body;
+    console.log(data);
+    res.end('ok');
 };
 
 UpdateLogRoute.getLogEditIndex = function(req,res){
-    res.render('edit')
 };
 
 UpdateLogRoute.deleteUpdateLog = function(req,res){
-    res.render('delete')
 };
 
 

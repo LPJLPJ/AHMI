@@ -32,14 +32,42 @@ $(function () {
         var content = $(document).on('click','#confirm-release',function(){
             var title = $('#release-log-title').val();
             var explain = $('#release-log-explain').val();
+            var content = [];
+
             logContentList.find('li').each(function(index){
                 var contentType = $(this).find('.log-type-bar').text();
                 var contentText = $(this).find('.release-log-value').text();
-                return{
-                    itemType:contentType,
-                    itemContent:contentText
+                var contentData = {
+                    type:contentType,
+                    content:contentText
+                };
+                content.push(contentData);
+            });
+
+            var data = {
+                title:title,
+                explain:explain,
+                content:content
+            };
+
+            releaseUpdateLog(data)
+        });
+
+        function releaseUpdateLog(logData){
+            $.ajax({
+                url:'/update-log/save',
+                type:'post',
+                data:logData,
+                success:function(data){
+                    if(data == 'ok'){
+                        alert('发布成功');
+                    }
+                },
+                error:function(err){
+                    console.log(err)
                 }
             })
-        })
+        }
+
     })(jQuery);
 });

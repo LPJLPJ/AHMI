@@ -452,6 +452,8 @@ router.route('/update-log')
     .get(UpdateLogRoute.getLogIndex);
 router.route('/update-log/release')
     .get(UpdateLogRoute.releaseUpdateLog);
+router.route('/update-log/save')
+    .post(UpdateLogRoute.saveUpdateLog);
 router.route('/update-log/manage')
     .get(UpdateLogRoute.getLogEditIndex);
 router.route('/update-log/delete')

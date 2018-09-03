@@ -319,17 +319,25 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tags = project.customTags;
-        var pattern = /SysTmr_/;
-        tags.forEach(function (tag, index) {
+        var pattern = /SysTmr_\d+_t/;
+        var tagList = [];
+        var timerList = [];
+        tags.forEach(function (tag) {
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
-            if (pattern.test(tag.name)) {
-                tags.splice(index, 1);
+            if(!pattern.test(tag.name)){
+                tagList.push(tag)
+            }else{
+                timerList.push(tag)
             }
         });
+        project.customTags = tagList;
 
         timers = project.timerTags;
+        if(timerList.length){
+            timers = timers.concat(timerList);
+        }
         var tmr = [];
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
