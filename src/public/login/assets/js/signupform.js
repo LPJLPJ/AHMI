@@ -3,7 +3,6 @@
  */
 
 $(function () {
-    console.log('haha')
     var ErrMessages = {
         username: {
             empty: '用户名不能为空',
