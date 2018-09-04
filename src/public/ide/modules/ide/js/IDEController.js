@@ -783,6 +783,9 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             $scope.$broadcast('PageNodeChanged');
         });
 
+        $scope.$on('ChangeCurrentTags', function (event) {
+            $scope.$broadcast('TagsChanged');
+        })
 
         function reOpenProject(event, pid) {
             $scope.ide.loaded = false;
@@ -848,7 +851,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //tags tbc
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);
-            TagService.setTimerNum(globalProject.timers);
+            TagService.setTimerNum(globalProject.timerTags.length||0);
             TagService.syncTagClasses(globalProject.tagClasses);
             NavModalCANConfigService.setCANId(globalProject.CANId);
         }
@@ -936,6 +939,15 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 attrArr = [],//属性名数组
                 pageNode = new fabric.Canvas('c'),
                 subLayerNode = new fabric.Canvas('c1', {renderOnAddRemove: false});
+            var projectId = window.location.pathname.split('/')[2];
+            var replaceProjectId = function (url) {
+                if (!url) {
+                    return url;
+                }
+                var urlArr = url.split('/');
+                urlArr[2] = projectId;
+                return urlArr.join('/');
+            };
 
             //fix basic data structure
             newData.thumbnail = '';
@@ -970,6 +982,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 pageNode.setWidth(tempContentObj.initSize.width);
                 pageNode.setHeight(tempContentObj.initSize.height);
                 pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
+                page.originBackgroundImage = replaceProjectId(page.originBackgroundImage);
                 page.backgroundImage = page.originBackgroundImage;
                 // pageNode.clear();
                 if (page.canvasList !== undefined) {
@@ -978,15 +991,22 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     attrArr = ['canvasList', 'linkedAllWidgets'];
                     deleteObjAttr(page, attrArr);
                     if (page.actions) {
-                        page.actions.forEach(function (action) {
-                            if (action.commands) {
-                                var newCommands;
-                                newCommands = action.commands.map(function (command) {
-                                    return command.cmd;
-                                });
-                                action.commands = newCommands;
-                            }
-                        })
+                        if(page.originActions){
+                            // 1.10.6 生成工程会保存原始指令
+                            page.actions = page.originActions;
+                            delete page.originActions;
+                        }else{
+                            page.actions.forEach(function (action) {
+                                if (action.commands) {
+                                    var newCommands;
+                                    newCommands = action.commands.map(function (command) {
+                                        return command.cmd;
+                                    });
+                                    action.commands = newCommands;
+                                }
+                            })
+                        }
+
                     }
                     page.layers.forEach(function (layer, index) {
                         layer.subLayers = layer.subCanvasList;
@@ -1003,25 +1023,11 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                             subLayer.selected = false;
                             subLayer.url = '';
                             if (subLayer.actions) {
-                                subLayer.actions.forEach(function (action) {
-                                    if (action.commands) {
-                                        var newCommands;
-                                        newCommands = action.commands.map(function (command) {
-                                            return command.cmd;
-                                        });
-                                        action.commands = newCommands;
-                                    }
-                                })
-                            }
-                            subLayer.widgets.forEach(function (widget, index) {
-                                widget.type = widget.subType;
-                                deleteObjAttr(widget, ['subType']);
-                                widget.current = false;
-                                widget.currentFabwidget = null;
-                                widget.expand = true;
-                                widget.selected = false;
-                                if (widget.actions) {
-                                    widget.actions.forEach(function (action) {
+                                if(subLayer.originActions){
+                                    subLayer.actions = subLayer.originActions;
+                                    delete subLayer.originActions;
+                                }else{
+                                    subLayer.actions.forEach(function (action) {
                                         if (action.commands) {
                                             var newCommands;
                                             newCommands = action.commands.map(function (command) {
@@ -1031,11 +1037,38 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                         }
                                     })
                                 }
+
+                            }
+                            subLayer.widgets.forEach(function (widget, index) {
+                                widget.type = widget.subType;
+                                deleteObjAttr(widget, ['subType']);
+                                widget.current = false;
+                                widget.currentFabwidget = null;
+                                widget.expand = true;
+                                widget.selected = false;
+                                if (widget.actions) {
+                                    if(widget.originActions){
+                                        widget.actions = widget.originActions;
+                                        delete widget.originActions;
+                                    }else{
+                                        widget.actions.forEach(function (action) {
+                                            if (action.commands) {
+                                                var newCommands;
+                                                newCommands = action.commands.map(function (command) {
+                                                    return command.cmd;
+                                                });
+                                                action.commands = newCommands;
+                                            }
+                                        })
+                                    }
+
+                                }
                                 if (widget.texList && (widget.texList instanceof Array)) {
                                     widget.texList.forEach(function (tex, index) {
                                         if (tex.slices && (tex.slices instanceof Array)) {
                                             tex.slices.forEach(function (slice, index) {
                                                 if (slice.hasOwnProperty('originSrc')) {
+                                                    slice.originSrc = replaceProjectId(slice.originSrc);
                                                     slice.imgSrc = slice.originSrc;
                                                     delete slice.originSrc;
                                                 }

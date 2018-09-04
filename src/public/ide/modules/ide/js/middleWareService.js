@@ -242,10 +242,9 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
-        var tags, timers;
+        var tags, timers, tagClasses;
 
         project = arguments[0];
-        console.log('haha',project);
 
         pages = project.pages || [];
         pages.forEach(function (page) {
@@ -270,20 +269,49 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tags = project.customTags;
-        tags.forEach(function (tag) {
+        var pattern = /SysTmr_\d+_t/;
+        var tagList = [];
+        var timerList = [];
+        tags.forEach(function (tag, index) {
+            if(!pattern.test(tag.name)){
+                tagList.push(tag)
+            }else{
+                timerList.push(tag)
+            }
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
         });
+        project.customTags = tagList;
 
-        timers = project.customTags;
+        timers = project.timerTags;
+        if(timerList.length){
+            timers = timers.concat(timerList);
+        }
+        var tmr = [];
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
+            if (pattern.test(timer.name)) {
+                tmr.push(timer)
+            }
         });
+        project.timerTags = tmr;
 
-        console.log('keke',project);
+
+
+        tagClasses = project.tagClasses;
+        if (!tagClasses) {
+            tagClasses = [{
+                name: '全部',
+                type: 'system',
+                tagArray: []
+            }]
+        }
+        if (tagClasses[0].name == '全部' || tagClasses[0].name == 'tags') {
+            tagClasses[0].name = '变量';
+        }
     }
 
     //检查工程版本是否过时

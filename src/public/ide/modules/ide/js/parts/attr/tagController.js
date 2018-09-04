@@ -47,7 +47,6 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     //导入tags事件
     $scope.$on('syncTagSuccess', function (event, data) {
-        console.log('syncTagSuccess', data);
         data = data || [];
         data.map(function (item) {
             addTagToTagClass(item, $scope.component.curTagClassName);
@@ -504,7 +503,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 }
             }
         }
-
+        TagService.deleteTag(name);
+        $scope.$emit('ChangeCurrentTags');
     }
 
     //点击list里的自定义tag名称，将其先显示编辑面板上。
@@ -619,6 +619,9 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         if (canTimerNumChange($scope.component.timerNum)){
             TagService.setTimerNum($scope.component.timerNum);
             TagService.setTimerTags($scope.component.timerNum);
+            $scope.component.timerNum=TagService.getTimerNum();
+            $scope.component.allTimerTags=TagService.getAllTimerTags();
+            $scope.$emit('ChangeCurrentTags');
         }
 
     }

@@ -20,10 +20,10 @@ ideServices.service('TagService', [function () {
     var curPageTag = new Tag('当前页面序号', false, null, 'true', 0, 'system', 'forbidden');
     var RTCTag1 = new Tag('时钟变量年月日', false, null, 'true', 0, 'system');
     var RTCTag2 = new Tag('时钟变量时分秒', false, null, 'true', 0, 'system');
-    var backLight = new Tag('背光', false, null, 'true', 0, 'system');
     var buzzer = new Tag('蜂鸣器', false, null, 'true', 0, 'system');
+    var backLight = new Tag('背光', false, null, 'true', 0, 'system');
     var fpsTag = new Tag('帧率', false, null, 'true', 0, 'system');
-    var sysTags = [keyCode, videoTag, curPageTag, RTCTag1, RTCTag2, backLight, buzzer, fpsTag];
+    var sysTags = [keyCode, videoTag, curPageTag, RTCTag1, RTCTag2, buzzer, backLight, fpsTag];
     var tags = sysTags;
     var timerTags = [];
     var timerNum = 0;
@@ -67,8 +67,8 @@ ideServices.service('TagService', [function () {
         }
 
         if (noDuplication(tag, tags)) {
-
             tags.push(tag);
+            tagClasses[0].tagArray=tags;
             cb && cb();
 
         }
@@ -191,6 +191,7 @@ ideServices.service('TagService', [function () {
         }else{
             return;
         }
+        tagClasses[1].tagArray=timerTags;
     };
 
     //设置timer的数量
@@ -201,6 +202,19 @@ ideServices.service('TagService', [function () {
     //获取timer的数量
     this.getTimerNum = function () {
         return timerNum;
+    };
+
+    this.deleteTag = function(name){
+        var tagList;
+        for (var j = 0; j < tagClasses.length; j++) {
+            tagList = tagClasses[j].tagArray;
+            for (i = 0; i < tagList.length; i++) {
+                if (tagList[i].name === name) {
+                    tagList.splice(i, 1);
+                }
+            }
+        }
+        tags=tagClasses[0].tagArray;
     };
 
     //将tag按名称排序
@@ -241,7 +255,7 @@ ideServices.service('TagService', [function () {
         this.tagArray = tagArray || [];
     }
 
-    var allTags = new TagClass('全部', 'system', tags);
+    var allTags = new TagClass('变量', 'system', tags);
     var timeTags = new TagClass('定时器', 'timer', timerTags);
     var defaultTagClass = new TagClass('default', 'custom', []);
     var tagClasses = [allTags, timeTags];
@@ -275,7 +289,7 @@ ideServices.service('TagService', [function () {
 
     //给用户的标签列表添加默认标签
     function addDefaultTagClasses(tagClassesList) {
-        var allTags = new TagClass('全部', 'system', tags);
+        var allTags = new TagClass('变量', 'system', tags);
         var timeTags = new TagClass('定时器', 'timer', timerTags);
         var defaultTagClasses = [allTags, timeTags];
         var sysTagClassFlags = defaultTagClasses.map(function () {
