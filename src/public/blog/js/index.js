@@ -30,6 +30,7 @@ function renderBlogs(blogs) {
 }
 
 function renderSingleBlog(blog) {
+    console.log(blog);
     var pTime = blog.publishTime;
 
     var showTime;

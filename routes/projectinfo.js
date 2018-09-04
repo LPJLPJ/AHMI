@@ -1493,6 +1493,7 @@ projectRoute.downloadFile = function (req,res) {
 projectRoute.createFolder = function (req, res) {
     var data = _.cloneDeep(req.body);
     data.userId = req.session.user.id;
+
     if (req.session.user) {
         var newFolder = new ClassModel(data);
         newFolder.save(function (err) {

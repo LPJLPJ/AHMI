@@ -34,15 +34,25 @@ $(function () {
             var explain = $('#release-log-explain').val();
             var content = [];
 
+            if(title == ''){
+                alert('请填写标题');
+                return;
+            }
+
             logContentList.find('li').each(function(index){
                 var contentType = $(this).find('.log-type-bar').text();
                 var contentText = $(this).find('.release-log-value').text();
-                var contentData = {
+                var contentItem = {
                     type:contentType,
                     content:contentText
                 };
-                content.push(contentData);
+                content.push(JSON.stringify(contentItem));
             });
+
+            if(explain==''&&!content.length){
+                alert('请填写内容');
+                return;
+            }
 
             var data = {
                 title:title,
@@ -61,6 +71,7 @@ $(function () {
                 success:function(data){
                     if(data == 'ok'){
                         alert('发布成功');
+                        location.reload();
                     }
                 },
                 error:function(err){
