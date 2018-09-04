@@ -296,37 +296,47 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tags = project.customTags;
-        var pattern = /SysTmr_/;
-        tags.forEach(function (tag,index) {
+        var pattern = /SysTmr_\d+_t/;
+        var tagList = [];
+        var timerList = [];
+        tags.forEach(function (tag, index) {
+            if(!pattern.test(tag.name)){
+                tagList.push(tag)
+            }else{
+                timerList.push(tag)
+            }
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
-            if(pattern.test(tag.name)){
-                tags.splice(index,1);
-            }
         });
+        project.customTags = tagList;
 
         timers = project.timerTags;
-        var tmr=[];
+        if(timerList.length){
+            timers = timers.concat(timerList);
+        }
+        var tmr = [];
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
-            if(pattern.test(timer.name)){
+            if (pattern.test(timer.name)) {
                 tmr.push(timer)
             }
         });
         project.timerTags = tmr;
 
+
+
         tagClasses = project.tagClasses;
-        if (!tagClasses){
+        if (!tagClasses) {
             tagClasses = [{
-                name:'全部',
-                type:'system',
-                tagArray:[]
+                name: '全部',
+                type: 'system',
+                tagArray: []
             }]
         }
-        if(tagClasses[0].name == '全部'||tagClasses[0].name == 'tags'){
+        if (tagClasses[0].name == '全部' || tagClasses[0].name == 'tags') {
             tagClasses[0].name = '变量';
         }
     }
