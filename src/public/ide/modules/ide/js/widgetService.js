@@ -454,7 +454,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.thresholdModeId=arg.thresholdModeId;
                     if(self.thresholdModeId=='2'){
                         self.color3=arg.color3;
-                        self.progressImageSrc3 = arg.progressImageSrc3 
+                        self.progressImageSrc3 = arg.progressImageSrc3
                     }
                     console.log('thresholdModeId',arg.thresholdModeId);
                 }else if(arg.hasOwnProperty('threshold1')){
@@ -619,7 +619,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                                 ctx.fillStyle=this.null;
                             }
                             ctx.fillRect(-this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
-                            
+
                         }else if(this.thresholdModeId=='2'){
                             if(this.progressValueOri<this.threshold1){
                                 ctx.fillStyle=this.color1;
@@ -642,7 +642,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                                 progressImageElement = ResourceService.getResourceFromCache(progressImageElement)
                                 ctx.drawImage(progressImageElement,0,progressImageElement.height*(1-this.progressValue),progressImageElement.width,progressImageElement.height*this.progressValue, -this.width / 2, this.height / 2-this.height*this.progressValue,this.width,this.height*this.progressValue);
                             }
-                                
+
                         }
                         if(this.cursorImageElement){
                             ctx.drawImage(this.cursorImageElement,-this.cursorImageElement.width/2/this.scaleX,this.height/2-this.height*this.progressValue-this.cursorImageElement.height/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
@@ -3286,21 +3286,21 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
      * @param  {[type]} numStr        [数字字符串]
      * @param  {[type]} align         [对齐方式]
      * @param  {[type]} width         [控件宽度]
-     * @param  {[type]} maxWidth      [字符最大宽度]
+     * @param  {[type]} fontSize      [字符大小]
      * @param  {[type]} decimalCount  [小数点模式]
      * @param  {[number]}spacing      [字符间距]
      * @return {[type]}               [description]
      */
-    function drawNumByCharacter(ctx,numStr,align,width,maxFontWidth,decimalCount,spacing){
+    function drawNumByCharacter(ctx,numStr,align,width,fontSize,decimalCount,spacing){
         var xCoordinate,         //渲染每个字符的x坐标
             initXPos,            //渲染字符的起始位置
             widthOfNumStr,       //渲染的字符串的长度
-            paddingX;             //控件左右两边的留白
+            padding;             //数字边缘的留白
 
-        paddingX = Math.ceil(maxFontWidth/10);
-        width = width-2*paddingX;
+        padding = Math.ceil(fontSize/10);
+        width = width-2*padding;
 
-        widthOfNumStr=(decimalCount===0?(maxFontWidth*numStr.length):(maxFontWidth*(numStr.length-0.5)));
+        widthOfNumStr=(decimalCount===0?(fontSize*numStr.length):(fontSize*(numStr.length-0.5)));
         widthOfNumStr += (numStr.length-1)*spacing;
         ctx.textAlign = 'center';
         switch(align){
@@ -3316,24 +3316,24 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 break;
         }
         xCoordinate = initXPos-width/2;
-        xCoordinate +=maxFontWidth/2;//+ 使数字画在方格中央
-        /*
-          修改数字控件字符的渲染位置的计算方式，步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
-         */
-        var containerMeanValuePerChar = (0 === decimalCount ? ((width-maxFontWidth)/(numStr.length-1)) : ((width-maxFontWidth)/((numStr.length-1)+0.5-1)));
-        var displayStep = widthOfNumStr > width ? containerMeanValuePerChar : maxFontWidth;
+        xCoordinate += fontSize/2;      //+ 使数字画在方格中央
+
+        // 修改数字控件字符的渲染位置的计算方式,
+        // 步长改为当字符总的长度大于控件的宽度时为控件宽度的等分，否则为字符宽度
+        var containerMeanValuePerChar = (0 === decimalCount ? ((width-fontSize)/(numStr.length-1)) : ((width-fontSize)/((numStr.length-1)+0.5-1)));
+        var displayStep = widthOfNumStr > width ? containerMeanValuePerChar : fontSize;
 
         for(var i=0;i<numStr.length;i++){
 
             if(numStr[i]==='.'){
                 //小数点往左偏移20%
-                var tempXCor = xCoordinate-maxFontWidth/5;
+                var tempXCor = xCoordinate-fontSize/5;
                 ctx.fillText(numStr[i],tempXCor,0);
-                // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth/2,maxFontWidth);
+                // ctx.strokeRect(xCoordinate-fontSize/2,-fontSize/2-padding,fontSize+2*padding,fontSize+2*padding);
                 xCoordinate+=displayStep/2;// 小数点显示坐标的步长为其它字符宽度的一半
             }else{
                 ctx.fillText(numStr[i],xCoordinate,0);
-                // ctx.strokeRect(xCoordinate-maxFontWidth/2,-maxFontWidth/2,maxFontWidth,maxFontWidth);
+                // ctx.strokeRect(xCoordinate-fontSize/2,-fontSize/2-padding,fontSize+2*padding,fontSize+2*padding);
                 xCoordinate+=displayStep;
             }
             xCoordinate += spacing;

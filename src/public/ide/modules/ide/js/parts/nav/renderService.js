@@ -1332,6 +1332,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         var stream = '';
         var outpath = path.join(dstDir,imgName);
         options.paddingRatio = 1.2;
+        // options.showGrid = true;
         stream = FontGeneratorService.generateSingleFont(font,options);
         stream = FontGeneratorService.pngStream(stream,local);
         if(local){
