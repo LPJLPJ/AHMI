@@ -471,6 +471,26 @@ ideServices
                 return names
             };
 
+            /**
+             * 搜寻所有被项目引用过的字体
+             * 用于删除资源时判断  该资源是否可以被删除
+             */
+            this.getRequiredTextNames=function(){
+                var names=[];
+                _.forEach(project.pages,function(page){
+                    _.forEach(page.layers,function(layer){
+                        _.forEach(layer.subLayers,function(subLayer){
+                            _.forEach(subLayer.widgets,function(widget){
+                                if(widget.info.fontFamily){
+                                    names.push(widget.info.fontFamily);
+                                }
+                            })
+                        })
+                    })
+                });
+                return names
+            };
+
             function replaceActions(target,oldTagName,newTagName) {
                 if (target&&target.actions){
                     target.actions.forEach(function (action) {
