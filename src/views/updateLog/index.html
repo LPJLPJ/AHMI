@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <title>ide-更新日志</title>
     <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../../public/blog/css/index.css">
     <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
-
     <link rel="stylesheet" href="../../public/updateLog/css/index.css"/>
     <script src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
     <script src="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
@@ -17,46 +15,34 @@
     <% include header.html %>
 </header>
     <div class="container-fluid update-log-headline">
-        <p>IDE-更新日志</p>
+        <p>IDE&nbsp;-&nbsp;更新日志</p>
     </div>
     <div class="container update-log-body">
         <ul class="update-log-list">
             <%for(var i=0;i<logData.length;i++){%>
             <li class="update-log-item">
-                <div class="timeline-dot"></div>
+                <div class="timeline-dot" title="<%= logData[i].createTime %>"></div>
                 <div class="log-item-content">
                     <div class="log-item-wrap">
                         <div class="log-item-body">
-                            <h3 class="log-item-title">ide 1.10.06 更新日志</h3>
-                            <p class="log-item-date">2018年8月28日</p>
+                            <h3 class="log-item-title"><%= logData[i].title %></h3>
+                            <p class="log-item-date"><%= logData[i].createTime %></p>
                             <div class="log-item-scroll">
                                 <div class="log-item-explain">
-                                    <p>天空飘来五个字，那都不是事。</p>
+                                    <p><%= logData[i].explain %></p>
                                 </div>
                                 <ol class="log-item-content-list">
-                                    <li><span class='log-type-bar'>新增</span><span>你好啊</span></li>
+                                    <%for(var j=0;j<logData[i].content.length;j++){%>
+                                    <li class="log-item-content-list__item"><span class='log-type-bar'><%= logData[i].content[j].type %></span><span><%= logData[i].content[j].content %></span></li>
+                                    <%}%>
                                 </ol>
                             </div>
                         </div>
-                        <p class="log-item-creator"><span class="log-item-author">发布者：</span><span class="author-name">653314653@qq.com</span></p>
+                        <p class="log-item-creator"><span class="log-item-author">发布者：</span><span class="author-name"><%= logData[i].author %></span></p>
                     </div>
                 </div>
             </li>
             <%}%>
-            <!--<li class="update-log-item">
-                <div class="timeline-dot"></div>
-                <div class="log-item-content">
-                    <div class="log-item-wrap">
-                        <div class="log-item-body">
-                            <h3>ide 1.10.06 更新日志</h3>
-                            <p>2018年8月28日</p>
-                            <div class="log-item-scroll">
-                                <p>增加装比特效</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>-->
         </ul>
     </div>
 <footer class="nav-bottom">

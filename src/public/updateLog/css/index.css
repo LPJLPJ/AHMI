@@ -30,14 +30,13 @@ body {
 .update-log-headline {
     z-index: 98;
     text-align: center;
-    height: 60px;
+    height: 50px;
     width: 100%;
     background-color: rgb(3, 57, 100);
     color: white;
     position: absolute;
     top: 50px;
     left: 0;
-    font-weight: 200 !important;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
@@ -47,9 +46,9 @@ body {
     left: 0;
 }
 
-.update-log-headline p {
-    line-height: 60px;
-    font-size: 25px;
+.update-log-headline>p {
+    line-height: 50px;
+    font-size: 22px;
     font-weight: 200 !important;
 }
 
@@ -124,7 +123,7 @@ body {
     box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
-.update-log-list > .update-log-item:not(:first-of-type) .timeline-dot {
+.update-log-list > .update-log-item:nth-of-type(even) .timeline-dot {
     right: auto;
     left: 0;
     margin-left: -8px;
@@ -183,6 +182,10 @@ body {
     padding-left: 30px;
 }
 
+.log-item-content-list__item{
+    color: #5e7387;
+}
+
 .log-item-date {
     color: rgb(3, 57, 100);
     font-size: 15px;
@@ -205,7 +208,7 @@ body {
     text-indent:2em;
     font-size: 15px;
     line-height: 1.2;
-    color: #5e7387;
+    color: rgb(84, 141, 212);
 }
 
 /*发布日志*/

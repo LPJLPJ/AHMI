@@ -17,11 +17,10 @@ UpdateLogRoute.getLogIndex = function (req,res){
                 logItem.content = log.content.map(function(item){
                     return JSON.parse(item)
                 });
-                logItem.createTime = moment(log.createTime).format('YYYY-MM-DD HH:mm');
+                logItem.createTime = moment(log.createTime).format('YYYY年MM月DD日 HH时mm分');
                 return logItem;
             });
-
-            res.render('updateLog/index.html',logData)
+            res.render('updateLog/index.html',{logData:logData})
         }
     });
 };
