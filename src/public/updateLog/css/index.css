@@ -95,7 +95,7 @@ body {
     clear: left;
 }
 
-.update-log-list > .right-reverse {
+.update-log-list > li:nth-of-type(even) {
     float: right;
     padding-right: 0;
     padding-left: 40px;
@@ -124,7 +124,7 @@ body {
     box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
 
-.right-reverse .timeline-dot {
+.update-log-list > .update-log-item:not(:first-of-type) .timeline-dot {
     right: auto;
     left: 0;
     margin-left: -8px;

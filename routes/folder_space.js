@@ -17,7 +17,7 @@ module.exports=function(req,res){
                     name:folder.name,
                     id:folderId
                 };
-                //���ҷ����еĹ���
+                //查找项目下的工程
                 ProjectModel.findProByClass(_user.id,folderId,function(err,projects){
                     if(err){
                         console.log(err);
@@ -52,7 +52,7 @@ module.exports=function(req,res){
                 });
             }
         });
-    }else{//���µ�¼
+    }else{
         res.redirect('/user/login');
     }
 };

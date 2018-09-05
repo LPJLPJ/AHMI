@@ -5,7 +5,6 @@ var moment = require('moment');
 var UpdateLogRoute = {};
 
 UpdateLogRoute.getLogIndex = function (req,res){
-    var logData = [];
     UpdateLogModel.fetch(function(err,data){
         if(err){
             errHandler(res, 500, 'update log not find');
@@ -21,9 +20,10 @@ UpdateLogRoute.getLogIndex = function (req,res){
                 logItem.createTime = moment(log.createTime).format('YYYY-MM-DD HH:mm');
                 return logItem;
             });
+
+            res.render('updateLog/index.html',logData)
         }
     });
-    res.render('updateLog/index.html')
 };
 
 UpdateLogRoute.releaseUpdateLog = function(req,res){
