@@ -117,7 +117,7 @@ function addEJSanchor(htmlText) {
     var backslashBodyIdx = htmlText.indexOf('<\/body>')
     var rearScriptIdx
     if (backslashBodyIdx!==-1){
-        rearScriptIdx = backslashBodyIdx-1
+        rearScriptIdx = backslashBodyIdx
         htmlText = htmlText.slice(0,rearScriptIdx) + '<%- rearScripts %>' + htmlText.slice(rearScriptIdx)
     }
 
