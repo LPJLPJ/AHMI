@@ -29,7 +29,7 @@ $(function () {
             $(this).parent().remove();
         });
 
-        var content = $(document).on('click','#confirm-release',function(){
+        $(document).on('click','#confirm-release',function(){
             var title = $('#release-log-title').val();
             var explain = $('#release-log-explain').val();
             var content = [];
@@ -79,6 +79,29 @@ $(function () {
                 }
             })
         }
+
+        //删除日志
+        $('.delete-log').on('click',function(){
+            var confirmDelete = confirm("确定要删除吗");
+            if(confirmDelete){
+                var logItem = $(this).parents('.manage-log-content__item');
+                var logId = logItem.attr('data-id');
+                $.ajax({
+                    url:'/update-log/delete',
+                    type:'post',
+                    data:{logId:logId},
+                    success:function(data){
+                        if(data == 'ok'){
+                            logItem.remove();
+                        }
+                    },
+                    error:function(err){
+                        alert('删除失败');
+                        console.log(err)
+                    }
+                })
+            }
+        })
 
     })(jQuery);
 });

@@ -1,9 +1,19 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a{
+    text-decoration: none!important;
 }
 
 body {
     background-color: #f1f4f5;
+}
+
+ul > li {
+    list-style: none;
 }
 
 .navbar-nav li a {
@@ -16,6 +26,7 @@ body {
     left: 0;
     width: 100%;
     z-index: 99;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .nav-shadow {
@@ -46,7 +57,7 @@ body {
     left: 0;
 }
 
-.update-log-headline>p {
+.update-log-headline > p {
     line-height: 50px;
     font-size: 22px;
     font-weight: 200 !important;
@@ -59,7 +70,6 @@ body {
 }
 
 .update-log-list {
-    list-style: none;
     position: relative;
     padding: 0;
     margin-top: 20px;
@@ -176,13 +186,14 @@ body {
 .log-item-title {
     font-size: 25px;
     font-weight: 300;
+    color: #37474f;
 }
 
-.log-item-content-list{
+.log-item-content-list {
     padding-left: 30px;
 }
 
-.log-item-content-list__item{
+.log-item-content-list__item {
     color: #5e7387;
 }
 
@@ -204,11 +215,14 @@ body {
     font-weight: 600;
 }
 
-.log-item-explain>p{
-    text-indent:2em;
+.log-item-explain > p {
+    text-indent: 2em;
     font-size: 15px;
     line-height: 1.2;
     color: rgb(84, 141, 212);
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden;
 }
 
 /*发布日志*/
@@ -260,4 +274,71 @@ body {
     cursor: pointer;
 }
 
+/*日志管理*/
+.manage-log-wrap {
+    min-height: 500px;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.manage-log-content__item {
+    width: 100%;
+    padding: 10px 10px 0 10px;
+    border: 1px solid #cccccc;
+    background-color: white;
+    border-radius: 5px;
+    position: relative;
+}
+
+.manage-log-content__item:not(:first-of-type){
+    margin-top: 20px;
+}
+
+.log-item-content-wrap{
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-item-content-wrap::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 10px;
+    background-color: rgba(217, 217, 217, 0.3);
+}
+
+.log-item-content-wrap::-webkit-scrollbar-thumb {
+    background-color: rgba(217, 217, 217, 0.3);
+    border-radius: 10px;
+    height: 10px;
+}
+
+.log-item-content-wrap::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(217, 217, 217, 0.3);
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.log-item-operate {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 25px;
+}
+.log-item-operate>span{
+    float: left;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+}
+
+.edit-log{
+    padding: 0 5px;
+    margin-right: 5px;
+}
+
+.delete-log{
+    font-size: 30px;
+    color: red;
+    cursor: pointer;
+    width: 25px;
+}
 
