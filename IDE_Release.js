@@ -32,11 +32,19 @@ Version.prototype.toString = function(){
     return this.major+'.'+this.minor+'.'+this.patch+'_'+'build'+'_'+this.build
 }
 
+Version.prototype.versionStr = function(){
+    return ''+this.major+'.'+this.minor+'.'+this.patch
+}
+
+Version.prototype.buildStr = function(){
+    return ''+this.build
+}
+
 Version.largerThan = function(v1,v2){
     return v1.major > v2.major || v1.minor > v2.minor || v1.patch > v2. patch || v1.build > v2.build
 }
 
-function createVersionByStr(verStr){
+function createVersionByStr(verStr,buildInfo){
     var verParts = verStr.split('_')
     var mainVerStr = verParts[0]
     var buildStr = verParts[2]
@@ -46,6 +54,9 @@ function createVersionByStr(verStr){
     var patch = parseInt(mainVerParts[2])||0
     if (buildStr && buildStr.length){
         var build = buildStr
+    }
+    if(buildInfo){
+        build = buildInfo
     }
     return new Version(major,minor,patch,build)
 }
@@ -65,7 +76,7 @@ function parseFileVersion(fileUrl){
 function parseJSONVersion(jsonUrl){
     var curJson = require(jsonUrl)
 
-    return createVersionByStr(curJson.version)
+    return createVersionByStr(curJson.version,curJson.build)
 }
 
 function parseJSVersion(jsUrl){
@@ -78,26 +89,27 @@ function parseJSVersion(jsUrl){
 }
 
 //write
-function writeJSONVersion(jsonUrl,versionStr){
+function writeJSONVersion(jsonUrl,version){
     var curJson = JSON.parse(fs.readFileSync(jsonUrl)+'')
-    curJson.version = versionStr
+    curJson.version = version.versionStr()
+    curJson.build = version.buildStr()
     fs.writeFileSync(jsonUrl,JSON.stringify(curJson,null,4))
 }
 
-function writeJSVersion(jsUrl,versionStr){
+function writeJSVersion(jsUrl,version){
     var curJS =  fs.readFileSync(jsUrl) +''
-    var result = curJS.replace(/versionNum\s*=\s*[\'|\"]([^\'\"]+?)[\'|\"];?/,'versionNum = \''+versionStr+'\';')
+    var result = curJS.replace(/versionNum\s*=\s*[\'|\"]([^\'\"]+?)[\'|\"];?/,'versionNum = \''+version.toString()+'\';')
     fs.writeFileSync(jsUrl,result)
 
 }
 
-function writeFileVersion(fileUrl,versionStr){
+function writeFileVersion(fileUrl,version){
     console.log('writing file version: '+fileUrl)
     switch(path.extname(fileUrl)){
         case ".json":
-            return writeJSONVersion(fileUrl,versionStr)
+            return writeJSONVersion(fileUrl,version)
         case ".js":
-            return writeJSVersion(fileUrl,versionStr)
+            return writeJSVersion(fileUrl,version)
         default:
             return null
     }
@@ -136,7 +148,7 @@ VersionMaker.prototype.getVersion = function(){
 
 VersionMaker.prototype.writeVersion = function(version){
     this.targetVerionFiles.forEach(function(fileUrl){
-        writeFileVersion(fileUrl,version.toString())
+        writeFileVersion(fileUrl,version)
     })
 }
 
