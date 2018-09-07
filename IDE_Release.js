@@ -10,12 +10,14 @@ Usage:
     2. `node IDE_Release.js minor` add minor version
     3. `node IDE_Release.js patch` add patch version
     4. `node IDE_Release.js 1.10.4` set custom version
+    5. `node IDE_Release.js` update build info
 
 */
 
 
 var path = require('path')
 var fs = require('fs')
+var exec = require('child_process').exec
 
 //1.10.4_build_9.7.10.19
 function Version(major,minor,patch,build){
@@ -175,7 +177,18 @@ VersionMaker.prototype.release = function(verType){
     curVersion.build = this.generateBuildInfo()
     console.log('will write new version: '+curVersion.toString())
     this.writeVersion(curVersion)
+    this.commit(curVersion.toString())
     
+}
+
+VersionMaker.prototype.commit = function(versionStr){
+    console.log('start to commit version files')
+    exec("git commit -a -m "+'"'+"release version: "+versionStr+'"',function(err){
+        if(err){
+            return console.log(err)
+        }
+        console.log('finish committing version files')
+    })
 }
 
 var verMaker = new VersionMaker()
