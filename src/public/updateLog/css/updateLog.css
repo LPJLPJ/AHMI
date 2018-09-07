@@ -4,8 +4,8 @@
     padding: 0;
 }
 
-a{
-    text-decoration: none!important;
+a {
+    text-decoration: none !important;
 }
 
 body {
@@ -249,7 +249,7 @@ ul > li {
     font-size: 15px;
 }
 
-#confirm-release {
+#confirm-release, #confirm-edit {
     display: block;
     margin: 20px auto;
 }
@@ -290,11 +290,11 @@ ul > li {
     position: relative;
 }
 
-.manage-log-content__item:not(:first-of-type){
+.manage-log-content__item:not(:first-of-type) {
     margin-top: 20px;
 }
 
-.log-item-content-wrap{
+.log-item-content-wrap {
     max-height: 200px;
     overflow-y: auto;
 }
@@ -323,19 +323,21 @@ ul > li {
     right: 0;
     height: 25px;
 }
-.log-item-operate>span{
+
+.log-item-operate > span {
     float: left;
     height: 25px;
     text-align: center;
     line-height: 25px;
 }
 
-.edit-log{
+.edit-log {
     padding: 0 5px;
     margin-right: 5px;
+    cursor: pointer;
 }
 
-.delete-log{
+.delete-log {
     font-size: 30px;
     color: red;
     cursor: pointer;

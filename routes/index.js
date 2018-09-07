@@ -458,6 +458,10 @@ router.route('/update-log/manage')
     .get(UpdateLogRoute.getLogEditIndex);
 router.route('/update-log/delete')
     .post(UpdateLogRoute.deleteUpdateLog);
+router.route('/update-log/edit')
+    .get(UpdateLogRoute.editUpdateLog);
+router.route('/update-log/update')
+    .post(UpdateLogRoute.saveEditLog);
 
 //comment
 router.route('/blog/post/comment')

@@ -5,10 +5,10 @@
     <title>管理更新日志</title>
     <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
     <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="../../public/updateLog/css/index.css"/>
+    <link rel="stylesheet" href="../../public/updateLog/css/updateLog.css"/>
     <script src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
     <script src="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
-    <script src="../../public/updateLog/js/index.js"></script>
+    <script src="../../public/updateLog/js/updateLog.js"></script>
 </head>
 <body>
 <header class="nav-top">
@@ -20,7 +20,7 @@
         <li class="manage-log-content__item" data-id="<%= logData[i].id %>">
             <div class="content__item-wrap">
                 <div class="log-item-operate">
-                    <span class="edit-log"><a href="javascript:">编辑</a></span>
+                    <span class="edit-log"><a>编辑</a></span>
                     <span class="delete-log">&times;</span>
                 </div>
                     <h3 class="log-item-title"><%= logData[i].title %></h3>
