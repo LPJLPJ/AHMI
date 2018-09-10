@@ -352,3 +352,7 @@ body{
 .templates-tools-getmore:hover{
     text-decoration: none;
 }
+select:disabled{
+    color:silver;
+    cursor: not-allowed;
+}

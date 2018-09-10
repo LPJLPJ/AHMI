@@ -27,3 +27,4 @@ views/
 template/
 
 legacy
+src/public/ide/modules/ide/js/parts/actionVisualization/
