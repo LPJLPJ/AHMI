@@ -16,6 +16,8 @@ $(function(){
     var closeModalConfirmButton = $('#closeModalConfirm');
     var localProjectDir='';
     var localCANProjectDir='';
+    var curIDEVersion = window.ideVersion.split('_')[0].trim()
+    var userType = localStorage.getItem('userType')
 
     closeModalConfirmButton.on('click',function (e) {
         //console.log('project',curProject);
@@ -76,7 +78,7 @@ $(function(){
 
         try {
             stats = fs.statSync(localProjectDir);
-            statsCAN = fs.statSync(localCANProjectDir);
+            var statsCAN = fs.statSync(localCANProjectDir);
             if (!stats.isDirectory()){
                 mkdir.sync(localProjectDir);
             }
@@ -149,8 +151,14 @@ $(function(){
 
     //versionOptions
     if(!local){
+        var versionWrapper = $('.version-wrapper')
+        
         var $versionSelector = $('#basicinfo-ideversion')
-        // $versionSelector.html($('<option value="">'+'--'+'</option>'))
+        if(userType!=='admin'){
+            $versionSelector.attr('disabled',true)
+        }
+        $versionSelector.html($('<option value="'+curIDEVersion+'">'+curIDEVersion+'</option>'))
+        
         $.ajax({
             type:'GET',
             url:'/api/versions',
@@ -159,6 +167,7 @@ $(function(){
                 data.forEach(function (op) {
                     $versionSelector.append($('<option value="'+op+'">'+op+'</option>'))
                 })
+                $versionSelector.val(curIDEVersion)
             },
             error:function (err) {
                 console.log(err)
@@ -514,7 +523,7 @@ $(function(){
 
                 targetUrl = '../ide/index.html?project_id='+project._id;
             }else{
-                if (project.ideVersion){
+                if (project.ideVersion&&project.ideVersion!=curIDEVersion){
                     targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
                 }else{
                     targetUrl = '/project/'+project._id+'/editor';
@@ -660,7 +669,7 @@ $(function(){
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
         $('#basicinfo-resolution').val('800*480');
-        $('#basicinfo-ideversion').val('');
+        $('#basicinfo-ideversion').val(curIDEVersion);
         //trigger change
         $('#basicinfo-ideversion').trigger('change')
         $('#basicinfo-customResolution').hide();
@@ -1092,7 +1101,7 @@ $(function(){
                         oldCANProject[key] = project[key];
                     }
                     fs.writeFileSync(CANProjectPath,JSON.stringify(oldCANProject));
-                    updateSuccess = true;
+                    var updateSuccess = true;
                     var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:project,thumbnail:null});
                     curPanel.replaceWith(html)
                 }else{

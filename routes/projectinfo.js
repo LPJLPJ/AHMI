@@ -551,6 +551,7 @@ function getProjectInfo(newProject) {
     info.resolution = newProject.resolution;
     info.name = newProject.name;
     info.thumbnail = newProject.thumbnail;
+    info.ideVersion = newProject.ideVersion;
     info.template = newProject.template;
     info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
     info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
@@ -814,16 +815,17 @@ projectRoute.saveProjectAs = function (req, res) {
                 } else {
                     //console.log('find project');
                     var copyProject = {};
-                    copyProject.name = _.cloneDeep(project.name);
-                    copyProject.userId = _.cloneDeep(userId);
-                    copyProject.author = _.cloneDeep(project.author);
-                    copyProject.resolution = _.cloneDeep(project.resolution);
-                    copyProject.type = _.cloneDeep(project.type);
-                    copyProject.template = _.cloneDeep(project.template);
-                    copyProject.supportTouch = _.cloneDeep(project.supportTouch);
-                    copyProject.curSize = _.cloneDeep(project.curSize);
-                    copyProject.thumbnail = _.cloneDeep(project.thumbnail);
-                    copyProject.content = _.cloneDeep(project.content);
+                    copyProject.name = project.name;
+                    copyProject.userId = userId;
+                    copyProject.author = project.author;
+                    copyProject.resolution = project.resolution;
+                    copyProject.type = project.type;
+                    copyProject.template = project.template;
+                    copyProject.ideVersion = project.ideVersion;
+                    copyProject.supportTouch = project.supportTouch;
+                    copyProject.curSize = project.curSize;
+                    copyProject.thumbnail = project.thumbnail;
+                    copyProject.content = project.content;
 
                     copyProject.name = data.saveAsName ? (data.saveAsName) : (copyProject.name + "副本");
                     copyProject.author = data.saveAsAuthor ? (data.saveAsAuthor) : (copyProject.author);
@@ -1205,7 +1207,7 @@ projectRoute.generateLocalProject = function (req, res) {
                 };
                 try {
                     var contentObj = JSON.parse(project.content);
-                    contentNewJSON = JSON.stringify(contentObj, transformSrc);
+                    var contentNewJSON = JSON.stringify(contentObj, transformSrc);
                     tempPro.content = contentNewJSON;
                     fs.writeFileSync(filePath, JSON.stringify(tempPro, null));
                     //generate localpro zip
