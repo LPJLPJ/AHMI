@@ -14,7 +14,7 @@ UpdateLogRoute.getLogIndex = function (req,res){
         }else{
             //分页显示，显示5个页码，每页10条数据
             UpdateLogModel.findByPage(pageOn,function(err,data){
-                var pageTotal = Math.ceil(count/2);
+                var pageTotal = Math.ceil(count/10);
                 var pageStart,pageEnd;
 
                 if(pageTotal<=5){

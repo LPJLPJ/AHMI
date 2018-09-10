@@ -45,8 +45,8 @@ UpdateLogSchema.statics={
     findByPage:function(page,cb){
         return this
             .find({})
-            .skip((page-1)*2)
-            .limit(2)
+            .skip((page-1)*10)
+            .limit(10)
             .sort({'createTime':-1})
             .exec(cb)
     }
