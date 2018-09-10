@@ -45,6 +45,19 @@
             <%}%>
         </ul>
     </div>
+    <div class="index-page-break-wrap container text-center">
+        <div class="btn-group index-page-break">
+            <a class="btn btn-default" href="/update-log/index?page=<%= page.prev %>">上一页</a>
+            <%for(var k=page.start;k<=page.end;k++){%>
+                <% if (k == page.now) { %>
+                    <a class="btn btn-page-on" href="/update-log/index?page=<%= k %>"><%= k %></a>
+                <% } else { %>
+                    <a class="btn btn-default" href="/update-log/index?page=<%= k %>"><%= k %></a>
+                <% } %>
+            <%}%>
+            <a class="btn btn-default" href="/update-log/index?page=<%= page.next %>">下一页</a>
+        </div>
+    </div>
 <footer class="nav-bottom">
     <% include ../all/footer.html %>
 </footer>

@@ -462,6 +462,9 @@ router.route('/update-log/edit')
     .get(UpdateLogRoute.editUpdateLog);
 router.route('/update-log/update')
     .post(UpdateLogRoute.saveEditLog);
+router.route('/update-log/index')
+    .get(UpdateLogRoute.getLogIndex);
+
 
 //comment
 router.route('/blog/post/comment')

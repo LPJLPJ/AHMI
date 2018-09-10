@@ -5,22 +5,55 @@ var moment = require('moment');
 var UpdateLogRoute = {};
 
 UpdateLogRoute.getLogIndex = function (req,res){
-    UpdateLogModel.fetch(function(err,data){
+    var pageOn = req.query.page?req.query.page:1;
+    pageOn = parseInt(pageOn);
+
+    UpdateLogModel.count(function(err,count){
         if(err){
-            errHandler(res, 500, 'update log not find');
+            console.log(err)
         }else{
-            var logData = data.map(function(log){
-                var logItem = {};
-                logItem.author = log.author;
-                logItem.title = log.title;
-                logItem.explain = log.explain;
-                logItem.content = log.content.map(function(item){
-                    return JSON.parse(item)
+            //分页显示，显示5个页码，每页10条数据
+            UpdateLogModel.findByPage(pageOn,function(err,data){
+                var pageTotal = Math.ceil(count/2);
+                var pageStart,pageEnd;
+
+                if(pageTotal<=5){
+                    pageStart = 1;
+                    pageEnd = pageTotal;
+                }else if((pageOn+2)<=pageTotal){
+                    if((pageOn-2)>0){
+                        pageStart = pageOn - 2;
+                        pageEnd = pageOn + 2;
+                    }else{
+                        pageStart = 1;
+                        pageEnd = 5;
+                    }
+                }else{
+                    pageStart = pageTotal - 4;
+                    pageEnd = pageTotal;
+                }
+                var page ={
+                    total:pageTotal,
+                    prev:pageOn==1?pageTotal:pageOn-1,
+                    next:pageOn==pageTotal?pageTotal:pageOn+1,
+                    now:pageOn,
+                    start:pageStart,
+                    end:pageEnd
+                };
+
+                var logData = data.map(function(log){
+                    var logItem = {};
+                    logItem.author = log.author;
+                    logItem.title = log.title;
+                    logItem.explain = log.explain;
+                    logItem.content = log.content.map(function(item){
+                        return JSON.parse(item)
+                    });
+                    logItem.createTime = moment(log.createTime).format('YYYY年MM月DD日 HH时mm分');
+                    return logItem;
                 });
-                logItem.createTime = moment(log.createTime).format('YYYY年MM月DD日 HH时mm分');
-                return logItem;
-            });
-            res.render('updateLog/index.html',{logData:logData})
+                res.render('updateLog/index.html',{logData:logData,page:page})
+            })
         }
     });
 };
@@ -126,6 +159,11 @@ UpdateLogRoute.saveEditLog = function(req,res){
             }
         }
     })
+};
+
+UpdateLogRoute.getLogByPage = function(req,res){
+    var data = req.query.page;
+    console.log(data);
 };
 
 

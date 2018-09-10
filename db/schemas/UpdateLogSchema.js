@@ -41,6 +41,14 @@ UpdateLogSchema.statics={
         return this
             .remove({_id:id})
             .exec(cb)
+    },
+    findByPage:function(page,cb){
+        return this
+            .find({})
+            .skip((page-1)*2)
+            .limit(2)
+            .sort({'createTime':-1})
+            .exec(cb)
     }
 };
 
