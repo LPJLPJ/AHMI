@@ -34,8 +34,8 @@ UpdateLogRoute.getLogIndex = function (req,res){
                 }
                 var page ={
                     total:pageTotal,
-                    prev:pageOn==1?pageTotal:pageOn-1,
-                    next:pageOn==pageTotal?pageTotal:pageOn+1,
+                    prev:pageOn==1?pageOn:pageOn-1,
+                    next:pageOn==pageTotal?pageOn:pageOn+1,
                     now:pageOn,
                     start:pageStart,
                     end:pageEnd
