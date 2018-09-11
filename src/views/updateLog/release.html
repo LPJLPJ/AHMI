@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>发布更新日志</title>
+    <meta charset="UTF-8">
+    <title>ide-更新日志</title>
+    <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../public/blog/css/index.css">
+    <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
+
+    <link rel="stylesheet" href="../../public/updateLog/css/updateLog.css"/>
+    <script src="../../public/blog/libs/jquery-3.1.1.min.js"></script>
+    <script src="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="../../public/updateLog/js/updateLog.js"></script>
+</head>
+<body>
+<header class="nav-top">
+    <% include header.html %>
+</header>
+<div class="container-fluid" style="margin-top: 50px">
+    <div class="release-log-wrap col-lg-12">
+        <div class="release-log-content" id="release-log-content">
+            <form class="form" name="release-log">
+                <div class="row release-form-item">
+                    <label for="release-log-title">标题</label>
+                    <input type="text" id="release-log-title" class="form-control" maxlength="50" placeholder="说明：标题内容尽量标注具体ide版本号，例如：ide x.xx.x更新"/>
+                </div>
+                <div class="row release-form-item">
+                    <label for="release-log-explain">说明</label>
+                    <textarea name="explain" id="release-log-explain" cols="50" rows="5" maxlength="250" class="form-control"></textarea>
+                </div>
+                <div class="row release-form-item">
+                    <div><label>具体内容</label></div>
+                    <div class="col-lg-2">
+                        <select name="type" id="release-log-type" class="form-control">
+                            <option>修复</option>
+                            <option>优化</option>
+                            <option>新增</option>
+                            <option>调整</option>
+                            <option>升级</option>
+                            <option>移除</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6">
+                        <textarea name="log-content-text" id="release-log-content-text" cols="100" rows="3" class="form-control" maxlength="250"></textarea>
+                    </div>
+                    <div class="col-lg-4">
+                        <button class="btn btn-default" id="add-log-content" type="button" style="width: 100px">添加</button>
+                    </div>
+                </div>
+                <div class="row release-form-item">
+                    <div class="col-lg-8">
+                        <div class="release-log-list-wrap">
+                            <ol id="release-log-list"></ol>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container-fluid" style="width: 100%">
+        <button class="btn btn-success" id="confirm-release">确认发布</button>
+    </div>
+</div>
+</body>
+</html>
