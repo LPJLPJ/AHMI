@@ -325,3 +325,6 @@ add:
     1.support dynamic Animation config. Animation normal mode compatible with old version
 update:
     1. update render font image，draw char from 46 of ASCII
+fix:
+    1. progress cursor
+    2. input color
