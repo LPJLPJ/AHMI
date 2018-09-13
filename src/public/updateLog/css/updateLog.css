@@ -245,10 +245,10 @@ ul > li {
 }
 
 .log-type-bar {
-    background-color: rgba(255, 48, 48, .8);
+    background-color: rgb(3, 57, 100);
     margin-right: 10px;
     border-radius: 2px;
-    padding: 0 5px;
+    padding: 1px 5px;
     color: white;
 }
 
