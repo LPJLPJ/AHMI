@@ -128,7 +128,7 @@ ul > li {
     color: #fff;
     text-align: center;
     cursor: pointer;
-    background-color: rgb(3, 57, 100);
+    background-color: rgba(3, 57, 100, .8);
     border-radius: 50%;
     box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
@@ -245,7 +245,7 @@ ul > li {
 }
 
 .log-type-bar {
-    background-color: rgba(255, 48, 48, .8);
+    background-color: rgb(3, 57, 100);
     margin-right: 10px;
     border-radius: 2px;
     padding: 0 5px;
