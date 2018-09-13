@@ -209,7 +209,7 @@ $(function(){
                     //update with copy
                     saveProjectCopy(curProject._id,curProject.name+'_'+curProject.ideVersion,function(err){
                         if(err){
-                            updateAlert.html('保存副本出错')
+                            updateAlert.html('保存副本出错'+err)
                         }else{
                             var thumbnailDOM = curPanel.find('img');
                             var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
