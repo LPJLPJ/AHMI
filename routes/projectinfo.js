@@ -138,8 +138,14 @@ function addVersionQueryFunc(ideVersion) {
 
 function renderIDEEditorPageWithResources(res, ideVersion) {
     var versionScripts = ''
-
-    if (ideVersion) {
+    var isInVersions = false
+    for(var i=0;i<VersionManager.versions.length;i++){
+        if(VersionManager.versions[i]==ideVersion){
+            isInVersions = true
+            break
+        }
+    }
+    if (ideVersion&&isInVersions) {
         var curAddVersionQueryFunc = addVersionQueryFunc(ideVersion)
         versionScripts = VersionManager.versionScripts[ideVersion]
         var frontScriptDOMs = FileLoader.generateFiles((versionScripts.frontScripts || []).map(curAddVersionQueryFunc))
@@ -162,7 +168,6 @@ projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session.user && req.session.user.id;
     var ideVersion = req.query.ideVersion
-    console.log(ideVersion)
     if (req.session.user) {
         req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
     }
@@ -555,6 +560,7 @@ function getProjectInfo(newProject) {
     info.resolution = newProject.resolution;
     info.name = newProject.name;
     info.thumbnail = newProject.thumbnail;
+    info.ideVersion = newProject.ideVersion;
     info.template = newProject.template;
     info.originalSite= newProject.originalSite;
     info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
@@ -819,16 +825,17 @@ projectRoute.saveProjectAs = function (req, res) {
                 } else {
                     //console.log('find project');
                     var copyProject = {};
-                    copyProject.name = _.cloneDeep(project.name);
-                    copyProject.userId = _.cloneDeep(userId);
-                    copyProject.author = _.cloneDeep(project.author);
-                    copyProject.resolution = _.cloneDeep(project.resolution);
-                    copyProject.type = _.cloneDeep(project.type);
-                    copyProject.template = _.cloneDeep(project.template);
-                    copyProject.supportTouch = _.cloneDeep(project.supportTouch);
-                    copyProject.curSize = _.cloneDeep(project.curSize);
-                    copyProject.thumbnail = _.cloneDeep(project.thumbnail);
-                    copyProject.content = _.cloneDeep(project.content);
+                    copyProject.name = project.name;
+                    copyProject.userId = userId;
+                    copyProject.author = project.author;
+                    copyProject.resolution = project.resolution;
+                    copyProject.type = project.type;
+                    copyProject.template = project.template;
+                    copyProject.ideVersion = project.ideVersion;
+                    copyProject.supportTouch = project.supportTouch;
+                    copyProject.curSize = project.curSize;
+                    copyProject.thumbnail = project.thumbnail;
+                    copyProject.content = project.content;
 
                     copyProject.name = data.saveAsName ? (data.saveAsName) : (copyProject.name + "副本");
                     copyProject.author = data.saveAsAuthor ? (data.saveAsAuthor) : (copyProject.author);
@@ -1210,7 +1217,7 @@ projectRoute.generateLocalProject = function (req, res) {
                 };
                 try {
                     var contentObj = JSON.parse(project.content);
-                    contentNewJSON = JSON.stringify(contentObj, transformSrc);
+                    var contentNewJSON = JSON.stringify(contentObj, transformSrc);
                     tempPro.content = contentNewJSON;
                     fs.writeFileSync(filePath, JSON.stringify(tempPro, null));
                     //generate localpro zip

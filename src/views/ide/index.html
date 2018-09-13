@@ -59,9 +59,6 @@
     <script src="../../public/ide/lib/Drag.js"></script>
     <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.min.js"></script>
     <!--encoding-->
-    <script>
-        window.TextEncoder = window.TextDecoder = null;
-    </script>
     <script src="../../public/ide/lib/text-encoding/encoding-indexes.js"></script>
     <script src="../../public/ide/lib/text-encoding/encoding.js"></script>
 
@@ -4579,10 +4576,11 @@
 <canvas id="offCanvas" hidden></canvas>
 <canvas id="tmp1" hidden></canvas>
 <canvas id="tmp2" hidden></canvas>
-<script language="javascript">
-    for (i in document.images)document.images[i].ondragstart = imgdragstart;
+<script>
+    for (var i in document.images){
+        document.images[i].ondragstart = imgdragstart
+    }
 </script>
-<!--<script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>-->
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/simulator/simulator.bundle.js"></script>
 <script type="text/javascript" src="../../public/ide/modules/ide/min-js/parts/actionVisualization/actionVisualizer.bundle.js"></script>
 <script type="text/javascript" src="../../public/general/js/versionTag.js"></script>

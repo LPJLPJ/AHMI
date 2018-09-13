@@ -395,3 +395,7 @@ body{
 .compatibility-warning{
     color: #ffcd06;
 }
+select:disabled{
+    color:silver;
+    cursor: not-allowed;
+}
