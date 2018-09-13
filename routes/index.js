@@ -446,15 +446,15 @@ router.route('/blog/*')
     .get(BlogRoute.getIndex)
 
 //updateLog
-router.route('/update-log/*')
-    .all(UserControl.admin);
 router.route('/update-log')
     .get(UpdateLogRoute.getLogIndex);
 router.route('/update-log/release')
+    .all(UserControl.admin)
     .get(UpdateLogRoute.releaseUpdateLog);
 router.route('/update-log/save')
     .post(UpdateLogRoute.saveUpdateLog);
 router.route('/update-log/manage')
+    .all(UserControl.admin)
     .get(UpdateLogRoute.getLogEditIndex);
 router.route('/update-log/delete')
     .post(UpdateLogRoute.deleteUpdateLog);

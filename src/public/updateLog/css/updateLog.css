@@ -162,7 +162,7 @@ ul > li {
 
 .log-item-scroll {
     overflow-y: auto;
-    max-height: 300px;
+    height: 300px;
 }
 
 .log-item-scroll::-webkit-scrollbar {
