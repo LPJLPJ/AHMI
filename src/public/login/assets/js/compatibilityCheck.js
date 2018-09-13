@@ -16,7 +16,7 @@ $(function () {
     }
     updateCompatibility()
     $basicinfoIDEVersion.on('change',function () {
-        curIDEVersion = $basicinfoIDEVersion.val().trim() || window.ideVersion
+        curIDEVersion = ($basicinfoIDEVersion.val()&&$basicinfoIDEVersion.val().trim() )|| window.ideVersion
         updateCompatibility()
     })
 

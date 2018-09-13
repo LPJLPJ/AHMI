@@ -319,8 +319,15 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         });
 
         tags = project.customTags;
-        var pattern = /SysTmr_/;
+        var pattern = /SysTmr_\d+_t/;
+        var tagList = [];
+        var timerList = [];
         tags.forEach(function (tag, index) {
+            if(!pattern.test(tag.name)){
+                tagList.push(tag)
+            }else{
+                timerList.push(tag)
+            }
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
@@ -328,8 +335,12 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 tags.splice(index, 1);
             }
         });
+        project.customTags = tagList;
 
         timers = project.timerTags;
+        if(timerList.length){
+            timers = timers.concat(timerList);
+        }
         var tmr = [];
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
