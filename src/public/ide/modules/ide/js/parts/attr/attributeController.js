@@ -996,6 +996,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 i;
             colorValue = op.value.slice(5, op.value.length - 1);
             colorValue = colorValue.split(",");
+            if(colorValue.length<3){
+                toastr.warning('格式错误');
+                restore();
+                return;
+            }
             for (i = 0; i < colorValue.length - 1; i++) {
                 if (colorValue[i] > 255 || colorValue[i] < 0 || !_.isInteger(Number(colorValue[i]))) {
                     toastr.warning('格式错误');

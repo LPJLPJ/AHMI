@@ -2085,7 +2085,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor);
                             if (cursor) {
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
                             }
                             break;
                         case 'horizontal':
