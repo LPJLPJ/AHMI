@@ -141,7 +141,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         for (var i=0;i<comparedKeys.length;i++){
             var curKey = comparedKeys[i];
             if (curKey == 'text'){
-                if(!compareStyle(this[curKey],nextResTrack[curKey])){
+                if(!(this[curKey]['text']==nextResTrack[curKey]['text']) || !compareStyle(this[curKey]['style'],nextResTrack[curKey]['style'])){
                     return false
                 }
             }else{
