@@ -141,9 +141,18 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         for (var i=0;i<comparedKeys.length;i++){
             var curKey = comparedKeys[i];
             if (curKey == 'text'){
-                if(!(this[curKey]['text']==nextResTrack[curKey]['text']) || !compareStyle(this[curKey]['style'],nextResTrack[curKey]['style'])){
+                if(this[curKey]&&nextResTrack[curKey]){
+                    if(!(this[curKey]['text']==nextResTrack[curKey]['text']) || !compareStyle(this[curKey]['style'],nextResTrack[curKey]['style'])){
+                        return false
+                    }else{
+                        return true
+                    }
+                }else if(!this[curKey]&&!nextResTrack[curKey]){
+                    return true
+                }else{
                     return false
                 }
+                
             }else{
                 if (this[curKey] != nextResTrack[curKey]){
                 
