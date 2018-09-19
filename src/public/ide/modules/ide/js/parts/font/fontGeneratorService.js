@@ -43,8 +43,8 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                 ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
             }
 
-            if(i>45){
-                // 从数字开始
+            if(i>=45){
+                // 从破折号(减号)开始
                 if(i===46){
                     //小数点往左边偏移百分之20%
                     drawChar(i,(column-0.7)*fontSize,(row-0.5)*fontSize)
