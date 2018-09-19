@@ -328,3 +328,4 @@ update:
 fix:
     1. progress cursor
     2. input color
+    3. fontGeneratorService render text png from index of 45 (represent by minus symbol)
