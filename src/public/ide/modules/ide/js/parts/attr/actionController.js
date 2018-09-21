@@ -258,8 +258,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
 
-            $scope.$broadcast('ResetTagChoose');
-            //console.log('chosenCmd',$scope.chosenCmd);
+            //selectedTag
+            $scope.selectedTagObjArray[0].tagName=$scope.chosenCmd[1].tag;
         };
 
         //增加新指令
@@ -431,7 +431,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 DEL_STR_FROM_HEAD:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
                 GET_STR_LEN:"操作数1必须是变量，且类型为'数字'型,操作数2必须是变量，且类型为'字符串'型",
                 EMPTY:"操作符不能为空",
-                NOT_NUMBER:"操作数2的值必须为数字类型"
+                NOT_NUMBER:"操作数2的值必须为数字类型",
+                TIMER_NEGATIVE:'定时器值不能是负数'
             };
             var getTagValueType = function(tagName){
                 for(var i=0,il=tags.length;i<il;i++){
@@ -483,6 +484,18 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                         if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==0||(cmd[2].tag&&getTagValueType(cmd[2].tag)!==1)){
                             validateArr[index].pass = false;
                             validateArr[index].tooltip = errTooltip['DEL_STR_FROM_TAIL'];
+                            pass = false;
+                        }
+                        break;
+                    case 'SET_TIMER_START':
+                    case 'SET_TIMER_STOP':
+                    case 'SET_TIMER_STEP':
+                    case 'SET_TIMER_INTERVAL':
+                    case 'SET_TIMER_CURVAL':
+                    case 'SET_TIMER_MODE':
+                        if(cmd[2].value<0){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['TIMER_NEGATIVE'];
                             pass = false;
                         }
                         break;

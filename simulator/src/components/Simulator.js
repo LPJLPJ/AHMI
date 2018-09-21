@@ -2937,6 +2937,9 @@ module.exports = React.createClass({
             transformMode: widget.info.hexControl.transformMode
         };
 
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
@@ -3150,6 +3153,10 @@ module.exports = React.createClass({
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
+
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
         //16进制
         var hexMode = {
             numSystem: widget.info.numSystem,
