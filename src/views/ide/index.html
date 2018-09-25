@@ -2180,6 +2180,7 @@
                             <span class="my-attr-title">符号</span>
                             <select class="my-attr-number-input form-control"
                                     ng-model="component.texNum.symbolMode"
+                                    ng-disabled="component.texNum.numSystem=='1'"
                                     ng-change="component.texNum.enterSymbolMode()">
                                 <option ng-repeat="mode in component.texNum.symbolModes" value="{{mode.id}}">
                                     {{mode.name}}

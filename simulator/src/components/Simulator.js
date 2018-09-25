@@ -2063,7 +2063,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor);
                             if (cursor) {
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
                             }
                             break;
                         case 'horizontal':
@@ -2915,6 +2915,10 @@ module.exports = React.createClass({
             transformMode: widget.info.hexControl.transformMode
         };
 
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
+
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
@@ -3128,6 +3132,10 @@ module.exports = React.createClass({
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
+
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
         //16进制
         var hexMode = {
             numSystem: widget.info.numSystem,
