@@ -603,9 +603,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             }
                         }
                     }else{
-                        if(this.cursorImageElement){
-                            ctx.drawImage(this.cursorImageElement,-this.width/2+(this.width*this.progressValue),-this.cursorImageElement.height/2/this.scaleY,this.cursorImageElement.width/this.scaleX,this.cursorImageElement.height/this.scaleY);
-                        }
                         if(this.thresholdModeId=='1'){
                             if(this.threshold1!=null){
                                 if(this.progressValueOri<this.threshold1){

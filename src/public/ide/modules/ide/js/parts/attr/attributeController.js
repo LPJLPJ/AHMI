@@ -996,6 +996,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 i;
             colorValue = op.value.slice(5, op.value.length - 1);
             colorValue = colorValue.split(",");
+            if(colorValue.length<3){
+                toastr.warning('格式错误');
+                restore();
+                return;
+            }
             for (i = 0; i < colorValue.length - 1; i++) {
                 if (colorValue[i] > 255 || colorValue[i] < 0 || !_.isInteger(Number(colorValue[i]))) {
                     toastr.warning('格式错误');
@@ -1187,6 +1192,10 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     console.error('not match in change font color!');
                     break;
             }
+            $timeout(function(){
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+            });
         }
 
         function enterHighlightMode() {
@@ -1567,19 +1576,34 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         function enterNumSystem(){
             var selectObj = ProjectService.getCurrentSelectObject();
             var selectSystem = null;
+            var info = $scope.component.object.level.info;
 
             if(selectObj.type=='MyNum'){
-                if($scope.component.object.level.info.decimalCount!=0||$scope.component.num.frontZeroMode!=0){
-                    $scope.component.num.numSystem='0';
-                    toastr.warning('小数和前导0模式下不能切换成16进制');
-                    return;
+                if($scope.component.num.numSystem=='1'){
+                    if(info.numValue<0){
+                        $scope.component.num.numSystem='0';
+                        toastr.warning('负数不能切换成16进制');
+                        return;
+                    }
+                    if(info.decimalCount!=0||info.frontZeroMode!=0||info.symbolMode!=0){
+                        $scope.component.num.numSystem='0';
+                        toastr.warning('小数和前导0模式下不能切换成16进制');
+                        return;
+                    }
                 }
                 selectSystem=$scope.component.num.numSystem
             }else if(selectObj.type=='MyTexNum'){
-                if($scope.component.object.level.info.decimalCount!=0||$scope.component.texNum.frontZeroMode!=0){
-                    $scope.component.texNum.numSystem='0';
-                    toastr.warning('小数和前导0模式下不能切换成16进制');
-                    return;
+                if($scope.component.texNum.numSystem=='1'){
+                    if(info.numValue<0){
+                        $scope.component.texNum.numSystem='0';
+                        toastr.warning('负数不能切换成16进制');
+                        return;
+                    }
+                    if(info.decimalCount!=0||info.frontZeroMode!=0||info.symbolMode!=0){
+                        $scope.component.texNum.numSystem='0';
+                        toastr.warning('小数和前导0模式下不能切换成16进制');
+                        return;
+                    }
                 }
                 selectSystem=$scope.component.texNum.numSystem
             }
