@@ -299,17 +299,14 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         var pattern = /SysTmr_\d+_t/;
         var tagList = [];
         var timerList = [];
-        tags.forEach(function (tag, index) {
+        tags.forEach(function (tag) {
+            if (tag.valueType === undefined) {
+                tag.valueType = 0;
+            }
             if(!pattern.test(tag.name)){
                 tagList.push(tag)
             }else{
                 timerList.push(tag)
-            }
-            if (tag.valueType === undefined) {
-                tag.valueType = 0;
-            }
-            if(pattern.test(tag.name)){
-                tags.splice(index,1);
             }
         });
         project.customTags = tagList;
@@ -323,21 +320,21 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
-            if(pattern.test(timer.name)){
+            if (pattern.test(timer.name)) {
                 tmr.push(timer)
             }
         });
         project.timerTags = tmr;
 
         tagClasses = project.tagClasses;
-        if (!tagClasses){
+        if (!tagClasses) {
             tagClasses = [{
-                name:'全部',
-                type:'system',
-                tagArray:[]
+                name: '全部',
+                type: 'system',
+                tagArray: []
             }]
         }
-        if(tagClasses[0].name == '全部'||tagClasses[0].name == 'tags'){
+        if (tagClasses[0].name == '全部' || tagClasses[0].name == 'tags') {
             tagClasses[0].name = '变量';
         }
     }
