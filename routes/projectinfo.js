@@ -134,8 +134,14 @@ function addVersionQueryFunc(ideVersion) {
 
 function renderIDEEditorPageWithResources(res, ideVersion) {
     var versionScripts = ''
-
-    if (ideVersion) {
+    var isInVersions = false
+    for(var i=0;i<VersionManager.versions.length;i++){
+        if(VersionManager.versions[i]==ideVersion){
+            isInVersions = true
+            break
+        }
+    }
+    if (ideVersion&&isInVersions) {
         var curAddVersionQueryFunc = addVersionQueryFunc(ideVersion)
         versionScripts = VersionManager.versionScripts[ideVersion]
         var frontScriptDOMs = FileLoader.generateFiles((versionScripts.frontScripts || []).map(curAddVersionQueryFunc))
@@ -158,7 +164,6 @@ projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session.user && req.session.user.id;
     var ideVersion = req.query.ideVersion
-    console.log(ideVersion)
     if (req.session.user) {
         req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
     }

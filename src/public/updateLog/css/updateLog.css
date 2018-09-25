@@ -162,7 +162,7 @@ ul > li {
 
 .log-item-scroll {
     overflow-y: auto;
-    height: 300px;
+    max-height: 300px;
 }
 
 .log-item-scroll::-webkit-scrollbar {
@@ -200,6 +200,8 @@ ul > li {
 .log-item-date {
     color: rgb(3, 57, 100);
     font-size: 15px;
+    text-align: right;
+    padding:0.5em;
 }
 
 .log-item-creator {
@@ -243,7 +245,7 @@ ul > li {
 }
 
 .log-type-bar {
-    background-color: rgba(255, 48, 48, .8);
+    background-color: rgb(3, 57, 100);
     margin-right: 10px;
     border-radius: 2px;
     padding: 0 5px;

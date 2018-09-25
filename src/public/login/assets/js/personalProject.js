@@ -28,6 +28,15 @@ $(function(){
         }
     });
 
+    //update modal
+
+    var updateModal = $('#updateModal')
+    var updateConfirmBtn = $('#updateConfirmBtn')
+    var updateCancelBtn = $('#updateCancelBtn')
+    var updateNewVersion = $('#update-new-version')
+    var updateAlert = $('.update-alert')
+    var userUpdateChoice = null
+
     var local = false;
     try {
         var os = require('os');
@@ -157,7 +166,7 @@ $(function(){
         if(userType!=='admin'){
             $versionSelector.attr('disabled',true)
         }
-        $versionSelector.html($('<option value="'+curIDEVersion+'">'+curIDEVersion+'</option>'))
+        $versionSelector.html($('<option value="'+curIDEVersion+'">'+curIDEVersion+'(最新)'+'</option>'))
         
         $.ajax({
             type:'GET',
@@ -173,6 +182,99 @@ $(function(){
                 console.log(err)
             }
         })
+
+        //register version update choices
+        // $('.update-option').on('click',function(e){
+
+        // })
+        $('.update-options-body input').on('change', function() {
+            updateAlert.html('')
+            userUpdateChoice =  $('.update-options-body input[name=update-options]:checked').val()
+         });
+
+         updateConfirmBtn.on('click',function(){
+             var toUpdateProject = null
+             var targetUrl = ''
+             if(!userUpdateChoice){
+                updateAlert.html('选项未选择')
+             }else{
+                 switch(userUpdateChoice){
+                    case '1':
+                    //no update
+                    updateModal.modal('hide')
+                    targetUrl = '/project/'+curProject._id+'/editor'+(curProject.ideVersion?'?ideVersion='+curProject.ideVersion:'');
+                    window.open(targetUrl)
+                    break;
+                    case '2':
+                    //update with copy
+                    saveProjectCopy(curProject._id,curProject.name+'_'+curProject.ideVersion,function(err){
+                        if(err){
+                            updateAlert.html('保存副本出错'+err)
+                        }else{
+                            var thumbnailDOM = curPanel.find('img');
+                            var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
+                            curProject.name = curProject.name+'_'+curProject.ideVersion
+                            addNewProject(curProject)
+                            toUpdateProject = JSON.parse(curPanel.attr('data-project'))
+                            toUpdateProject.ideVersion = curIDEVersion
+                            updateProjectInfo(toUpdateProject,function(err){
+                                if(err){
+                                    updateAlert.html('更新版本出错')
+                                }else{
+                                    var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                                    curPanel.replaceWith(html)
+                                    updateModal.modal('hide')
+                                    targetUrl = '/project/'+curProject._id+'/editor'
+                                    window.open(targetUrl)
+                                }
+                            })
+                        }
+                    })
+                    break;
+                    case '3':
+                    //update without copy
+                    toUpdateProject = JSON.parse(curPanel.attr('data-project'))
+                    toUpdateProject.ideVersion = curIDEVersion
+                    var thumbnailDOM = curPanel.find('img');
+                    var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
+                    updateProjectInfo(toUpdateProject,function(err){
+                        if(err){
+                            updateAlert.html('更新版本出错')
+                        }else{
+                            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                            curPanel.replaceWith(html)
+                            updateModal.modal('hide')
+                            targetUrl = '/project/'+curProject._id+'/editor'
+                            window.open(targetUrl)
+                        }
+                    })
+                    break;
+                 }
+                // targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
+             }
+         })
+    }
+
+    function saveProjectCopy(projectId,saveAsName,cb){
+        $.ajax({
+            method: 'POST',
+            url: '/project/' + projectId + '/saveAs',
+            data: {
+                saveAsName:saveAsName
+            },
+            success:function (data) {
+                if(data == 'ok'){
+                    cb && cb(null)
+                }else{
+                    cb && cb(new Error('save as failed'))
+                }
+            },
+            error:function (err) {
+                cb && cb(err)
+            }
+
+        })
+            
     }
 
     function readLocalProjects(projectType) {
@@ -522,16 +624,34 @@ $(function(){
             if (local){
 
                 targetUrl = '../ide/index.html?project_id='+project._id;
+                window.open(targetUrl);
             }else{
-                if (project.ideVersion&&project.ideVersion!=curIDEVersion){
-                    targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
+                // if (project.ideVersion&&project.ideVersion!=curIDEVersion){
+                //     targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
+                //     window.open(targetUrl);
+                // }else{
+                //     updateModal.modal('show')
+                //     targetUrl = '/project/'+project._id+'/editor';
+                //     // window.open(targetUrl);
+                // }
+                //reset update modal
+                updateNewVersion.html(curIDEVersion)
+                updateAlert.html('')
+                if(project.ideVersion){
+                    if(project.ideVersion == curIDEVersion){
+                        targetUrl = '/project/'+project._id+'/editor';
+                        window.open(targetUrl);
+                    }else{
+                        updateModal.modal('show')
+                    }
                 }else{
-                    targetUrl = '/project/'+project._id+'/editor';
+                    updateModal.modal('show')
+                    // targetUrl = '/project/'+project._id+'/editor';
                 }
 
             }
 
-            window.open(targetUrl);
+            
 
         }else if (curNodeName == 'SPAN'){
             //span
@@ -853,6 +973,24 @@ $(function(){
             }
         }
         return false;
+    }
+
+    function updateProjectInfo(project,cb) {
+        
+        $.ajax({
+            type:'POST',
+            url:'/project/'+project._id+'/basicinfo',
+            data:project,
+            success: function (data, status, xhr) {
+                
+                cb && cb(null,data)
+
+            },
+            error: function (err, status, xhr) {
+                cb && cb(err)
+            }
+        })
+        
     }
 
     function updateProject(e,local) {
