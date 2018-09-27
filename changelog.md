@@ -331,3 +331,4 @@ fix:
     3. fontGeneratorService render text png from index of 45 (represent by minus symbol)
     4. 数字控件和图层数字符号模式下，模拟器运行显示错误
     5. 控件第一次使用自定义字体时渲染错误
+    6. 增加删除变量时的占用检测条件
