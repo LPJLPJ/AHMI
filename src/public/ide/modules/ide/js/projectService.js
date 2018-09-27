@@ -466,6 +466,10 @@ ideServices
                         })
                     })
                 });
+                var actions = getCurrentSelectObject().level.actions[0].commands;
+                _.forEach(actions,function(action){
+                    names.push(action[1].tag)
+                });
                 return names
             };
 

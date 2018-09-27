@@ -268,33 +268,39 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             })
         });
 
+        //过滤变量和定时器
         tags = project.customTags;
         var pattern = /SysTmr_\d+_t/;
         var tagList = [];
         var timerList = [];
-        tags.forEach(function (tag, index) {
-            if(!pattern.test(tag.name)){
-                tagList.push(tag)
-            }else{
-                timerList.push(tag)
-            }
+        tags.forEach(function (tag) {
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
+            }
+            if(pattern.test(tag.name)){
+                timerList.push(tag)
+            }else{
+                tagList.push(tag)
             }
         });
         project.customTags = tagList;
 
+        //定时器去重排序
         timers = project.timerTags;
         if(timerList.length){
             timers = timers.concat(timerList);
         }
-        var tmr = [];
+        var tmr = [],tmrTest={};
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
             if (pattern.test(timer.name)) {
-                tmr.push(timer)
+                if(!tmrTest[timer.name]){
+                    var index = timer.name.split('_')[1];
+                    tmr[index] = timer;
+                    tmrTest[timer.name]=true;
+                }
             }
         });
         project.timerTags = tmr;
