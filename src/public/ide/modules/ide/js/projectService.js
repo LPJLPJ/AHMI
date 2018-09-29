@@ -466,10 +466,12 @@ ideServices
                         })
                     })
                 });
-                var actions = getCurrentSelectObject().level.actions[0].commands;
-                _.forEach(actions,function(action){
-                    names.push(action[1].tag)
-                });
+                var actions = getCurrentSelectObject().level.actions;
+                if(actions){
+                    _.forEach(actions[0].commands,function(action){
+                        names.push(action[1].tag)
+                    });
+                }
                 return names
             };
 
