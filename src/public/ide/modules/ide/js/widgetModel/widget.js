@@ -747,7 +747,7 @@
 
         var dateTimeModeId = Number(info.dateTimeModeId),
             //maxFontWidth = info.maxFontWidth,
-            maxFontWidth = fontStyle['font-size']||info.maxFontWidth
+            maxFontWidth = fontStyle['font-size']||info.maxFontWidth,
             sWidth = maxFontWidth,
             sHeight = h,
             highLight = !info.disableHighlight,
@@ -1211,9 +1211,9 @@
 
         //year text
         yLayer = new Layer(opts.yearX,opts.yearY,opts.yearW,opts.yearH);
-        fontStyle['font-size'] = opts.titleFontSize;
-        fontStyle['font-family'] = opts.titleFontFamily;
-        fontStyle['font-color'] = opts.titleFontColor;
+        fontStyle['fontSize'] = opts.titleFontSize;
+        fontStyle['fontFamily'] = opts.titleFontFamily;
+        fontStyle['fontColor'] = opts.titleFontColor;
         yLayer.subLayers.font = new FontSubLayer('2018',fontStyle);
         layers.push(yLayer);
 
@@ -1229,9 +1229,9 @@
             for(var i=0;i<7;i++){
                 dLayer = new Layer(initX,initY,opts.dayW,opts.dayH);
                 fontStyle = {};
-                fontStyle['font-size'] = opts.itemFontSize;
-                fontStyle['font-family'] = opts.itemFontFamily;
-                fontStyle['font-color'] = opts.itemFontColor;
+                fontStyle['fontSize'] = opts.itemFontSize;
+                fontStyle['fontFamily'] = opts.itemFontFamily;
+                fontStyle['fontColor'] = opts.itemFontColor;
                 dLayer.subLayers.image = new TextureSubLayer(slices[3].imgSrc);
                 dLayer.subLayers.font = new FontSubLayer(String(i+1),fontStyle);
                 layers.push(dLayer);
@@ -1259,9 +1259,9 @@
         var bgLayer,yLayer,mLayer,dLayer,hlLayer;
         var i=0,j=0;
 
-        fontStyle['font-size'] = opts.titleFontSize;
-        fontStyle['font-family'] = opts.titleFontFamily;
-        fontStyle['font-color'] = opts.titleFontColor;
+        fontStyle['fontSize'] = opts.titleFontSize;
+        fontStyle['fontFamily'] = opts.titleFontFamily;
+        fontStyle['fontColor'] = opts.titleFontColor;
 
         //background image
         slices = texList[0].slices;

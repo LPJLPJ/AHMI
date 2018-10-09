@@ -473,20 +473,35 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     var fontStyle = {};
                     for (var key in info) {
                         switch (key) {
+                            // case "fontItalic":
+                            //     fontStyle['font-style'] = info[key];
+                            //     break;
+                            // case "fontBold":
+                            //     fontStyle['font-weight'] = info[key];
+                            //     break;
+                            // case "fontSize":
+                            //     fontStyle['font-size'] = info[key];
+                            //     break;
+                            // case "fontFamily":
+                            //     fontStyle['font-family'] = info[key];
+                            //     break;
+                            // case "fontColor":
+                            //     fontStyle['font-color'] = info[key];
+                            //     break;
                             case "fontItalic":
-                                fontStyle['font-style'] = info[key];
+                                fontStyle[key] = info[key];
                                 break;
                             case "fontBold":
-                                fontStyle['font-weight'] = info[key];
+                                fontStyle[key] = info[key];
                                 break;
                             case "fontSize":
-                                fontStyle['font-size'] = info[key];
+                                fontStyle[key] = info[key];
                                 break;
                             case "fontFamily":
-                                fontStyle['font-family'] = info[key];
+                                fontStyle[key] = info[key];
                                 break;
                             case "fontColor":
-                                fontStyle['font-color'] = info[key];
+                                fontStyle[key] = info[key];
                                 break;
                         }
                     }

@@ -27,7 +27,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             $scope.component = {
                 type: '',
                 onAttributeChanged: onAttributeChanged,
-                transitionMode: AnimationService.getTransitionModes(),
+                transitionMode: AnimationService.getAllTransititon(),
                 transitionName: null,
                 timingFun: '',
                 timingFuns: ['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'],

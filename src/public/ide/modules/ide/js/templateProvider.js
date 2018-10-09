@@ -2,7 +2,16 @@
  * Created by shenaolin on 16/3/12.
  */
 ideServices
-    .service('TemplateProvider', ['Type','Preference','FontMesureService','AnimationService',function (Type,Preference,FontMesureService,AnimationService) {
+    .service('TemplateProvider', ['Type','Preference','FontMesureService',function (Type,Preference,FontMesureService) {
+
+
+        function Transition(name,show,duration){
+            this.name=name||'';
+            this.show=show||'';
+            this.duration=duration;
+        }
+
+        var defaultTransition=new Transition('NO_TRANSITION','无动画',0);
 
         var project,
             projectSize = {
@@ -549,7 +558,7 @@ ideServices
                 backgroundColor:'rgb(' + r + ',' + g + ',' + b + ')',
                 backgroundImage:'',
                 currentFabLayer:null,
-                transition:AnimationService.getDefaultTransition()
+                transition:_.cloneDeep(defaultTransition)
             }
 
         };
@@ -579,7 +588,7 @@ ideServices
                 expand:true,
                 showSubLayer:subLayer,
                 zIndex:0,
-                transition:AnimationService.getDefaultTransition()
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 
@@ -847,7 +856,7 @@ ideServices
                 url:'',
                 zIndex:0,
                 texList:texList,
-                transition:AnimationService.getDefaultTransition()
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 
@@ -867,7 +876,7 @@ ideServices
                 url:'',
                 zIndex:0,
                 texList:texList,
-                transition:AnimationService.getDefaultTransition()
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 
@@ -934,7 +943,7 @@ ideServices
                         name:'数字背景'
                     }]
                 }],
-                transition:AnimationService.getDefaultTransition()
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 
@@ -1000,7 +1009,7 @@ ideServices
                     currentSliceIdx:0,
                     slices:slices
                 }],
-                transition:AnimationService.getDefaultTransition()
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 

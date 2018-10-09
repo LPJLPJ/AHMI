@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:webpack": "webpack -p",
     "build:actionV": "cd actionVisualization && webpack -p",
-    "build:widget":"cross-env  NODE_ENV=production gulp transWidgetCommands",
+    "build:widget": "cross-env  NODE_ENV=production gulp transWidgetCommands",
     "build": "npm run build:webpack && npm run build:actionV && npm run build:widget && cross-env  NODE_ENV=production gulp build",
     "start:webpack": "webpack",
     "start:actionV": "cd actionVisualization && webpack",
