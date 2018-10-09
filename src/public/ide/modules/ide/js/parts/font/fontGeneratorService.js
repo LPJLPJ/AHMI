@@ -136,6 +136,56 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         return fonts;
     }
 
+    function getFontCollectionsForGeneralWidgets(widgets){
+        var fontWidgets,
+            fonts = [];
+        fontWidgets = widgets.filter(function(widget){
+            return (widget.subType===Type.General)
+        });
+        var fontSubLayers = []
+        fontWidgets.forEach(function(fw){
+            fw.layers && fw.layers.length && fw.layers.forEach(function(fwl){
+                fwl.subLayers && fwl.subLayers.font && fwl.subLayers.font.fontStyle && fontSubLayers.push(fwl.subLayers.font.fontStyle) 
+            })
+        })
+
+        fontSubLayers.forEach(function(fsl){
+            var font={},
+                result,
+                fontFamily = fsl.fontFamily,
+                reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+            if(reg.test(fontFamily)){
+                var str = '';
+                for(var i=0;i<fontFamily.length;i++){
+                    str += fontFamily.charCodeAt(i).toString(32);
+                }
+                fontFamily = str;
+            }
+            fsl.originFont = {};
+            fsl.originFont.src = '\\'+fontFamily+'-'+fsl.fontSize+'-'+fsl.fontBold+'-'+(fsl.fontItalic||'null')+'.png';
+            fsl.originFont.w = fsl.fontSize;
+            fsl.originFont.h = fsl.fontSize;
+            fsl.originFont.W = Math.ceil(fsl.fontSize*paddingRatio);
+            fsl.originFont.H = Math.ceil(fsl.fontSize*paddingRatio);
+            fsl.originFont.paddingX = Math.ceil(fsl.fontSize*(paddingRatio-1)/2);
+            fsl.originFont.paddingY = Math.ceil(fsl.fontSize*(paddingRatio-1)/2);
+
+            fsl.originFont.paddingRatio = paddingRatio;
+            result = fonts.some(function(item){
+                return ((item['font-family']===fsl.fontFamily)&&(item['font-size']===fsl.fontSize)&&(item['font-bold']===fsl.fontBold)&&(item['font-italic']===fsl.fontItalic));
+            });
+            if(!result){
+                font['font-family'] = fsl.fontFamily;
+                font['font-size'] = fsl.fontSize;
+                font['font-bold'] = fsl.fontBold;
+                font['font-italic'] = fsl.fontItalic;
+                fonts.push(font);
+            }
+        })
+        
+        return fonts;
+    }
+
     /**
      * 返回正确的stream
      * @param dataUrl
@@ -153,5 +203,6 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
 
     this.generateSingleFont = generateSingleFont;
     this.getFontCollections = getFontCollections;
+    this.getFontCollectionsForGeneralWidgets = getFontCollectionsForGeneralWidgets;
     this.pngStream = pngStream;
 }]);

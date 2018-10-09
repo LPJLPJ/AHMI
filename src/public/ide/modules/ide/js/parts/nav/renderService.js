@@ -1563,7 +1563,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
         //system widgets
         allWidgets = allWidgets.concat(dataStructure.systemWidgets||[])
-        var fontList =  FontGeneratorService.getFontCollections(allWidgets),
+        var fontList =  FontGeneratorService.getFontCollections(allWidgets).concat(FontGeneratorService.getFontCollectionsForGeneralWidgets(allWidgets)),
             totalNum = allPageList.length+allWidgets.length+fontList.length,
             m = 0,
             curWidget = null,
