@@ -63,6 +63,9 @@ router.route('/user/checkUserType')
 //blog
 var BlogRoute = require('./routeBlog');
 
+//update log
+var UpdateLogRoute = require('./route_updateLog');
+
 // router.route('/userlist')
 // .get(function(req, res){
 // 	res.render('client/index.html')
@@ -227,9 +230,14 @@ router.route('/project/:id/downloadLocalProject')
 
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
-//������Դ
+//download resources
 router.route('/project/:id/downloadFile')
     .get(projectInfo.downloadFile);
+//download tag Excel
+router.route('/project/:id/generateTagExcel')
+    .post(projectInfo.generateTagExcel);
+router.route('/project/:id/downloadTagExcel')
+    .get(projectInfo.downloadTagExcel);
 
 
 router.route('/project/:id/savedatacompress')
@@ -436,6 +444,27 @@ router.route('/blog/resources/deleteresource')
 
 router.route('/blog/*')
     .get(BlogRoute.getIndex)
+
+//updateLog
+router.route('/update-log')
+    .get(UpdateLogRoute.getLogIndex);
+router.route('/update-log/release')
+    .all(UserControl.admin)
+    .get(UpdateLogRoute.releaseUpdateLog);
+router.route('/update-log/save')
+    .post(UpdateLogRoute.saveUpdateLog);
+router.route('/update-log/manage')
+    .all(UserControl.admin)
+    .get(UpdateLogRoute.getLogEditIndex);
+router.route('/update-log/delete')
+    .post(UpdateLogRoute.deleteUpdateLog);
+router.route('/update-log/edit')
+    .get(UpdateLogRoute.editUpdateLog);
+router.route('/update-log/update')
+    .post(UpdateLogRoute.saveEditLog);
+router.route('/update-log/index')
+    .get(UpdateLogRoute.getLogIndex);
+
 
 //comment
 router.route('/blog/post/comment')

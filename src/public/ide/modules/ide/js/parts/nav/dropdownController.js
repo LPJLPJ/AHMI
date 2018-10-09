@@ -18,6 +18,7 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"开机动画",icon:"&#xe633"},
         {name:"图层数字",icon:"&#xe675"},
         {name:"图层时间",icon:"&#xe655"},
+        // {name:"透明图层",icon:"&#xe6e0;"}
         {name:"选择器",icon:"&#xe65a"},
         {name:"旋钮",icon:"&#xe93a"},
         {name:"颜色",icon:"&#xe660"},

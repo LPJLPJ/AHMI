@@ -142,8 +142,8 @@ body{
     border-radius: 5px;
     position: relative;
 }
-.all ul li:hover,.img1:hover{
-    background: rgba(0,0,0,.03) !important;
+.projectpanel:hover,.img1:hover{
+    background: rgba(0,0,0,.03);
 }
 .createIcon{
     position: absolute;
@@ -279,6 +279,10 @@ body{
     /*line-height: 1.3em;*/
 }
 
+.panel-other-site:hover{
+    background-color: rgba(255,206,66,0.9);
+}
+
 .projectinfo span{
     overflow: hidden;
 }
@@ -347,6 +351,9 @@ body{
     overflow: auto
 }
 
+.templates-container{
+    min-height: 300px;
+}
 
 .templates-tools-getmore{
     float:right;
@@ -387,4 +394,8 @@ body{
 }
 .compatibility-warning{
     color: #ffcd06;
+}
+select:disabled{
+    color:silver;
+    cursor: not-allowed;
 }

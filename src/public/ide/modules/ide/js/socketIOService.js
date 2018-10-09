@@ -6,11 +6,15 @@
 ideServices.service('socketIOService',[function(){
     var socket;
     var roomUsers={};
-
+    var initial = true
     this.createSocket = function(path,cb){
         socket = io(path||'');
         socket.on('connect',function(){
-            cb&&cb();
+            if(initial){
+                cb&&cb();
+                initial = false
+            }
+            
         })
     };
 

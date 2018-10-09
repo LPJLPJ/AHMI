@@ -191,7 +191,7 @@ ideServices
         };
 
         this.addWebFont = function (fontFile,type) {
-            console.log('font: ',fontFile,type,fontFile)
+            //console.log('font: ',fontFile,type,fontFile)
             var fontName = fontFile.name;
             //handle window url
             var curSrc = fontFile.src;
@@ -248,7 +248,7 @@ ideServices
                 //ttf
                 //font
 
-                console.log("this.getExt(file.id)==='ttf'||this.getExt(file.id)==='woff'success");
+                //console.log("this.getExt(file.id)==='ttf'||this.getExt(file.id)==='woff'success");
                 var ext = this.getExt(file.id);
                 var type;
                 // console.log(ext)
@@ -261,7 +261,7 @@ ideServices
                 resourceObj.type = 'font/'+type;
                 file.type=resourceObj.type;
                 globalResources.push(resourceObj);
-                console.log('added',globalResources)
+                //console.log('added',globalResources)
                 scb && scb({type:'ok'},resourceObj);
 
                 // var ext = this.getExt(file.id);

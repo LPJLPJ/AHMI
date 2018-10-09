@@ -13,40 +13,52 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         paddingRatio = 1.2;
 
     function initCanvas(width,height) {
-        fontCanvas.width = width
-        fontCanvas.height = height
+        fontCanvas.width = width;
+        fontCanvas.height = height;
         ctx.clearRect(0,0,width,height)
     }
 
     function drawChar(charCode,x,y) {
+        console.log(charCode,String.fromCharCode(charCode));
         ctx.fillText(String.fromCharCode(charCode),x,y)
     }
 
+    /**
+     * 绘制字符
+     * @param fontSize 字符大小
+     * @param fontStr  字符
+     * @param options  选项。showGrid，显示格子
+     */
     function drawChars(fontSize,fontStr,options) {
-        ctx.font = fontStr
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        var x=0,y=0
-        var column = 0
-        var row = 0
+        ctx.font = fontStr;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        var x=0,y=0;
+        var column = 0;
+        var row = 0;
         for(var i = 0;i<128;i++){
             row = Math.ceil(i/gridSize.w);
             column = i - (row-1)*gridSize.w;
             if (options.showGrid) {
                 ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
             }
-            if(i===46){
-                //小数点往左边偏移百分之20%
-                drawChar(i,(column-0.7)*fontSize,(row-0.5)*fontSize)
-            }else{
-                drawChar(i,(column-0.5)*fontSize,(row-0.5)*fontSize)
+
+            if(i>=45){
+                // 从破折号(减号)开始
+                if(i===46){
+                    //小数点往左边偏移百分之20%
+                    drawChar(i,(column-0.7)*fontSize,(row-0.5)*fontSize)
+                }else {
+                    drawChar(i,(column-0.5)*fontSize,(row-0.5)*fontSize)
+                }
             }
+
         }
         return fontCanvas.toDataURL()
     }
 
     function calCanvasSize(fontSize,charNum) {
-        var wNum = Math.ceil(Math.sqrt(charNum))
+        var wNum = Math.ceil(Math.sqrt(charNum));
         if (wNum){
             return {
                 w:wNum,
@@ -62,7 +74,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         options = options||{};
         //add padding
         var paddingRatio = options.paddingRatio||1.0;
-        paddingFontSize= Math.ceil(paddingRatio*fontSize);
+        var paddingFontSize= Math.ceil(paddingRatio*fontSize);
         gridSize = calCanvasSize(paddingFontSize,128);
         if (gridSize) {
             initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize);

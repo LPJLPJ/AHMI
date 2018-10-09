@@ -5,6 +5,18 @@
 ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (AnimationService, Type) {
     var IDEVersion = window.ideVersion;
 
+    var utils = {
+        isString:function (o) {
+            return Object.prototype.toString.call(o)==='[object String]';
+        },
+        isObject:function (o) {
+            return Object.prototype.toString.call(o)==='[object Object]'
+        },
+        isArray:function(o){
+            return Object.prototype.toString.call(o)==='[object Array]';
+        },
+    }
+
     /**
      * 单例模式，构建Inject对象
      * @type {Object}
@@ -40,8 +52,8 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             if (info.numSystem === undefined) {
                 info.numSystem = '0';
                 info.hexControl = {
-                    markingMode:'0',
-                    transformMode:'0'
+                    markingMode: '0',
+                    transformMode: '0'
                 }
             }
         },
@@ -52,19 +64,19 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 level.transition = AnimationService.getDefaultTransition();
             }
 
-            if (info.numSystem === undefined||info.hexControl === undefined) {
+            if (info.numSystem === undefined || info.hexControl === undefined) {
                 info.numSystem = '0';
                 info.hexControl = {
-                    markingMode:'0',
-                    transformMode:'0'
+                    markingMode: '0',
+                    transformMode: '0'
                 }
             }
 
-            var slices=level.texList[0].slices;
-            if(slices.length<26){
-                var hexTex = ['x','a','b','c','d','e','f','A','B','C','D','E','F'];
-                for(var i=0;i<hexTex.length;i++){
-                    var n=i+13;
+            var slices = level.texList[0].slices;
+            if (slices.length < 26) {
+                var hexTex = ['x', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'];
+                for (var i = 0; i < hexTex.length; i++) {
+                    var n = i + 13;
                     slices[n] = {};
                     slices[n].imgSrc = '';
                     slices[n].color = 'rgba(120,120,120,1)';
@@ -188,25 +200,36 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             }
             if (layer.animations) {
                 layer.animations.map(function (animation) {
-                    var translate = animation.animationAttrs && animation.animationAttrs.translate;
-                    var scale = animation.animationAttrs && animation.animationAttrs.scale;
-                    var temp, key;
-                    if (translate && translate.dstPos ) {
-                        for (key in translate) {
-                            temp = translate[key].x;
-                            translate[key].x = temp || 0
-                            temp = translate[key].y;
-                            translate[key].y = temp || 0
-                        }
-                        for (key in scale) {
-                            temp = scale[key].x;
-                            scale[key].x = temp||1
-                            temp = scale[key].y;
-                            scale[key].y = temp||1
-                        }
-                    }
+                    // var translate = animation.animationAttrs && animation.animationAttrs.translate;
+                    // var scale = animation.animationAttrs && animation.animationAttrs.scale;
+                    // var temp, key;
+                    // if (translate && translate.dstPos) {
+                    //     for (key in translate) {
+                    //         temp = translate[key].x;
+                    //         if (utils.isObject(temp)) {
+                    //             translate[key].x = 0;
+                    //         }
+                    //         temp = translate[key].y;
+                    //         if (utils.isObject(temp)) {
+                    //             translate[key].y = 0;
+                    //         }
+                    //     }
+                    //     for (key in scale) {
+                    //         temp = scale[key].x;
+                    //         if (utils.isObject(temp)) {
+                    //             scale[key].x = 0;
+                    //         }
+                    //         temp = scale[key].y;
+                    //         if (utils.isObject(temp)) {
+                    //             scale[key].y = 0;
+                    //         }
+                    //     }
+                    // }
                     if (animation.timingFun === undefined) {
                         animation.timingFun = '';
+                    }
+                    if (animation.advanceMode === undefined) {
+                        animation.advanceMode = false;
                     }
                 })
 
@@ -269,7 +292,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
      */
     function injectDataToContent() {
         var project, pages, layers, subLayers, widgets;
-        var tags, timers ,tagClasses;
+        var tags, timers, tagClasses;
 
         project = arguments[0];
 
@@ -295,38 +318,52 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             })
         });
 
+        //过滤变量和定时器
         tags = project.customTags;
-        var pattern = /SysTmr_/;
-        tags.forEach(function (tag,index) {
+        var pattern = /SysTmr_\d+_t/;
+        var tagList = [];
+        var timerList = [];
+        tags.forEach(function (tag) {
             if (tag.valueType === undefined) {
                 tag.valueType = 0;
             }
             if(pattern.test(tag.name)){
-                tags.splice(index,1);
+                timerList.push(tag)
+            }else{
+                tagList.push(tag)
             }
         });
+        project.customTags = tagList;
 
+        //定时器去重排序
         timers = project.timerTags;
-        var tmr=[];
+        if(timerList.length){
+            timers = timers.concat(timerList);
+        }
+        var tmr = [],tmrTest={};
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
-            if(pattern.test(timer.name)){
-                tmr.push(timer)
+            if (pattern.test(timer.name)) {
+                if(!tmrTest[timer.name]){
+                    var index = timer.name.split('_')[1];
+                    tmr[index] = timer;
+                    tmrTest[timer.name]=true;
+                }
             }
         });
         project.timerTags = tmr;
 
         tagClasses = project.tagClasses;
-        if (!tagClasses){
+        if (!tagClasses) {
             tagClasses = [{
-                name:'全部',
-                type:'system',
-                tagArray:[]
+                name: '变量',
+                type: 'system',
+                tagArray: []
             }]
         }
-        if(tagClasses[0].name == '全部'||tagClasses[0].name == 'tags'){
+        if (tagClasses[0].name == '全部' || tagClasses[0].name == 'tags') {
             tagClasses[0].name = '变量';
         }
     }
@@ -335,9 +372,7 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
     function checkProjectVerIsOld(project) {
         var proVerNum = parseInt((project.version || '1.0.0').replace(/\./g, ''));
         var nowVerNum = parseInt((IDEVersion || '').replace(/\./g, ''));
-
         return proVerNum < nowVerNum || true;
-
     }
 
 

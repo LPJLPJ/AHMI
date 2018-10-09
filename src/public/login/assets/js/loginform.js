@@ -12,7 +12,8 @@ $(function(){
 			wrong:'验证码错误'
 		},
 		general:{
-			wrong:'无效的账号或密码',
+			wrong:'账号错误',
+			noPass:'密码错误',
             verify:'<a id="resend">账户没有验证, 请进入邮箱验证, 点击重新获取验证链接</a>',
             verifyErr:'邮箱不存在'
 		}
@@ -110,7 +111,7 @@ $(function(){
                 var errMsg = err.responseJSON.errMsg;
                 switch (errMsg){
                     case 'not match':
-                        $('#captcha-verify').html(ErrMessages.general.wrong);
+                        $('#captcha-verify').html(ErrMessages.general.noPass);
                         break;
                     case 'no user':
                         $('#captcha-verify').html(ErrMessages.general.wrong);

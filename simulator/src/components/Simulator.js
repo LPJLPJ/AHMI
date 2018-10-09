@@ -298,7 +298,7 @@ module.exports = React.createClass({
 
 
         if (requiredResourceNum > 0) {
-            requiredResourceList.map(function (resource) {
+            requiredResourceList.forEach(function (resource) {
                 if (this.isIn(resource, imageList, 'id')) {
                     requiredResourceNum -= 1;
                     this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
@@ -988,7 +988,7 @@ module.exports = React.createClass({
         var ctx = canvas.getContext('2d');
         if (this.currentDrawedProject) {
             offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-            var project = this.currentDrawedProject;    
+            var project = this.currentDrawedProject;
 
             var page = project.pageList[(project&&project.curPageIdx)||0];
             if (page){
@@ -1089,6 +1089,16 @@ module.exports = React.createClass({
             if (pageUnloadIdx !== null){
                 project.pageList[pageUnloadIdx].curPageImg = this.generatePageCopy(project.pageList[pageUnloadIdx],offcanvas.width,offcanvas.height)
                 this.handleTargetAction(project.pageList[pageUnloadIdx], 'UnLoad')
+                //reset pageUnloadIdx translate
+                project.pageList[pageUnloadIdx].translate = null
+                project.pageList[pageUnloadIdx].transform = null
+                var unloadPageCanvasList = project.pageList[pageUnloadIdx].canvasList
+                if(unloadPageCanvasList&&unloadPageCanvasList.length){
+                    unloadPageCanvasList.forEach(function(uc){
+                        uc.translate = null
+                        uc.transform = null
+                    })
+                }
             }
             project.pageUnloadIdx = pageUnloadIdx
             project.curPageIdx = curPageIdx;
@@ -1122,7 +1132,7 @@ module.exports = React.createClass({
     //get num value
     getValueByTagName: function (name, defaultValue) {
         var curTag = this.findTagByName(name);
-        if (curTag && curTag.value != undefined) {
+        if (curTag) {
             return this.getTagTrueValue(curTag);
         } else if (defaultValue) {
             return defaultValue;
@@ -3733,7 +3743,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor,ctx);
                             if (cursor){
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color,ctx);
+                                this.drawCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY,ctx);
                             }
                             break;
                         case 'horizontal':
@@ -4585,6 +4595,9 @@ module.exports = React.createClass({
             transformMode: widget.info.hexControl.transformMode
         };
 
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
@@ -4798,6 +4811,10 @@ module.exports = React.createClass({
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
+
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
         //16进制
         var hexMode = {
             numSystem: widget.info.numSystem,
@@ -7471,14 +7488,14 @@ module.exports = React.createClass({
         //     }
         //
         // }
-        if ((typeof param) === 'number') {
-            value = param;
+        if ((typeof param) === 'number'||(typeof param)==='string') {
+            value = Number(param);
         } else {
             if (param) {
                 if (param.tag) {
                     value = this.getValueByTagName(param.tag);
                 } else {
-                    value = param.value;
+                    value = Number(param.value);
                 }
             } else {
                 value = 0;
@@ -7686,9 +7703,9 @@ module.exports = React.createClass({
                 }
                 break;
             case 'NOT':
-                // var targetTag = this.findTagByName(param1.tag);
+                var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = !Number(this.getParamValue(param2));
+                    var nextValue = !Number(this.getParamValue(targetTag));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null, {
                         updatedTagName: param1.tag

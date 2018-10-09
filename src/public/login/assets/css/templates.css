@@ -58,3 +58,13 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+.template-more{
+    text-decoration: none;
+    color:black;
+}
+
+.template-more:hover{
+    color: black;
+    cursor: pointer;
+}

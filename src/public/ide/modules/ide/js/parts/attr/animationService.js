@@ -1,69 +1,42 @@
 /**
  * Created by lixiang on 2016/10/19.
  */
-ideServices.service('AnimationService', [function () {
-    //Animation 构造函数
-    function Animation(title, id, srcX, srcY, srcScaleX, srcScaleY, dstX, dstY, dstXScale, dstYScale, duration) {
+ideServices.service('AnimationService', ['ProjectService', 'Type', function (ProjectService, Type) {
+    function Animation(title, id, srcX, srcY, srcScaleX, srcScaleY, dstX, dstY, dstXScale, dstYScale, duration, advanceMode) {
         this.title = title;
         this.id = id;
         this.animationAttrs = {
             translate: {
                 srcPos: {
-                    x: {
-                        value: srcX,
-                        tag: ''
-                    },
-                    y: {
-                        value: srcY,
-                        tag: ''
-                    }
+                    x: srcX,
+                    y: srcY,
                 },
                 dstPos: {
-                    x: {
-                        value: dstX,
-                        tag: ''
-                    },
-                    y: {
-                        value: dstY,
-                        tag: ''
-                    }
+                    x: dstX,
+                    y: dstY,
                 }
             },
             scale: {
                 srcScale: {
-                    x: {
-                        value: srcScaleX,
-                        tag: ''
-                    },
-                    y: {
-                        value: srcScaleY,
-                        tag: ''
-                    }
+                    x: srcScaleX,
+                    y: srcScaleY
                 },
                 dstScale: {
-                    x: {
-                        value: dstXScale,
-                        tag: ''
-                    },
-                    y: {
-                        value: dstYScale,
-                        tag: ''
-                    }
+                    x: dstXScale,
+                    y: dstYScale
                 }
             }
         };
         this.duration = duration;
         this.timingFun = '';
+        this.advanceMode = advanceMode || false;
     }
 
-    //过渡动画构造函数
     function Transition(name, show, duration) {
         this.name = name || '';
         this.show = show || '';
         this.duration = duration;
-        this.timingFun = '';
     }
-
 
     var noTransition = new Transition('NO_TRANSITION', '无动画', 0);
     var moveLR = new Transition('MOVE_LR', '从左进入(遮盖)', 1);
@@ -78,20 +51,62 @@ ideServices.service('AnimationService', [function () {
     var swipeV = new Transition('SWIPE_V','垂直滑动',1);
     var fadeInFadeOut = new Transition('FADE-IN_FADE-OUT','淡入淡出',1);
     var scale = new Transition('SCALE', '缩放', 1);
-    var transitionModes = [noTransition,moveLR,moveRL,moveBT,moveTB,pushLR,pushRL,pushTB,pushBT,swipeH,swipeV,fadeInFadeOut,scale];
+    var transition = [noTransition,moveLR,moveRL,moveBT,moveTB,pushLR,pushRL,pushTB,pushBT,swipeH,swipeV,fadeInFadeOut,scale];
 
+
+    var tempAnimation = new Animation('动画', null, null, null, 1, 1, 0, 0, 1, 1, 0);
+    var defaultAnimation = [tempAnimation];
+
+    var animations = [];
+
+    this.setAnimations = function (newAnimations) {
+        if (newAnimations) {
+            animations = newAnimations;
+        } else {
+            animations = [];
+        }
+    };
+
+    this.getAllAnimations = function () {
+        return animations;
+    };
+
+    this.appendAnimation = function (newAnimation, cb) {
+        animations.push(newAnimation);
+        ProjectService.ChangeAttributeAnimation(_.cloneDeep(animations));
+        cb && cb();
+    };
 
     this.getNewAnimation = function () {
         return new Animation('动画', null, 0, 0, 1, 1, 0, 0, 1, 1, 1000);
     };
 
+    this.updateAnimationByIndex = function (animation, index, cb) {
+        if (index >= 0 && index < animations.length) {
+            animations[index] = animation;
+            ProjectService.ChangeAttributeAnimation(_.cloneDeep(animations));
+            cb && cb();
+        }
+    };
 
-    this.getTransitionModes = function () {
-        return _.cloneDeep(transitionModes);
+    this.deleteAnimationByIndex = function (index, sCB, fCB) {
+        if (index < 0 && index >= animations.length) {
+            fCB && fCB();
+            return false;
+        } else {
+            animations.splice(index, 1);
+            ProjectService.ChangeAttributeAnimation(_.cloneDeep(animations));
+            sCB && sCB();
+            return true;
+        }
+    };
+
+    this.getAllTransititon = function () {
+        return _.cloneDeep(transition);
     };
 
     this.getDefaultTransition = function () {
         return new Transition('NO_TRANSITION', '无动画', 0);
-    }
+    };
 
 }]);

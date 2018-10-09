@@ -10,6 +10,8 @@ release/
 log/
 
 .db/
+.scannerwork
+.sonarlint
 
 src/views/learn/
 src/public/learn/
@@ -28,3 +30,4 @@ src/public/ide/modules/ide/js/parts/simulator/
 template/
 
 legacy
+src/public/ide/modules/ide/js/parts/actionVisualization/

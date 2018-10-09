@@ -1,0 +1,357 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+body {
+    background-color: #f1f4f5;
+}
+
+ul > li {
+    list-style: none;
+}
+
+.navbar-nav li a {
+    font-size: 16px;
+}
+
+.nav-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.nav-shadow {
+    margin: 0;
+    border: 0;
+}
+
+.nav-bottom {
+    position: static !important;
+}
+
+.update-log-headline {
+    z-index: 98;
+    text-align: center;
+    height: 50px;
+    width: 100%;
+    background-color: rgb(3, 57, 100);
+    color: white;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.nav-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.update-log-headline > p {
+    line-height: 50px;
+    font-size: 22px;
+    font-weight: 200 !important;
+}
+
+.update-log-body {
+    width: 80%;
+    margin-top: 120px;
+    min-height: 600px;
+}
+
+.update-log-list {
+    position: relative;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.update-log-list:before {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    content: "";
+    background-color: #e4eaec;
+}
+
+.update-log-list:after {
+    display: table;
+    content: "";
+}
+
+.update-log-list:after {
+    clear: both;
+}
+
+.update-log-list > .update-log-item {
+    position: relative;
+    display: block;
+    float: left;
+    width: 50%;
+    padding-right: 40px;
+    clear: left;
+}
+
+.update-log-list > li:nth-of-type(even) {
+    float: right;
+    padding-right: 0;
+    padding-left: 40px;
+    clear: right;
+}
+
+.update-log-list > .update-log-item:not(:first-of-type) {
+    margin-top: 90px;
+}
+
+.timeline-dot {
+    top: 0;
+    margin-top: 10px;
+    width: 14px;
+    height: 14px;
+    margin-right: -7px;
+    line-height: 14px;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    background-color: rgba(3, 57, 100, .8);
+    border-radius: 50%;
+    box-shadow: 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.update-log-list > .update-log-item:nth-of-type(even) .timeline-dot {
+    right: auto;
+    left: 0;
+    margin-left: -8px;
+}
+
+.log-item-content {
+    float: left;
+    width: 100%;
+    overflow: hidden;
+    clear: left;
+}
+
+.log-item-wrap {
+    border-radius: 5px;
+    position: relative;
+    margin-bottom: 30px;
+    margin-right: 5px;
+    background-color: #fff;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, .2);
+}
+
+.log-item-body {
+    padding: 20px;
+    position: relative;
+}
+
+.log-item-scroll {
+    overflow-y: auto;
+    height: 300px;
+}
+
+.log-item-scroll::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 10px;
+    background-color: rgba(217, 217, 217, 0.3);
+}
+
+.log-item-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(217, 217, 217, 0.3);
+    border-radius: 10px;
+    height: 10px;
+}
+
+.log-item-scroll::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(217, 217, 217, 0.3);
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.log-item-title {
+    font-size: 25px;
+    font-weight: 300;
+    color: #37474f;
+}
+
+.log-item-content-list {
+    padding-left: 30px;
+}
+
+.log-item-content-list__item {
+    color: #5e7387;
+}
+
+.log-item-date {
+    color: rgb(3, 57, 100);
+    font-size: 15px;
+    text-align: right;
+    padding:0.5em;
+}
+
+.log-item-creator {
+    text-align: right;
+    margin-right: 20px;
+}
+
+.log-item-creator .log-item-author {
+    color: rgb(3, 57, 100);
+}
+
+.log-item-creator .author-name {
+    font-weight: 600;
+}
+
+.log-item-explain > p {
+    text-indent: 2em;
+    font-size: 15px;
+    line-height: 1.2;
+    color: rgb(84, 141, 212);
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden;
+}
+
+.index-page-break-wrap{
+    margin: 30px auto;
+}
+
+.btn-page-on{
+    background-color: rgb(3, 57, 100);
+    color: white;
+}
+
+/*发布日志*/
+.release-log-wrap {
+    padding: 20px;
+    margin: 10px auto;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.log-type-bar {
+    background-color: rgb(3, 57, 100);
+    margin-right: 10px;
+    border-radius: 2px;
+    padding: 1px 5px;
+    color: white;
+}
+
+#release-log-list {
+    padding-left: 30px;
+}
+
+#release-log-list > li {
+    font-size: 15px;
+}
+
+#confirm-release, #confirm-edit {
+    display: block;
+    margin: 20px auto;
+}
+
+.release-log-list-wrap {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    min-height: 110px;
+    background-color: white;
+}
+
+.release-form-item:not(:first-of-type) {
+    margin-top: 20px;
+}
+
+.delete-release-list {
+    color: red;
+    margin-left: 20px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/*日志管理*/
+.manage-log-wrap {
+    min-height: 500px;
+    padding: 20px 0;
+    margin-top: 50px;
+}
+
+.manage-log-content__item {
+    width: 100%;
+    padding: 10px 10px 0 10px;
+    border: 1px solid #cccccc;
+    background-color: white;
+    border-radius: 5px;
+    position: relative;
+}
+
+.manage-log-content__item:not(:first-of-type) {
+    margin-top: 20px;
+}
+
+.log-item-content-wrap {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log-item-content-wrap::-webkit-scrollbar {
+    width: 6px;
+    border-radius: 10px;
+    background-color: rgba(217, 217, 217, 0.3);
+}
+
+.log-item-content-wrap::-webkit-scrollbar-thumb {
+    background-color: rgba(217, 217, 217, 0.3);
+    border-radius: 10px;
+    height: 10px;
+}
+
+.log-item-content-wrap::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(217, 217, 217, 0.3);
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.log-item-operate {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 25px;
+}
+
+.log-item-operate > span {
+    float: left;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+}
+
+.edit-log {
+    padding: 0 5px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.delete-log {
+    font-size: 30px;
+    color: red;
+    cursor: pointer;
+    width: 25px;
+}
+
