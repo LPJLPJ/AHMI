@@ -708,7 +708,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     if (err){
                         cb && cb(err);
                     }else{
-                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,new TextInfo(info.text,style),outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
                         //write widget
                         curSlice.originSrc = curSlice.imgSrc;

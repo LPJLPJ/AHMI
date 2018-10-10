@@ -5285,9 +5285,9 @@ module.exports = React.createClass({
                 }
                 break;
             case 'NOT':
-                // var targetTag = this.findTagByName(param1.tag);
+                var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = !Number(this.getParamValue(param2));
+                    var nextValue = !Number(this.getParamValue(targetTag));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null, {
                         updatedTagName: param1.tag
