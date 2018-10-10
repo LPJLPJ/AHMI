@@ -6,10 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:webpack": "cd simulator && webpack -p",
-    "build:actionV":"cd actionVisualization && webpack -p",
+    "build:actionV": "cd actionVisualization && webpack -p",
     "build": "npm run build:webpack && npm run build:actionV && cross-env  NODE_ENV=production gulp build",
     "start:webpack": "cd simulator && webpack",
-    "start:actionV":"cd actionVisualization && webpack",
+    "start:actionV": "cd actionVisualization && webpack",
     "start:build": "cross-env NODE_ENV=development  gulp build",
     "start:dev": "cross-env NODE_ENV=development gulp dev"
   },
@@ -53,7 +53,12 @@
     "reflux": "^0.3.0"
   },
   "devDependencies": {
-    "cross-env": "^5.1.5",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-react": "^6.24.1",
+    "cross-env": "^5.2.0",
+    "css-loader": "^0.28.11",
+    "file-loader": "^0.8.5",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^5.0.0",
     "gulp-babel": "^7.0.1",
