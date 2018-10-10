@@ -432,7 +432,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 GET_STR_LEN:"操作数1必须是变量，且类型为'数字'型,操作数2必须是变量，且类型为'字符串'型",
                 EMPTY:"操作符不能为空",
                 NOT_NUMBER:"操作数2的值必须为数字类型",
-                NEGATIVE:'值不能是负数'
+                NEGATIVE:'值不能是负数',
+                POSITIVE_INTEGER:'值只能是非0正整数'
             };
             var getTagValueType = function(tagName){
                 for(var i=0,il=tags.length;i<il;i++){
@@ -493,10 +494,17 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                     case 'SET_TIMER_INTERVAL':
                     case 'SET_TIMER_CURVAL':
                     case 'SET_TIMER_MODE':
-                    case 'GOTO':
                         if(cmd[2].value<0){
                             validateArr[index].pass = false;
                             validateArr[index].tooltip = errTooltip['NEGATIVE'];
+                            pass = false;
+                        }
+                        break;
+                    case 'GOTO':
+                        var integerReg = /^[1-9]\d*$/;
+                        if(!integerReg.test(cmd[2].value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['POSITIVE_INTEGER'];
                             pass = false;
                         }
                         break;
