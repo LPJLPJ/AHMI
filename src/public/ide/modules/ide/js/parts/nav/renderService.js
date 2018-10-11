@@ -668,6 +668,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 var canvas = new Canvas(width,height);
                 var ctx = canvas.getContext('2d');
                 var curSlice = slideTex.slices[i];
+                var curText = curSlice.text;
                 // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
                 ctx.clearRect(0,0,width,height);
                 ctx.save();
@@ -708,7 +709,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     if (err){
                         cb && cb(err);
                     }else{
-                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,new TextInfo(info.text,style),outputFilename,width,height,curSlice))
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,new TextInfo(curText,style),outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
                         //write widget
                         curSlice.originSrc = curSlice.imgSrc;
