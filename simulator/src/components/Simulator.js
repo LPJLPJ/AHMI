@@ -1321,6 +1321,7 @@ module.exports = React.createClass({
 
                 }
             } else {
+                this.handleTargetAction(subCanvas, 'Load')
                 this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
             }
 
