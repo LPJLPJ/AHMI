@@ -747,7 +747,7 @@
 
         var dateTimeModeId = Number(info.dateTimeModeId),
             //maxFontWidth = info.maxFontWidth,
-            maxFontWidth = fontStyle['font-size']||info.maxFontWidth,
+            maxFontWidth = fontStyle['fontSize']||info.maxFontWidth,
             sWidth = maxFontWidth,
             sHeight = h,
             highLight = !info.disableHighlight,

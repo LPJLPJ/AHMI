@@ -765,23 +765,24 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     var styleElems = "fontFamily,fontSize,fontColor,fontBold,fontItalic,fontUnderline"
                     var fontStyle = {}
                     for (var key in info) {
-                        switch (key) {
-                            case "fontItalic":
-                                fontStyle['font-style'] = info[key];
-                                break;
-                            case "fontBold":
-                                fontStyle['font-weight'] = info[key];
-                                break;
-                            case "fontSize":
-                                fontStyle['font-size'] = info[key];
-                                break;
-                            case "fontFamily":
-                                fontStyle['font-family'] = info[key];
-                                break;
-                            case "fontColor":
-                                fontStyle['font-color'] = info[key];
-                                break;
-                        }
+                        fontStyle[key] = info[key];
+                        // switch (key) {
+                        //     case "fontItalic":
+                        //         fontStyle[key] = info[key];
+                        //         break;
+                        //     case "fontBold":
+                        //         fontStyle[key] = info[key];
+                        //         break;
+                        //     case "fontSize":
+                        //         fontStyle[key] = info[key];
+                        //         break;
+                        //     case "fontFamily":
+                        //         fontStyle[key] = info[key];
+                        //         break;
+                        //     case "fontColor":
+                        //         fontStyle[key] = info[key];
+                        //         break;
+                        // }
                     }
                     generalWidget = new WidgetModel.models['Num'](x, y, w, h, info, fontStyle);
                     generalWidget = generalWidget.toObject();
@@ -1020,23 +1021,24 @@ ideServices.service('ProjectTransformService',['Type','ResourceService','Templat
                     var fontStyle = {},
                         baseLayerNum = 0;
                     for (var key in info) {
-                        switch (key) {
-                            case "fontItalic":
-                                fontStyle['font-style'] = info[key];
-                                break;
-                            case "fontBold":
-                                fontStyle['font-weight'] = info[key];
-                                break;
-                            case "fontSize":
-                                fontStyle['font-size'] = info[key];
-                                break;
-                            case "fontFamily":
-                                fontStyle['font-family'] = info[key];
-                                break;
-                            case "fontColor":
-                                fontStyle['font-color'] = info[key];
-                                break;
-                        }
+                        fontStyle[key] = info[key]
+                        // switch (key) {
+                        //     case "fontItalic":
+                        //         fontStyle['font-style'] = info[key];
+                        //         break;
+                        //     case "fontBold":
+                        //         fontStyle['font-weight'] = info[key];
+                        //         break;
+                        //     case "fontSize":
+                        //         fontStyle['font-size'] = info[key];
+                        //         break;
+                        //     case "fontFamily":
+                        //         fontStyle['font-family'] = info[key];
+                        //         break;
+                        //     case "fontColor":
+                        //         fontStyle['font-color'] = info[key];
+                        //         break;
+                        // }
                     }
                     generalWidget = new WidgetModel.models['DateTime'](x, y, w, h, targetWidget.info, fontStyle, targetWidget.texList[0].slices[0]);
                     generalWidget = generalWidget.toObject();
