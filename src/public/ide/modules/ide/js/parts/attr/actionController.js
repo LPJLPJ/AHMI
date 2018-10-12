@@ -66,7 +66,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             case Type.MyDashboard:
             case Type.MyButtonGroup:
             // case Type.MyLayer:
-            case Type.MySubLayer:
+            // case Type.MySubLayer:
             case Type.MyPage:
             case Type.MyNum:
             case Type.MyImage:
