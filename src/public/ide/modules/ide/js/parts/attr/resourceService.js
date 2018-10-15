@@ -212,7 +212,6 @@ ideServices
         this.cacheFile = function (file, targetArray, scb, fcb) {
             // console.log(file)
             var resourceObj = {};
-            var ttf=''
 
             resourceObj.id = file.id;
             resourceObj.type = file.type;
@@ -287,6 +286,12 @@ ideServices
                 // curFont.src = file.src;
                 // globalResources.push(resourceObj);
 
+            }else if(file.type.match(/audio/)){
+                var curAudio = new Audio(file.src)
+                resourceObj.content = curAudio
+                globalResources.push(resourceObj);
+                scb && scb({type:'ok'}, resourceObj);
+                
             }else{
                 //other
                 scb && scb({type:'ok'},{})
@@ -499,6 +504,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     // case 'tiff':
                     case 'ttf':
                     case 'woff':
+                    //audio
+                    case 'mp3':
                         return true;
                     default:
                         return false;
@@ -662,7 +669,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                                 deleteUploadingItem(translatedFile);
                                 //update
                                 //scope.component.top.files = ResourceService.getAllImages();
-                                console.log('updating fonts')
+                                
                                 scope.$emit('ResourceUpdate');
                             }.bind(this));
                         }.bind(this));

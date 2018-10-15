@@ -66,6 +66,10 @@ module.exports = React.createClass({
         this.state.innerTimerList.map(function (timerId) {
             clearInterval(timerId);
         }.bind(this));
+        window.audioList.forEach(function(res){
+            res.currentTime = 0
+            res.pause()
+        })
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
@@ -176,6 +180,7 @@ module.exports = React.createClass({
         //loading resources
         var resourceList = [];
         var imageList = []
+        var audioList = []
         var allResources = data.resourceList || [];
         this.state.resourceList = resourceList
         //this.state.imageList = imageList
@@ -239,6 +244,20 @@ module.exports = React.createClass({
                         imageList.push(newResource)
 
                         break;
+                    case 'audio':
+                        var curAudio = new Audio(resource.src)
+                        curAudio.onload = function(){
+                            requiredResourceNum = requiredResourceNum - 1;
+                            //update loading progress
+                            this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
+                            if (requiredResourceNum <= 0) {
+                                // console.log(imageList);
+                                callBack(data);
+                            }
+                        }.bind(this)
+                        newResource.content = curAudio;
+                        audioList.push(newResource)
+                    break;
                     default:
                         num = num - 1
                         this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
@@ -303,6 +322,10 @@ module.exports = React.createClass({
         this.state.innerTimerList.map(function (timerId) {
             clearInterval(timerId);
         }.bind(this));
+        window.audioList.forEach(function(res){
+            res.currentTime = 0
+            res.pause()
+        })
         this.simState = {};
         VideoSource.setVideoSrc('');
         //init animation keys
@@ -5227,7 +5250,22 @@ module.exports = React.createClass({
 
                 break;
             case 'INC':
-
+                // this.state.imageList.forEach(function(res){
+                //     if(res.type &&res.type.match(/audio/)){
+                //         res.content.play()
+                //     }
+                // })
+                //window.audioList[0].connect(window.audioCtx)
+                //window.audioList[0].start(0)
+                /*
+                var bufferSrc = audioCtx.createBufferSource();
+                bufferSrc.buffer =window.audioList[0].buffer;
+                //bufferSrc.connect(gainNode);
+                bufferSrc.connect(window.audioCtx.destination);
+                bufferSrc.start(0)
+                */
+               window.audioList[0].play()
+                // window.audioCtx.play()
                 var targetTag = this.findTagByName(param1.tag);
 
                 if (targetTag) {

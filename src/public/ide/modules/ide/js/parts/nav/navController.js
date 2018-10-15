@@ -1247,6 +1247,45 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function play() {
             generateData()
             window.cachedResourceList = ResourceService.getGlobalResources();
+            var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            window.audioCtx = audioCtx
+            if(!window.audioList){
+                window.audioList = []
+            }
+            
+            window.cachedResourceList.filter(function(res){return res.type && res.type.match(/audio/)}).forEach(function(res){
+                // var track =  audioCtx.createMediaElementSource(res.content);
+                // track.connect(audioCtx.destination)
+                
+                // var request = new XMLHttpRequest();
+                // request.open('get', res.src, true);
+                // request.responseType = 'arraybuffer';
+                // request.onload = function() {
+                //     audioCtx.decodeAudioData(request.response, function(buffer) {
+                        
+                //         //var gainNode = audioCtx.createGain();
+                //         var bufferSrc = audioCtx.createBufferSource();
+                //         bufferSrc.buffer = buffer;
+                //         //bufferSrc.connect(gainNode);
+                //         bufferSrc.connect(audioCtx.destination);
+                //         //gainNode.connect(audioCtx.destination);
+                //         // bufferSrc.start(0)
+                //         // bufferSrc.stop(0)
+                //         window.audioList.push(bufferSrc)
+                       
+                //      });
+                // };
+                // request.send();
+                if(!res.inMediaSource){
+                    var track = audioCtx.createMediaElementSource(res.content);
+                    res.inMediaSource = true
+                    track.connect(audioCtx.destination)
+                    window.audioList.push(res.content)
+
+                }
+                
+                
+            })
 
             $scope.component.simulator.show = true;
 

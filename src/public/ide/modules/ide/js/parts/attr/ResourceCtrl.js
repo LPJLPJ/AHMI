@@ -40,6 +40,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 allSelected:false,
                 unSelAll:unSelAll,
                 imageType:imageType,
+                playMusic:playMusic,
                 mask:[]
             }
         };
@@ -200,10 +201,24 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             return 1;//文件是图片
         }else if(file.type.match(/font/)){
             return 2;//文件是字体文件
+        }else if(file.type.match(/audio/)){
+            return 3
         }else{
             return 1;//预留
         }
 
+    }
+
+    function playMusic(fileSrc){
+        var curAudio = ResourceService.getResourceFromCache(fileSrc,'src')
+        if(curAudio){
+            if(curAudio.paused){
+                curAudio.play()
+            }else{
+                curAudio.pause()
+            }
+            
+        }
     }
 
     var restoreValue;
