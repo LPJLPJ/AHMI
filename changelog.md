@@ -326,6 +326,9 @@ add:
 update:
     1. update render font image，draw char from 46 of ASCII
     2. remove dashboard's simple mode
+    3. 屏蔽子画布action功能，与一体化同步
+    4. 屏蔽NEQ指令，与一体化同步
+    5. 屏蔽仪表盘精简模式
 fix:
     1. progress cursor
     2. input color
@@ -333,3 +336,6 @@ fix:
     4. 数字控件和图层数字符号模式下，模拟器运行显示错误
     5. 控件第一次使用自定义字体时渲染错误
     6. 增加删除变量时的占用检测条件
+    7. 修复子画布第一次加载，不会执行action
+    8. 修复逻辑非运算
+    9. 修复图层控件纹理去重，未考虑图层上的文字
