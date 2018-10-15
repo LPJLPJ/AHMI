@@ -89,3 +89,61 @@ div.wrapper-custom{
 .jumbotron h2{
     text-align: center;
 }
+
+
+.lx-modal-body{
+    font-size: 12px;
+    font-weight:bold;
+}
+.lx-modal-body .row{
+    margin-bottom: 10px;
+}
+.lx-modal-body .col-md-1{
+    padding:0px 5px 0px 15px
+}
+.lx-modal-body input{
+    height: 30px;
+    width: 173px;
+    display: inline-block;
+    font-weight: 100;
+}
+
+.lx-modal-body .ui-select-container{
+    height: 30px;
+    width: 173px;
+    display: inline-block;
+    font-weight: 100;
+    position: absolute;
+    left: 15px;
+    top:0px !important;
+}
+
+.lx-modal-body .ui-select-container .ui-select-toggle{
+    height: 30px;
+}
+.lx-modal-body .ui-select-container .ui-select-toggle span{
+    margin-top: 3px;
+}
+
+.lx-modal-body .ui-select-container ul{
+    max-height: 90px;
+}
+
+.lx-modal-body select.form-control{
+    height: 30px;
+    width: 173px;
+    display: inline-block;
+    font-weight: 100;
+    position: absolute;
+    left: 15px;
+}
+
+.lx-modal-title{
+    margin-top: 5px;
+}
+.lx-margin-top-5{
+    margin-top:5px;
+}
+.lx-margin-bottom-10{
+    margin-bottom: 10px;
+}

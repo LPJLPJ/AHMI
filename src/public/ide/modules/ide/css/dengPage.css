@@ -92,7 +92,7 @@
 .dengPage-attrbute-container .my-attr-title .bgiDownload{
     float: right;
     font-size: 15px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 .dengPage-attrbute-container .my-attr-item .dengPage-color-input{
@@ -384,6 +384,19 @@
 }
 .deng-pannel-item .deng-tags .addTag-container{
     padding-bottom: 15px;
+}
+
+.generate-excel-button{
+    margin-top: 10px;
+}
+
+.clearfix:after {
+    content: "";
+    height: 0;
+    line-height: 0;
+    display: block;
+    visibility: hidden;
+    clear: both;
 }
 
 .deng-attr-item .listTable-container{
@@ -779,7 +792,7 @@
     float: left;
 }
 .my-tag-button-import{
-    margin-right: 10px
+    margin-right: 5px
 }
 .my-tag-add-to-div{
     max-height: 250px;

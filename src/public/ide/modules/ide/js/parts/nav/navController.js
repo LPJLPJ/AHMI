@@ -442,7 +442,29 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                                 $scope.$emit('UpdateProject');
                                                 //modify url
                                                 if (saveState) {
-                                                    var newUrl = '/project/' + currentProject.projectId + '/editor'
+                                                    var targetSearch = ''
+                                                    var curSearch = window.location.search
+                                                    if(curSearch&&curSearch.length){
+                                                        curSearch = curSearch.slice(1)
+                                                        if(curSearch){
+                                                            var pairs = curSearch.split('&')
+                                                            if(pairs && pairs.length){
+                                                                pairs = pairs.map(function(p){
+                                                                    return p.split('=')
+                                                                }).filter(function(p){
+                                                                    return p[0]!='v'
+                                                                })
+                                                                if(pairs && pairs.length){
+                                                                    pairs = pairs.map(function(p){
+                                                                        return p[0]+'='+p[1]
+                                                                    })
+                                                                    targetSearch = pairs.join('&')
+                                                                }
+
+                                                            }
+                                                        }
+                                                    }
+                                                    var newUrl = targetSearch ? '/project/' + currentProject.projectId + '/editor'+'?'+targetSearch : '/project/' + currentProject.projectId + '/editor'
                                                     if ("undefined" !== typeof history.pushState) {
                                                         history.pushState(null, '', newUrl)
                                                     } else {
@@ -1045,6 +1067,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             ProjectService.getProjectCopyTo(temp);
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
+            temp.project.ideVersion = window.ideVersion;
             temp.project.physicalPixelRatio = physicalPixelRatio
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
             temp.project.basicUrl = ResourceService.getResourceUrl();

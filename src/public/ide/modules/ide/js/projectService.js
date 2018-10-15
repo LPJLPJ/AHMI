@@ -468,6 +468,32 @@ ideServices
                         })
                     })
                 });
+                var actions = getCurrentSelectObject().level.actions;
+                if(actions){
+                    _.forEach(actions[0].commands,function(action){
+                        names.push(action[1].tag)
+                    });
+                }
+                return names
+            };
+
+            /**
+             * 搜寻所有被项目引用过的字体
+             * 用于删除资源时判断  该资源是否可以被删除
+             */
+            this.getRequiredTextNames=function(){
+                var names=[];
+                _.forEach(project.pages,function(page){
+                    _.forEach(page.layers,function(layer){
+                        _.forEach(layer.subLayers,function(subLayer){
+                            _.forEach(subLayer.widgets,function(widget){
+                                if(widget.info.fontFamily){
+                                    names.push(widget.info.fontFamily);
+                                }
+                            })
+                        })
+                    })
+                });
                 return names
             };
 
@@ -1508,6 +1534,11 @@ ideServices
                 //var currentSubLayer = _self.getCurrentSubLayer();
                 //currentSubLayer.proJsonStr=JSON.stringify(fabNode.toJSON());
 
+                var selectObj = getCurrentSelectObject();
+                var fabGroup = selectObj.target;
+                var baseLeft=selectObj.level.info.left+fabGroup.width/2;
+                var baseTop=selectObj.level.info.top+fabGroup.height/2;
+
                 if (layerMode){
                     var layer=_self.getCurrentLayer();
                     if (layer){
@@ -1518,12 +1549,13 @@ ideServices
                             // currentPage.proJsonStr=JSON.stringify(fabNode.toJSON());
                         }
                     }
+                    fabGroup.forEachObject(function(item){
+                        var layer = getLevelById(item.id,'layer');
+                        layer.info.left = Math.round(baseLeft+item.left);
+                        layer.info.top = Math.round(baseTop+item.top);
+                    })
                 }else{
-                    var selectObj = getCurrentSelectObject();
                     if(selectObj.type=='group'&&selectObj.mode==1){
-                        var fabGroup = selectObj.target;
-                        var baseLeft=selectObj.level.info.left+fabGroup.width/2;
-                        var baseTop=selectObj.level.info.top+fabGroup.height/2;
                         fabGroup.forEachObject(function(item){
                             var widget = getLevelById(item.id,'widget');
                             widget.info.left = Math.round(baseLeft+item.left);
@@ -4193,6 +4225,7 @@ ideServices
 
                     });
                 }else if (object.type==Type.MyGroup){
+                    var currentObject=_self.getCurrentSelectObject();
                     var fabGroup=object.target;
                     var currentGroup=object.level;
                     if (!fabGroup) {
@@ -4213,9 +4246,14 @@ ideServices
                     var baseLeft=object.level.info.left+fabGroup.width/2;
                     var baseTop=object.level.info.top+fabGroup.height/2;
                     fabGroup.forEachObject(function(item){
-                        var widget = getLevelById(item.id,'widget');
-                        widget.info.left = Math.round(baseLeft+item.left);
-                        widget.info.top = Math.round(baseTop+item.top);
+                        var obj = '';
+                        if(currentObject.mode=='0'){
+                            obj = getLevelById(item.id,'layer');
+                        }else if(currentObject.mode=='1'){
+                            obj = getLevelById(item.id,'widget');
+                        }
+                        obj.info.left = Math.round(baseLeft+item.left);
+                        obj.info.top = Math.round(baseTop+item.top);
                     });
                     subLayerNode.renderAll();
                     pageNode.renderAll();

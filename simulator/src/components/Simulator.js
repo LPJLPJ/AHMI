@@ -204,7 +204,7 @@ module.exports = React.createClass({
 
 
         if (requiredResourceNum > 0) {
-            requiredResourceList.map(function (resource) {
+            requiredResourceList.forEach(function (resource) {
                 if (this.isIn(resource, imageList, 'id')) {
                     requiredResourceNum -= 1;
                     this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
@@ -483,12 +483,24 @@ module.exports = React.createClass({
 
             if (pageUnloadIdx !== null) {
                 this.handleTargetAction(project.pageList[pageUnloadIdx], 'UnLoad')
+                //reset pageUnloadIdx translate
+                project.pageList[pageUnloadIdx].translate = null
+                project.pageList[pageUnloadIdx].transform = null
+                var unloadPageCanvasList = project.pageList[pageUnloadIdx].canvasList
+                if(unloadPageCanvasList&&unloadPageCanvasList.length){
+                    unloadPageCanvasList.forEach(function(uc){
+                        uc.translate = null
+                        uc.transform = null
+                    })
+                }
             }
+            
+
             project.curPageIdx = curPageIdx;
             var page = project.pageList[curPageIdx];
             this.state.curPageIdx = curPageIdx
 
-
+            
             this.drawPage(page, options);
             //update
             // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
@@ -904,10 +916,10 @@ module.exports = React.createClass({
         //         }
         //     }
         // };
-        var srcScale = (animationAttrs.scale && animationAttrs.scale.srcScale) || {x: 1, y: 1};
-        var dstScale = (animationAttrs.scale && animationAttrs.scale.dstScale) || {x: 1, y: 1};
-        var srcTranslate = (animationAttrs.translate && animationAttrs.translate.srcPos) || {x: 0, y: 0};
-        var dstTranslate = (animationAttrs.translate && animationAttrs.translate.dstPos) || {x: 0, y: 0};
+        var srcScale = (animationAttrs.scale&&animationAttrs.scale.srcScale&&this.getAnimationAtrr(animationAttrs.scale.srcScale))||{x:1,y:1};
+        var dstScale = (animationAttrs.scale&&animationAttrs.scale.dstScale&&this.getAnimationAtrr(animationAttrs.scale.dstScale))||{x:1,y:1};
+        var srcTranslate = (animationAttrs.translate&&animationAttrs.translate.srcPos&&this.getAnimationAtrr(animationAttrs.translate.srcPos))||{x:0,y:0};
+        var dstTranslate = (animationAttrs.translate&&animationAttrs.translate.dstPos&&this.getAnimationAtrr(animationAttrs.translate.dstPos))||{x:0,y:0};
         var type = target.type;
         var duration = (animation && animation.duration) || 1000;
         // console.log(scale,translate,duration)
@@ -1018,6 +1030,16 @@ module.exports = React.createClass({
 
         })
 
+    },
+    getAnimationAtrr:function (attr) {
+        var values = {}
+        for(var key in attr){
+            if (attr.hasOwnProperty(key)){
+                //own key
+                values[key] = this.getParamValue(attr[key])
+            }
+        }
+        return values
     },
     matrixMultiply: function (matrixArray) {
         var length = matrixArray.length
@@ -1299,6 +1321,7 @@ module.exports = React.createClass({
 
                 }
             } else {
+                this.handleTargetAction(subCanvas, 'Load')
                 this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
             }
 
@@ -2063,7 +2086,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor);
                             if (cursor) {
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
                             }
                             break;
                         case 'horizontal':
@@ -2915,6 +2938,9 @@ module.exports = React.createClass({
             transformMode: widget.info.hexControl.transformMode
         };
 
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
@@ -3128,6 +3154,10 @@ module.exports = React.createClass({
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
+
+        if(symbolMode=='0'){
+            curValue = Math.abs(curValue);
+        }
         //16进制
         var hexMode = {
             numSystem: widget.info.numSystem,
@@ -5277,9 +5307,9 @@ module.exports = React.createClass({
                 }
                 break;
             case 'NOT':
-                // var targetTag = this.findTagByName(param1.tag);
+                var targetTag = this.findTagByName(param1.tag);
                 if (targetTag) {
-                    var nextValue = !Number(this.getParamValue(param2));
+                    var nextValue = !Number(this.getParamValue(targetTag));
                     this.setTagByTag(targetTag, nextValue)
                     this.draw(null, {
                         updatedTagName: param1.tag

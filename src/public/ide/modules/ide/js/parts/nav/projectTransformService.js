@@ -36,6 +36,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
     function transActions(object,changelt) {
         changelt = changelt||true;
         if (object&&object.actions&&object.actions.length){
+            object.originActions = _.cloneDeep(object.actions);  // 保存原始指令
             for (var i=0;i<object.actions.length;i++){
                 var curAction = object.actions[i];
                 curAction.commands = transCmds(curAction.commands,changelt);

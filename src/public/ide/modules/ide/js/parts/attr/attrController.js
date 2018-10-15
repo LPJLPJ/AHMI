@@ -50,9 +50,9 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyButtonGroup:"&#xe637;",
             MyScriptTrigger:"&#xe7d0;",
             MyVideo:"&#xe6ad;",
-            MyAnimation:"&#xe633",
-            MyTexNum:"&#xe675",
-            MyTexTime:"&#xe655",
+            MyAnimation:"&#xe633;",
+            MyTexNum:"&#xe675;",
+            MyTexTime:"&#xe655;",
             MyAlphaImg:"&#xe6e0;"
         };
     }

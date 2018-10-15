@@ -27,6 +27,10 @@ var Font = Canvas.Font;
 var Renderer = require('../utils/render/renderer');
 var fse = require('fs-extra');
 var moment = require('moment');
+//tag excel
+var Excel = require('exceljs');
+var generateExcel = require('./generateTagExcel');
+
 projectRoute.getAllProjects = function (req, res) {
     ProjectModel.fetch(function (err, projects) {
         if (err) {
@@ -134,8 +138,14 @@ function addVersionQueryFunc(ideVersion) {
 
 function renderIDEEditorPageWithResources(res, ideVersion) {
     var versionScripts = ''
-
-    if (ideVersion) {
+    var isInVersions = false
+    for(var i=0;i<VersionManager.versions.length;i++){
+        if(VersionManager.versions[i]==ideVersion){
+            isInVersions = true
+            break
+        }
+    }
+    if (ideVersion&&isInVersions) {
         var curAddVersionQueryFunc = addVersionQueryFunc(ideVersion)
         versionScripts = VersionManager.versionScripts[ideVersion]
         var frontScriptDOMs = FileLoader.generateFiles((versionScripts.frontScripts || []).map(curAddVersionQueryFunc))
@@ -158,7 +168,6 @@ projectRoute.getProjectById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session.user && req.session.user.id;
     var ideVersion = req.query.ideVersion
-    console.log(ideVersion)
     if (req.session.user) {
         req.session.user.readOnlyState = false; //使用session保存只读状态，只读状态与当前用户有关，因此存放在req.session中
     }
@@ -551,7 +560,9 @@ function getProjectInfo(newProject) {
     info.resolution = newProject.resolution;
     info.name = newProject.name;
     info.thumbnail = newProject.thumbnail;
+    info.ideVersion = newProject.ideVersion;
     info.template = newProject.template;
+    info.originalSite= newProject.originalSite;
     info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
     info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
     info.supportTouch = newProject.supportTouch;
@@ -814,16 +825,17 @@ projectRoute.saveProjectAs = function (req, res) {
                 } else {
                     //console.log('find project');
                     var copyProject = {};
-                    copyProject.name = _.cloneDeep(project.name);
-                    copyProject.userId = _.cloneDeep(userId);
-                    copyProject.author = _.cloneDeep(project.author);
-                    copyProject.resolution = _.cloneDeep(project.resolution);
-                    copyProject.type = _.cloneDeep(project.type);
-                    copyProject.template = _.cloneDeep(project.template);
-                    copyProject.supportTouch = _.cloneDeep(project.supportTouch);
-                    copyProject.curSize = _.cloneDeep(project.curSize);
-                    copyProject.thumbnail = _.cloneDeep(project.thumbnail);
-                    copyProject.content = _.cloneDeep(project.content);
+                    copyProject.name = project.name;
+                    copyProject.userId = userId;
+                    copyProject.author = project.author;
+                    copyProject.resolution = project.resolution;
+                    copyProject.type = project.type;
+                    copyProject.template = project.template;
+                    copyProject.ideVersion = project.ideVersion;
+                    copyProject.supportTouch = project.supportTouch;
+                    copyProject.curSize = project.curSize;
+                    copyProject.thumbnail = project.thumbnail;
+                    copyProject.content = project.content;
 
                     copyProject.name = data.saveAsName ? (data.saveAsName) : (copyProject.name + "副本");
                     copyProject.author = data.saveAsAuthor ? (data.saveAsAuthor) : (copyProject.author);
@@ -1205,7 +1217,7 @@ projectRoute.generateLocalProject = function (req, res) {
                 };
                 try {
                     var contentObj = JSON.parse(project.content);
-                    contentNewJSON = JSON.stringify(contentObj, transformSrc);
+                    var contentNewJSON = JSON.stringify(contentObj, transformSrc);
                     tempPro.content = contentNewJSON;
                     fs.writeFileSync(filePath, JSON.stringify(tempPro, null));
                     //generate localpro zip
@@ -1484,7 +1496,7 @@ projectRoute.downloadFile = function (req,res) {
 };
 
 
-//分类操作 add by tang
+//分类操作
 projectRoute.createFolder = function (req, res) {
     var data = _.cloneDeep(req.body);
     data.userId = req.session.user.id;
@@ -1617,6 +1629,41 @@ projectRoute.getFolderList = function (req, res) {
     } else {
         res.status(500).end('not login')
     }
+};
+
+//生成tagExcel
+projectRoute.generateTagExcel = function(req,res){
+    var data = req.body;
+    var projectId = req.params.id;
+    var workbook = new Excel.Workbook();
+    var tagExcel = workbook.addWorksheet("tag");
+
+    generateExcel(tagExcel,data);
+
+    var fileUrl = path.join(__dirname,'../project',String(projectId),'tag.xlsx');
+    workbook.xlsx.writeFile(fileUrl)
+        .then(function(err){
+            if(err){
+                console.log(err);
+            }
+            res.end('ok');
+        });
+};
+
+projectRoute.downloadTagExcel = function (req,res){
+    var projectId = req.params.id;
+    var fileUrl = path.join(__dirname,'../project',String(projectId),'tag.xlsx');
+    res.download(fileUrl,'tag.xlsx', function (err) {
+        if (err){
+            errHandler(res,500,err);
+        }else{
+            fs.unlinkSync(fileUrl,function(err){
+                if(err){
+                    console.log(err)
+                }
+            })
+        }
+    })
 };
 
 module.exports = projectRoute;

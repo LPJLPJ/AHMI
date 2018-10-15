@@ -15,7 +15,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         local = true;
         //add hash function
         createHashForFile = function (fileUrl,algo,cb) {
-            var algo = algo||'md5'
+            algo = algo||'md5'
             var hash = crypto.createHash(algo),
                 stream = fs.createReadStream(fileUrl);
 
@@ -141,9 +141,18 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         for (var i=0;i<comparedKeys.length;i++){
             var curKey = comparedKeys[i];
             if (curKey == 'text'){
-                if(!compareStyle(this[curKey],nextResTrack[curKey])){
+                if(this[curKey]&&nextResTrack[curKey]){
+                    if(!(this[curKey]['text']==nextResTrack[curKey]['text']) || !compareStyle(this[curKey]['style'],nextResTrack[curKey]['style'])){
+                        return false
+                    }else{
+                        return true
+                    }
+                }else if(!this[curKey]&&!nextResTrack[curKey]){
+                    return true
+                }else{
                     return false
                 }
+                
             }else{
                 if (this[curKey] != nextResTrack[curKey]){
                 
@@ -311,7 +320,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
 
         var imgUrl;
-        if (img &&img !== ''){
+        if (img && img !== ''){
             //draw image
             imgUrl = path.join(srcRootDir,img);
             var targetImageObj = this.getTargetImage(imgUrl);
@@ -480,7 +489,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 slices.push((texList[count].slices[0]));
                 totalSlices++;
             }
-            slices.map(function (slice,i) {
+            slices.forEach(function (slice,i) {
                 var canvas = new Canvas(width,height);
                 var ctx = canvas.getContext('2d');
 
@@ -660,6 +669,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 var canvas = new Canvas(width,height);
                 var ctx = canvas.getContext('2d');
                 var curSlice = slideTex.slices[i];
+                var curText = curSlice.text;
                 // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
                 ctx.clearRect(0,0,width,height);
                 ctx.save();
@@ -700,7 +710,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     if (err){
                         cb && cb(err);
                     }else{
-                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,new TextInfo(curText,style),outputFilename,width,height,curSlice))
                         // console.log(_.cloneDeep(this.trackedRes))
                         //write widget
                         curSlice.originSrc = curSlice.imgSrc;
@@ -769,7 +779,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     if (err){
                         cb && cb(err);
                     }else{
-                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice));
+                        //this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice));
                         // console.log(_.cloneDeep(this.trackedRes))
                         //write widget
                         curSlice.originSrc = curSlice.imgSrc;
@@ -1332,6 +1342,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         var stream = '';
         var outpath = path.join(dstDir,imgName);
         options.paddingRatio = 1.2;
+        // options.showGrid = true;
         stream = FontGeneratorService.generateSingleFont(font,options);
         stream = FontGeneratorService.pngStream(stream,local);
         if(local){
@@ -1407,7 +1418,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             totalNum = allPageList.length+allWidgets.length+fontList.length,
             m = 0,
             curWidget = null,
-            curFont = null;
+            curFont = null,
             curRenderPage = null;
         if (totalNum>0){
             var okFlag = true;
@@ -1512,7 +1523,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             if (local){
                 fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
                     if (err){
-                        errHandler(res,500,err);
+                        errHandler(err);
                     }else{
                         //write ok
                         // successHandler();

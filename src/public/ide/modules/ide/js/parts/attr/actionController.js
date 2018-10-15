@@ -66,7 +66,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             case Type.MyDashboard:
             case Type.MyButtonGroup:
             // case Type.MyLayer:
-            case Type.MySubLayer:
+            // case Type.MySubLayer:
             case Type.MyPage:
             case Type.MyNum:
             case Type.MyImage:
@@ -258,8 +258,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.currentChosenIdx = index;
             $scope.chosenCmd = $scope.action.commands[index];
 
-            $scope.$broadcast('ResetTagChoose');
-            //console.log('chosenCmd',$scope.chosenCmd);
+            //selectedTag
+            $scope.selectedTagObjArray[0].tagName=$scope.chosenCmd[1].tag;
         };
 
         //增加新指令
@@ -431,7 +431,9 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 DEL_STR_FROM_HEAD:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
                 GET_STR_LEN:"操作数1必须是变量，且类型为'数字'型,操作数2必须是变量，且类型为'字符串'型",
                 EMPTY:"操作符不能为空",
-                NOT_NUMBER:"操作数2的值必须为数字类型"
+                NOT_NUMBER:"操作数2的值必须为数字类型",
+                NEGATIVE:'值不能是负数',
+                POSITIVE_INTEGER:'值只能是非0正整数'
             };
             var getTagValueType = function(tagName){
                 for(var i=0,il=tags.length;i<il;i++){
@@ -447,14 +449,6 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 if(cmd[0].name===""){
                     validateArr[index].pass = false;
                     validateArr[index].tooltip = errTooltip['EMPTY'];
-                    pass = false;
-                    return;
-                }
-                var value = Number(cmd[2].value);
-                var reg =/^(\-|\+)?\d+(\.\d+)?$/;
-                if(value!=''&&!reg.test(value)){
-                    validateArr[index].pass = false;
-                    validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
                     pass = false;
                     return;
                 }
@@ -494,7 +488,36 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                             pass = false;
                         }
                         break;
+                    case 'SET_TIMER_START':
+                    case 'SET_TIMER_STOP':
+                    case 'SET_TIMER_STEP':
+                    case 'SET_TIMER_INTERVAL':
+                    case 'SET_TIMER_CURVAL':
+                    case 'SET_TIMER_MODE':
+                        if(cmd[2].value<0){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NEGATIVE'];
+                            pass = false;
+                        }
+                        break;
+                    case 'GOTO':
+                        var integerReg = /^[1-9]\d*$/;
+                        if(!integerReg.test(cmd[2].value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['POSITIVE_INTEGER'];
+                            pass = false;
+                        }
+                        break;
                     default:
+                        var value = cmd[2].value;
+                        var tagName = cmd[2].tag;
+                        var reg =/^(\-|\+)?\d+(\.\d+)?$/;
+                        if(tagName===''&&value!==''&&!reg.test(value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
+                            pass = false;
+                            return;
+                        }
                         break;
                 }
             });

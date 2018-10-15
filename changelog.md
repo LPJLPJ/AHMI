@@ -320,3 +320,17 @@ update:
     11. tag bit overlap detection, add timer quickly
     12. texture.acf size calculation
     13. widget list icon
+    
+1.10.6
+add:
+    1.support dynamic Animation config. Animation normal mode compatible with old version
+update:
+    1. update render font image，draw char from 46 of ASCII
+    2. remove dashboard's simple mode
+fix:
+    1. progress cursor
+    2. input color
+    3. fontGeneratorService render text png from index of 45 (represent by minus symbol)
+    4. 数字控件和图层数字符号模式下，模拟器运行显示错误
+    5. 控件第一次使用自定义字体时渲染错误
+    6. 增加删除变量时的占用检测条件

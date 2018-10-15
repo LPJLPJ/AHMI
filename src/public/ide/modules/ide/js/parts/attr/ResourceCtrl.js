@@ -95,17 +95,23 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
      * @param indexArr
      */
     function deleteFile(indexArr){
+        var requiredTextNames = ProjectService.getRequiredTextNames();
         var requiredResourceNames=ProjectService.getRequiredResourceNames(),
             files = _.cloneDeep($scope.component.top.files),
             resourceId = [],
             j,
-            fileIsNotUsed = true;
+            fileIsNotUsed = true,
+            TextIsNotUsed = true;
+
         for(j=0;j<indexArr.length;j++){
             var fileIndex = indexArr[j];
             fileIsNotUsed = requiredResourceNames.every(function(itemSrc){
                 return itemSrc!==files[fileIndex].src
             });
-            if(fileIsNotUsed){
+            TextIsNotUsed = requiredTextNames.every(function(textName){
+                return textName!==files[fileIndex].name
+            });
+            if(fileIsNotUsed&&TextIsNotUsed){
                 resourceId = files[fileIndex].id;
                 ResourceService.deleteFileById(resourceId, function () {
                     //$scope.component.top.files = ResourceService.getAllImages();

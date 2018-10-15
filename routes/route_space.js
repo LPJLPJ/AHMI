@@ -10,13 +10,13 @@ module.exports = function (req, res) {
     var classId='space';
 	if (_user && _user.id) {
 
-        //edit by tang   ½«Î´·ÖÀàµÄÏîÄ¿·ÅÔÚ¸öÈËÖÐÐÄ½çÃæ
+        //edit by tang   ï¿½ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½
         ProjectModel.findProInfo(_user.id,classId,function (err, projects) {
             if (err){
                 console.log(err);
                 res.status(500).end()
             }else{
-                var processedProjects = _.cloneDeep(projects).map(function (project) {
+                var processedProjects = projects.map(function (project) {
                     var info = {};
                     if(project.classId){
                         info.classId=project.classId;
@@ -29,6 +29,7 @@ module.exports = function (req, res) {
                     info.name = project.name;
                     info.template = project.template;
                     info.ideVersion = project.ideVersion;
+                    info.originalSite = project.originalSite;
                     info.createTime = moment(project.createTime).format('YYYY-MM-DD HH:mm');
                     info.lastModifiedTime = moment(project.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                     info.supportTouch = project.supportTouch;
@@ -39,7 +40,7 @@ module.exports = function (req, res) {
                         thumbnail:thumbnail
                     }
                 });
-                //»ñÈ¡·ÖÀàÁÐ±í
+                //ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½
                 ClassModel.findFolderByUser(_user.id,function(err,folders){
                     if(err){
                         console.log(err);

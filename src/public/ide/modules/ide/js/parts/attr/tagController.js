@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal', function ($rootScope, $scope, TagService, ProjectService, Type, $uibModal) {
+ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService, Type, $uibModal,$http,$q) {
     $scope.selectedIdx = -1;
     $scope.animationsEnabled = true;
     $scope.component = {
@@ -38,7 +38,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         addToTagClass: addToTagClass,
         regCheckboxClick: regCheckboxClick,
 
-        importTags: importTags
+        importTags: importTags,
+        generateExcel: generateExcel
     };
 
     $scope.$on('GlobalProjectReceived', function () {
@@ -813,6 +814,9 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         });
     }
 
+    /**
+     * 自定义导入tags
+     */
     $scope.customTagList=function(){
         var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
@@ -829,7 +833,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
                 $http({
                     method: 'get',
-                    url: '/public/ide/modules/tagConfig/template/tags.default.json'
+                    url: '/public/ide/modules/tagConfig/template/tags.default1.json'
                 }).success(function (data) {
                     $scope.defaultTags=data;
                 }).error(function (err) {
@@ -885,6 +889,77 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 };
             }]
         });
+    };
+
+    /**
+     * 导出tag序号表 excel
+     */
+    function generateExcel(){
+            var modalInstance = $uibModal.open({
+                templateUrl: 'generateExcel.html',
+                controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
+                    $scope.ok = function(){
+                        generateTagExcel();
+                        $uibModalInstance.close();
+                    };
+
+                    $scope.cancel = function(){
+                        $uibModalInstance.close();
+                    }
+                }]
+            });
+    }
+
+    function generateTagExcel(){
+        var url = "/public/ide/modules/tagConfig/template/tags.default";
+        ProjectService.getProjectCopyTo($scope);
+        var project = $scope.project;
+
+        //同步获取到所有的预设tag参数；
+        $q.all([
+            getDefaultTags(url+'1.json'),
+            getDefaultTags(url+'2.json'),
+            getDefaultTags(url+'3.json'),
+            getDefaultTags(url+'4.json')
+        ]).then(function(defaultTags){
+            TagService.processTagsData(project,defaultTags,function(data){
+                makeTagExcel(data,project);
+            });
+        });
+
+        function getDefaultTags(url){
+            var deferred = $q.defer();
+            $http({
+                method:'get',
+                url:url
+            }).success(function(data){
+                deferred.resolve(data)
+            }).error(function(err){
+                console.log(err);
+            });
+            return deferred.promise;
+        }
+    }
+
+    function makeTagExcel(tagsData,project){
+        $http({
+            method:'post',
+            url:"/project/"+project.projectId+"/generateTagExcel",
+            data:tagsData
+        }).success(function(data){
+            if(data == 'ok'){
+                downloadTagExcel(project);
+                toastr.info('生成excel成功');
+            }else{
+                toastr.error('生成失败，请刷新');
+            }
+        }).error(function(err){
+            console.log(err);
+        })
+    }
+
+    function downloadTagExcel(project){
+        window.location.href = '/project/' + project.projectId + '/downloadTagExcel';
     }
 
 }]);
@@ -1121,7 +1196,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyRotateImg:
             case Type.MyScriptTrigger:
             case Type.MySlideBlock:
-            case Type.MyVideo:
+            //case Type.MyVideo:
             case Type.MyAnimation:
             case Type.MyTexNum:
             case Type.MyAlphaImg:
