@@ -9,6 +9,7 @@ var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
+var AudioManager = require('../utils/audioManager')
 var math = require('mathjs');
 var StringConverter = require('./StringConverter')
 var env = 'dev' //dev or build
@@ -66,10 +67,11 @@ module.exports = React.createClass({
         this.state.innerTimerList.map(function (timerId) {
             clearInterval(timerId);
         }.bind(this));
-        window.audioList.forEach(function(res){
-            res.currentTime = 0
-            res.pause()
-        })
+        // window.audioList.forEach(function(res){
+        //     res.currentTime = 0
+        //     res.pause()
+        // })
+        AudioManager.stopAllAudios()
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
@@ -322,10 +324,11 @@ module.exports = React.createClass({
         this.state.innerTimerList.map(function (timerId) {
             clearInterval(timerId);
         }.bind(this));
-        window.audioList.forEach(function(res){
-            res.currentTime = 0
-            res.pause()
-        })
+        // window.audioList.forEach(function(res){
+        //     res.currentTime = 0
+        //     res.pause()
+        // })
+        AudioManager.stopAllAudios()
         this.simState = {};
         VideoSource.setVideoSrc('');
         //init animation keys
@@ -5257,14 +5260,17 @@ module.exports = React.createClass({
                 // })
                 //window.audioList[0].connect(window.audioCtx)
                 //window.audioList[0].start(0)
-                /*
-                var bufferSrc = audioCtx.createBufferSource();
-                bufferSrc.buffer =window.audioList[0].buffer;
-                //bufferSrc.connect(gainNode);
-                bufferSrc.connect(window.audioCtx.destination);
-                bufferSrc.start(0)
-                */
-               window.audioList[0].play()
+                
+                // var bufferSrc = audioCtx.createBufferSource();
+                // bufferSrc.buffer =window.audioList[0];
+                // //bufferSrc.connect(gainNode);
+                // bufferSrc.connect(window.audioCtx.destination);
+                // bufferSrc.start(0)
+                AudioManager.addNewAudioAndPlay(window.audioList[0])
+                
+                
+            
+                //window.audioList[0].play()
                 // window.audioCtx.play()
                 var targetTag = this.findTagByName(param1.tag);
 

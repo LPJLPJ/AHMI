@@ -21,15 +21,23 @@ playButton.addEventListener('click', function () {
 
     {/*ReactDOM.render( < Simulator projectData = {{}} />, simulatorContainer);*/}
     
-    // window.audioList.forEach(function(res){
-    //     res.start(0)
-    //     res.stop(0)
-    // })
     window.audioList.forEach(function(res){
-        res.play()
-        res.currentTime = 0
-        res.pause()
+        
+        var bufferSrc = audioCtx.createBufferSource();
+        bufferSrc.buffer = res;
+        
+        bufferSrc.connect(audioCtx.destination);
+        
+        bufferSrc.start(0)
+        bufferSrc.stop()
+        // res.start(0)
+        // res.stop()
     })
+    // window.audioList.forEach(function(res){
+    //     res.play()
+    //     res.currentTime = 0
+    //     res.pause()
+    // })
     // window.cachedResourceList.filter(function(res){return res.type && res.type.match(/audio/)}).forEach(function(res){
     //     // var track =  audioCtx.createMediaElementSource(res.content);
     //     // track.connect(audioCtx.destination)
