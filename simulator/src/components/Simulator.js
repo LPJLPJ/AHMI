@@ -3639,7 +3639,7 @@ module.exports = React.createClass({
             minCoverAngle = minCoverAngle * Math.PI / 180 + Math.PI / 2;
             maxCoverAngle = maxCoverAngle * Math.PI / 180 + Math.PI / 2;
             // console.log(curArc,widget.oldValue);
-            var arcPhase = 45;
+            var arcPhase = Math.atan(pointerWidth/pointerHeight)*180/Math.PI;
             if (clockwise != '2') {
                 clockwise = clockwise == '1' ? 1 : -1;
                 if (widget.dashboardModeId == '0') {

@@ -1173,7 +1173,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.beginPath();
                     ctx.moveTo(0,0);
                     var radius=calculateRadius(this.dashboardModeId,this.width,this.height);
-
                     //如果是逆时针，则反方向旋转
                     if(this.clockwise=='0'){
                         minAngle=-minAngle+Math.PI/2;
@@ -1217,7 +1216,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.closePath();
                     ctx.clip();
                     ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
-
                     ctx.restore();
                 }
 
@@ -1230,7 +1228,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if(this.clockwise=='0'){
                         angleOfPointer=-angleOfPointer;
                     }
-                    angleOfPointer=angleOfPointer+45;
+                    var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    angleOfPointer=angleOfPointer+rotateAngle;
                     if(!(this.minCoverAngle==this.maxCoverAngle)){
                         var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                         var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
@@ -1250,6 +1249,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         ctx.clip();
                     }
                     ctx.scale(1/this.scaleX,1/this.scaleY);
+                    //var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
                     ctx.rotate(angleOfPointer*Math.PI/180);
                     ctx.scale(this.scaleX,this.scaleY);
                     ctx.fillStyle=this.pointerColor;
