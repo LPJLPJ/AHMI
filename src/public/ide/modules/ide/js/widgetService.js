@@ -1230,7 +1230,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if(this.clockwise=='0'){
                         angleOfPointer=-angleOfPointer;
                     }
-                    angleOfPointer=angleOfPointer+45;
+                    var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    angleOfPointer=angleOfPointer+rotateAngle;
                     if(!(this.minCoverAngle==this.maxCoverAngle)){
                         var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                         var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
