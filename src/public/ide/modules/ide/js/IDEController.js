@@ -33,12 +33,13 @@ console.log = (function (console) {
 
 
 var logs = [];
-ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
+ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService','TrackService', 'TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
     'socketIOService', 'MiddleWareService', function ($scope, $timeout, $http, $interval,
                                                       ProjectService,
                                                       GlobalService,
                                                       Preference,
                                                       ResourceService,
+                                                      TrackService,
                                                       TagService,
                                                       TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
 
@@ -863,6 +864,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         function syncServices(globalProject) {
             ResourceService.setMaxTotalSize(globalProject.maxSize || 100 * 1024 * 1024);
             ResourceService.syncFiles(globalProject.resourceList);
+            TrackService.setTracks(globalProject.trackList||[]);
             //tags tbc
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);

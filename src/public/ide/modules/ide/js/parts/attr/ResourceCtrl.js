@@ -1,10 +1,10 @@
 /**
  * Created by shenaolin on 16/3/10.
  */
-ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal', function(ResourceService,$scope,$timeout,
+ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal','TrackService', function(ResourceService,$scope,$timeout,
                                           ProjectService,
                                           Type,
-                                          CanvasService,$uibModal) {
+                                          CanvasService,$uibModal,TrackService) {
     $scope.$on('GlobalProjectReceived', function () {
 
         initUserInterface();
@@ -33,6 +33,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 toggleOperation:toggleOperation,
                 basicUrl:'',
                 resources:[],
+                tracks:[],
                 showDel:true,
                 selectIndexArr:[],
                 selectAll:selectAll,
@@ -46,13 +47,44 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         };
 
         $scope.component.top.resources = ResourceService.getAllResource();
-
+        $scope.component.top.tracks = TrackService.getAllTracks();
         $scope.component.top.basicUrl = ResourceService.getResourceUrl();
         $scope.component.top.maxSize = ResourceService.getMaxTotalSize();
         $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
 
-
+/**
+         * 删除资源按钮的弹窗
+         */
+        $scope.openTrackPanel = function(index,cb){
+            var curTrack 
+            if(index<=-1){
+                //new track
+                curTrack = TrackService.getNewTrack()
+            }else{
+                curTrack = _.cloneDeep(TrackService.getTrackByIndex(index))
+            }
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'trackPanelModal.html',
+                controller: 'trackPanelCtrl',
+                size: 'md',
+                resolve: {
+                    
+                    track:function(){
+                        return curTrack
+                    }
+                }
+            });
+            modalInstance.result.then(function(_track){
+                if(index<=-1){
+                    TrackService.appendTrack(_track)
+                }else{
+                    TrackService.updateTrackByIndex(index,_track)
+                }
+                $scope.component.top.tracks = TrackService.getAllTracks()
+            })
+        }
         
         
         /**
@@ -122,6 +154,11 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 toastr.warning('资源-'+files[fileIndex].name+'已经被使用');
             }
         }
+    }
+
+
+    $scope.deleteTrack = function(index){
+        TrackService.deleteTrackByIndex(index)
     }
 
     /**
@@ -274,5 +311,18 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         }
-    }]);
+    }])
 
+    .controller('trackPanelCtrl', ['$scope', '$uibModalInstance', 'ResourceService','track', function ($scope, $uibModalInstance,ResourceService, track) {
+        $scope.track = track;     // 动画配置
+
+        $scope.trackSources = ResourceService.getAllAudios()
+
+        $scope.confirm = function(){
+            $uibModalInstance.close($scope.track)
+        }
+
+        $scope.cancel = function(){
+            $uibModalInstance.dismiss()
+        }
+    }])

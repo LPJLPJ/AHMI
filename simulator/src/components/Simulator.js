@@ -5266,7 +5266,8 @@ module.exports = React.createClass({
                 // //bufferSrc.connect(gainNode);
                 // bufferSrc.connect(window.audioCtx.destination);
                 // bufferSrc.start(0)
-                AudioManager.addNewAudioAndPlay(window.audioList[0])
+                AudioManager.addNewAudioAndPlay(this.state.project.trackList[0].buffer)
+                AudioManager.addNewAudioAndPlay(this.state.project.trackList[1].buffer)
                 
                 
             

@@ -11,6 +11,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
     'OperateQueService',
     'TagService',
     'ResourceService',
+    'TrackService',
     '$http',
     'ProjectTransformService',
     'RenderSerive',
@@ -26,7 +27,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
               Type,
               CanvasService,
               $uibModal,
-              OperateQueService, TagService, ResourceService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService, NavModalCANConfigService) {
+              OperateQueService, TagService, ResourceService, TrackService,$http, ProjectTransformService, RenderSerive, LinkPageWidgetsService, NavModalCANConfigService) {
 
         var path, fs, __dirname, fse;
         initLocalPref();
@@ -326,6 +327,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                     function postFun() {
                         curScope.project.resourceList = ResourceService.getAllResource();
+                        curScope.project.trackList = TrackService.getAllTracks();
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
                         curScope.project.timers = TagService.getTimerNum();//-
@@ -1070,6 +1072,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             temp.project.ideVersion = window.ideVersion;
             temp.project.physicalPixelRatio = physicalPixelRatio
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
+            temp.project.trackList = _.cloneDeep(TrackService.getAllTracks())
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
             temp.project.tagList = TagService.getAllTags();
@@ -1252,42 +1255,61 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             if(!window.audioList){
                 window.audioList = []
             }
+            var trackLoadCB = function(){
+                $scope.component.simulator.show = true;
+            }
+            var trackNum = window.projectData.trackList.length
+            if(trackNum){
+                window.projectData.trackList.forEach(function(res,i){
+                    // var track =  audioCtx.createMediaElementSource(res.content);
+                    // track.connect(audioCtx.destination)
+                    
+                    var request = new XMLHttpRequest();
+                    request.open('get', res.src, true);
+                    request.responseType = 'arraybuffer';
+                    request.onload = function() {
+                        audioCtx.decodeAudioData(request.response, function(buffer) {
+                            
+                            //var gainNode = audioCtx.createGain();
+                            //var bufferSrc = audioCtx.createBufferSource();
+                            //bufferSrc.buffer = buffer;
+                            //bufferSrc.connect(gainNode);
+                            //bufferSrc.connect(audioCtx.destination);
+                            //gainNode.connect(audioCtx.destination);
+                            // bufferSrc.start(0)
+                            // bufferSrc.stop(0)
+                            // window.audioList.push(buffer)
+                            window.projectData.trackList[i].buffer = buffer
+                            trackNum--
+                            if(trackNum == 0){
+                                trackLoadCB()
+                            }
+                           
+                         });
+                    };
+                    request.onerror = function(e){
+                        trackNum--
+                        toastr.error('加载音频错误：'+res.name)
+                        if(trackNum == 0){
+                            trackLoadCB()
+                        }
+                    }
+                    request.send();
+                    // if(!res.inMediaSource){
+                    //     var track = audioCtx.createMediaElementSource(res.content);
+                    //     res.inMediaSource = true
+                    //     track.connect(audioCtx.destination)
+                    //     window.audioList.push(res.content)
+    
+                    // }
+                    
+                    
+                })
+            }
             
-            window.cachedResourceList.filter(function(res){return res.type && res.type.match(/audio/)}).forEach(function(res){
-                // var track =  audioCtx.createMediaElementSource(res.content);
-                // track.connect(audioCtx.destination)
-                
-                var request = new XMLHttpRequest();
-                request.open('get', res.src, true);
-                request.responseType = 'arraybuffer';
-                request.onload = function() {
-                    audioCtx.decodeAudioData(request.response, function(buffer) {
-                        
-                        //var gainNode = audioCtx.createGain();
-                        //var bufferSrc = audioCtx.createBufferSource();
-                        //bufferSrc.buffer = buffer;
-                        //bufferSrc.connect(gainNode);
-                        //bufferSrc.connect(audioCtx.destination);
-                        //gainNode.connect(audioCtx.destination);
-                        // bufferSrc.start(0)
-                        // bufferSrc.stop(0)
-                        window.audioList.push(buffer)
-                       
-                     });
-                };
-                request.send();
-                // if(!res.inMediaSource){
-                //     var track = audioCtx.createMediaElementSource(res.content);
-                //     res.inMediaSource = true
-                //     track.connect(audioCtx.destination)
-                //     window.audioList.push(res.content)
+            
 
-                // }
-                
-                
-            })
-
-            $scope.component.simulator.show = true;
+            
 
         }
 

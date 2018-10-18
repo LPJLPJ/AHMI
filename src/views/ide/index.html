@@ -97,6 +97,7 @@
 
     <script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/trackService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/userType.js"></script>
     <script src="../../public/ide/modules/ide/min-js/socketIOService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/middleWareService.js"></script>
@@ -3930,6 +3931,73 @@
                         <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
                         <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
                     <!--</div>-->
+
+                    <!-- tracks -->
+                    <div>
+                        <span class="dengPage-Action-Title">声音</span>
+                        <button type="button" class="btn btn-default dengPage-addAction" ng-click="openTrackPanel(-1)" id="addTrackBtn">
+                            添加新声音
+                        </button>
+                    </div>
+
+                    <!--list of current actions-->
+                    <div class="glyphicon" style="display: block" ng-click="collapse($event)"
+                         ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"></div>
+                    <ul uib-collapse="status.collapsed " class="dengPage-Actionlist" id="tracksUL">
+                        <li ng-repeat="track in component.top.tracks" >
+                            <span ng-click="openTrackPanel($index)">{{track.name}}</span><span>{{track.index}}</span><i class="iconfont" ng-click="deleteTrack($index)">
+                            &#xe627;</i>
+                        </li>
+                    </ul>
+
+                    <script type="text/ng-template" id="trackPanelModal.html">
+                        <div class="modal-header">
+                            <h3 class="modal-title">声音配置</h3>
+                        </div>
+                        <div class="modal-body lx-modal-body">
+
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">声音名称</div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <input class="form-control"
+                                           type="text"
+                                           ng-model="track.name" >
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">声音序号</div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <input class="form-control" type="number" ng-model="track.index">
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">声音源</div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <ui-select ng-model="track.src" theme="bootstrap">
+                                        <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                        <ui-select-choices repeat="trackSource.src as trackSource in (trackSources | filter: $select.search) track by trackSource.src">
+                                            <span ng-bind-html="trackSource.name | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">循环</div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <my-bool-switch-button status="track.loop"></my-bool-switch-button>
+                                </div>
+                                
+                            </div>
+                            
+
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" type="button" ng-click="confirm(this)">保存</button>
+                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        </div>
+                    </script>
 
                     <script type="text/ng-template" id="deletePanelModal.html">
                         <div class="modal-header">

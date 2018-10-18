@@ -100,6 +100,13 @@ ideServices
 
         };
 
+        this.getAllAudios = function(){
+            var audios = _.filter(files, function (file) {
+                return file.type && file.type.split('/')[0]=='audio'
+            })
+            return audios
+        }
+
         this.setFiles=function (_files) {
             files=_files||[];
         }

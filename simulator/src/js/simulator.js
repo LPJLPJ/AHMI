@@ -21,10 +21,10 @@ playButton.addEventListener('click', function () {
 
     {/*ReactDOM.render( < Simulator projectData = {{}} />, simulatorContainer);*/}
     
-    window.audioList.forEach(function(res){
+    window.projectData.trackList.forEach(function(res){
         
         var bufferSrc = audioCtx.createBufferSource();
-        bufferSrc.buffer = res;
+        bufferSrc.buffer = res.buffer;
         
         bufferSrc.connect(audioCtx.destination);
         
