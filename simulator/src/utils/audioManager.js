@@ -12,57 +12,66 @@ function getKey(){
 }
 
 function playAudio(audio){
+    if(audio.audioSrc){
+        stopAudio(audio)
+    }
+    var bufferSrc = audioCtx.createBufferSource();
+    bufferSrc.buffer = audio.buffer;
+    
+    bufferSrc.connect(window.audioCtx.destination);
+    audio.audioSrc = bufferSrc
     audio.startTime = audioCtx.currentTime
+    
+    if(audio.pausedAt && audio.status==audioStatus.paused){
+        audio.audioSrc.start(0,audio.pausedAt)
+    }else{
+        audio.audioSrc.start(0)
+    }
     audio.status = audioStatus.playing
-    audio.audioSrc.start(0)
+    
 }
 
 function pauseAudio(audio){
     stopAudio(audio)
-    audio.pausedAt = audioCtx.currentTime - audio.startTime
+    audio.pausedAt = audio.pausedAt||0
+    audio.pausedAt += audioCtx.currentTime - audio.startTime
     audio.status = audioStatus.paused
     
 }
 
 function resumeAudio(audio){
-    var bufferSrc = audioCtx.createBufferSource()
-    bufferSrc.buffer = audio.audioSrc.buffer
     
-    bufferSrc.connect(window.audioCtx.destination)
-    audio.audioSrc = bufferSrc
-    audio.startTime = audioCtx.currentTime
-    audio.status = audioStatus.playing
-    audio.audioSrc.start(0,audio.pausedAt)
+    
+    playAudio(audio)
+    
 }
 
 function stopAudio(audio){
-    audio.audioSrc.stop()
+    if(audio.audioSrc){
+        audio.audioSrc.stop()
+        audio.audioSrc = null
+    }
+    
     //audio.audioSrc = null
 }
 
 AudioManager.addNewAudio = function(buffer){
-    var bufferSrc = audioCtx.createBufferSource();
-    bufferSrc.buffer = buffer;
     
-    bufferSrc.connect(window.audioCtx.destination);
     var key = getKey()
     audios.push({
         key:key,
-        audioSrc:bufferSrc
+        buffer:buffer
     })
     return key
     
 }
 
 AudioManager.addNewAudioAndPlay = function(buffer){
-    var bufferSrc = audioCtx.createBufferSource();
-    bufferSrc.buffer = buffer;
     
-    bufferSrc.connect(window.audioCtx.destination);
     var key = getKey()
     var curAudio = {
         key:key,
-        audioSrc:bufferSrc
+        buffer:buffer
     }
     audios.push(curAudio)
     playAudio(curAudio)
@@ -83,7 +92,7 @@ AudioManager.recordAudio = function(audioSrc){
 AudioManager.playAudioWithKey = function(key){
     for(var i=0;i<audios.length;i++){
         if(audios[i].key === key){
-            return audios[i].audioSrc && playAudio(audios[i])
+            return  playAudio(audios[i])
         }
     }
 }
@@ -99,7 +108,7 @@ AudioManager.pauseAudioWithKey = function(key){
 AudioManager.resumeAudioWithKey = function(key){
     for(var i=0;i<audios.length;i++){
         if(audios[i].key === key){
-            return audios[i].audioSrc && (audios[i].status== audioStatus.paused) && resumeAudio(audios[i])
+            return  (audios[i].status== audioStatus.paused) && resumeAudio(audios[i])
         }
     }
 }

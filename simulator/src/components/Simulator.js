@@ -5675,8 +5675,15 @@ module.exports = React.createClass({
 
                 if (targetTag) {
                     var playTrackIndex = Number(targetTag.value) 
-                    var key = AudioManager.addNewAudioAndPlay(this.state.project.trackList[playTrackIndex].buffer)
-                    this.state.project.trackList[playTrackIndex].key = key
+                    var curTrack = this.state.project.trackList[playTrackIndex]
+                    if(curTrack){
+                        if(curTrack.key){
+                            AudioManager.playAudioWithKey(curTrack.key)
+                        }else{
+                            curTrack.key = AudioManager.addNewAudioAndPlay(curTrack.buffer)
+                        }
+                    }
+                    
                     // this.draw(null, {
                     //     updatedTagName: param1.tag
                     // });

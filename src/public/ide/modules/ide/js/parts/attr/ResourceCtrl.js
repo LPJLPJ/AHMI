@@ -19,6 +19,10 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.$emit('ChangeCurrentPage');
     });
 
+    $scope.$on('trackListChanged',function(){
+        $scope.component.top.tracks = TrackService.getAllTracks();
+    })
+
     function initUserInterface(){
 
     }
@@ -77,12 +81,17 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 }
             });
             modalInstance.result.then(function(_track){
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                
                 if(index<=-1){
                     TrackService.appendTrack(_track)
                 }else{
                     TrackService.updateTrackByIndex(index,_track)
-                }
-                $scope.component.top.tracks = TrackService.getAllTracks()
+                }     
+                //$scope.component.top.tracks = TrackService.getAllTracks()
+                console.log(TrackService.getAllTracks(),ProjectService.getAllTrackList())
+                $scope.$emit('ChangeCurrentPage', oldOperate);
             })
         }
         
@@ -158,7 +167,10 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
 
     $scope.deleteTrack = function(index){
+        var oldOperate = ProjectService.SaveCurrentOperate();
         TrackService.deleteTrackByIndex(index)
+        $scope.$emit('ChangeCurrentPage', oldOperate);
+
     }
 
     /**

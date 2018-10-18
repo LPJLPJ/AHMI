@@ -1,4 +1,4 @@
-ideServices.service('TrackService', ['ProjectService', 'Type', function (ProjectService, Type) {
+ideServices.service('TrackService', [ 'Type', function ( Type) {
     function Track(name,index,src,loop){
         this.name = name||'新声音'
         this.index = index || 0
@@ -24,12 +24,14 @@ ideServices.service('TrackService', ['ProjectService', 'Type', function (Project
     this.updateTrackByIndex = function(idx,track){
         if(idx>=0 && idx < tracks.length){
             tracks[idx] = track
+            
         }
     }
 
     this.deleteTrackByIndex = function(idx){
         if(idx>=0 && idx < tracks.length){
             tracks.splice(idx,1)
+            
         }
     }
 
@@ -44,5 +46,7 @@ ideServices.service('TrackService', ['ProjectService', 'Type', function (Project
     this.setTracks = function(_tracks){
         tracks = _tracks
     }
+
+    
 
 }])

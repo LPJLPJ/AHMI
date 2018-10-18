@@ -737,6 +737,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 $scope.$broadcast('PageNodeChanged');
                 $scope.$broadcast('AttributeChanged');
                 $scope.$broadcast('syncTagSuccess')
+                $scope.$broadcast('trackListChanged')
             });
 
             $scope.$on('Redo', function (event, operate, callback) {
@@ -744,6 +745,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 $scope.$broadcast('NavStatusChanged');
                 $scope.$broadcast('PageNodeChanged');
                 $scope.$broadcast('AttributeChanged');
+                $scope.$broadcast('syncTagSuccess')
+                $scope.$broadcast('trackListChanged')
             });
 
             $scope.$on('DoCopy', function (event) {
