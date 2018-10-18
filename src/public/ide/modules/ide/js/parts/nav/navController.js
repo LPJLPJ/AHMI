@@ -1250,65 +1250,71 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function play() {
             generateData()
             window.cachedResourceList = ResourceService.getGlobalResources();
-            var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            window.audioCtx = audioCtx
-            if(!window.audioList){
-                window.audioList = []
-            }
-            var trackLoadCB = function(){
-                $scope.$apply(function () {
-                    $scope.component.simulator.show = true
-                })
-                
-            }
-            var trackNum = window.projectData.trackList.length
-            if(trackNum){
-                window.projectData.trackList.forEach(function(res,i){
-                    // var track =  audioCtx.createMediaElementSource(res.content);
-                    // track.connect(audioCtx.destination)
-                    
-                    var request = new XMLHttpRequest();
-                    request.open('get', res.src, true);
-                    request.responseType = 'arraybuffer';
-                    request.onload = function() {
-                        audioCtx.decodeAudioData(request.response, function(buffer) {
-                            
-                            //var gainNode = audioCtx.createGain();
-                            //var bufferSrc = audioCtx.createBufferSource();
-                            //bufferSrc.buffer = buffer;
-                            //bufferSrc.connect(gainNode);
-                            //bufferSrc.connect(audioCtx.destination);
-                            //gainNode.connect(audioCtx.destination);
-                            // bufferSrc.start(0)
-                            // bufferSrc.stop(0)
-                            // window.audioList.push(buffer)
-                            window.projectData.trackList[i].buffer = buffer
-                            trackNum--
-                            if(trackNum == 0){
-                                trackLoadCB()
-                            }
-                           
-                         });
-                    };
-                    request.onerror = function(e){
-                        trackNum--
-                        toastr.error('加载音频错误：'+res.name)
-                        if(trackNum == 0){
-                            trackLoadCB()
-                        }
+            
+            for(var i=0;i<window.projectData.trackList.length;i++){
+                var curTrack = window.projectData.trackList[i]
+                for(var j=0;j<window.cachedResourceList.length;j++){
+                    if(window.cachedResourceList[j].src == curTrack.src){
+                        curTrack.buffer = window.cachedResourceList[j].content
+                        break
                     }
-                    request.send();
-                    // if(!res.inMediaSource){
-                    //     var track = audioCtx.createMediaElementSource(res.content);
-                    //     res.inMediaSource = true
-                    //     track.connect(audioCtx.destination)
-                    //     window.audioList.push(res.content)
-    
-                    // }
-                    
-                    
-                })
+                }
             }
+            $scope.component.simulator.show = true
+            // var trackLoadCB = function(){
+            //     $scope.$apply(function () {
+            //         $scope.component.simulator.show = true
+            //     })
+                
+            // }
+            // var trackNum = window.projectData.trackList.length
+            // if(trackNum){
+            //     window.projectData.trackList.forEach(function(res,i){
+            //         // var track =  audioCtx.createMediaElementSource(res.content);
+            //         // track.connect(audioCtx.destination)
+                    
+            //         var request = new XMLHttpRequest();
+            //         request.open('get', res.src, true);
+            //         request.responseType = 'arraybuffer';
+            //         request.onload = function() {
+            //             audioCtx.decodeAudioData(request.response, function(buffer) {
+                            
+            //                 //var gainNode = audioCtx.createGain();
+            //                 //var bufferSrc = audioCtx.createBufferSource();
+            //                 //bufferSrc.buffer = buffer;
+            //                 //bufferSrc.connect(gainNode);
+            //                 //bufferSrc.connect(audioCtx.destination);
+            //                 //gainNode.connect(audioCtx.destination);
+            //                 // bufferSrc.start(0)
+            //                 // bufferSrc.stop(0)
+            //                 // window.audioList.push(buffer)
+            //                 window.projectData.trackList[i].buffer = buffer
+            //                 trackNum--
+            //                 if(trackNum == 0){
+            //                     trackLoadCB()
+            //                 }
+                           
+            //              });
+            //         };
+            //         request.onerror = function(e){
+            //             trackNum--
+            //             toastr.error('加载音频错误：'+res.name)
+            //             if(trackNum == 0){
+            //                 trackLoadCB()
+            //             }
+            //         }
+            //         request.send();
+            //         // if(!res.inMediaSource){
+            //         //     var track = audioCtx.createMediaElementSource(res.content);
+            //         //     res.inMediaSource = true
+            //         //     track.connect(audioCtx.destination)
+            //         //     window.audioList.push(res.content)
+    
+            //         // }
+                    
+                    
+            //     })
+            // }
             
             
 

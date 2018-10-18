@@ -294,10 +294,28 @@ ideServices
                 // globalResources.push(resourceObj);
 
             }else if(file.type.match(/audio/)){
-                var curAudio = new Audio(file.src)
-                resourceObj.content = curAudio
+                // var curAudio = new Audio(file.src)
+                // resourceObj.content = curAudio
+                // globalResources.push(resourceObj);
+                // scb && scb({type:'ok'}, resourceObj);
+                
+
+                var request = new XMLHttpRequest();
+                request.open('get', file.src, true);
+                request.responseType = 'arraybuffer';
+                request.onload = function() {
+                    audioCtx.decodeAudioData(request.response, function(buffer) {
+                        
+                        resourceObj.content = buffer
+                        scb && scb({type:'ok'}, resourceObj);
+                        
+                    });
+                };
+                request.onerror = function(e){
+                    fcb && fcb({type:'error'}, resourceObj);
+                }
+                request.send();
                 globalResources.push(resourceObj);
-                scb && scb({type:'ok'}, resourceObj);
                 
             }else{
                 //other

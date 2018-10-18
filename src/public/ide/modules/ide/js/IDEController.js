@@ -51,6 +51,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         var loadStep = 0;     //加载到了第几步,共8步
         var fs, path, __dirname;
 
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        window.audioCtx = audioCtx
         // showIDE();
 
         //var params=getUrlParams();
