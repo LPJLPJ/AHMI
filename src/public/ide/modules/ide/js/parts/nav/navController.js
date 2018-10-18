@@ -1256,7 +1256,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 window.audioList = []
             }
             var trackLoadCB = function(){
-                $scope.component.simulator.show = true;
+                $scope.$apply(function () {
+                    $scope.component.simulator.show = true
+                })
+                
             }
             var trackNum = window.projectData.trackList.length
             if(trackNum){

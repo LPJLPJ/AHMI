@@ -5253,26 +5253,6 @@ module.exports = React.createClass({
 
                 break;
             case 'INC':
-                // this.state.imageList.forEach(function(res){
-                //     if(res.type &&res.type.match(/audio/)){
-                //         res.content.play()
-                //     }
-                // })
-                //window.audioList[0].connect(window.audioCtx)
-                //window.audioList[0].start(0)
-                
-                // var bufferSrc = audioCtx.createBufferSource();
-                // bufferSrc.buffer =window.audioList[0];
-                // //bufferSrc.connect(gainNode);
-                // bufferSrc.connect(window.audioCtx.destination);
-                // bufferSrc.start(0)
-                AudioManager.addNewAudioAndPlay(this.state.project.trackList[0].buffer)
-                AudioManager.addNewAudioAndPlay(this.state.project.trackList[1].buffer)
-                
-                
-            
-                //window.audioList[0].play()
-                // window.audioCtx.play()
                 var targetTag = this.findTagByName(param1.tag);
 
                 if (targetTag) {
@@ -5670,6 +5650,71 @@ module.exports = React.createClass({
                     });
                 };
                 break;
+            case 'PLAY_SOUND':
+                // this.state.imageList.forEach(function(res){
+                //     if(res.type &&res.type.match(/audio/)){
+                //         res.content.play()
+                //     }
+                // })
+                //window.audioList[0].connect(window.audioCtx)
+                //window.audioList[0].start(0)
+                
+                // var bufferSrc = audioCtx.createBufferSource();
+                // bufferSrc.buffer =window.audioList[0];
+                // //bufferSrc.connect(gainNode);
+                // bufferSrc.connect(window.audioCtx.destination);
+                // bufferSrc.start(0)
+                // AudioManager.addNewAudioAndPlay(this.state.project.trackList[0].buffer)
+                // AudioManager.addNewAudioAndPlay(this.state.project.trackList[1].buffer)
+                
+                
+            
+                //window.audioList[0].play()
+                // window.audioCtx.play()
+                var targetTag = this.findTagByName(param1.tag);
+
+                if (targetTag) {
+                    var playTrackIndex = Number(targetTag.value) 
+                    var key = AudioManager.addNewAudioAndPlay(this.state.project.trackList[playTrackIndex].buffer)
+                    this.state.project.trackList[playTrackIndex].key = key
+                    // this.draw(null, {
+                    //     updatedTagName: param1.tag
+                    // });
+                }
+                break;
+            case 'PAUSE_SOUND':
+                var targetTag = this.findTagByName(param1.tag);
+
+                if (targetTag) {
+                    var playTrackIndex = Number(targetTag.value) 
+                    var key = this.state.project.trackList[playTrackIndex].key
+                    if(key){
+                        AudioManager.pauseAudioWithKey(key)
+                    }
+                }
+            break;
+            case 'RESUME_SOUND':
+                var targetTag = this.findTagByName(param1.tag);
+
+                if (targetTag) {
+                    var playTrackIndex = Number(targetTag.value) 
+                    var key = this.state.project.trackList[playTrackIndex].key
+                    if(key){
+                        AudioManager.resumeAudioWithKey(key)
+                    }
+                }
+            break;
+            case 'STOP_SOUND':
+                var targetTag = this.findTagByName(param1.tag);
+
+                if (targetTag) {
+                    var playTrackIndex = Number(targetTag.value) 
+                    var key = this.state.project.trackList[playTrackIndex].key
+                    if(key){
+                        AudioManager.stopAudioWithKey(key)
+                    }
+                }
+            break;
             default:
                 console.log('unsupported cmd: ',op)
 
