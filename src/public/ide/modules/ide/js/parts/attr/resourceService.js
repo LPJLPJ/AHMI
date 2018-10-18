@@ -74,6 +74,17 @@ ideServices
             }
             return null;
         }
+
+        this.getResourceObjFromCache = function (key, type) {
+            type = type || 'src';
+            for (var i = 0; i < globalResources.length; i++) {
+                if (globalResources[i][type] == key) {
+                    return globalResources[i];
+                }
+            }
+            return null;
+        }
+
         this.setResourceNWUrl = function (_url) {
             resourceNWUrl = _url;
         };

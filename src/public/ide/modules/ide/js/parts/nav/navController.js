@@ -1253,12 +1253,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             
             for(var i=0;i<window.projectData.trackList.length;i++){
                 var curTrack = window.projectData.trackList[i]
-                for(var j=0;j<window.cachedResourceList.length;j++){
-                    if(window.cachedResourceList[j].src == curTrack.src){
-                        curTrack.buffer = window.cachedResourceList[j].content
-                        break
-                    }
-                }
+                curTrack.buffer = ResourceService.getResourceFromCache(curTrack.src,'src')
             }
             $scope.component.simulator.show = true
             // var trackLoadCB = function(){

@@ -259,12 +259,19 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     }
 
     function playMusic(fileSrc){
-        var curAudio = ResourceService.getResourceFromCache(fileSrc,'src')
+        var curAudio = ResourceService.getResourceObjFromCache(fileSrc,'src')
         if(curAudio){
-            if(curAudio.paused){
-                curAudio.play()
+            if(curAudio.playing){
+                curAudio.playing = false
+                curAudio.audioSrc.stop()
             }else{
-                curAudio.pause()
+                var bufferSrc = audioCtx.createBufferSource();
+                bufferSrc.buffer = curAudio.content;
+                
+                bufferSrc.connect(window.audioCtx.destination);
+                curAudio.audioSrc = bufferSrc
+                bufferSrc.start(0)
+                curAudio.playing = true
             }
             
         }
