@@ -316,13 +316,14 @@ ideServices
                 request.responseType = 'arraybuffer';
                 request.onload = function() {
                     audioCtx.decodeAudioData(request.response, function(buffer) {
-                        
+                        resourceObj.complete = true
                         resourceObj.content = buffer
                         scb && scb({type:'ok'}, resourceObj);
                         
                     });
                 };
                 request.onerror = function(e){
+                    resourceObj.complete = false
                     fcb && fcb({type:'error'}, resourceObj);
                 }
                 request.send();

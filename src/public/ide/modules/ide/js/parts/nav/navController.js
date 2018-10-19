@@ -1249,8 +1249,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function play() {
             generateData()
-            window.cachedResourceList = ResourceService.getGlobalResources();
-            
+            window.cachedResourceList = ResourceService.getGlobalResources()
             for(var i=0;i<window.projectData.trackList.length;i++){
                 var curTrack = window.projectData.trackList[i]
                 curTrack.buffer = ResourceService.getResourceFromCache(curTrack.src,'src')

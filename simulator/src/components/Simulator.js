@@ -5675,14 +5675,21 @@ module.exports = React.createClass({
 
                 if (targetTag) {
                     var playTrackIndex = Number(targetTag.value) 
-                    var curTrack = this.state.project.trackList[playTrackIndex]
-                    if(curTrack){
-                        if(curTrack.key){
-                            AudioManager.playAudioWithKey(curTrack.key)
-                        }else{
-                            curTrack.key = AudioManager.addNewAudioAndPlay(curTrack.buffer)
+                    for(var i=0;i<this.state.project.trackList.length;i++){
+                        var curTrack = this.state.project.trackList[i]
+                        if(curTrack.index === playTrackIndex){
+                            //hit
+                            if(curTrack.key){
+                                AudioManager.playAudioWithKey(curTrack.key)
+                            }else{
+                                curTrack.key = AudioManager.addNewAudioAndPlay(curTrack.buffer,{
+                                    loop:curTrack.loop||false
+                                })
+                            }
                         }
                     }
+                    
+                    
                     
                     // this.draw(null, {
                     //     updatedTagName: param1.tag
@@ -5693,11 +5700,18 @@ module.exports = React.createClass({
                 var targetTag = this.findTagByName(param1.tag);
 
                 if (targetTag) {
-                    var playTrackIndex = Number(targetTag.value) 
-                    var key = this.state.project.trackList[playTrackIndex].key
-                    if(key){
-                        AudioManager.pauseAudioWithKey(key)
+                    var playTrackIndex = Number(targetTag.value)
+                    for(var i=0;i<this.state.project.trackList.length;i++){
+                        var curTrack = this.state.project.trackList[i]
+                        if(curTrack.index === playTrackIndex){
+                            //hit
+                            var key = curTrack.key
+                            if(key){
+                                AudioManager.pauseAudioWithKey(key)
+                            }
+                        }
                     }
+                    
                 }
             break;
             case 'RESUME_SOUND':
@@ -5705,10 +5719,17 @@ module.exports = React.createClass({
 
                 if (targetTag) {
                     var playTrackIndex = Number(targetTag.value) 
-                    var key = this.state.project.trackList[playTrackIndex].key
-                    if(key){
-                        AudioManager.resumeAudioWithKey(key)
+                    for(var i=0;i<this.state.project.trackList.length;i++){
+                        var curTrack = this.state.project.trackList[i]
+                        if(curTrack.index === playTrackIndex){
+                            //hit
+                            var key = curTrack.key
+                            if(key){
+                                AudioManager.resumeAudioWithKey(key)
+                            }
+                        }
                     }
+                    
                 }
             break;
             case 'STOP_SOUND':
@@ -5716,10 +5737,17 @@ module.exports = React.createClass({
 
                 if (targetTag) {
                     var playTrackIndex = Number(targetTag.value) 
-                    var key = this.state.project.trackList[playTrackIndex].key
-                    if(key){
-                        AudioManager.stopAudioWithKey(key)
+                    for(var i=0;i<this.state.project.trackList.length;i++){
+                        var curTrack = this.state.project.trackList[i]
+                        if(curTrack.index === playTrackIndex){
+                            //hit
+                            var key = curTrack.key
+                            if(key){
+                                AudioManager.stopAudioWithKey(key)
+                            }
+                        }
                     }
+                    
                 }
             break;
             default:

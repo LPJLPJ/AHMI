@@ -17,7 +17,7 @@ function playAudio(audio){
     }
     var bufferSrc = audioCtx.createBufferSource();
     bufferSrc.buffer = audio.buffer;
-    
+    bufferSrc.loop = audio.loop
     bufferSrc.connect(window.audioCtx.destination);
     audio.audioSrc = bufferSrc
     audio.startTime = audioCtx.currentTime
@@ -55,23 +55,25 @@ function stopAudio(audio){
     //audio.audioSrc = null
 }
 
-AudioManager.addNewAudio = function(buffer){
-    
+AudioManager.addNewAudio = function(buffer,opts){
+    opts = opts||{}
     var key = getKey()
     audios.push({
         key:key,
-        buffer:buffer
+        buffer:buffer,
+        loop:opts.loop||false
     })
     return key
     
 }
 
-AudioManager.addNewAudioAndPlay = function(buffer){
-    
+AudioManager.addNewAudioAndPlay = function(buffer,opts){
+    opts = opts||{}
     var key = getKey()
     var curAudio = {
         key:key,
-        buffer:buffer
+        buffer:buffer,
+        loop:opts.loop||false
     }
     audios.push(curAudio)
     playAudio(curAudio)
