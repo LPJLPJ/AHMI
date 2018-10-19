@@ -24,7 +24,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     })
 
     function initUserInterface(){
-
+        $scope.trackListCollapsed = false
     }
 
     function initProject(){
@@ -57,7 +57,12 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
 
-/**
+
+        $scope.collapseTrackList = function(){
+            $scope.trackListCollapsed = !$scope.trackListCollapsed
+        }
+
+        /**
          * 删除资源按钮的弹窗
          */
         $scope.openTrackPanel = function(index,cb){

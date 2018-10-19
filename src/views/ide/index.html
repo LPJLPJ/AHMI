@@ -3934,16 +3934,16 @@
 
                     <!-- tracks -->
                     <div>
-                        <span class="dengPage-Action-Title">声音</span>
-                        <button type="button" class="btn btn-default dengPage-addAction" ng-click="openTrackPanel(-1)" id="addTrackBtn">
+                        <span class="trackList__title">声音</span>
+                        <button type="button" class="btn btn-default addTrackBtn" ng-click="openTrackPanel(-1)" id="addTrackBtn">
                             添加新声音
                         </button>
                     </div>
 
-                    <!--list of current actions-->
-                    <div class="glyphicon" style="display: block" ng-click="collapse($event)"
-                         ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"></div>
-                    <ul uib-collapse="status.collapsed " class="dengPage-Actionlist" id="tracksUL">
+                    <!--list of current tracks-->
+                    <div class="trackList__glyphicon glyphicon" style="display: block" ng-click="collapseTrackList($event)"
+                         ng-class="{'glyphicon-chevron-down':!trackListCollapsed,'glyphicon-chevron-right':trackListCollapsed}"></div>
+                    <ul uib-collapse="trackListCollapsed " class="trackList" id="tracksUL">
                         <li ng-repeat="track in component.top.tracks" >
                             <span ng-click="openTrackPanel($index)">{{track.name}}</span><span>{{track.index}}</span><i class="iconfont" ng-click="deleteTrack($index)">
                             &#xe627;</i>

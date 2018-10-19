@@ -121,25 +121,25 @@
 
 
 
-.dengPage-attrbute-container .dengPage-addAction{
+.dengPage-attrbute-container .dengPage-addAction,.addTrackBtn{
     margin-left: 0px;
     height: 28px;
     font-size: 12px;
     float: right;
 }
 
-.dengPage-attrbute-container .glyphicon{
+.dengPage-attrbute-container .glyphicon,.trackList__glyphicon{
     display: block;
     width: 15px;
     top: -12px;
 }
-.dengPage-Action-Title{
+.dengPage-Action-Title,.trackList__title{
     margin-left: 20px;
     font-size: 12px;
     position: relative;
     top: 4px;
 }
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist{
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist,.trackList{
     border: 0px solid;
     border-color: lightgrey;
     background-color: white;
@@ -148,7 +148,7 @@
     list-style: none;
     padding-left: 0px;
 }
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li{
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li,.trackList li{
     border: 1px solid;
     border-color: lightgrey;
     /*添加了圆角 lixiang*/
@@ -160,12 +160,12 @@
     padding-bottom: 0px;
 }
 
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li:hover{
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li:hover,.trackList li:hover{
     background-color:#e0e0e0;
 }
 
 /*改用垃圾箱图片，并显示小手 lixiang*/
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li i{
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li i,.trackList li i{
     background-color:transparent;
     padding:0 5px;
     float: right;
@@ -174,15 +174,16 @@
     opacity: .5;
     cursor: pointer;
 }
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li span{
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li span,.trackList li span{
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 125px;
     white-space: nowrap;
     display: inline-block;
+    padding-right:2em;
 }
 
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li img:hover{
+.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li img:hover,.trackList li img:hover{
     opacity: 1;
 }
 .dengModel-body .modelPart{
