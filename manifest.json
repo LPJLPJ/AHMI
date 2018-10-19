@@ -5,14 +5,14 @@
     "manifestUrl": "https://ide.graphichina.com/checkUpdate/manifest.json",
     "packages": {
         "mac": {
-           "url": "https://ide.graphichina.com/releases/updapp/mac/updFiles.zip"
+            "url": "https://ide.graphichina.com/releases/updapp/mac/updFiles.zip"
         },
         "win": {
-           "url": "https://ide.graphichina.com/releases/updapp/win/updFiles.zip"
+            "url": "https://ide.graphichina.com/releases/updapp/win/updFiles.zip"
         },
         "linux32": {
-           "url": "https://ide.graphichina/releases/updapp/linux32/updFiles.tar.gz"
+            "url": "https://ide.graphichina/releases/updapp/linux32/updFiles.tar.gz"
         }
     },
-    "build": "10.19.14.46"
+    "build": "10.19.14.54"
 }
