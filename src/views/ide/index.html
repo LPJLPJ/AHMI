@@ -41,6 +41,7 @@
     <script src="../../public/ide/lib/sxintro/SXIntro.bundle.js"></script>
     <script src="../../public/ide/lib/angular-ui-select/select.min.js"></script>
     <script src="../../public/ide/lib/angular-sanitize-1.5.10/angular-sanitize.min.js"></script>
+    <script src="../../public/ide/lib/jsmediatags.min.js"></script>
     <!--<script src="../../public/ide/lib/sortable.js"></script>-->
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
@@ -3899,7 +3900,7 @@
                             <td>
                                 <img width="40px" height="40px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}"/>
                                 <span width="40px" height="40px" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
-                                <img width="40px" height="40px" ng-show="component.top.imageType(file)==3" ng-click="component.top.playMusic(file.src)" />
+                                <img width="40px" height="40px" class="album-cover" ng-class="{'album-cover--animate':file.playing}" ng-show="component.top.imageType(file)==3" ng-src="{{file.albumCoverSrc}}" ng-click="component.top.playMusic(file)" />
                             </td>
                             <td>
                                 <input class="img-name"

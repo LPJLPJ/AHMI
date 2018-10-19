@@ -810,3 +810,20 @@ a,a:hover{
     font-size: 16px;
     font-weight: 900;
 }
+
+.album-cover{
+    border-radius: 50%;
+}
+
+.album-cover--animate{
+    animation: rotateCover 4s infinite linear;
+}
+
+@keyframes rotateCover {
+    from {
+            transform: rotate(0deg);
+    }
+    to {
+            transform: rotate(359deg);
+    }
+}

@@ -327,6 +327,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                     function postFun() {
                         curScope.project.resourceList = ResourceService.getAllResource();
+                        //delete unnecessary infos
+                        curScope.project.resourceList.forEach(function(r){
+                            delete r.albumCoverSrc
+                        })
                         curScope.project.trackList = TrackService.getAllTracks();
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
