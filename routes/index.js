@@ -71,7 +71,8 @@ var BlogRoute = require('./routeBlog');
 //index.html
 router
 .get('/',function(req,res){
-	res.render('login/index.html')
+	// res.render('login/index.html')
+    res.render('login/home.html');
 });
 
 
