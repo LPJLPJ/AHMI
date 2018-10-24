@@ -247,6 +247,12 @@ ideServices
                 return project.projectId;
             };
 
+            this.getProjectName = function(){
+                if(project.name){
+                    return project.name;
+                }
+            }
+
             /**
              * 获得当前Page
              * @returns {*}

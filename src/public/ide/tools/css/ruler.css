@@ -1,10 +1,4 @@
-* {
-    margin: 0;
-    padding: 0;
-}
-
-
-/*¸¨ÖúÏß*/
+/*åˆ»åº¦å°º*/
 #rulerX {
     background: url("../../../images/ruler/ruler_h.png") repeat-x;
     position: absolute;
@@ -116,7 +110,7 @@
     z-index: 999;
 }
 
-/*Ä£¾ß¿ò*/
+/*Ä£ï¿½ß¿ï¿½*/
 #mask {
     width: 200px;
     height: 200px;

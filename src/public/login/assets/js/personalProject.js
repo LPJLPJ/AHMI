@@ -1,24 +1,15 @@
 $(function(){
-	// $('#user-icon').on('click',function(){
-	// 	$('#user-icon-menu').
-	// })
-	// $(".right").hover(function(){
- //        $(".menu").stop().animate({"height":"60px"})
- //    },function(){
- //        $(".menu").stop().animate({"height":"0px"})
- //    })
     var curSelectedPanel = null;
     var curPanel = null;
     var curFolder = null;
     var closeModal = $('#exampleModal');
     var curProject = null;
     var fs,path,mkdir,__dirname;
-    var closeModalConfirmButton = $('#closeModalConfirm');
+    var deleteProjectButton = $('#delete-project-confirm');
     var localProjectDir='';
     var localCANProjectDir='';
 
-    closeModalConfirmButton.on('click',function (e) {
-        //console.log('project',curProject);
+    deleteProjectButton.on('click',function (e) {
         if(curProject.resolution){
             deleteProject(curProject,curPanel);
         }else{
@@ -91,13 +82,8 @@ $(function(){
 
     //render projects
     if (local){
-        //delte projectPanels
 
-        // $('.projectpanel').each(function (index,elem) {
-        //     $(elem).remove();
-        // });
-
-        $('#addproject').siblings().each(function (index,elem) {
+        $('#add-project').siblings().each(function (index,elem) {
             $(elem).remove();
         });
         $('#addCANproject').siblings().each(function(index,elem){
@@ -122,7 +108,7 @@ $(function(){
         //console.log('projects',projects);
         //console.log('CANprojects',CANProjects);
 
-        var addProjectButton =  $('#addproject');
+        var addProjectButton =  $('#add-project');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
             console.log('newProject.createTime',newProject.createTime);
@@ -147,9 +133,9 @@ $(function(){
         }
     }
 
-    if(!local){
+    /*if(!local){
         showOriginalSite()
-    }
+    }*/
 
     //versionOptions
     if(!local){
@@ -171,7 +157,7 @@ $(function(){
     }
 
     //show original site
-    function showOriginalSite(){
+    /*function showOriginalSite(){
         $('.projectpanel').each(function(p){
             var $p = $(this)
             var ogSite = $p.data('project').originalSite
@@ -182,7 +168,7 @@ $(function(){
                 //$p.addClass('panel-other-site')
             }
         })
-    }
+    }*/
 
     function readLocalProjects(projectType) {
         var dir;
@@ -392,11 +378,11 @@ $(function(){
     }
 
     $.contextMenu({
-        selector: '.projectpanel',
+        selector: '.project-tool',
         callback: function(key) {
-            var project = $(this).attr('data-project');
+            var project = $(this).parents('.project-panel').attr('data-project');
             project = JSON.parse(project);
-            curPanel = $(this);
+            curPanel = $(this).parents('.project-panel');
             curSelectedPanel = curPanel;
             curProject = project;
             switch (key){
@@ -406,7 +392,7 @@ $(function(){
                    gui.Shell.openItem(localprojectpath);
                    break;
                 case "showInfo":
-                   showProInfo($(this));
+                   showProInfo($(this).parents('.project-panel'));
                    break;
                 case "deletePro":
                    closeModal.modal('show');
@@ -436,6 +422,7 @@ $(function(){
                     break;
                 case "space":
                     moveToClass(project,key);
+                    break;
                 default:
              }
 
@@ -450,7 +437,7 @@ $(function(){
             }
         },
         build:function($trigger, e){
-            var project=JSON.parse(e.currentTarget.dataset.project);
+            var project=JSON.parse(e.currentTarget.parentNode.dataset.project);
             if(local){
                 var items={
                     "openFolder": {name: "查看工程所在文件夹"},
@@ -470,7 +457,7 @@ $(function(){
                     items:{
                         "showInfo": {name: "修改工程信息"},
                         "sep1":"---------",
-                        "moveToClass":{name:"移动至",items:loadClass(project)},
+                        "moveToClass":{name:"移动至项目",items:loadClass(project)},
                         "sep5":"---------",
                         "showProjectVersion": {name: "打开较早保存的工程",items: loadItems(project._id)},
                         "sep2":"---------",
@@ -514,81 +501,43 @@ $(function(){
         $.when(promise).then(completedPromise, failPromise, notifyPromise);
     };
 
-    $('#projectlist')
-        .on('click','.projectpanel', function (e) {
-        curPanel = $(this);
+    //运行工程
+    $('#project-list').on('click','.play-project', function (e) {
+        curPanel = $(this).parents('.project-panel');
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
-        var project = $(this).attr('data-project');
+        var project = $(this).parents('.project-panel').attr('data-project');
         project = JSON.parse(project);
         curProject = project;
-        var curNodeName = e.target.nodeName;
-        if (curNodeName == 'IMG'){
-            //img
-            //open in new window
-            var targetUrl = '';
-            if (local){
-
-                targetUrl = '../ide/index.html?project_id='+project._id;
+        var targetUrl = '';
+        if (local){
+            targetUrl = '../ide/index.html?project_id='+project._id;
+        }else{
+            if (project.ideVersion){
+                targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
             }else{
-                if (project.ideVersion){
-                    targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
-                }else{
-                    targetUrl = '/project/'+project._id+'/editor';
-                }
-
+                targetUrl = '/project/'+project._id+'/editor';
             }
-
-            window.open(targetUrl);
-
-        }else if (curNodeName == 'SPAN'){
-            //span
-            //show modal
-            $('#modal-ok').html('确认');
-            var title = $('#basicinfo-title');
-            var author = $('#basicinfo-author');
-            var resolution = $('#basicinfo-resolution');
-            var customWidth = $('#customWidth');
-            var customHeight = $('#customHeight');
-            var template = $('#basicinfo-template');
-            var ideVersion = $('#basicinfo-ideversion');
-            var supportTouch = $('#basicinfo-supportTouch');
-            title.val(project.name);
-            author.val(project.author);
-            if(identifyCustomResolution(project.resolution)){
-                resolution.val(project.resolution);
-                $('#basicinfo-customResolution').hide();
-            }else{
-                //console.log('custom');
-                resolution.val('custom');
-                $('#basicinfo-customResolution').show();
-                var arr=project.resolution.split('*');
-                customWidth.val(arr[0]);
-                customHeight.val(arr[1]);
-            }
-            template.val(project.template);
-            template.attr('disabled',true);
-            ideVersion.val(project.ideVersion);
-            ideVersion.trigger('change')
-            supportTouch.val(project.supportTouch);
-            supportTouch.attr('disabled',true);
-        }else if (curNodeName == 'I'){
-            //delete
-            // if(confirm('确认删除?')){
-            //     deleteProject(project,curPanel)
-            // }else{
-            //
-            // }
-            closeModal.modal('show');
-
         }
+        window.open(targetUrl);
+    });
+    
+    //删除工程
+    $('#project-list').on('click','.delete-project',function(){
+        curPanel = $(this).parents('.project-panel');
+        var project = $(this).parents('.project-panel').attr('data-project');
+        project = JSON.parse(project);
+        curProject = project;
+        closeModal.modal('show');
     });
 
-    //控制右键菜单是否显示
-    // if(local===false){
-    //     $('.projectpanel').contextMenu(false);
-    // }
+    //修改信息
+    $("#project-list").on('click','.edit-project',function(){
+        console.log(1);
+        curPanel = $(this).parents('.project-panel');
+        showProInfo(curPanel);
+    });
 
     function showProInfo(cur){
          curPanel = cur;
@@ -599,13 +548,13 @@ $(function(){
          project = JSON.parse(project);
          curProject = project;
 
-         $('#modal-ok').html('确认');
+         $('#project-info-confirm').html('确认');
          var title = $('#basicinfo-title');
          var author = $('#basicinfo-author');
          var resolution = $('#basicinfo-resolution');
          var customWidth = $('#customWidth');
          var customHeight = $('#customHeight');
-         var ideVersion = $('#basicinfo-ideversion')
+         var ideVersion = $('#basicinfo-ideversion');
          var template = $('#basicinfo-template');
          var supportTouch = $('#basicinfo-supportTouch');
          title.val(project.name);
@@ -620,59 +569,27 @@ $(function(){
              customWidth.val(arr[0]);
              customHeight.val(arr[1]);
          }
-         ideVersion.val(project.ideVersion)
-         ideVersion.trigger('change')
+         ideVersion.val(project.ideVersion);
+         ideVersion.trigger('change');
          template.val(project.template);
          template.attr('disabled',true);
          supportTouch.val(project.supportTouch);
          supportTouch.attr('disabled',true);
-         $('#myModal').modal('show');
+         $('#project-info-modal').modal('show');
     }
 
     function identifyCustomResolution(resolution){
         var result=false;
         $("#basicinfo-resolution option").each(function(){
             if($(this).val().trim()==resolution){
-                // console.log('haha',$(this).val().trim());
                 result=true;
             }
         });
         return result;
     }
 
-
-
-    $('#projectlist').on('mouseenter','.projectpanel',function (e) {
-        //console.log('hover',e)
-        //console.log($(this))
-        var icon = $(this).find('.projectdelete')
-        //console.log((icon))
-        if (icon){
-            icon.css('display','block')
-        }
-    })
-        .on('mouseleave','.projectpanel',function (e) {
-            var icon = $(this).find('.projectdelete')
-            if (icon){
-                icon.css('display','none')
-            }
-        })
-        .on('mouseenter','.folderPanel',function (e) {
-            var icon = $(this).find('.folderDelete');
-            if (icon){
-                icon.css('display','block')
-            }
-        })
-        .on('mouseleave','.folderPanel',function (e) {
-            var icon = $(this).find('.folderDelete');
-            if (icon){
-                icon.css('display','none')
-            }
-        });
-
-
-
-    $('#addproject').on('click', function (e) {
+    //创建按钮
+    $('#add-project').on('click', function (e) {
         $('#basicinfo-title').val('');
         $('#basicinfo-author').val('');
         $('#basicinfo-template').attr('disabled',false);
@@ -680,29 +597,26 @@ $(function(){
         $('#basicinfo-resolution').val('800*480');
         $('#basicinfo-ideversion').val('');
         //trigger change
-        $('#basicinfo-ideversion').trigger('change')
+        $('#basicinfo-ideversion').trigger('change');
         $('#basicinfo-customResolution').hide();
         $('#customWidth').val('');
         $('#customHeight').val('');
-        $('#modal-ok').html('创建');
+        $('#project-info-confirm').html('创建');
     });
 
     $('#basicinfo-resolution').on('change',function(e){
         var resolution = $('#basicinfo-resolution').val().trim();
         if(resolution==="custom"){
             $('#basicinfo-customResolution').show();
-            //$('#customWidth').val('');
-            //$('#customHeight').val('');
         }else{
             $('#basicinfo-customResolution').hide();
         }
     });
 
-
-    $('#modal-ok').on('click',changeProject);
+    $('#project-info-confirm').on('click',changeProject);
 
     function changeProject(e){
-        var op = $('#modal-ok').html();
+        var op = $('#project-info-confirm').html();
         //console.log(op);
         if (op == '确认'){
             updateProject(e,local)
@@ -721,7 +635,7 @@ $(function(){
         var resolution = $('#basicinfo-resolution');
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
-        var folderId=$('#addproject').attr('folder-id');
+        var folderId=$('#add-project').attr('folder-id');
 
         if(folderId){
             project.classId=folderId;
@@ -780,7 +694,8 @@ $(function(){
                     data:project,
                     success: function (data, status, xhr) {
                         var newProject = JSON.parse(data)
-                        addNewProject(newProject)
+                        addNewProject(newProject);
+                        
                     },
                     error: function (err, status, xhr) {
                         console.log(err)
@@ -791,8 +706,8 @@ $(function(){
 
     }
 
-
     function deleteProject(project,curPanel){
+
         if (local){
             //console.log('project id',project._id);
             var projectdirpath = path.join(localProjectDir,String(project._id));
@@ -825,7 +740,6 @@ $(function(){
     }
 
     function checkName() {
-        // name.match(/["'\/\\\(\){},\.\+\-\*\?]/)
         try {
             for (var i=0;i<arguments.length;i++){
                 var name = arguments[i].value;
@@ -878,8 +792,7 @@ $(function(){
         var template = $('#basicinfo-template');
         var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
-        var thumbnailDOM = curPanel.find('img');
-        console.log("thumbnailDOM",thumbnailDOM);
+        var thumbnailDOM = curPanel.find('.project-thumb');
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
         if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim() || project.ideVersion != ideVersion.val().trim()){
             //changed
@@ -920,13 +833,10 @@ $(function(){
                     data:project,
                     success: function (data, status, xhr) {
                         //update success
-                        //console.log('success',data)
-                        //update panel
                         updateSuccess = true;
-                        console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
                         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
-                        curPanel.replaceWith(html)
-
+                        curPanel.replaceWith(html);
+                        
                     },
                     error: function (err, status, xhr) {
                         //update error
@@ -947,16 +857,9 @@ $(function(){
 
 
     function addNewProject(newProject){
-        // console.log(newProject)
-        // console.log(newProject,JSON.stringify(newProject));
         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
-        // console.log(html,JSON.stringify(html));
-        var folder=$('#projectlist').find('.folderPanel');
-        if(!folder||folder.length==0){
-            $('#addproject').after(html);
-        }else{
-            folder.last().after(html);
-        }
+        var folder=$('#project-list').find('.folder-panel');
+        $('#project-list').prepend(html);
     }
 
     //edit by lixiang
@@ -1001,9 +904,6 @@ $(function(){
                 var author = $('#CAN-basicinfo-author');
                 title.val(project.name);
                 author.val(project.author);
-            }else if(curNodeName=='I'){
-                //deleteCANProject(project,curPanel);
-                closeModal.modal('show');
             }
         });
 
@@ -1173,62 +1073,62 @@ $(function(){
 
     /**
      * @author tang
-     * 分类相关方法
+     * 项目分类
      */
     var folder;
     var folderList;
-    var deleteFolderModal=$('#deleteFolderModal');
+    var deleteFolderModal=$('#delete-folder-modal');
     var deleteFolderConfirm=$('#deleteFolderConfirm');
-    $('#projectlist').on('click','.folderPanel',function(e){
-        curFolder=$(this);
-        var fol = curFolder.attr('data-folder');
-        fol = JSON.parse(fol);
-        folder=fol;
-        var point=e.target.nodeName;
+    var projectList = $('#project-list');
+    var folderListWrap = $('#folder-list');
 
-        if(point=='I'){
-            deleteFolderModal.modal('show');
-        }else if(point=='IMG'){
-            var url = '/folder/'+folder._id+'/space';
-            window.open(url,"_self");
-        }
-    });
-    deleteFolderConfirm.on('click',function(){
-       deleteFolder(folder,curFolder);
-    });
-    $('#addFolder').on('click',function(){
+    //创建、修改项目
+    $('#add-folder').on('click',function(){
         $('#folder-ok').html('创建');
         $('#folder-title').val('');
         $('#folder-author').val('');
     });
     $('#folder-ok').on('click',changeFolder);
-    $.contextMenu({
-        selector:'.folderPanel',
-        build:function($trigger,e){
-            return{
-                items:{
-                    "folderInfo":{name:"修改信息"},
-                    "sep1":"---------",
-                    "deleteFolder":{name:"删除项目"}
-                }
-            }
-        },
-        callback:function(key){
-            curFolder=$(this);
-            var fol = curFolder.attr('data-folder');
-            fol = JSON.parse(fol);
-            folder=fol;
 
-            switch (key){
-                case 'folderInfo':
-                    showFolderInfo($(this));
-                    break;
-                case 'deleteFolder':
-                    deleteFolderModal.modal('show');
-                    break;
-            }
-        }
+    //打开项目
+    folderListWrap.on('click','.open-folder',function(e){
+        curFolder=$(this).parents('.folder-panel');
+        var fol = curFolder.attr('data-folder');
+        fol = JSON.parse(fol);
+        folder=fol;
+        var url = '/folder/'+folder._id+'/space';
+        window.open(url,"_self");
     });
+
+    //删除确认按钮
+    folderListWrap.on('click','.delete-folder',function(){
+        curFolder=$(this).parents('.folder-panel');
+        var fol = curFolder.attr('data-folder');
+        fol = JSON.parse(fol);
+        folder=fol;
+        deleteFolderModal.modal('show');
+    });
+    deleteFolderConfirm.on('click',function(){
+        deleteFolder(folder,curFolder);
+    });
+
+    //编辑项目
+    folderListWrap.on('click','.edit-folder',function(){
+        curFolder=$(this).parents('.folder-panel');
+        var fol = curFolder.attr('data-folder');
+        fol = JSON.parse(fol);
+        folder=fol;
+        showFolderInfo(curFolder);
+    });
+    function showFolderInfo(cur){
+        $('#folder-ok').html('确认');
+        var fol = cur.attr('data-folder');
+        fol = JSON.parse(fol);
+        curFolder=cur;
+        $('#folder-title').val(fol.name);
+        $('#folder-author').val(fol.author);
+        $('#folder-info-modal').modal('show');
+    }
 
     function changeFolder(){
         if($(this).html()==='确认'){
@@ -1256,7 +1156,7 @@ $(function(){
             success: function (data, status, xhr) {
                 var newFolder = JSON.parse(data);
                 var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:newFolder});
-                $('#addproject').after(html);
+                folderListWrap.prepend(html);
             },
             error: function (err, status, xhr) {
                 console.log(err)
@@ -1268,7 +1168,6 @@ $(function(){
         var author=$('#folder-author');
         name=name.val().trim();
         author=author.val().trim();
-
         var folder = curFolder.attr('data-folder');
         folder = JSON.parse(folder);
 
@@ -1283,11 +1182,11 @@ $(function(){
                 type:'POST',
                 url:'/folder/update',
                 data:folder,
-                success: function (data, status, xhr) {
+                success: function (data) {
                     var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:folder});
-                    curFolder.replaceWith(html)
+                    curFolder.replaceWith(html);
                 },
-                error: function (err, status, xhr) {
+                error: function (err) {
                     console.log('err',err);
                     alert('修改失败')
                 }
@@ -1307,15 +1206,6 @@ $(function(){
                 alert('删除失败')
             }
         })
-    }
-    function showFolderInfo(cur){
-        $('#folder-ok').html('确认');
-        var fol = cur.attr('data-folder');
-        fol = JSON.parse(fol);
-        curFolder=cur;
-        $('#folder-title').val(fol.name);
-        $('#folder-author').val(fol.author);
-        $('#myFolderModal').modal('show');
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();

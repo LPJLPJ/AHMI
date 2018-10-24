@@ -64,9 +64,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 nav: {
                     currentNav: 0,
                     navs: [{name: '文件'},
-                        {name: '开始'},
                         {name: '编辑'},
-                        {name: '格式'},
                         {name: '视图'},
                         {name: '帮助'}],
                     changeNav: changeNav
@@ -109,7 +107,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     maskSwitch:maskSwitch
                 },
                 simulator: {
-                    show: false
+                    show: false,
+                    run:false
                 },
                 actionVisualization:{
                     show:false
@@ -1242,13 +1241,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         }
 
         function closeSimulator() {
-
             $scope.component.simulator.show = false;
-
+            $scope.component.simulator.run = false;
         }
 
         function runSimulator() {
-            // console.log(window.runSimulator);
+            $scope.component.simulator.run = true;
         }
 
         function closeActionVisualizer() {

@@ -1,3 +1,4 @@
+/*
 .xiangPage-title{
     font-size: 12px;
 }
@@ -56,9 +57,9 @@
     width: 40%;
 
 }
-.my-stage>table>tbody>tr>td{
+/!*.my-stage>table>tbody>tr>td{
     background-color: lightgray;
-}
+}*!/
 
 .my-stage .subCanvas{
     position:relative;
@@ -69,7 +70,7 @@
 }
 
 
-/*遮盖，用于分享的工程，有人同时登录时展示*/
+/!*遮盖，用于分享的工程，有人同时登录时展示*!/
 div.wrapper-custom{
     position: fixed;
     top: 0px;
@@ -146,4 +147,4 @@ div.wrapper-custom{
 }
 .lx-margin-bottom-10{
     margin-bottom: 10px;
-}
+}*/

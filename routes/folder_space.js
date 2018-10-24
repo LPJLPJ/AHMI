@@ -17,7 +17,6 @@ module.exports=function(req,res){
                     name:folder.name,
                     id:folderId
                 };
-                //���ҷ����еĹ���
                 ProjectModel.findProByClass(_user.id,folderId,function(err,projects){
                     if(err){
                         console.log(err);
@@ -44,7 +43,7 @@ module.exports=function(req,res){
                             }
                         });
 
-                        res.render('login/classSpace.html',{
+                        res.render('login/folderSpace.html',{
                             folder:folderInfo,
                             projects:processedProjects
                         });
@@ -52,7 +51,7 @@ module.exports=function(req,res){
                 });
             }
         });
-    }else{//���µ�¼
+    }else{
         res.redirect('/user/login');
     }
 };
