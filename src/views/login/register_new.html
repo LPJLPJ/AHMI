@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-9 ">
+    <meta name="description" content="我们提供快捷高效的二次开发工具链，可在网络客户端或本地客户端实现无代码二次开发工程。入门简单，且开发效果好。为广大客户 节省了大量的产品迭代开发时间，降低研发成本。用户不用花费大量时间和金钱成本去适应安卓等复杂操作系统的软件开发流程，只需要用简单的鼠标操作和坐标输入就能像做ppt一样做出优良的人机交互界面。" />
+    <meta name="author" content="graphichina web dev team" />
+    <title>AHMI IDE:人机界面云端开发平台-注册</title>
+    <link rel="stylesheet" href="./fonts/iconfont/iconfont.css">
+    <link rel="stylesheet" href="./css/login_register.css">
+    <script type="text/javascript" src="./js/register.js" defer></script>
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="navbar-brand">
+            <a href="/">
+                <img src="./images/首页-公司LOGO.png" />
+            </a>
+        </div>
+
+        <nav class="navbar-nav">
+            <ul class="navbar-nav-link">
+                <li><a href="/">首页</a></li>
+                <li><a href="">下载</a></li>
+                <li><a href="">博客</a></li>
+                <li><a href="">教程</a></li>
+                <li><a href="">联系我们</a></li>
+                <li><a href="/login">登录</a></li>
+                <li><a href="/register"><button class="btn btn-primary btn-register">注册</button></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="switch">
+            <a href="/login" id="loginBtn" class="switch-btn">登录</a>
+            <a href="/register" id="registerBtn" class="switch-btn active">注册</a>
+        </div>
+        <form id="form" class="form">
+            <div class="form-item">
+                <i class="iconfont icon-yonghuming form-item-icon"></i>
+                <input type="email" name="username" placeholder="用户名" />
+            </div>
+            <div class="form-item">
+                <i class="iconfont icon-youxiang form-item-icon"></i>
+                <input type="text" name="email" placeholder="邮箱" />
+            </div>
+            <div class="form-item">
+                <i class="iconfont icon-mima form-item-icon"></i>
+                <input type="password" name="password" placeholder="密码" />
+            </div>
+            <div class="form-item">
+                <i class="iconfont icon-mima form-item-icon"></i>
+                <input type="password" name="password-secondary" placeholder="再次输入密码" />
+            </div>
+            <div class="form-item">
+                <i class="iconfont icon-yanzhengma2 form-item-icon"></i>
+                <input type="text" name="verify-code" placeholder="验证码" />
+            </div>
+            <div class="form-captcha">
+                <img src="" alt="验证码">
+                <span class="change-captcha"><a href="">换一张</a></span>
+            </div>
+            <div class="form-button">
+                <button type="submit" class="btn btn-primary btn-register">注册</button>
+            </div>
+        </form>
+        <div class="link">
+            <span class="password"><a href="">忘记密码</a></span>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -19,13 +19,8 @@ login.get = function(req, res){
             res.redirect('/private/space')
         }
 
-
-
-
-
-
     }else{
-        res.render('login/login.html',{
+        res.render('login/login_new.html',{
             title:'登录'
         })
     }
