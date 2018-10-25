@@ -29,7 +29,7 @@ ideServices.service('TagService', [function () {
     var timerNum = 0;
 
     var sortNameOrder = true;
-    var sortRegisterOrder = true;
+    var sortRegisterOrder = this.sortRegisterOrder = true;
 
 
     function addSysTags(tagList) {
@@ -231,6 +231,7 @@ ideServices.service('TagService', [function () {
 
     //将tag按寄存器号排序
     this.sortByRegister = function (cb) {
+        console.log(tags);
         var sort = function (a, b) {
             var A = a.indexOfRegister || -1,
                 B = b.indexOfRegister || -1;

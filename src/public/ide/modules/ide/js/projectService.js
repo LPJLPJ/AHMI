@@ -1260,12 +1260,16 @@ ideServices
                     dropped: function (e) {
                         endIndex = e.dest.index;
                         if (endIndex != startIndex) {
-
                             endOperate = SaveCurrentOperate();
-
                         }
-
                         _droppedCallback(e, endOperate)
+                    },
+                    accept: function (sourceNodeScope, destNodesScope, destIndex) {
+                        if (destNodesScope.isParent(sourceNodeScope)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     }
 
                 };
