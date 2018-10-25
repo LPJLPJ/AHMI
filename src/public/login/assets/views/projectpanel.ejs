@@ -1,14 +1,8 @@
 <li class="project-list__item project-panel" data-project='<%= JSON.stringify(project) %>'>
     <div class="project-item__thumb">
-        <% if(thumbnail){%>
         <div class="project-thumb-box thumb-img">
-            <img class="project-thumb" src=<%= thumbnail %> />
+            <img class="project-thumb" src=<%= thumbnail||'../../public/login/assets/images/project.png' %> />
         </div>
-        <%}else{%>
-        <div class="project-thumb-box project-img">
-            <img class="project-thumb" src="../../public/login/assets/images/project.png"/>
-        </div>
-        <%}%>
         <div class="project-item__hover-menu">
             <div class="hover-menu__item play-project">
                 <img class="default-img" src="../../public/login/assets/images/play-project.png"/>

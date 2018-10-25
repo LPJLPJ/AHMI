@@ -288,27 +288,12 @@ a img {
     position: relative;
 }
 
-.project-thumb-box.project-img{
-    width: 220px;
-    height: 140px;
-    box-sizing: border-box;
-    margin: 30px auto;
-    overflow: hidden;
-    line-height: 140px;
-    text-align: center;
-}
-
 .project-thumb-box.thumb-img{
     width: 220px;
     height: 180px;
     margin: 10px auto;
     line-height: 180px;
     text-align: center;
-}
-
-.project-thumb-box.project-img > img {
-    width: 180px;
-    height: 125px;
 }
 
 .project-thumb-box.thumb-img > img{
