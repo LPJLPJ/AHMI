@@ -1,8 +1,10 @@
 /**
- * Created by ChangeCheng on 16/5/5.
+ * create at 2018/10/25
+ * created by lixiang
  */
 
 $(function () {
+    console.log('haha')
     var ErrMessages = {
         username: {
             empty: '用户名不能为空',
@@ -81,7 +83,7 @@ $(function () {
         var agree = get('agree')
         var submit = get('submit')
 
-        var form = get('signup-form')
+        var form = get('form')
         form.addEventListener('focus', function () {
             captchaVerify.innerHTML = ''
         })
@@ -218,25 +220,25 @@ $(function () {
 
         //agree
 
-        agree.addEventListener('change', function () {
-            var _agree = agree.checked
-            if (_agree) {
-                formVerify.agree = true
-            } else {
-                formVerify.agree = false
-            }
-            checkSubmit()
-        })
+        // agree.addEventListener('change', function () {
+        //     var _agree = agree.checked
+        //     if (_agree) {
+        //         formVerify.agree = true
+        //     } else {
+        //         formVerify.agree = false
+        //     }
+        //     checkSubmit()
+        // })
 
         //submit
 
         submit.addEventListener('click', function (e) {
-            e.preventDefault()
+            e.preventDefault();
+            e.stopPropagation();
             userInfo.username = username.value
             userInfo.mail = mail.value
             userInfo.password = $.md5(password.value)
             userInfo.captcha = captchaInput.value
-            console.log(userInfo);
             submit.disabled = true;
             $.ajax({
                 type: 'POST',
