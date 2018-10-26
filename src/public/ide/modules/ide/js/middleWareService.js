@@ -174,6 +174,13 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 info.fontItalic = '';
             }
         },
+        rotateImg: function () {
+            var level = arguments[0];
+            var info = level.info;
+            if(info.clockwise == undefined) {
+                info.clockwise = 1;
+            }
+        },
         mySwitch: function () {
             var level = arguments[0];
             var info = level.info;
@@ -279,6 +286,9 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                     break;
                 case Type.MySwitch:
                     this.mySwitch(widget);
+                    break;
+                case Type.MyRotateImg:
+                    this.rotateImg(widget);
                     break;
                 default:
                     // console.log('not match widget type in inject data');

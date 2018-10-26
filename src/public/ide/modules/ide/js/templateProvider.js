@@ -150,7 +150,8 @@ ideServices
                     left: 0, top: 0,
                     originX: 'center', originY: 'center',
                     minValue:0,maxValue:360,
-                    initValue:0
+                    initValue:0,
+                    clockwise:1
                 },
                 texList:[{
                     currentSliceIdx:0,

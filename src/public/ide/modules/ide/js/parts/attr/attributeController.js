@@ -109,7 +109,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     ],
                     enableAnimationModeId: '0',
                     enterDashboardMode: enterDashboardMode,
-                    enterDashboardClockwise: enterDashboardClockwise,
+                    enterDashboardClockwise: enterRotateClockwise,
                     enterDashboardValue: enterDashboardValue,
                     enterDashboardOffsetValue: enterDashboardOffsetValue,
                     enterBackgroundMode: enterBackgroundMode,
@@ -260,7 +260,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 //旋转
                 rotateImg: {
-                    enterInitValue: enterInitValue
+                    enterInitValue: enterInitValue,
+                    clockwise:1,
+                    enterRotateImgClockwise:enterRotateClockwise,
+                    rotateImgClockwise: [
+                        {wise:1,name:'顺时针'},
+                        {wise:0,name:'逆时针'}
+                    ]
                 },
                 //alpha
                 alphaImg: {
@@ -694,6 +700,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.info.fontBold = "100";
                         //     selectObject.level.info.fontItalic = '';
                         // }
+                        break;
+                    case Type.MyRotateImg:
+                        $scope.component.rotateImg.clockwise = $scope.component.object.level.info.clockwise;
                         break;
                 }
 
@@ -1788,23 +1797,34 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             })
         }
 
-        function enterDashboardClockwise(e) {
+        function enterRotateClockwise(e) {
             var selectObj = ProjectService.getCurrentSelectObject();
-            var selectDashboardClockwise = null;
+            var selectClockwise = null;
             if (selectObj.type == Type.MyDashboard) {
-                selectDashboardClockwise = $scope.component.dashboard.clockwise;
-            } else {
+                selectClockwise = $scope.component.dashboard.clockwise;
+            } else if(selectObj.type == Type.MyRotateImg){
+                selectClockwise = $scope.component.rotateImg.clockwise;
+            }else {
                 return;
             }
 
             var oldOperate = ProjectService.SaveCurrentOperate();
 
             var option = {
-                clockwise: selectDashboardClockwise
+                clockwise: selectClockwise
             };
-            ProjectService.ChangeAttributeDashboardClockwise(option, function () {
-                $scope.$emit('ChangeCurrentPage', oldOperate);
-            })
+
+            switch (selectObj.type){
+                case Type.MyDashboard:
+                    ProjectService.ChangeAttributeDashboardClockwise(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyRotateImg:
+                    ProjectService.ChangeAttributeRotateImgClockwise(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+            }
         }
 
         function enterMinCoverAngle(e) {

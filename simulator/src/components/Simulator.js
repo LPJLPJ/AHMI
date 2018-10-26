@@ -3747,17 +3747,17 @@ module.exports = React.createClass({
 
         var width = widget.info.width;
         var height = widget.info.height;
+        var clockwise = widget.info.clockwise;
         if (widget.texList) {
-
             //pointer
-
             var initValue = widget.info.initValue;
             // var curArc = widget.info.value;
             var curArc = widget.curArc;
-
-            this.drawRotateElem(curX, curY, width, height, width, height, curArc + initValue, widget.texList[0].slices[0], -0.5, -0.5, widget.subType,null,null,false,this.pixelRatio);
-
-
+            var arc = curArc + initValue;
+            if(clockwise==0){
+                arc = -arc;
+            }
+            this.drawRotateElem(curX, curY, width, height, width, height, arc, widget.texList[0].slices[0], -0.5, -0.5, widget.subType,null,null,false,this.pixelRatio);
         }
 
         cb && cb();

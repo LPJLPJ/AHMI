@@ -1638,6 +1638,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.minValue=level.info.minValue;
             this.maxValue=level.info.maxValue;
             this.initValue=level.info.initValue;
+            this.clockwise=level.info.clockwise;
 
 
             this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
@@ -1666,6 +1667,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
+            });
+            this.on('changeRotateImgClockwise',function(arg){
+                var _callback = arg.callback;
+                self.clockwise = arg.clockwise;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
             })
         },
         toObject: function () {
@@ -1673,14 +1681,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render: function (ctx) {
             try{
-                ctx.rotate((Math.PI/180)*this.initValue);
+                var rotateAngle = (Math.PI/180)*this.initValue;
+                //旋转方向
+                if(this.clockwise==0){
+                    rotateAngle = -rotateAngle;
+                }
+                ctx.rotate(rotateAngle);
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
                     -(this.height / 2) ,
                     this.width ,
                     this.height);
-
                 if (this.imageElement){
                     ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }

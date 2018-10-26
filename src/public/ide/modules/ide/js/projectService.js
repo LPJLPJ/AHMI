@@ -4082,12 +4082,25 @@ ideServices
             this.ChangeAttributeDashboardClockwise=function(_option,_successCallback){
                 var selectObj = _self.getCurrentSelectObject();
                 selectObj.level.info.clockwise = _option.clockwise;
-                arg={
+                var arg={
                     clockwise: _option.clockwise,
                     callback:_successCallback
                 };
                 selectObj.target.fire('changeDashboardClockwise',arg);
             };
+
+            this.ChangeAttributeRotateImgClockwise=function(_option,_successCallback){
+                var selectObj = _self.getCurrentSelectObject();
+                selectObj.level.info.clockwise = _option.clockwise;
+                var arg={
+                    clockwise: _option.clockwise,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeRotateImgClockwise',arg);
+            };
+
+
+
             //改变仪表盘的覆盖角度
             this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
