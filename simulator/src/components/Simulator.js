@@ -2937,10 +2937,6 @@ module.exports = React.createClass({
             markingMode: widget.info.hexControl.markingMode,
             transformMode: widget.info.hexControl.transformMode
         };
-
-        if(symbolMode=='0'){
-            curValue = Math.abs(curValue);
-        }
         //arrange
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
@@ -3155,9 +3151,6 @@ module.exports = React.createClass({
         var arrange = widget.info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         // console.log(arrange)
 
-        if(symbolMode=='0'){
-            curValue = Math.abs(curValue);
-        }
         //16进制
         var hexMode = {
             numSystem: widget.info.numSystem,
@@ -3490,14 +3483,13 @@ module.exports = React.createClass({
         }
 
         //配置正负号
+        var symbol = '';
         if (!negative) {
-            var symbol = '';
-            if (symbolMode == '1') {
-                symbol = '';
-            }
             tempNumValue = symbol + tempNumValue;
         } else if (negative) {
-            symbol = '-';
+            if (symbolMode == '1'){
+                symbol = '-';
+            }
             tempNumValue = symbol + tempNumValue;
         }
 
