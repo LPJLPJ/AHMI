@@ -4,7 +4,6 @@
  */
 
 $(function () {
-    console.log('haha')
     var ErrMessages = {
         username: {
             empty: '用户名不能为空',
@@ -220,15 +219,15 @@ $(function () {
 
         //agree
 
-        // agree.addEventListener('change', function () {
-        //     var _agree = agree.checked
-        //     if (_agree) {
-        //         formVerify.agree = true
-        //     } else {
-        //         formVerify.agree = false
-        //     }
-        //     checkSubmit()
-        // })
+        agree.addEventListener('change', function () {
+            var _agree = agree.checked
+            if (_agree) {
+                 formVerify.agree = true
+            } else {
+                formVerify.agree = false
+            }
+             checkSubmit()
+         });
 
         //submit
 

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @font-face {
   font-family: "SOURCEHANSANSCN-NORMAL";
-  src: url("../fonts/SOURCEHANSANSCN/SOURCEHANSANSCN-NORMAL.woff"), url("../fonts//SOURCEHANSANSCN-NORMAL/SOURCEHANSANSCN-NORMAL.woff2");
+  src: url("../fonts/SOURCEHANSANSCN/SOURCEHANSANSCN-NORMAL.woff"), url("../fonts/SOURCEHANSANSCN/SOURCEHANSANSCN-NORMAL.woff2");
 }
 
 @font-face {
@@ -69,20 +69,13 @@ body {
   margin: 0;
 }
 
-input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -o-appearance: none;
-  appearance: none;
-}
-
 /* 导航栏 */
 
 .navbar {
   box-sizing: border-box;
   width: 100%;
   height: 68px;
-  background: #ffff;
+  background: #ffffff;
   padding: 10px 60px;
 }
 
@@ -232,5 +225,14 @@ input {
   text-decoration: none;
 }
 
+.form-agree{
+  font-size: 15px;
+  color: #7d7d7d;
+}
+
+.form-agree>.agree{
+  display: inline-block;
+  vertical-align: -1px;
+}
 
 /*# sourceMappingURL=login_register.css.map */
