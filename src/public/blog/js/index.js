@@ -2,8 +2,11 @@
  * Created by changecheng on 2017/2/10.
  */
 
-var blogs
-var $blogUL =$('.blog-list')
+var tool = $('#blog-right-operate');
+
+
+var blogs;
+var $blogUL =$('.blog-list-menu')
 function loadFromServer() {
     var pageQuery = window.location.search
     $.ajax({
@@ -39,9 +42,42 @@ function renderSingleBlog(blog) {
         showTime = moment().local().format('YYYY-MM-DD')
     }
 
-    var result =  '<li class="blog-list-li" data-id="'+blog._id+'">'+'<div class="blog-panel"><div class="blog-panel-title">'+(blog.title||"")+'</div><div class="blog-panel-keywords">'+(blog.keywords||"")+'</div><div class="blog-panel-digest">'+(blog.digest||"")+
-        '</div><div class="blog-panel-time">'+showTime+'</div></div>'+'</li>'
-    return result;
+    var result =  '<li class="blog-list-li" data-id="'+blog._id+'">'+
+        '<div class="blog-panel"><div class="blog-panel-title">'+(blog.title||"")+
+        '</div><div class="blog-panel-keywords">'+(blog.keywords||"")+
+        '</div><div class="blog-panel-digest">'+(blog.digest||"")+
+        '</div><div class="blog-panel-time">'+showTime+'</div></div>'+'</li>';
+
+    var tpl = '<li class="blog-list__item blog-list-li blog-panel-title" data-id="'+blog._id+'">'+
+        '<h3><img src="../../public/blog/img/star.png"/><span class="blog-list__item-title">'+(blog.title||"")+'</span></h3>'+
+        '<div class="blog-list__item-param">'+
+            '<div class="blog-param__item">'+
+                '<img src="../../public/blog/img/author.png"/>'+
+                '<span class="blog-param__item-text">GraphiChina</span>'+
+            '</div>'+
+            '<span class="parting-line"></span>'+
+            '<div class="blog-param__item">'+
+                '<span class="blog-param__item-text">'+showTime+'</span>'+
+            '</div>'+
+            '<span class="parting-line"></span>'+
+            '<div class="blog-param__item">'+
+                '<img src="../../public/blog/img/see.png"/>'+
+                '<span class="blog-param__item-text">666666</span>'+
+            '</div>'+
+            '<span class="parting-line"></span>'+
+            '<div class="blog-param__item">'+
+                '<img src="../../public/blog/img/comment.png"/>'+
+                '<span class="blog-param__item-text">999999</span>'+
+            '</div>'+
+        '</div>'+
+        '<div class="blog-list__item-surface">'+
+            '<img src="../../public/blog/img/img.png"/>'+
+        '</div>'+
+        '<div class="blog-list__item-content">'+
+            '<p>'+(blog.digest||"")+'</p>'+
+        '</div>'+
+    '</li>';
+    return tpl;
 }
 
 function bindEvent() {

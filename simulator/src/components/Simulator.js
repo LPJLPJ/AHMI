@@ -5708,65 +5708,48 @@ module.exports = React.createClass({
         }
     },
     render: function () {
-        // console.log('registers',this.state.registers);
         return (
             < div className='simulator'>
-                <div className='simulator-tools-wrapper'>
-                    <div className='simulator-tools tools-scale'>
-                        <select className='btn btn-default' onChange={this.handleViewScale} defaultValue='1'>
-                            <option value='0.5'>50%</option>
-                            <option value='0.75'>75%</option>
-                            <option value='1'>100%</option>
-                            <option value='1.5'>150%</option>
-                            <option value='2'>200%</option>
-                        </select>
-
-                    </div>
-                    <div className='simulator-tools tools-fps'>
-                        <span className='btn btn-default'>{this.state.fps}</span>
-                    </div>
-                    {/*
-                    <div className='simulator-tools tools-step'>
-                        <div className='btn btn-default' onClick={this.handleStep}>-&gt;</div>
-                    </div>
-                    <div className='simulator-tools tools-bp'>
-                        <select className='btn btn-default select' onChange={this.handleDebugChooseWidget}>
-                            {generalCommandsDOM}
-                        </select>
-                        <select className='btn btn-default' onChange={this.handleDebugChooseTrigger}>
-                            {triggerDOM}
-                        </select>
-                        <select className='btn btn-default' onChange={this.handleDebugChooseLine}>
-                            {commandsDOM}
-                        </select>
-                    </div>
-                    */}
-                </div>
-                < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove}
+                < div className='simulator-canvas-wrapper' onMouseDown={this.handlePress} onMouseMove={this.handleMove}
                       onMouseUp={this.handleRelease}>
+                    <div className='simulator-tools-wrapper'>
+                        <div className='simulator-tools__fps'>
+                            <span>帧率&nbsp;</span>
+                            <span>{this.state.fps}</span>
+                        </div>
+
+                        <div className='simulator-tools__scale'>
+                            <select onChange={this.handleViewScale} defaultValue='1'>
+                                <option value='0.5'>50%</option>
+                                <option value='0.75'>75%</option>
+                                <option value='1'>100%</option>
+                                <option value='1.5'>150%</option>
+                                <option value='2'>200%</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <canvas ref='canvas' className='simulator-canvas'/>
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas'/>
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
-                <div className='col-md-3'>
-                    <div className='setting-wrapper'>
-                        <div className='row'>
-                            <span>像素宽高比： 1：</span><input type='number' min='0' onKeyDown={this.setPixelRatio}/>
+
+                <div className='simulator-attribute-wrapper'>
+                    <div className='simulator-setting-wrapper'>
+                        <div className='simulator-setting__ratio'>
+                            <span>像素宽高比&nbsp;&nbsp;1&nbsp;:&nbsp;</span><input type='number' min='0' onKeyDown={this.setPixelRatio}/>
+                        </div>
+                        <div className="simulator-setting__keyboard">
+                            <span onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </span>
+                            <span onMouseDown={this.handleOk.bind(null, 'press')} onMouseUp={this.handleOk.bind(null, 'release')}>OK</span>
+                            <span onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </span>
                         </div>
                     </div>
-                    <div className="phical-keyboard-wrapper" style={{margin: '1em'}}>
-                        <button className='btn btn-default'
-                                onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
-                        <button className='btn btn-default' onMouseDown={this.handleOk.bind(null, 'press')}
-                                onMouseUp={this.handleOk.bind(null, 'release')}>OK
-                        </button>
-                        <button className='btn btn-default'
-                                onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </button>
-
+                    <div className="simulator-tag-wrapper">
+                        < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
+                        <RegisterList registers={this.state.registers || {}}
+                                      handleRegisterChange={this.handleRegisterChange}/>
                     </div>
-                    < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
-                    <RegisterList registers={this.state.registers || {}}
-                                  handleRegisterChange={this.handleRegisterChange}/>
                 </div>
 
             </div>);

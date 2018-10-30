@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
     <title>AHMI-IDE BLOG</title>
     <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../../public/blog/css/index.css">
+    <link rel="stylesheet" type="text/css" href="../../public/blog/css/blog.css">
     <!-- CUSTOM STYLE CSS -->
     <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
 
@@ -19,25 +19,55 @@
 <header>
     <% include header.html %>
 </header>
-<div class="main-container">
+
+<div class="blog-wrap">
+    <div class="blog-top-nav">
+        <div class="blog-nav-content">
+            <ul class="blog-nav-list">
+                <li class="active"><a href="">精选</a></li>
+                <li><a href="">更新</a></li>
+                <li><a href="">教程</a></li>
+                <li><a href="">意见反馈</a></li>
+                <li><a href="">收藏</a></li>
+                <li><a href="">我的帖子</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="blog-content">
+        <div class="blog-list-content">
+            <ul class="blog-list-menu blog-list">
+
+            </ul>
+        </div>
+        <div class="blog-list__item-right" id="blog-right-operate">
+            <div class="blog-feature">
+                <button class="add-blog" id="create">新建帖子</button>
+                <div class="blog-course">
+                    <h3>入门教程</h3>
+                    <div class="blog-course__list">
+                        <p>怎样新建一个项目?</p>
+                        <p>怎样导出项目?</p>
+                        <p>怎样将项目分享给别人?</p>
+                        <p>怎样添加动画?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="main-container">
     <div class="blog-list-container">
         <ul class="blog-list"></ul>
         <div id="paginator"></div>
     </div>
-    <footer>
-        <% include ../all/footer.html %>
-    </footer>
-</div>
-
-
-
-
+</div>-->
 
 <script>
-    ;(function () {
+    /*;(function () {
         var paginationer = new Paginationer(5,<%=currentPage%>,<%=totalPage%>);
         paginationer.setElem(document.getElementById('paginator'))
-    }())
+    }())*/
 </script>
 
 <script src="../../public/blog/js/index.js"></script>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>个人空间</title>
+    <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
+    <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
+    <!--<link href="/public/login/assets/css/style.css" rel="stylesheet"/>-->
+    <link rel="stylesheet" href="../../public/login/assets/css/personalProject.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/login/assets/css/personalSpace.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/login/assets/css/jquery.contextMenu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/ide/modules/templateCenter/templateCenter.css" />
+    <link rel="stylesheet" href="../../public/login/assets/css/templates.css" />
+    <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
+    <script src="../../public/login/assets/js/jquery.contextMenu.min.js"></script>
+    <script src="../../public/login/assets/js/bootstrap.js"></script>
+    <script src="../../public/login/assets/js/ejs_production.js"></script>
+    <script src="../../public/login/assets/js/templates.js"></script>
+    <script src="../../public/login/assets/js/compatibilityCheck.js"></script>
+    <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
+</head>
+<body>
+<div class="header" id="mianHeader" >
+    <div class="header_main">
+        <div class="header_main_logo"><a id="mainhref" href="/">
+            <img src="../../public/login/assets/img/速显微.png" />
+        </a></div>
+        <div class="nav">
+            <!--<ul>-->
+            <!--<li><a href="personalProject.html">项目</a></li>-->
+            <!--&lt;!&ndash;<li><a href="#">任务</a></li>&ndash;&gt;-->
+            <!--<li><a href="#">IDE</a></li>-->
+            <!--<li><a href="#">产品介绍</a></li>-->
+            <!--<li><a href="#">联系我们</a></li>-->
+            <!--<li><%= username %></li>-->
+            <!--</ul>-->
+        </div>
+        <div id="user-icon"   class="dropdown right">
+            <a id="icon-dropdown" data-toggle="dropdown"><img src="../../public/login/assets/img/Fruit.png" /></a>
+
+            <!--<div id="user-icon-menu" class="menu">-->
+            <!--<a href="/private/info">个人信息</a>-->
+            <!--<a href="/user/logout">退出</a>-->
+            <!--</div>-->
+            <ul class="dropdown-menu dropdown-menu-right">
+                <!--<li><a href="/private/info">个人信息</a></li>-->
+                <li><a href="/user/logout">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="main templates-container" >
+    <div class="top" >
+        <span class="pro">工程模板</span>
+        <a target="_blank" class="templates-tools-getmore" href="/templatecenter">获取更多模板</a>
+        <!--（<em class="var">2</em> )-->
+        <!--<span class="pro2">-->
+        <!--<input type="text" placeholder="项目名搜索" name="name" />-->
+        <!--<i class="iconfont">&#xe605;</i>-->
+        <!--</span>-->
+    </div>
+    <!--<div class="pro_tab">-->
+    <!--<ul>-->
+    <!--<li><a href="#">所有</a></li>-->
+    <!--&lt;!&ndash;<li><a href="#">私有</a></li>-->
+    <!--<li><a href="#">公开</a></li>&ndash;&gt;-->
+    <!--</ul>-->
+    <!--</div>-->
+    <div class="templates">
+
+
+
+
+    </div>
+</div>
+<div id="updater_wrapper">
+    <div class="displayInfo">
+        <p id="updateInfoText"></p>
+        <div id="myprogressBackground">
+            <div id="myprogress"></div>
+        </div>
+    </div>
+</div>
+<!--删除模板-->
+<div class="modal fade" id="template-modal" tabindex="-1" role="dialog" aria-labelledby="template-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="template-modal-delete">确认删除?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="template-modal-confirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //        for local
+    try{
+        var os = require('os');
+        var mainhref = document.getElementById('mainhref');
+        mainhref.setAttribute('href','#');
+        var iconDropdown = document.getElementById('icon-dropdown');
+        iconDropdown.parentNode.removeChild(iconDropdown);
+    }catch (e){
+
+    }
+</script>
+</body>
+<script src="../../public/general/js/browserCheck.js"></script>
+<script src="../../public/nw/menubar.js"></script>
+<!--<script src="../../public/login/assets/js/perProCtrol.js"></script>-->
+</html>

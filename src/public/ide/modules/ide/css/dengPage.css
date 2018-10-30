@@ -1,4 +1,5 @@
-/*my-attr-item 最小模块 主要对属性中的span input 进行修改*/
+/*
+/!*my-attr-item 最小模块 主要对属性中的span input 进行修改*!/
 .dengPage-attrbute-container{
     background-color: rgb(247,247,247);
 
@@ -39,7 +40,7 @@
      height: 28px;
      font-size: 12px;
  }
-/* tex-container  修改 属性 中的纹理模块*/
+/!* tex-container  修改 属性 中的纹理模块*!/
 .tex-container .my-attr-title{
     margin: 0px 0px;
     width: 60px;
@@ -61,7 +62,7 @@
     padding-top: 3px;
     padding-bottom: 3px;
 
-    /*edit by lixang*/
+    /!*edit by lixang*!/
     border-radius: 4px;
 }
 .tex-container li div{
@@ -133,13 +134,8 @@
     width: 15px;
     top: -12px;
 }
-.dengPage-Action-Title{
-    margin-left: 20px;
-    font-size: 12px;
-    position: relative;
-    top: 4px;
-}
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist{
+
+/!*.action-wrap .action-item__action-list{
     border: 0px solid;
     border-color: lightgrey;
     background-color: white;
@@ -148,10 +144,10 @@
     list-style: none;
     padding-left: 0px;
 }
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li{
+.action-wrap .action-item__action-list li{
     border: 1px solid;
     border-color: lightgrey;
-    /*添加了圆角 lixiang*/
+    /!*添加了圆角 lixiang*!/
     border-radius: 4px;
 
     min-height: 25px;
@@ -160,12 +156,12 @@
     padding-bottom: 0px;
 }
 
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li:hover{
+.action-wrap .action-item__action-list li:hover{
     background-color:#e0e0e0;
 }
 
-/*改用垃圾箱图片，并显示小手 lixiang*/
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li i{
+/!*改用垃圾箱图片，并显示小手 lixiang*!/
+.action-wrap .action-item__action-list li i{
     background-color:transparent;
     padding:0 5px;
     float: right;
@@ -174,7 +170,7 @@
     opacity: .5;
     cursor: pointer;
 }
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li span{
+.action-wrap .action-item__action-list li span{
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 125px;
@@ -182,9 +178,9 @@
     display: inline-block;
 }
 
-.dengPage-attrbute-container .ng-scope .dengPage-Actionlist li img:hover{
+.action-wrap .action-item__action-list li img:hover{
     opacity: 1;
-}
+}*!/
 .dengModel-body .modelPart{
     margin-bottom: 10px;
 }
@@ -400,8 +396,8 @@
 }
 
 .deng-attr-item .listTable-container{
-    /*max-height: 280px;*/
-    /*overflow-y: auto;*/
+    /!*max-height: 280px;*!/
+    /!*overflow-y: auto;*!/
     background-color: white;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -413,12 +409,12 @@
     font-size: 12px;
 }
 .deng-attr-item .listTable >tbody>tr{
-    /*border: 1px solid;*/
-    /*border-color: rgb(225,225,225);*/
-    /*border-top: 0px*/
+    /!*border: 1px solid;*!/
+    /!*border-color: rgb(225,225,225);*!/
+    /!*border-top: 0px*!/
 }
 
-/*edit by lixiang*/
+/!*edit by lixiang*!/
 .deng-attr-item .listTable >tbody>tr:first-child{
     background-color: #eee;
 }
@@ -432,8 +428,8 @@
 
 
 .deng-attr-item .listTable >tbody>:first-child{
-    /*border: 1px solid;*/
-    /*border-color: rgb(225,225,225);*/
+    /!*border: 1px solid;*!/
+    /!*border-color: rgb(225,225,225);*!/
 }
 
 
@@ -445,12 +441,12 @@
     padding: 4px;
 }
 .deng-attr-item .listTable td:nth-child(2) {
-    /*background: #cccc99;*/
+    /!*background: #cccc99;*!/
     border-left:1px solid #ccc;
     border-right:1px solid #ccc;
 }
 .deng-attr-item .listTable td:not(:first-child) {
-    /*background: #cccc99;*/
+    /!*background: #cccc99;*!/
     border-left:1px solid #ccc;
     border-right:1px solid #ccc;
     text-align: center;
@@ -467,7 +463,7 @@
     text-overflow: ellipsis;
     max-width: 30px;
     width: 30px;
-    /*white-space: nowrap;*/
+    /!*white-space: nowrap;*!/
 }
 .deng-attr-item .listTable tr .icon-close {
     width:20px;
@@ -612,7 +608,7 @@
 }
 
 .my-bottom-panel .my-layers-panel{
-    /*height: 386px;*/
+    /!*height: 386px;*!/
 }
 .animation-input{
     display: inline-block;
@@ -645,7 +641,7 @@
 
 }
 
-/*last edtor: liuhuan 2017/8/17*/
+/!*last edtor: liuhuan 2017/8/17*!/
 .my-row-left{
     text-align: left;
 
@@ -690,7 +686,7 @@
     border-radius: 4px;
     padding:10px;
     width: 100%;
-    /*min-width: 250px;*/
+    /!*min-width: 250px;*!/
     vertical-align: middle
 }
 
@@ -817,8 +813,8 @@
 .my-tag-edit-td-width{
     width: 60%;
 }
-/*蒙板*/
-.switch-button{
+/!*蒙板*!/
+/!*.switch-button{
     margin:0 auto;
     position: relative;
     background: #008CEE;
@@ -857,15 +853,10 @@
 }
 .switch-button-close .switch-flag{
     left:0px;
-}
+}*!/
 
-
-
-.my-matte{
-    margin-bottom: 10px;
-}
-.my-matte-wrap{
-    border: 1px solid #cccccc;
+/!*.my-matte-wrap{
+    border: 1px solid #7d7d7d;
     border-radius: 4px;
     width: 100%;
     padding: 10px;
@@ -893,17 +884,18 @@
 .my-matte-color{
     text-align: center;
     cursor: pointer;
-}
-.my-matte-switch{
+}*!/
+/!*.my-matte-switch{
     float: right;
     margin-right: calc(100% - 120px);
     line-height: normal;
     width: 38px;
     height: 20px;
     cursor: pointer;
-}
+}*!/
 
-/*批量选择*/
+/!*
+/!*批量选择*!/
 .batch-select-table thead{
     background-color: #eeeeee;
 }
@@ -929,7 +921,7 @@
     overflow: hidden!important;
 }
 
-/*拉伸*/
+/!*拉伸*!/
 .pullingWrap{
     width: 100%;
 }
@@ -946,4 +938,5 @@
 .layer-preview{
     float: right;
     margin-right: 20px;
-}
+}*!/
+*/

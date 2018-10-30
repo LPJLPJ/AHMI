@@ -7,10 +7,10 @@ var moment = require('moment');
 var _ = require('lodash');
 module.exports = function (req, res) {
 	var _user = req.session.user;
+    var path = req.query.path;
     var classId='space';
 	if (_user && _user.id) {
 
-        //edit by tang   ��δ�������Ŀ���ڸ������Ľ���
         ProjectModel.findProInfo(_user.id,classId,function (err, projects) {
             if (err){
                 console.log(err);
@@ -40,7 +40,6 @@ module.exports = function (req, res) {
                         thumbnail:thumbnail
                     }
                 });
-                //��ȡ�����б�
                 ClassModel.findFolderByUser(_user.id,function(err,folders){
                     if(err){
                         console.log(err);
@@ -79,6 +78,7 @@ module.exports = function (req, res) {
                                     username:_user.username,
                                     folders:processedFolders,
                                     projects:processedProjects,
+                                    path:path?path:'project',
                                     CANProjects:processedCANProjects
                                 })
                             }
