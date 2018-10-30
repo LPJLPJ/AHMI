@@ -345,6 +345,12 @@ body {
     color: #005599;
 }
 
+/*生成导出工程*/
+.export-project__ratio>span,.export-project__ratio>input{
+    display: inline-block;
+    vertical-align: 1px;
+}
+
 /*###导航下方显示视图公共样式###*/
 .thumb-wrap, .stage-wrap, .attribute-wrap {
     -webkit-transition: height .2s, width .2s;
@@ -1117,6 +1123,20 @@ body {
     cursor: pointer;
 }
 
+.register__check-box{
+    width: 20px;
+    height: 20px;
+    margin-left: 1em!important;
+}
+
+.add-tag__modal>fieldset{
+    margin-top: 10px;
+}
+
+.add-tag__radio>label{
+    margin-left: 1em!important;
+}
+
 /*资源上传*/
 .upload-button {
     padding: 0 10px;
@@ -1723,14 +1743,6 @@ div.wrapper-custom{
 }
 .modal-validate-info{
     display:block;
-}
-
-.pixelratio-wrapper{
-    margin:1em 0;
-}
-
-.pixelratio-input-wrapper{
-    display:inline-block;
 }
 
 .modal-open .modal{
