@@ -323,6 +323,7 @@ update:
 1.10.6
 add:
     1.support dynamic Animation config. Animation normal mode compatible with old version
+    2.旋转图逆时针旋转
 update:
     1. update render font image，draw char from 46 of ASCII
     2. remove dashboard's simple mode
