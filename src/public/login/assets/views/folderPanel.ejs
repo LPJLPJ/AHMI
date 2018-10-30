@@ -1,9 +1,23 @@
-<li data-folder='<%= JSON.stringify(folder) %>' class="folderPanel" title="项目名称:<%= folder.name %>&#10创建作者:<%= folder.author %>&#10创建时间:<%= folder.createTime %>&#10修改时间:<%= folder.lastModifiedTime %>">
-    <div class="img">
-        <i class="folderDelete iconfont createIcon">&#xe607;</i>
-        <a href="#"><img src='<%= "../../public/login/assets/img/folder.png" %>'/></a>
+<li class="project-list__item folder-panel" data-folder='<%= JSON.stringify(folder) %>'>
+    <div class="project-item__thumb">
+        <img class="folder-thumb-icon" src="../../public/login/assets/images/folder.png">
+        <div class="project-item__hover-menu">
+            <div class="hover-menu__item open-folder">
+                <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
+                <span>打开项目</span>
+            </div>
+            <div class="hover-menu__item edit-folder">
+                <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
+                <span>编辑信息</span>
+            </div>
+            <p class="hover-menu__item2">
+                <span class="hover-menu__share-project share-project"></span>
+                <span class="hover-menu__delete-project delete-folder"></span>
+            </p>
+        </div>
     </div>
-    <p class="text folderInfo">
-        <span><%= folder.name %></span>
-    </p>
+    <div class="project-item__title folder-tool"
+         title="创建作者:<%= folder.author %>&#10创建时间:<%= folder.createTime %>&#10修改时间:<%= folder.lastModifiedTime %>">
+        <p class="project-item_folder-title"><%= folder.name %></p>
+    </div>
 </li>

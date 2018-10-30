@@ -37,23 +37,23 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
         };
 
         $scope.widgetIcon={
-            MySlide:"&#xe6e0;",
-            MySwitch:"&#xe64e;",
-            MyProgress:"&#xe62a;",
-            MyDashboard:"&#xe632;",
-            MyRotateImg:"&#xe64f;",
-            MyDateTime:"&#xe64d;",
-            MyNum:"&#xe631;",
-            MyTextArea:"&#xe62f;",
-            MyButton:"&#xe658;",
-            MySlideBlock:"&#xe77e;",
-            MyButtonGroup:"&#xe637;",
-            MyScriptTrigger:"&#xe7d0;",
-            MyVideo:"&#xe6ad;",
-            MyAnimation:"&#xe633;",
-            MyTexNum:"&#xe675;",
-            MyTexTime:"&#xe655;",
-            MyAlphaImg:"&#xe6e0;"
+            MySlide:"slide",
+            MySwitch:"switch",
+            MyProgress:"progress",
+            MyDashboard:"dashboard",
+            MyRotateImg:"rotate-img",
+            MyDateTime:"time",
+            MyNum:"num",
+            MyTextArea:"text",
+            MyButton:"button",
+            MySlideBlock:"slide-block",
+            MyButtonGroup:"button-group",
+            MyScriptTrigger:"script-trigger",
+            MyVideo:"video",
+            MyAnimation:"animation",
+            MyTexNum:"tex-num",
+            MyTexTime:"tex-time"
+            //MyAlphaImg:"alpha-img"
         };
     }
 

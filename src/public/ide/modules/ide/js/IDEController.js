@@ -390,6 +390,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
                 globalProject = GlobalService.getBlankProject();
                 globalProject.projectId = id;
+                globalProject.name = data.name;
                 //change resolution
                 //console.log(data);
                 var resolution = data.resolution.split('*').map(function (r) {

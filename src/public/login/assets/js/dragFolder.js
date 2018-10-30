@@ -19,8 +19,7 @@
         init();
     }
     function init(){
-        $('#projectlist li').on('dragstart',function(){return false});
-        //var filedrag = document.getElementById('filedrag');
+        $('body').on('dragstart',function(){return false});
         var filedrag = document.getElementById('filedrag');
         filedrag.addEventListener('dragover', FileDragHover, false);
         filedrag.addEventListener('dragleave',FileDragHover,false);
