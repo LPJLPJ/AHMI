@@ -607,33 +607,37 @@
                     </div>
                 </div>
             </div>-->
-            <div ng-controller="ViewCtl" class="top-menu-content__item view-wrap" ng-show="component.nav.currentNav==2">
-                <a ng-click="component.tool.showLeft()" ng-class=""><span class="iconfont icon">&#xe644;</span><span
+            <div ng-controller="ViewCtl" class="top-menu-content__item" ng-show="component.nav.currentNav==2">
+                <!--<a ng-click="component.tool.showLeft()" ng-class=""><span class="iconfont icon">&#xe644;</span><span
                         class="caption"></span></a>
                 <a ng-click="component.tool.showRight()" ng-class=""><span class="iconfont icon">&#xe643;</span><span
                         class="caption"></span></a>
                 <a ng-click="component.tool.showBottom()" ng-class=""><span class="iconfont icon">&#xe619;</span><span
-                        class="caption"></span></a>
+                        class="caption"></span></a>-->
                 <!--<a ng-click="component.tool.rotateCanvasLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>-->
                 <!--<a ng-click="component.tool.rotateCanvasRight()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>-->
-                <a id="ruler">
-                    <span class="iconfont icon">&#xe65d;</span><span class="caption"></span>
+                <a id="ruler" class="top-menu-content__item-title">
+                    <img class="default-title" src="../../public/ide/modules/ide/images/widget/ruler.png"/>
+                    <img class="active-title" src="../../public/ide/modules/ide/images/widget/ruler-active.png"/>
+                    <p>辅助线</p>
                 </a>
-                <a id="maskIcon" ng-click="component.tool.maskSwitch()">
-                    <span class="iconfont icon">&#xe663;</span><span class="caption"></span>
+                <a id="maskIcon" ng-click="component.tool.maskSwitch()" class="top-menu-content__item-title">
+                    <img class="default-title" src="../../public/ide/modules/ide/images/widget/mask.png"/>
+                    <img class="active-title" src="../../public/ide/modules/ide/images/widget/mask-active.png"/>
+                    <p>模具框</p>
                 </a>
-                <a ng-click="" ng-class="">
-                    <!--视图缩放-->
+                <!--<a ng-click="" ng-class="">
+                    &lt;!&ndash;视图缩放&ndash;&gt;
                     <div style="top: 13px;">
-                        <!--<input  id="view-ratio-input" style="min-width: 5em" class="form-control" type="text" ng-keydown="handleRatioChange($event)" />-->
+                        &lt;!&ndash;<input  id="view-ratio-input" style="min-width: 5em" class="form-control" type="text" ng-keydown="handleRatioChange($event)" />&ndash;&gt;
                         <span>
-                            <!--<button type="button" class="btn btn-default">缩放</button>-->
+                            &lt;!&ndash;<button type="button" class="btn btn-default">缩放</button>&ndash;&gt;
                             <select class="view-select btn btn-default" ng-model="viewRatio"
                                     ng-options="ratio for ratio in defaultRatios">
                             </select>
                         </span>
                     </div>
-                </a>
+                </a>-->
             </div>
             <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==3">
                 <a ng-click="startTip()" class="top-menu-content__item-title" >

@@ -207,30 +207,6 @@ body {
     height: 56px;
 }
 
-.view-wrap{
-    line-height: 56px;
-    overflow: hidden!important;
-}
-
-.view-wrap>a>.icon{
-    color: #707070;
-    font-size: 25px;
-}
-
-.view-wrap>a{
-    margin: 0;
-    width: 4%;
-    height: 56px;
-    min-width: 56px;
-    float: left;
-    text-align: center;
-    cursor: pointer;
-}
-
-.view-wrap>a:hover>span{
-    color: #005599;
-}
-
 .top-menu-content__item-title > img {
     padding: 6px 18px 0 18px;
 }

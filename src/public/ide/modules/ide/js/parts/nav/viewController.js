@@ -149,7 +149,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
             var intro = new SXIntro(null, {flag: 'data-step-c1'})
                 .setIntro([{
                     index: 1,
-                    tooltip: '<h4>添加画布</h4><p>你好~接下来让我们开始一个简单的DEMO工程</p> <p>1.请点击导航栏上的编辑栏目</p><p>2.请点击开始栏目下的添加画布按钮</p>',
+                    tooltip: '<h4>添加画布</h4><p>你好~接下来让我们开始一个简单的DEMO工程</p> <p>1.请点击导航栏上的编辑栏目</p><p>2.请点击编辑栏目下的添加画布按钮</p>',
                     position: 'bottom'
                 }, {
                     index: 2,
@@ -189,7 +189,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                     position:'bottom'
                 },{
                     index:11,
-                    tooltip:'<h4>生成下载</h4><p>设计完成，可以生成配置包以供烧录至硬件系统</p> <p>1.点击文件栏</p><p>2.点击保存按钮，提示保存生成</p><p>3.点击生成，选择默认，会自动下载一个压缩包，烧录到硬件系统上试试吧~。</p>',
+                    tooltip:'<h4>生成下载</h4><p>设计完成，可以生成配置包以供烧录至硬件系统</p> <p>1.点击文件栏</p><p>2.点击保存按钮，提示保存成功</p><p>3.点击生成，选择默认，确认后会自动下载一个压缩包，烧录到硬件系统上试试吧~。</p>',
                     position:'bottom'
                 }
 

@@ -234,10 +234,16 @@ $(function () {
         submit.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
+            userInfo.captcha = captchaInput.value;
+            if(userInfo.captcha.length===0){
+                captchaVerify.innerHTML = ErrMessages.captcha.empty;
+                return;
+            }
+
             userInfo.username = username.value
             userInfo.mail = mail.value
             userInfo.password = $.md5(password.value)
-            userInfo.captcha = captchaInput.value
+
             submit.disabled = true;
             $.ajax({
                 type: 'POST',

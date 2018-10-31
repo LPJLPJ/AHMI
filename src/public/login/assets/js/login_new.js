@@ -6,10 +6,11 @@
 $(function () {
     var ErrMessages = {
         username: {
-            empty: '用户名或邮箱不能为空'
+            empty: '用户名或邮箱不能为空',
         },
         password: {
-            empty: '密码不能为空'
+            empty: '密码不能为空',
+            wrong:'密码错误'
         },
         captcha: {
             empty: '请输入验证码',
@@ -105,14 +106,13 @@ $(function () {
                 var errMsg = err.responseJSON.errMsg;
                 switch (errMsg) {
                     case 'not match':
-                        $('#captcha-verify').html(ErrMessages.general.wrong);
+                        $('#password-verify').html(ErrMessages.password.wrong);
                         break;
                     case 'no user':
-                        $('#captcha-verify').html(ErrMessages.general.wrong);
+                        $('#username-verify').html(ErrMessages.general.wrong);
                         break;
                     case 'captcha invalid':
                         $('#captcha-verify').html(ErrMessages.captcha.wrong);
-
                         break;
                     case 'not verified':
                         //not verified
