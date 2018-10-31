@@ -682,7 +682,7 @@
                     ng-repeat="page in project.pages"
                     ng-class="{'active':page.selected,'unfocus':page.current&&!page.selected}"
                     ui-tree-node>
-                    <!--<span style="vertical-align: top;display: inline-block;width: 20px" class="my-thumb-index">{{project.pages.indexOf(page)+1}}</span>-->
+                    <span class="thumb-content-list__item-index">{{project.pages.indexOf(page)+1}}</span>
                     <img context-menu="component.menuOptions"
                          ng-click="component.selectThumb(page)"
                          class="thumb-content-list__item-img" ui-tree-handle
@@ -696,9 +696,9 @@
     <!--中间画布区-->
     <div class="stage-wrap" ng-controller="StageCtrl" ng-class="{true:'top-menu-content-show'}[component.out.toolShow]"
          id="stage" ng-click="selectMask(false)" data-step="3" data-step-c1="2-4">
-        <!--<div id="mask" ng-hide="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
+        <div id="mask" ng-show="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
             <img style="position: absolute;left: 0;top: 0;z-index: 100;float: left" width="100%" height="100%" ng-src="{{maskSrc}}"/>
-        </div>-->
+        </div>
         <div class="stage__project-title"><p>{{project.name}}</p></div>
         <div class="stage-content" ng-show="status.editPage" id="myStageTable">
             <table width="100%" height="100%">
@@ -752,40 +752,40 @@
             <!--属性面板-->
             <div class="attr-panel-item" ng-show="component.top.currentNav==0">
                 <div ng-controller="AttributeCtrl">
-                    <!--<div ng-show="myMask" id="myMask">
+                    <div ng-show="myMask" id="myMask">
                         <div class="attr-item__cell-wrap lg">
-                            <span class="attr-item__cell-title">模具框名称</span>
-                            <input class="my-attr-number-input form-control form-control"
+                            <p class="attr-item__cell-title">模具框名称</p>
+                            <input class="attr-item__cell-input form-control"
                                    type="text"
                                    ng-model="maskAttr.name"
                                    ng-blur="maskRestore()"
                                    ng-keypress="enterMaskAttr($event,'name')">
                         </div>
                         <div class="attr-item__cell-wrap">
-                            <span class="attr-item__cell-title">坐标X</span>
-                            <input class="my-attr-number-input form-control form-control short-input"
+                            <p class="attr-item__cell-title">坐标X</p>
+                            <input class="attr-item__cell-input form-control"
                                    ng-model="maskAttr.left"
                                    ng-blur="maskRestore()"
                                    ng-keypress="enterMaskAttr($event,'left')"
                                    type="number">
                         </div><div class="attr-item__cell-wrap">
-                        <span class="attr-item__cell-title">坐标Y</span>
-                        <input class="my-attr-number-input form-control short-input  "
+                        <p class="attr-item__cell-title">坐标Y</p>
+                        <input class="attr-item__cell-input form-control"
                                ng-model="maskAttr.top"
                                ng-blur="maskRestore()"
                                ng-keypress="enterMaskAttr($event,'top')"
                                type="number">
                         </div>
                         <div class="attr-item__cell-wrap">
-                            <span class="attr-item__cell-title">宽度</span>
-                            <input class="my-attr-number-input form-control short-input"
+                            <p class="attr-item__cell-title">宽度</p>
+                            <input class="attr-item__cell-input form-control"
                                    ng-model="maskAttr.width"
                                    ng-blur="maskRestore()"
                                    ng-keypress="enterMaskAttr($event,'width')"
                                    type="number">
                         </div><div class="attr-item__cell-wrap">
-                        <span class="attr-item__cell-title ">高度</span>
-                        <input class="my-attr-number-input form-control short-input  "
+                        <p class="attr-item__cell-title ">高度</p>
+                        <input class="attr-item__cell-input form-control"
                                ng-model="maskAttr.height"
                                ng-blur="maskRestore()"
                                ng-keypress="enterMaskAttr($event,'height')"
@@ -793,12 +793,12 @@
                         </div>
 
                         <div class="attr-item__cell-wrap lg" style="margin-top: 20px" ng-controller="ResourceCtrl">
-                            <a href="javascript:;" class="btn btn-default my-upload" style="width: 100%;text-align: center">
+                            <a href="javascript:;" class="btn btn-default upload-button mask-upload">
                                 <maskform></maskform>
-                                上传模具框图片<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
+                                上传模具框图片<span class="iconfont">&#xe648;</span>
                             </a>
                         </div>
-                    </div>-->
+                    </div>
 
                     <div ng-show="component.object.type=='MyPage'&&!myMask">
                         <div class="attr-item__cell-wrap lg">
@@ -1002,12 +1002,12 @@
                             <!--<span class="attr-item__cell-title">颜色</span>-->
                             <!--<input colorpicker="rgba"-->
                                    <!--type="text"-->
-                                   <!--class="my-attr-number-input form-control"-->
+                                   <!--class="attr-item__cell-input form-control"-->
                                    <!--ng-model="component.object.level.backgroundColor"/>-->
                         <!--</div>-->
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">图片</span>-->
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.subLayer.selectImage"-->
+                            <!--<select class="attr-item__cell-input form-control" ng-model="component.subLayer.selectImage"-->
                                     <!--ng-change="component.subLayer.enterImage($event)">-->
                                 <!--<option ng-repeat="image in component.images" value="{{image.src}}">{{image.name}}-->
                                 <!--</option>-->
@@ -1142,7 +1142,7 @@
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.button.arrangeModel"-->
+                            <!--<select class="attr-item__cell-input form-control" ng-model="component.button.arrangeModel"-->
                                     <!--ng-change="component.button.enterArrange($event)">-->
                                 <!--<option value="horizontal">水平</option>-->
                                 <!--<option value="vertical">竖直</option>-->
@@ -1753,7 +1753,7 @@
 
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">指针长度</span>-->
-                            <!--<input class="my-attr-number-input form-control"-->
+                            <!--<input class="attr-item__cell-input form-control"-->
                                    <!--ng-model="component.object.level.info.pointerLength"-->
                                    <!--ng-blur="component.restore()"-->
                                    <!--ng-keypress="component.dashboard.enterPointerLength($event)"-->
@@ -2026,7 +2026,7 @@
 
                         <div class="attr-item__cell-wrap lg">
                             <p class="attr-item__cell-title">溢出模式</p>
-                            <select class="my-attr-number-input form-control"
+                            <select class="attr-item__cell-input form-control"
                                     ng-model="component.num.overFlowStyle"
                                     ng-change="component.num.enterOverFlowStyle()">
                                 <option ng-repeat="style in component.num.overFlowStyles" value="{{style.id}}">
@@ -2037,7 +2037,7 @@
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.num.arrangeModel"-->
+                            <!--<select class="attr-item__cell-input form-control" ng-model="component.num.arrangeModel"-->
                                     <!--ng-change="component.num.enterArrange($event)">-->
                                 <!--<option value="horizontal">水平</option>-->
                                 <!--<option value="vertical">竖直</option>-->
@@ -2045,7 +2045,7 @@
                         <!--</div>-->
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">数字值</span>-->
-                            <!--<input class="my-attr-number-input form-control"-->
+                            <!--<input class="attr-item__cell-input form-control"-->
                                    <!--type="number"-->
                                    <!--ng-model="component.object.level.info.numValue"-->
                                    <!--ng-blur="component.restore()"-->
@@ -2220,7 +2220,7 @@
                         </div>
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">开启动画</span>-->
-                            <!--<select class="my-attr-number-input form-control"-->
+                            <!--<select class="attr-item__cell-input form-control"-->
                                     <!--ng-model="component.texNum.enableAnimationModeId"-->
                                     <!--ng-change="component.enterEnableAnimationMode($event)">-->
                                 <!--<option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">-->
@@ -2352,7 +2352,7 @@
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.textArea.arrangeModel"-->
+                            <!--<select class="attr-item__cell-input form-control" ng-model="component.textArea.arrangeModel"-->
                                     <!--ng-change="component.textArea.enterArrange($event)">-->
                                 <!--<option value="horizontal">水平</option>-->
                                 <!--<option value="vertical">竖直</option>-->
@@ -2819,7 +2819,7 @@
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">方向</span>-->
 
-                            <!--<select class="my-attr-number-input form-control" ng-model="component.dateTime.arrangeModel"-->
+                            <!--<select class="attr-item__cell-input form-control" ng-model="component.dateTime.arrangeModel"-->
                                     <!--ng-change="component.dateTime.enterArrange($event)">-->
                                 <!--<option value="horizontal">水平</option>-->
                                 <!--<option value="vertical">竖直</option>-->
@@ -2828,7 +2828,7 @@
                         <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">初始值</span>-->
                             <!--<input type="number"-->
-                                   <!--class="my-attr-number-input form-control"-->
+                                   <!--class="attr-item__cell-input form-control"-->
                                    <!--ng-model="component.object.level.info.initValue"-->
                                    <!--ng-blur="component.restore()"-->
                                    <!--ng-keypress=""/>-->
@@ -3038,7 +3038,7 @@
 
                         <!--<div class = "attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">比例</span>-->
-                            <!--<select class="form-control my-attr-number-input form-control" -->
+                            <!--<select class="form-control attr-item__cell-input form-control" -->
                                     <!--ng-model="component.video.scaleId"-->
                                     <!--ng-change="component.video.changeVideoScale($event)">-->
                                 <!--<option ng-repeat="mode in component.video.scale" value="{{mode.id}}">{{mode.name}}</option>-->

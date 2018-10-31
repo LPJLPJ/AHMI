@@ -117,22 +117,20 @@ a img {
     margin-top: 16px;
     margin-right: 60px;
     box-sizing: border-box;
-    border: 1px solid #005599;
     border-radius: 5px;
     text-align: center;
     cursor: pointer;
+    background-color: #005599;
 }
 
 .top-nav__personal-space>span{
     display: inline-block;
     font-size: 16px;
-    color: #005599;
+    color: white;
     font-weight: 500;
 }
 
 .top-nav__personal-space>img{
-    width: 26px;
-    height: 24px;
     vertical-align: -5px;
 }
 

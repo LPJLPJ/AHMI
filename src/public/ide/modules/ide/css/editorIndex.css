@@ -426,6 +426,15 @@ body {
 .thumb-content-list__item {
     padding: 20px 12px;
     text-align: center;
+    position: relative;
+}
+
+.thumb-content-list__item-index{
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    color: #7d7d7d;
+    font-size: 15px;
 }
 
 .thumb-content-list__item-img {
@@ -1175,8 +1184,11 @@ body {
     margin-top: 10px;
 }
 
-.upload-button{
-
+.mask-upload{
+    width: 100%;
+    text-align: center;
+    line-height: 28px;
+    border: 1px solid #7d7d7d;
 }
 
 /*右侧属性栏__底部图层菜单*/

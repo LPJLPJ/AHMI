@@ -110,7 +110,6 @@
     z-index: 999;
 }
 
-/*ģ�߿�*/
 #mask {
     width: 200px;
     height: 200px;
@@ -119,7 +118,6 @@
     top: 0;
     left: 0;
     z-index: 998;
-    display: none;
 }
 
 #maskWrap {

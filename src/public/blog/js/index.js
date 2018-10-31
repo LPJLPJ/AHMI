@@ -62,12 +62,12 @@ function renderSingleBlog(blog) {
             '<span class="parting-line"></span>'+
             '<div class="blog-param__item">'+
                 '<img src="../../public/blog/img/see.png"/>'+
-                '<span class="blog-param__item-text">666666</span>'+
+                '<span class="blog-param__item-text">666</span>'+
             '</div>'+
             '<span class="parting-line"></span>'+
             '<div class="blog-param__item">'+
                 '<img src="../../public/blog/img/comment.png"/>'+
-                '<span class="blog-param__item-text">999999</span>'+
+                '<span class="blog-param__item-text">999</span>'+
             '</div>'+
         '</div>'+
         '<div class="blog-list__item-surface">'+
