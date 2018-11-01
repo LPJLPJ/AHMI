@@ -5671,84 +5671,74 @@ module.exports = React.createClass({
             
                 //window.audioList[0].play()
                 // window.audioCtx.play()
-                var targetTag = this.findTagByName(param1.tag);
+                var param2Value = this.getParamValue(param2);
 
-                if (targetTag) {
-                    var playTrackIndex = Number(targetTag.value) 
-                    for(var i=0;i<this.state.project.trackList.length;i++){
-                        var curTrack = this.state.project.trackList[i]
-                        if(curTrack.index === playTrackIndex){
-                            //hit
-                            if(curTrack.key){
-                                AudioManager.playAudioWithKey(curTrack.key)
-                            }else{
-                                curTrack.key = AudioManager.addNewAudioAndPlay(curTrack.buffer,{
-                                    loop:curTrack.loop||false
-                                })
-                            }
+                var playTrackIndex = param2Value
+                for(var i=0;i<this.state.project.trackList.length;i++){
+                    var curTrack = this.state.project.trackList[i]
+                    if(curTrack.index === playTrackIndex){
+                        //hit
+                        if(curTrack.key){
+                            AudioManager.playAudioWithKey(curTrack.key)
+                        }else{
+                            curTrack.key = AudioManager.addNewAudioAndPlay(curTrack.buffer,{
+                                loop:curTrack.loop||false
+                            })
                         }
                     }
-                    
-                    
-                    
-                    // this.draw(null, {
-                    //     updatedTagName: param1.tag
-                    // });
                 }
+                    
                 break;
             case 'PAUSE_SOUND':
-                var targetTag = this.findTagByName(param1.tag);
+            var param2Value = this.getParamValue(param2);
 
-                if (targetTag) {
-                    var playTrackIndex = Number(targetTag.value)
-                    for(var i=0;i<this.state.project.trackList.length;i++){
-                        var curTrack = this.state.project.trackList[i]
-                        if(curTrack.index === playTrackIndex){
-                            //hit
-                            var key = curTrack.key
-                            if(key){
-                                AudioManager.pauseAudioWithKey(key)
-                            }
-                        }
+            var playTrackIndex = param2Value
+            for(var i=0;i<this.state.project.trackList.length;i++){
+                var curTrack = this.state.project.trackList[i]
+                if(curTrack.index === playTrackIndex){
+                    //hit
+                    var key = curTrack.key
+                    if(key){
+                        AudioManager.pauseAudioWithKey(key)
                     }
-                    
                 }
+            }
+                    
+                
             break;
             case 'RESUME_SOUND':
-                var targetTag = this.findTagByName(param1.tag);
+            var param2Value = this.getParamValue(param2);
 
-                if (targetTag) {
-                    var playTrackIndex = Number(targetTag.value) 
-                    for(var i=0;i<this.state.project.trackList.length;i++){
-                        var curTrack = this.state.project.trackList[i]
-                        if(curTrack.index === playTrackIndex){
-                            //hit
-                            var key = curTrack.key
-                            if(key){
-                                AudioManager.resumeAudioWithKey(key)
-                            }
-                        }
+            var playTrackIndex = param2Value
+            for(var i=0;i<this.state.project.trackList.length;i++){
+                var curTrack = this.state.project.trackList[i]
+                if(curTrack.index === playTrackIndex){
+                    //hit
+                    var key = curTrack.key
+                    if(key){
+                        AudioManager.resumeAudioWithKey(key)
                     }
-                    
                 }
+            }
+                    
+                
             break;
             case 'STOP_SOUND':
-                var targetTag = this.findTagByName(param1.tag);
+            var param2Value = this.getParamValue(param2);
 
-                if (targetTag) {
-                    var playTrackIndex = Number(targetTag.value) 
-                    for(var i=0;i<this.state.project.trackList.length;i++){
-                        var curTrack = this.state.project.trackList[i]
-                        if(curTrack.index === playTrackIndex){
-                            //hit
-                            var key = curTrack.key
-                            if(key){
-                                AudioManager.stopAudioWithKey(key)
-                            }
-                        }
+            var playTrackIndex = param2Value
+            for(var i=0;i<this.state.project.trackList.length;i++){
+                var curTrack = this.state.project.trackList[i]
+                if(curTrack.index === playTrackIndex){
+                    //hit
+                    var key = curTrack.key
+                    if(key){
+                        AudioManager.stopAudioWithKey(key)
                     }
-                    
                 }
+            }
+                    
+                
             break;
             default:
                 console.log('unsupported cmd: ',op)
