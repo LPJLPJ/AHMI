@@ -99,9 +99,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     closeActionVisualizer:closeActionVisualizer,
                     saveProject: saveProject.bind(null, null, true),
                     saveProjectAs: saveProjectAs,
-                    showLeft: showLeft,
-                    showRight: showRight,
-                    showBottom: showBottom,
                     rotateCanvasLeft: rotateCanvasLeft,
                     rotateCanvasRight: rotateCanvasRight,
                     maskSwitch:maskSwitch
@@ -140,19 +137,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function hideSpinner() {
             window.spinner && window.spinner.hide();
-        }
-
-
-        function showLeft() {
-            $scope.$emit('ChangeShownArea', 0);
-        }
-
-        function showRight() {
-            $scope.$emit('ChangeShownArea', 1);
-        }
-
-        function showBottom() {
-            $scope.$emit('ChangeShownArea', 2);
         }
 
         $scope.maskView=false;

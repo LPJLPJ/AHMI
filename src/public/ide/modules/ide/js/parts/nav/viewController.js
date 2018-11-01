@@ -127,7 +127,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
         function startIntro() {
             var intro = new SXIntro()
                 .setIntro([{
-                    tooltip: '<h4>导航栏</h4><p>1.在文件菜单中可以对工程进行基本操作</p> <p>2.在编辑菜单中有基本操作按钮和常用辅助操作功能</p> <p>3.视图栏中能够显示或隐藏侧边栏、调整画布缩放比例</p><p>4.帮助栏中有丰富的资料</p>',
+                    tooltip: '<h4>导航栏</h4><p>1.在文件菜单中可以对工程进行基本操作</p> <p>2.在编辑菜单中有基本操作按钮和常用辅助操作功能</p> <p>3.视图栏中有辅助开发的工具</p><p>4.帮助栏中有丰富的资料</p>',
                     position: 'bottom'
                 }, {
                     tooltip: '<h4>页面缩略图栏</h4> <p>在这里您可以点击+号新增一个页面</p> <p>也可以通过缩略图选择页面，甚至可以拖动页面进行排序！</p>',

@@ -607,15 +607,7 @@
                     </div>
                 </div>
             </div>-->
-            <div ng-controller="ViewCtl" class="top-menu-content__item" ng-show="component.nav.currentNav==2">
-                <!--<a ng-click="component.tool.showLeft()" ng-class=""><span class="iconfont icon">&#xe644;</span><span
-                        class="caption"></span></a>
-                <a ng-click="component.tool.showRight()" ng-class=""><span class="iconfont icon">&#xe643;</span><span
-                        class="caption"></span></a>
-                <a ng-click="component.tool.showBottom()" ng-class=""><span class="iconfont icon">&#xe619;</span><span
-                        class="caption"></span></a>-->
-                <!--<a ng-click="component.tool.rotateCanvasLeft()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69e;</span><span class="caption"></span></a>-->
-                <!--<a ng-click="component.tool.rotateCanvasRight()" class="my-cmd-item" ng-class=""><span class="iconfont icon">&#xe69d;</span><span class="caption"></span></a>-->
+            <div class="top-menu-content__item" ng-show="component.nav.currentNav==2">
                 <a id="ruler" class="top-menu-content__item-title">
                     <img class="default-title" src="../../public/ide/modules/ide/images/widget/ruler.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/widget/ruler-active.png"/>
@@ -626,18 +618,6 @@
                     <img class="active-title" src="../../public/ide/modules/ide/images/widget/mask-active.png"/>
                     <p>模具框</p>
                 </a>
-                <!--<a ng-click="" ng-class="">
-                    &lt;!&ndash;视图缩放&ndash;&gt;
-                    <div style="top: 13px;">
-                        &lt;!&ndash;<input  id="view-ratio-input" style="min-width: 5em" class="form-control" type="text" ng-keydown="handleRatioChange($event)" />&ndash;&gt;
-                        <span>
-                            &lt;!&ndash;<button type="button" class="btn btn-default">缩放</button>&ndash;&gt;
-                            <select class="view-select btn btn-default" ng-model="viewRatio"
-                                    ng-options="ratio for ratio in defaultRatios">
-                            </select>
-                        </span>
-                    </div>
-                </a>-->
             </div>
             <div ng-controller="ViewCtl" class="my-tool-content-item" ng-show="component.nav.currentNav==3">
                 <a ng-click="startTip()" class="top-menu-content__item-title" >
@@ -677,10 +657,13 @@
     <!--左侧缩略图-->
     <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow}" data-step="2">
         <div class="thumb-operate">
-            <!--<div class="thumb-operate__left-hide"></div>-->
             <div class="thumb-operate__add-page" ng-click="component.addPage()"></div>
         </div>
         <div ui-tree="component.uitree" class="thumb-content" data-drag-delay="200">
+            <div class="thumb-view view-wrap" ng-click="component.showLeft()">
+                <img class="pack" src="../../public/ide/modules/ide/images/left.png"/>
+                <img class="open" src="../../public/ide/modules/ide/images/right.png"/>
+            </div>
             <ol ui-tree-nodes="" ng-model="project.pages" style="padding-bottom: 60px">
                 <li class="thumb-content-list__item"
                     ng-repeat="page in project.pages"
@@ -703,46 +686,46 @@
         <div id="mask" ng-show="maskSwitch" ng-click="selectMask(true)" ng-style="maskStyle" ng-mouseup="getMaskAttr()">
             <img style="position: absolute;left: 0;top: 0;z-index: 100;float: left" width="100%" height="100%" ng-src="{{maskSrc}}"/>
         </div>
-        <div class="stage__project-title"><p>{{project.name}}</p></div>
-        <div class="stage-content" ng-show="status.editPage" id="myStageTable">
-            <table width="100%" height="100%">
-                <tr>
-                    <td align="center" valign="middle">
-                        <canvas id="c" context-menu="component.menuOptions.contextMenu()"></canvas>
-                    </td>
-                </tr>
-            </table>
+        <div class="stage__project-title">
+            <div ng-controller="ViewCtl" class="stage__view">
+                <span class="stage__view-title">缩放:</span>
+                <select class="stage__zoom" ng-model="viewRatio" ng-options="ratio for ratio in defaultRatios">
+                </select>
+            </div>
+            <p>{{project.name}}</p>
         </div>
-        <div class="stage-content" ng-show="!status.editPage">
-            <table width="100%" height="100%">
-                <tr>
-                    <td align="center" valign="middle">
-                        <div class="subCanvas">
-                            <canvas id="backgroundCanvas"></canvas>
-                            <canvas id="c1" context-menu="component.menuOptions.contextMenu()" ></canvas>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+        <div class="stage-content-wrap">
+            <div class="stage-content" ng-show="status.editPage" id="myStageTable">
+                <!--<div class="attribute-view view-wrap" ng-click="showRight()">
+                    <img class="pack" src="../../public/ide/modules/ide/images/left.png"/>
+                    <img class="open" src="../../public/ide/modules/ide/images/right.png"/>
+                </div>-->
+                <table width="100%" height="100%">
+                    <tr>
+                        <td align="center" valign="middle">
+                            <canvas id="c" context-menu="component.menuOptions.contextMenu()"></canvas>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="stage-content" ng-show="!status.editPage">
+                <table width="100%" height="100%">
+                    <tr>
+                        <td align="center" valign="middle">
+                            <div class="subCanvas">
+                                <canvas id="backgroundCanvas"></canvas>
+                                <canvas id="c1" context-menu="component.menuOptions.contextMenu()" ></canvas>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <!--<div class="my-scale-bar">-->
-            <!--<div class="my-scale-op" style="display: none">-->
-                <!--&lt;!&ndash;显示百分比&ndash;&gt;-->
-                <!--&lt;!&ndash;<div style="width: 40px">{{component.scaleSlider.scale*100}}%</div>&ndash;&gt;-->
-                <!--<div class="my-scale-slider" id="scale-slider">-->
-                    <!--<div class="my-slider-gauge" id="scale-gauge"></div>-->
-                <!--</div>-->
-                <!--<div class="iconfont" ng-click="component.scaleSlider.reSetScale()" style="cursor: pointer">-->
-                    <!--&#xe603;</div>-->
-            <!--</div>-->
-        <!--</div>-->
     </div>
 
     <!--右侧属性栏-->
     <div class="attribute-wrap" ng-controller="AttrCtrl"
          ng-class="{'my-bottom-show':bottomShown,'my-bottom-hide':!bottomShown,'top-menu-content-show':component.out.toolShow}">
-        <div class="attribute-view"></div>
-
         <!--右上方属性栏-->
         <div class="attribute-top-content" data-step="4" data-step-c1="5-7-9">
             <ul class="nav nav-tabs attribute-top-nav">
@@ -799,7 +782,7 @@
                         <div class="attr-item__cell-wrap lg" style="margin-top: 20px" ng-controller="ResourceCtrl">
                             <a href="javascript:;" class="btn btn-default upload-button mask-upload">
                                 <maskform></maskform>
-                                上传模具框图片<span class="iconfont">&#xe648;</span>
+                                设置模具框图片<span class="iconfont">&#xe648;</span>
                             </a>
                         </div>
                     </div>
@@ -4603,7 +4586,13 @@
 
         <!--右下方图层菜单-->
         <div class="attribute-bottom-content" data-step="5" data-step-c1="6-8">
-            <div class="attribute-bottom-content__title"><span>图层</span></div>
+            <div class="layer-menu-view--open" ng-click="showBottom()"><img src="../../public/ide/modules/ide/images/top.png"/></div>
+            <div class="attribute-bottom-content__title">
+                <span class="layer-menu-title">图层</span>
+                <div class="layer-menu-view--pack" ng-click="showBottom()">
+                    <img src="../../public/ide/modules/ide/images/down.png"/>
+                </div>
+            </div>
             <!--page-->
             <div class="bottom-layer-menu">
                 <div class="layer-menu-level layer-menu__page">

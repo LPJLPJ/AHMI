@@ -57,6 +57,15 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
         };
     }
 
+    $scope.showRight = function() {
+        $scope.$emit('ChangeShownArea', 1);
+    };
+
+    $scope.showBottom = function() {
+        $scope.$emit('ChangeShownArea', 2);
+    };
+
+
     function initProject(){
         $timeout(function () {
             ProjectService.getProjectTo($scope);
