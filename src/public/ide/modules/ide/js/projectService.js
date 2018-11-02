@@ -3496,6 +3496,38 @@ ideServices
 
             };
 
+            this.ChangeAttributePointerOffset= function (_option, _successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+                var posRotatePointX=_option.posRotatePointX;
+                var posRotatePointY = _option.posRotatePointY;
+
+                var fabDashboardObj = getFabricObject(selectObj.level.id,true);
+                //console.log(fabDashboardObj,fabDashboardObj.getWidth(),fabDashboardObj.getHeight(),fabDashboardObj.getScaleX(),fabDashboardObj.getScaleY());
+
+                selectObj.level.info.posRotatePointX=posRotatePointX;
+                selectObj.level.info.posRotatePointY=posRotatePointY;
+
+                var arg={
+                    posRotatePointX:posRotatePointX,
+                    posRotatePointY:posRotatePointY,
+                    // scaleX:fabDashboardObj.getScaleX(),
+                    // scaleY:fabDashboardObj.getScaleY(),
+                    callback:_successCallback
+                }
+                switch(selectObj.type){
+                    case Type.MyDashboard:
+                        selectObj.target.fire('changeDashboardPointerOffset',arg);
+                    break
+                    case Type.MyRotateImg:
+                        selectObj.target.fire('changeRotateImgPointerOffset',arg);
+                    break
+                }
+                // _successCallback()
+                //selectObj.target.fire('changeDashboardPointerOffset',arg);
+
+
+            };
+
             this.ChangeAttributeKnobSize = function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
                 var value=_option.knobSize;

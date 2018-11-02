@@ -1672,6 +1672,21 @@
                                    ng-keypress="component.dashboard.enterMinCoverAngle($event)"
                                    type="number">
                         </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">指针原点X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointX"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">指针原点Y</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointY"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div>
                         <div class="my-attr-item ">
                             <span class="my-attr-title">起始角度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2582,6 +2597,21 @@
                                    ng-model="component.object.level.info.initValue"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.rotateImg.enterInitValue($event)"/>
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">指针原点X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointX"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.rotateImg.enterRotateImgOffsetValue($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">指针原点Y</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointY"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.rotateImg.enterRotateImgOffsetValue($event)"
+                                   type="number">
                         </div>
 
                         <div class="my-attr-item lg">

@@ -114,6 +114,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterDashboardOffsetValue: enterDashboardOffsetValue,
                     enterBackgroundMode: enterBackgroundMode,
                     enterPointerLength: enterPointerLength,
+                    enterDashboardPointerPos:enterPointerOffset.bind(null,'dashboard'),
                     enterMinCoverAngle: enterMinCoverAngle,
                     enterMaxCoverAngle: enterMaxCoverAngle
                 },
@@ -1773,6 +1774,44 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     $scope.$emit('ChangeCurrentPage', oldOperate);
 
                 })
+
+            }
+        }
+
+        function enterPointerOffset(type,e) {
+            if (e.keyCode == 13) {
+                console.log(e,type)
+                var posRotatePointX = $scope.component.object.level.info.posRotatePointX||0;
+                var posRotatePointY = $scope.component.object.level.info.posRotatePointY||0;
+                var width = $scope.component.object.level.info.width;
+                var height = $scope.component.object.level.info.height;
+                
+                //判断输入是否合法
+                if (!_.isInteger(Number(posRotatePointX))||!_.isInteger(Number(posRotatePointY))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if (posRotatePointX < 0 || posRotatePointX > width || posRotatePointY < 0 || posRotatePointY > height) {
+                    toastr.warning('指针原点超出范围');
+                    restore();
+                    return;
+                }
+
+                
+
+                var option = {
+                    posRotatePointX: posRotatePointX,
+                    posRotatePointY:posRotatePointY
+                };
+                //console.log(option);
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                ProjectService.ChangeAttributePointerOffset(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+                
 
             }
         }

@@ -976,6 +976,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.maxCoverAngle=level.info.maxCoverAngle;
             }
 
+            this.posRotatePointX = level.info.posRotatePointX||0
+            this.posRotatePointY = level.info.posRotatePointY||0
+
             if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
                 this.backgroundColor=level.texList[0].slices[0].color;
 
@@ -1019,6 +1022,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeDashboardPointerOffset', function (arg) {
+                self.posRotatePointX = arg.posRotatePointX
+                self.posRotatePointY = arg.posRotatePointY
+                var _callback=arg.callback;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
 
             this.on('changeDashboardValue', function (arg) {
                 if(arg.hasOwnProperty('value')){
@@ -1250,8 +1262,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     }
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     //var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    //ctx.save()
+                    ctx.translate(-this.width/2+(this.posRotatePointX||0),-this.height/2+(this.posRotatePointY||0))
                     ctx.rotate(angleOfPointer*Math.PI/180);
                     ctx.scale(this.scaleX,this.scaleY);
+                    //ctx.restore()
                     ctx.fillStyle=this.pointerColor;
                     ctx.fillRect(
                         0,
@@ -1639,7 +1654,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxValue=level.info.maxValue;
             this.initValue=level.info.initValue;
             this.clockwise=level.info.clockwise;
-
+            this.posRotatePointX = level.info.posRotatePointX||0
+            this.posRotatePointY = level.info.posRotatePointY||0
 
             this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.imageElement) {
@@ -1675,6 +1691,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             })
+
+            this.on('changeRotateImgPointerOffset', function (arg) {
+                self.posRotatePointX = arg.posRotatePointX
+                self.posRotatePointY = arg.posRotatePointY
+                var _callback=arg.callback;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1686,6 +1712,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.clockwise==0){
                     rotateAngle = -rotateAngle;
                 }
+                ctx.translate(-this.width/2+(this.posRotatePointX||0),-this.height/2+(this.posRotatePointY||0))
                 ctx.rotate(rotateAngle);
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
