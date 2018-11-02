@@ -11,11 +11,6 @@
 
 body {
     width: 100%;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    -khtml-user-select: none;
-    user-select: none;
     border: none;
     font-family: SOURCEHANSANSCN-NORMAL;
     background-color: #f5f4f6;
@@ -209,7 +204,7 @@ a img {
 
 .project-operate__create-item > span {
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: 0;
     margin-left: 5px;
 }
 

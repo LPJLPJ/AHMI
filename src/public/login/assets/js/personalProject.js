@@ -1244,9 +1244,86 @@ $(function(){
             url:'/project/moveToClass',
             data:project,
             success:function(data){
-                console.log(data);
                 curPanel.remove();
             }
         })
     }
+
+    /*分享工程*/
+    var shareModal = $('#share-project-modal');
+
+    /*var socket = io(path||'');
+    socket.on('connect',function(){});*/
+
+    var shareButton = $('#share-button'),
+        shareUrl = $('#share-url'),
+        shareKey = $('#share-key'),
+        reddOnlyKye = $('#readOnly-key'),
+        shareWrap = $('#share-wrap'),
+        projectShared = false,
+        projectData = null,
+        sharedOwn = false;
+
+    $('#project-list').on('click','.share-project',function(){
+        var project = $(this).parents('.project-panel').attr('data-project');
+        projectData = JSON.parse(project);
+        var projectId = projectData._id;
+        var openUrl = window.location.origin+'/project/'+projectId+'/editor';
+        shareUrl.html("路径："+openUrl);
+        $.ajax({
+            type:'GET',
+            url:'/project/' + projectId + '/share',
+            success:function(data){
+                data = JSON.parse(data);
+                projectShared = data.shared;
+                sharedOwn = data.own;
+                shareKey.html("密码："+data.sharedKey);
+                reddOnlyKye.html("只读密码："+data.readOnlySharedKey);
+
+                if(projectShared){
+                    shareButton.html('取消分享');
+                    shareWrap.show();
+                }else{
+                    shareButton.html('开始分享');
+                    shareWrap.hide();
+                }
+            },
+            error:function(err){
+                console.log(err);
+                alert('加载出错');
+            }
+        });
+
+        shareModal.modal('show');
+    });
+
+    shareButton.on('click',function(){
+        var projectId = projectData._id;
+        projectShared = !projectShared;
+        $.ajax({
+            type:'POST',
+            url:'/project/' + projectId + '/share',
+            data:{
+                share:projectShared
+            },
+            success:function(data){
+                data = JSON.parse(data);
+                projectShared = data.shared;
+                sharedOwn = data.own;
+                shareKey.html("密码："+data.sharedKey);
+                reddOnlyKye.html("只读密码："+data.readOnlySharedKey);
+
+                if(projectShared){
+                    shareButton.html('取消分享');
+                    shareWrap.show();
+                }else{
+                    shareButton.html('开始分享');
+                    shareWrap.hide();
+                }
+            },
+            error:function(err){
+                console.log(err);
+            }
+        });
+    })
 });

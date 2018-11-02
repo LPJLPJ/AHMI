@@ -343,7 +343,15 @@ projectRoute.getProjectContent = function (req, res) {
 projectRoute.updateShare = function (req, res) {
 
     var projectId = req.params.id
-    var shareState = !!req.body.share
+    var shareState = req.body.share
+    if((typeof shareState) === 'string'){
+        if(shareState == 'true'){
+            shareState = true;
+        }else{
+            shareState = false;
+        }
+    }
+
     var userId = req.session.user && req.session.user.id;
 
     if (projectId && projectId != '') {

@@ -2,7 +2,6 @@ $(function () {
     var pathname = window.location.pathname
     var urlElems = pathname.split('/')
     $('#submit').click(function () {
-        console.log('click')
         var key = $('#sharedKey').val().trim()
         $.ajax({
             type:'post',

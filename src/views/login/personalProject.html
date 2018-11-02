@@ -72,7 +72,7 @@
                             <div class="project-item__hover-menu">
                                 <div class="hover-menu__item play-project">
                                     <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
-                                    <span>运行工程</span>
+                                    <span>打开工程</span>
                                 </div>
                                 <div class="hover-menu__item edit-project">
                                     <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
@@ -110,7 +110,6 @@
                                     <span>编辑信息</span>
                                 </div>
                                 <p class="hover-menu__item2">
-                                    <span class="hover-menu__share-project share-project"></span>
                                     <span class="hover-menu__delete-project delete-folder"></span>
                                 </p>
                             </div>
@@ -296,6 +295,28 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="confirmReleaseBtn">确定</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!--分享工程-->
+    <div class="modal fade" id="share-project-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">分享工程</h4>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-default" id="share-button">开启分享</button>
+                    <div id="share-wrap" style="margin-top: 20px">
+                        <p id="share-url"></p>
+                        <p id="share-key"></p>
+                        <p id="readOnly-key"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="share-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                 </div>
             </div>
         </div>
