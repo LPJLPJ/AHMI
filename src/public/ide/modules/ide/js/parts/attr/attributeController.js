@@ -267,7 +267,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     rotateImgClockwise: [
                         {wise:1,name:'顺时针'},
                         {wise:0,name:'逆时针'}
-                    ]
+                    ],
+                    enterRotateImgPointerPos:enterPointerOffset.bind(null,'rotateImg')
                 },
                 //alpha
                 alphaImg: {
