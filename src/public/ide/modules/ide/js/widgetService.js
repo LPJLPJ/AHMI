@@ -976,6 +976,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.maxCoverAngle=level.info.maxCoverAngle;
             }
 
+            this.posRotatePointX = level.info.posRotatePointX||0
+            this.posRotatePointY = level.info.posRotatePointY||0
+
             if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
                 this.backgroundColor=level.texList[0].slices[0].color;
 
@@ -1007,6 +1010,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
             }
 
+            this.on('OnRelease', function () {
+                self.posRotatePointX = level.info.posRotatePointX
+                self.posRotatePointY = level.info.posRotatePointY
+            });
+
             this.on('changeDashboardOffsetValue', function (arg) {
                 if(arg.offsetValue||arg.offsetValue==0){
                     self.offsetValue=arg.offsetValue;
@@ -1019,6 +1027,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeDashboardPointerOffset', function (arg) {
+                self.posRotatePointX = arg.posRotatePointX
+                self.posRotatePointY = arg.posRotatePointY
+                var _callback=arg.callback;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
 
             this.on('changeDashboardValue', function (arg) {
                 if(arg.hasOwnProperty('value')){
@@ -1230,28 +1247,31 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     }
                     var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
                     angleOfPointer=angleOfPointer+rotateAngle;
-                    if(!(this.minCoverAngle==this.maxCoverAngle)){
-                        var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
-                        var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.moveTo(0,0);
-                        ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
-                        ctx.closePath();
-                        ctx.fillStyle='rgba(244,244,244,0.3)';
-                        ctx.fill();
-                        ctx.restore();
-                        ctx.beginPath();
-                        ctx.moveTo(0,0);
-                        ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
-                        ctx.closePath();
-                        //ctx.stroke();
-                        ctx.clip();
-                    }
+                    // if(!(this.minCoverAngle==this.maxCoverAngle)){
+                    //     var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                    //     var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                    //     ctx.save();
+                    //     ctx.beginPath();
+                    //     ctx.moveTo(0,0);
+                    //     ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
+                    //     ctx.closePath();
+                    //     ctx.fillStyle='rgba(244,244,244,0.3)';
+                    //     ctx.fill();
+                    //     ctx.restore();
+                    //     ctx.beginPath();
+                    //     ctx.moveTo(0,0);
+                    //     ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
+                    //     ctx.closePath();
+                    //     //ctx.stroke();
+                    //     ctx.clip();
+                    // }
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     //var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    //ctx.save()
+                    ctx.translate(-this.width/2+(this.posRotatePointX||0),-this.height/2+(this.posRotatePointY||0))
                     ctx.rotate(angleOfPointer*Math.PI/180);
                     ctx.scale(this.scaleX,this.scaleY);
+                    //ctx.restore()
                     ctx.fillStyle=this.pointerColor;
                     ctx.fillRect(
                         0,
@@ -1263,16 +1283,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.restore();
                 }
                 //将图片超出canvas的部分裁剪
-                this.clipTo = function (ctx) {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.rect(-this.width / 2,
-                        -this.height / 2,
-                        this.width,
-                        this.height);
-                    ctx.closePath();
-                    ctx.restore();
-                };
+                // this.clipTo = function (ctx) {
+                //     ctx.save();
+                //     ctx.beginPath();
+                //     ctx.rect(-this.width / 2,
+                //         -this.height / 2,
+                //         this.width,
+                //         this.height);
+                //     ctx.closePath();
+                //     ctx.restore();
+                // };
 
             }
             catch(err){
@@ -1639,7 +1659,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxValue=level.info.maxValue;
             this.initValue=level.info.initValue;
             this.clockwise=level.info.clockwise;
-
+            this.posRotatePointX = level.info.posRotatePointX||0
+            this.posRotatePointY = level.info.posRotatePointY||0
 
             this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.imageElement) {
@@ -1675,6 +1696,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             })
+
+            this.on('changeRotateImgPointerOffset', function (arg) {
+                self.posRotatePointX = arg.posRotatePointX
+                self.posRotatePointY = arg.posRotatePointY
+                var _callback=arg.callback;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1686,15 +1717,20 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.clockwise==0){
                     rotateAngle = -rotateAngle;
                 }
+                ctx.translate(-this.width/2,-this.height/2)
+                var posRotatePointX = this.posRotatePointX||0
+                var posRotatePointY = this.posRotatePointY||0
+                ctx.translate(posRotatePointX,posRotatePointY)
                 ctx.rotate(rotateAngle);
+                ctx.translate(-posRotatePointX,-posRotatePointY)
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
+                   0,
+                    0,
                     this.width ,
                     this.height);
                 if (this.imageElement){
-                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    ctx.drawImage(this.imageElement, 0, 0,this.width,this.height);
                 }
             }
             catch(err){
