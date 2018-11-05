@@ -1010,6 +1010,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
             }
 
+            this.on('OnRelease', function () {
+                self.posRotatePointX = level.info.posRotatePointX
+                self.posRotatePointY = level.info.posRotatePointY
+            });
+
             this.on('changeDashboardOffsetValue', function (arg) {
                 if(arg.offsetValue||arg.offsetValue==0){
                     self.offsetValue=arg.offsetValue;

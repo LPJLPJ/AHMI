@@ -3142,6 +3142,11 @@ ideServices
                         level.info.height = (Math.abs(fabNode.getWidth()-width)<=1)?width:Math.round(fabNode.getWidth());
                     }
                 }
+                else if(level.type==Type.MyDashboard||level.type==Type.MyRotateImg){
+                    //重置旋转中心
+                    level.info.posRotatePointX = Math.round(level.info.width/2)
+                    level.info.posRotatePointY = Math.round(level.info.height/2)
+                }
 
 
             }
@@ -4793,13 +4798,41 @@ ideServices
                         fabWidget.set({height:_option.height,scaleY:1});
                         currentWidget.info.height = _option.height;
                     }
-                    subLayerNode.renderAll();
+                    
+                    var arg={
+                        posRotatePointX:Math.round(currentWidget.info.width/2),
+                        posRotatePointY:Math.round(currentWidget.info.height/2),
+                        // scaleX:fabDashboardObj.getScaleX(),
+                        // scaleY:fabDashboardObj.getScaleY(),
+                        callback:function(){
+                            OnWidgetSelected(currentWidget, function () {
+                                _successCallback && _successCallback(currentOperate);
+        
+                            });
+                        }
+                    }
+                    switch(object.type){
+                        case Type.MyDashboard:
+                            object.level.info.posRotatePointX = arg.posRotatePointX
+                            object.level.info.posRotatePointY = arg.posRotatePointY
+                            object.target.fire('changeDashboardPointerOffset',arg);
+                        break
+                        case Type.MyRotateImg:
+                            object.level.info.posRotatePointX = arg.posRotatePointX
+                            object.level.info.posRotatePointY = arg.posRotatePointY
+                            object.target.fire('changeRotateImgPointerOffset',arg);
+                        break
+                        default:
+                            subLayerNode.renderAll();
 
-                    // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    OnWidgetSelected(currentWidget, function () {
-                        _successCallback && _successCallback(currentOperate);
+                            // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                            OnWidgetSelected(currentWidget, function () {
+                                _successCallback && _successCallback(currentOperate);
+        
+                            });
+                    }
 
-                    });
+                    
                 }
 
 
