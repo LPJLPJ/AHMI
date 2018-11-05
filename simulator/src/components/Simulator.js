@@ -3761,7 +3761,7 @@ module.exports = React.createClass({
             if(clockwise==0){
                 arc = -arc;
             }
-            this.drawRotateElem(curX, curY, width, height,posRotatePointX,posRotatePointY, width, height, arc, widget.texList[0].slices[0], -0.5, -0.5, widget.subType,null,null,false,this.pixelRatio);
+            this.drawRotateElem(curX, curY, width, height,posRotatePointX,posRotatePointY, width, height, arc, widget.texList[0].slices[0], -posRotatePointX/width, -posRotatePointY/height, widget.subType,null,null,false,this.pixelRatio);
         }
 
         cb && cb();
@@ -4088,11 +4088,11 @@ module.exports = React.createClass({
             //offctx.stroke();
             offctx.clip();
         }
-        if (!(type && type == 'MyRotateImg')) {
-            offctx.beginPath();
-            offctx.rect(x, y, w, h);
-            offctx.clip();
-        }
+        // if (!(type && type == 'MyRotateImg')) {
+        //     offctx.beginPath();
+        //     offctx.rect(x, y, w, h);
+        //     offctx.clip();
+        // }
 
         offctx.translate(x + pointerOffsetX, y + pointerOffsetY);
         if(verticalPixelScale){
