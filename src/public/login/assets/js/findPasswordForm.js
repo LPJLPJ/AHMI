@@ -35,7 +35,7 @@ $(function () {
     $('#captcha-input').on('keyup', function () {
         var captchaVal = $(this).val()
         if (captchaVal==""){
-            $('#captcha-verify').html(errMessages.captcha.empty)
+            $('#captcha-verify').html(errMessages.captcha.empty);
         }else{
             $('#captcha-verify').html('')
         }
@@ -59,16 +59,16 @@ $(function () {
                 success: function (data, status, xhr) {
                     $('#captcha-verify').html(successMessages.general.ok)
                     $('#captcha-img').attr('src','/captcha');
-                    $('#submit').attr('disabled',false)
+                    $('#submit').attr('disabled',true)
                 },
                 error: function (err, status, xhr) {
                     //error
-                    switch (err.responseText){
+                    switch (err.responseJSON.errMsg){
                         case 'captcha error':
                             $('#captcha-verify').html(errMessages.captcha.error)
                             break;
                         case 'user not found':
-                            $('#captcha-verify').html(errMessages.mail.error)
+                            $('#mail-verify').html(errMessages.mail.error)
                             break;
                         default:
                             $('#captcha-verify').html(errMessages.general.error)

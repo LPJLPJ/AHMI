@@ -6,65 +6,59 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
     <title><%= title %></title>
+    <link rel="stylesheet" href="/public/login/assets/fonts/iconfont/iconfont.css">
+    <link rel="stylesheet" href="/public/login/assets/css/login_register.css">
+
     <script src="/public/login/assets/js/jquery-1.10.2.js"></script>
-    <!--  Core Bootstrap Script -->
-    <script src="/public/login/assets/js/bootstrap.js"></script>
-
-    <!-- BOOTSTRAP CORE STYLE CSS -->
-    <link href="/public/login/assets/css/bootstrap.css" rel="stylesheet"/>
-    <!-- FONT AWESOME CSS -->
-    <!--<link href="/public/login/assets/css/font-awesome.min.css" rel="stylesheet"/>-->
-
-    <link href="/public/login/assets/css/style.css" rel="stylesheet"/>
-    <link href="/public/login/assets/css/signupform.css" rel="stylesheet" />
     <script src="/public/login/assets/js/findPasswordForm.js"></script>
-
-
 </head>
 <body>
 <div class="content">
-<div class="navbar navbar-inverse " id="menu">
-    <div class="container container-zyj1">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/"><img class="logo-custom" src="/public/login/assets/img/速显微.png" alt=""/></a>
-        </div>
-        <div class="navbar-collapse collapse move-me findback">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="/user/signup">注册</a></li>
-                <li><a href="/user/login">登录</a></li>
-            </ul>
+    <header class="navbar">
+        <div class="navbar-brand">
+            <a href="/">
+                <img src="/public/login/assets/img/首页-公司LOGO.png" />
+            </a>
         </div>
 
+        <nav class="navbar-nav">
+            <ul class="navbar-nav-link">
+                <li><a href="/">首页</a></li>
+                <li><a href="/download/index.html">下载</a></li>
+                <li><a href="/blog/">博客</a></li>
+                <li><a href="http://docs.graphichina.com/">教程</a></li>
+                <li><a href="/update-log">更新日志</a></li>
+                <li><a href="http://www.graphichina.com/Contact/Default.aspx">联系我们</a></li>
+                <li><a href="/user/login">登录</a></li>
+                <li><a href="/user/signup"><button class="btn btn-primary btn-register">注册</button></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="switch">
+            <a class="switch-btn"><%= title %></a>
+        </div>
+        <form id="form" class="form">
+            <div class="form-item">
+                <i class="iconfont icon-yonghuming form-item-icon"></i>
+                <input  id="mail" type='text' placeholder="邮箱" class="form-control" required/>
+                <span id="mail-verify" class="verify-result"></span>
+            </div>
+            <div class="form-item">
+                <i class="iconfont icon-yanzhengma2 form-item-icon"></i>
+                <input id="captcha-input" type="text" name="verify-code" placeholder="验证码" />
+                <span id="captcha-verify" class="verify-result"></span>
+            </div>
+            <div class="form-captcha">
+                <img id="captcha-img" src="/captcha" />
+                <span class="change-captcha"><a id='change-captcha' class="noselelct" style="cursor: pointer;">换一张</a></span>
+            </div>
+            <div class="form-button">
+                <button id="submit" type="submit" class="btn btn-primary btn-register">提交</button>
+            </div>
+        </form>
     </div>
 </div>
-<!--NAVBAR SECTION END-->
-<div class="subtitle" style="text-align: center">
-    <h2><%= title %></h2>
-</div>
-<div class="form-wrapper">
-    <% include findpasswordform.html %>
-</div>
-</div>
-
-
-<div class="short-footer">
-    <footer>
-        <% include ../all/footer.html %>
-    </footer>
-
-</div>
-
-<!-- FOOTER SECTION END-->
-
-<!--  Jquery Core Script -->
-
-
-<!--注册-->
-
-</body >
-</html >
+</body>
+</html>
