@@ -32,12 +32,22 @@ export default {
       const projectId = yield select(state => state.global.projectId);
       const response = yield call(queryProject, projectId);
       if (response.data) {
+        if(!response.data.content){
+          notification.open({
+            message: "工程数据为空",
+            description: "工程数据为空",
+            duration: 0,
+          });
+          return;
+        }
+
         yield put({
           type: 'save',
           payload: {
             project: response.data,
           }
         })
+
       } else {
         notification.open({
           message: "获取工程数据出错",
