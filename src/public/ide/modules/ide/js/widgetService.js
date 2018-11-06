@@ -1011,8 +1011,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }
 
             this.on('OnRelease', function () {
+                // level.info.posRotatePointX = Math.round(level.info.width/2)
+                // level.info.posRotatePointY = Math.round(level.info.height/2)
                 self.posRotatePointX = level.info.posRotatePointX
                 self.posRotatePointY = level.info.posRotatePointY
+                //subLayerNode.renderAll();
+                // this.fire('changeDashboardPointerOffset',{
+                //     posRotatePointX:level.info.posRotatePointX,
+                //     posRotatePointY:level.info.posRotatePointY
+                // })
             });
 
             this.on('changeDashboardOffsetValue', function (arg) {
@@ -1268,7 +1275,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     //var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
                     //ctx.save()
-                    ctx.translate(-this.width/2+(this.posRotatePointX||0),-this.height/2+(this.posRotatePointY||0))
+                    ctx.translate((-this.width/2+(this.posRotatePointX||0)/this.scaleX),(-this.height/2+(this.posRotatePointY||0)/this.scaleY))
                     ctx.rotate(angleOfPointer*Math.PI/180);
                     ctx.scale(this.scaleX,this.scaleY);
                     //ctx.restore()
@@ -1277,7 +1284,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         0,
                         0,
                         this.width/2,
-                        this.width/2
+                        this.height/2
                     );
                     ctx.drawImage(this.pointerImageElement, 0, 0,this.pointerImageElement.width/this.scaleX,this.pointerImageElement.height/this.scaleY);
                     ctx.restore();
@@ -1697,6 +1704,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             })
 
+            this.on('OnRelease', function () {
+                // level.info.posRotatePointX = Math.round(level.info.width/2)
+                // level.info.posRotatePointY = Math.round(level.info.height/2)
+                self.posRotatePointX = level.info.posRotatePointX
+                self.posRotatePointY = level.info.posRotatePointY
+                //subLayerNode.renderAll();
+                // this.fire('changeDashboardPointerOffset',{
+                //     posRotatePointX:level.info.posRotatePointX,
+                //     posRotatePointY:level.info.posRotatePointY
+                // })
+            });
+
             this.on('changeRotateImgPointerOffset', function (arg) {
                 self.posRotatePointX = arg.posRotatePointX
                 self.posRotatePointY = arg.posRotatePointY
@@ -1717,12 +1736,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.clockwise==0){
                     rotateAngle = -rotateAngle;
                 }
+                ctx.save()
+                
                 ctx.translate(-this.width/2,-this.height/2)
+                ctx.scale(1/this.scaleX,1/this.scaleY)
                 var posRotatePointX = this.posRotatePointX||0
                 var posRotatePointY = this.posRotatePointY||0
                 ctx.translate(posRotatePointX,posRotatePointY)
+                
                 ctx.rotate(rotateAngle);
                 ctx.translate(-posRotatePointX,-posRotatePointY)
+                ctx.scale(this.scaleX,this.scaleY)
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
                    0,
@@ -1732,6 +1756,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if (this.imageElement){
                     ctx.drawImage(this.imageElement, 0, 0,this.width,this.height);
                 }
+                ctx.restore()
             }
             catch(err){
                 console.log('错误描述',err);
