@@ -1501,6 +1501,9 @@ module.exports = React.createClass({
                 case 'MyAnimation':
                     this.drawAnimation(curX, curY, widget, options, cb);
                     break;
+                case 'MyTouchTrack':
+                    this.drawTouchTrack(curX, curY, widget, options, cb);
+                    break;
                 case 'MyAlphaImg':
                     this.drawAlphaImg(curX, curY, widget, options, cb);
                     break;
@@ -1603,6 +1606,9 @@ module.exports = React.createClass({
                 break;
             case 'MyAnimation':
                 this.paintAnimation(curX, curY, widget, options, cb);
+                break;
+            case 'MyTouchTrack':
+                this.paintTouchTrack(curX,curY,widget,options,cb);
                 break;
             case 'MyAlphaImg':
                 this.paintAlphaImg(curX,curY,widget,options,cb);
@@ -3758,6 +3764,47 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+    drawTouchTrack: function (curX, curY, widget, options, cb) {
+        // var lowAlarm = widget.info.lowAlarmValue;
+        // var highAlarm = widget.info.highAlarmValue;
+        // var minValue = widget.info.minValue;
+        // var maxValue = widget.info.maxValue;
+        var curValue = this.getValueByTagName(widget.tag, 0) ;
+        // if (curValue > maxValue) {
+        //     curValue = maxValue
+        // } else if (curValue < minValue) {
+        //     curValue = minValue;
+        // }
+        widget.curValue = curValue;
+        // this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
+        widget.oldValue = curValue;
+    },
+    paintTouchTrack: function (curX, curY, widget, options, cb) {
+        var offctx = this.offctx
+        var width = widget.info.width;
+        var height = widget.info.height;
+        if (widget.texList) {
+
+            //pointer
+
+            //var initValue = widget.info.initValue;
+            // var curArc = widget.info.value;
+            var curValue = widget.curValue||0;
+            var x = Math.round(curValue /10000)
+            var y = curValue%10000
+            var pointL = Math.round(Math.min(width,height)/10)
+            offctx.save()
+            
+            this.drawBg(curX,curY,width,height,widget.texList[0].slices[0].imgSrc,widget.texList[0].slices[0].color,offctx)
+
+            this.drawBg(curX+x-pointL/2,curY+y-pointL/2,pointL,pointL,widget.texList[0].slices[1].imgSrc,widget.texList[0].slices[1].color,offctx)
+            offctx.restore()
+
+        }
+
+        cb && cb();
+
+    },
     drawAlphaImg: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
@@ -4404,6 +4451,14 @@ module.exports = React.createClass({
                 this.handleSlideBlockInnerPress(widget, x, y);
 
                 break;
+            case 'MyTouchTrack':
+
+                x = x - left;
+                y = y - top;
+                //console.log('relative rect',x,y)
+                this.handleTouchTrackInnerPress(widget, x, y);
+
+                break;
             case 'MyInputKeyboard':
                 //relative pos
                 var keys = widget.info.keys;
@@ -4512,6 +4567,13 @@ module.exports = React.createClass({
         curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
         widget.curValue = curValue;
         // console.log(curValue,widget.info);
+    },
+    handleTouchTrackInnerPress:function(widget,x,y){
+        var curValue = x*10000+y
+        var curTag = this.findTagByName(widget.tag)
+        if  (curTag){
+            this.setTagByTag(curTag,curValue)
+        }
     },
     handlePress: function (e) {
         // console.log(e);

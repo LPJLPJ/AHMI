@@ -163,6 +163,29 @@ ideServices
                     }]
                 }]
             },
+            defaultTouchTrack={
+                info:{
+                    width: 100,
+                    height: 100,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center'
+                    
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(150,150,150,1)',
+                        imgSrc:'',
+                        name:'背景'
+                    },
+                    {
+                        color:'rgba(0,150,0,1)',
+                        imgSrc:'',
+                        name:'指示'
+                    }]
+                }]
+            },
             defaultAlphaImage={
                 info:{
                     width: 100,
@@ -782,6 +805,21 @@ ideServices
                 info: info,
                 name: 'NewRotateImg',
                 type: Type.MyRotateImg,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList
+            }
+        };
+
+        this.getDefaultTouchTrack=function(){
+            var info = _.cloneDeep(defaultTouchTrack.info);
+            var texList=_.cloneDeep(defaultTouchTrack.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTouchTrack',
+                type: Type.MyTouchTrack,
                 expand:true,
                 url:'',
                 zIndex:0,

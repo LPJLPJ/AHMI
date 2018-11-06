@@ -2054,6 +2054,110 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyDateTime.async = true;
 
 
+    //my touch track
+    fabric.MyTouchTrack = fabric.util.createClass(fabric.Object, {
+        type: Type.MyTouchTrack,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.backgroundColor=level.texList[0].slices[0].color;
+            
+            this.pointerColor = level.texList[0].slices[1].color
+
+
+            this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            this.pointerElement = ResourceService.getResourceFromCache(level.texList[0].slices[1].imgSrc);
+            if (this.imageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.backgroundColor=tex.slices[0].color;
+
+                self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                
+                self.pointerColor = tex.slices[1].color
+
+                self.pointerElement = ResourceService.getResourceFromCache(level.texList[0].slices[1].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            // this.on('changeInitValue',function(arg){
+            //     var _callback=arg.callback;
+
+            //     if(arg.hasOwnProperty('initValue')){
+            //         self.initValue=arg.initValue;
+            //     }else if(arg.hasOwnProperty('maxValue')){
+            //         self.maxValue=arg.maxValue;
+            //     }else if(arg.hasOwnProperty('minValue')){
+            //         self.minValue=arg.minValue;
+            //     }
+            //     var subLayerNode=CanvasService.getSubLayerNode();
+            //     subLayerNode.renderAll();
+            //     _callback&&_callback();
+            // })
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                // ctx.rotate((Math.PI/180)*this.initValue);
+                ctx.save()
+                
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.imageElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+                var pointerL = Math.min(this.width,this.height)/10
+                ctx.fillStyle = this.pointerColor
+                ctx.fillRect(-pointerL/2,-pointerL/2,pointerL,pointerL)
+                if(this.pointerElement){
+                    ctx.drawImage(this.pointerElement, -pointerL / 2, -pointerL/ 2,pointerL,pointerL);
+                }
+                ctx.restore()
+            }
+            catch(err){
+                ctx.restore()
+                console.log('错误描述',err);
+                toastr.warning('渲染透明图出错');
+            }
+        }
+    });
+    fabric.MyTouchTrack.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyTouchTrack(level, option));
+    };
+    fabric.MyTouchTrack.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                imageElement:this.imageElement,
+                backgroundColor:this.backgroundColor
+            });
+        }
+    })(fabric.MyTouchTrack.prototype.toObject);
+    fabric.MyTouchTrack.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyTouchTrack(level, object));
+    };
+    fabric.MyTouchTrack.async = true;
+
     //my alpha img
     //rotateImg
     fabric.MyAlphaImg = fabric.util.createClass(fabric.Object, {
