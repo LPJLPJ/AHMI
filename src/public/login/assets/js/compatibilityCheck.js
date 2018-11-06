@@ -8,6 +8,7 @@ $(function () {
     var curIDEVersion = window.ideVersion
 
     var compatibiltyObj = {
+        '1.10.7':'1.5.0',
         '1.10.6':'1.5.0',
         '1.10.5':'1.4.0',
         '1.10.4':'1.4.0',

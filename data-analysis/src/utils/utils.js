@@ -614,7 +614,6 @@ class TextureSizeCalculator {
   // 计算
   calcSize() {
     const {texture} = this;
-    console.log('haha', this.images);
     this.totalSize = 0;
     for (let i = 0, il = texture.length; i < il; i++) {
       this.totalSize += texture[i].getSize();
