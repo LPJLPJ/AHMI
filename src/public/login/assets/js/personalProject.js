@@ -948,7 +948,12 @@ $(function(){
             }else{
                 project.resolution = resolution.val().trim();
             }
-            project.ideVersion = ideVersion.val().trim();
+
+            if(ideVersion.val()){
+                project.ideVersion = ideVersion.val().trim();
+            }else{
+                project.ideVersion = '';
+            }
             project.supportTouch = supportTouch.val().trim();
             var updateSuccess = false;
             if (local){

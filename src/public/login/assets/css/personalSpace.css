@@ -62,7 +62,7 @@ a img {
 }
 
 /*顶部导航*/
-.project-top-nav{
+.project-top-nav {
     width: 100%;
     min-width: 1106px;
     height: 68px;
@@ -70,17 +70,17 @@ a img {
     border-bottom: 1px solid #dcdcdc;
 }
 
-.index-top-nav{
+.index-top-nav {
     width: 100%;
     height: 100%;
     line-height: 68px;
 }
 
-.top-nav__logo{
+.top-nav__logo {
     margin-left: 60px;
 }
 
-.top-nav__menu-list{
+.top-nav__menu-list {
     height: 68px;
     line-height: 68px;
     float: right;
@@ -88,23 +88,23 @@ a img {
     padding: 0;
 }
 
-.top-menu__item{
+.top-menu__item {
     display: inline-block;
     margin-right: 25px;
 }
 
-.top-menu__item>a{
+.top-menu__item > a {
     font-size: 16px;
     color: #898989;
     font-weight: 500;
     cursor: pointer;
 }
 
-.top-menu__item>a:hover{
+.top-menu__item > a:hover {
     color: #005599;
 }
 
-.top-nav__personal-space{
+.top-nav__personal-space {
     width: 140px;
     height: 36px;
     line-height: 34px;
@@ -118,17 +118,16 @@ a img {
     background-color: #005599;
 }
 
-.top-nav__personal-space>span{
+.top-nav__personal-space > span {
     display: inline-block;
     font-size: 16px;
     color: white;
     font-weight: 500;
 }
 
-.top-nav__personal-space>img{
+.top-nav__personal-space > img {
     vertical-align: -5px;
 }
-
 
 /*拖拽上传*/
 .wrapper {
@@ -281,7 +280,7 @@ a img {
     position: relative;
 }
 
-.project-thumb-box.thumb-img{
+.project-thumb-box.thumb-img {
     width: 220px;
     height: 180px;
     margin: 10px auto;
@@ -289,7 +288,7 @@ a img {
     text-align: center;
 }
 
-.project-thumb-box.thumb-img > img{
+.project-thumb-box.thumb-img > img {
     width: 160px;
     height: 160px;
 }
@@ -379,7 +378,6 @@ a img {
     width: 100%;
     height: 64px;
     line-height: 64px;
-    text-align: center;
     font-size: 18px;
     font-weight: 200;
     color: #898989;
@@ -391,9 +389,8 @@ a img {
     margin: 0 !important;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    white-space: nowrap;
+    text-align: center;
 }
 
 .project-item_folder-title {
@@ -426,66 +423,68 @@ a img {
 
 /*上传*/
 #updater_wrapper {
-    position:absolute;
-    min-width:1050px;
-    min-height:660px;
-    height:100%;
-    width:100%;
+    position: absolute;
+    min-width: 1050px;
+    min-height: 660px;
+    height: 100%;
+    width: 100%;
     z-index: 999;
-    top:0;
-    bottom:0;
+    top: 0;
+    bottom: 0;
     overflow: auto;
-    background-color: rgba(15,56,76,0.9);
+    background-color: rgba(15, 56, 76, 0.9);
     display: none;
 }
 
-#updater_wrapper .displayInfo{
+#updater_wrapper .displayInfo {
     position: fixed;
-    top:50%;
-    left:50%;
+    top: 50%;
+    left: 50%;
     margin-left: -200px;
-    margin-top:-10px;
+    margin-top: -10px;
 }
 
-#myprogressBackground{
-    width:400px;
+#myprogressBackground {
+    width: 400px;
     height: 20px;
-    border:1px #ddd solid;
-    background-color:#e0e0e0;
+    border: 1px #ddd solid;
+    background-color: #e0e0e0;
     padding: 1px;
     border-radius: 3px;
 }
 
-#myprogress{
+#myprogress {
     width: 35%;
     height: 100%;
-    background-color:#00bfff;
+    background-color: #00bfff;
     border-radius: 3px;
 }
 
-#updateInfoText{
-    color:#ffffff;
+#updateInfoText {
+    color: #ffffff;
 }
 
-#filedrag.hover{
-    border:1px dashed #333;
+#filedrag.hover {
+    border: 1px dashed #333;
     cursor: default;
 }
 
-.templates-container{
+.templates-container {
     min-height: 300px;
 }
 
-.templates-tools-getmore{
-    float:right;
-    margin-right:1em;
+.templates-tools-getmore {
+    float: right;
+    margin-right: 1em;
     text-decoration: none;
-    color:black;
+    color: black;
 }
-.templates-tools-getmore:hover{
+
+.templates-tools-getmore:hover {
     text-decoration: none;
 }
-.createPro{
+
+.createPro {
     margin-left: 20px;
     margin-top: -20px;
     cursor: pointer;
@@ -495,41 +494,43 @@ a img {
 .compatibility-ok {
     color: #0fff3e;
 }
-.compatibility-warning{
+
+.compatibility-warning {
     color: #ffcd06;
 }
 
 /*模态框*/
-.modal-title{
+.modal-title {
     text-align: center;
 }
 
-.modal-input,.modal-label{
+.modal-input, .modal-label {
     height: 30px;
     line-height: 2em;
     text-align: left;
     vertical-align: middle;
 }
 
-.modal-input{
+.modal-input {
     padding: 0px 10px;
     border-radius: 5px;
-    border:1px solid #A9A9A9;
-    color: rgba(0,0,0,.7);
+    border: 1px solid #A9A9A9;
+    color: rgba(0, 0, 0, .7);
     outline: none;
-}
-.modal-text{
-    padding: 5px 10px;
-    border:1px solid #A9A9A9;
-    border-radius: 5px;
-    color: rgba(0,0,0,.7);
-    outline: none;
-    resize:vertical;
 }
 
-.modal-row{
+.modal-text {
+    padding: 5px 10px;
+    border: 1px solid #A9A9A9;
+    border-radius: 5px;
+    color: rgba(0, 0, 0, .7);
+    outline: none;
+    resize: vertical;
+}
+
+.modal-row {
     width: 555px;
-    height:50px;
+    height: 50px;
     margin-bottom: 20px;
 }
 
