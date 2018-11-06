@@ -183,7 +183,7 @@ projectRoute.getProjectById = function (req, res) {
                 // res.render('ide/index.html')
                 renderIDEEditorPageWithResources(res, ideVersion)
             } else if (!userId) {
-                res.render('login/login.html', {
+                res.render('login/login_new.html', {
                     title: '重新登录'
                 });
             } else {
@@ -225,7 +225,7 @@ projectRoute.getProjectTreeById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session && req.session.user && req.session.user.id;
     if (!userId) {
-        res.render('login/login.html', {
+        res.render('login/login_new.html', {
             title: '重新登录'
         })
     } else {
@@ -271,7 +271,7 @@ projectRoute.renderDataAnalysis = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session && req.session.user && req.session.user.id;
     if (!userId) {
-        res.render('login/login.html', {
+        res.render('login/login_new.html', {
             title: '重新登录'
         })
     } else {
