@@ -239,7 +239,34 @@
         </div>
     </div>
 </div>
-
+<!--工程版本-->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">IDE编辑器检测到更新：<span id="update-new-version"></span></h4>
+            </div>
+            <div class="modal-body update-options-body">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="update-options" id="update-option-1" class="update-option" value='1' autocomplete="off" > 不升级，打开旧版本
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="update-options" id="update-option-2" class="update-option" value='2' autocomplete="off"> 保存副本，升级工程
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="update-options" id="update-option-3" class="update-option" value='3' autocomplete="off"> 不保存副本，升级工程
+                </label>
+                <div >
+                    <span class="update-alert"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="updateConfirmBtn">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="updateCancelBtn">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     //        for local
