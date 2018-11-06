@@ -397,6 +397,7 @@ body {
     height: calc(100% - 30px);
     box-sizing: border-box;
     position: relative;
+    overflow-y: auto;
 }
 
 .view-wrap{
