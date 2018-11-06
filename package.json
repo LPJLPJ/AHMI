@@ -1,6 +1,6 @@
 {
     "name": "AHMI-IDE",
-    "version": "1.10.6",
+    "version": "1.10.7",
     "description": "",
     "main": "./views/login/personalProject.html",
     "scripts": {
@@ -79,5 +79,5 @@
         "webpack-cli": "^3.0.8",
         "webpack-dev-server": "^3.1.4"
     },
-    "build": "10.19.15.2"
+    "build": "11.6.14.32"
 }

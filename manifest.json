@@ -1,6 +1,6 @@
 {
     "name": "AHMI_IDE",
-    "version": "1.10.6",
+    "version": "1.10.7",
     "author": "graphichina",
     "manifestUrl": "https://test.graphichina.com/checkUpdate/manifest.json",
     "packages": {
@@ -14,5 +14,5 @@
             "url": "https://test.graphichina/releases/updapp/linux32/updFiles.tar.gz"
         }
     },
-    "build": "10.19.15.2"
+    "build": "11.6.14.32"
 }
