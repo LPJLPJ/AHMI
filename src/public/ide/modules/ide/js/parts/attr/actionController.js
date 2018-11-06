@@ -433,7 +433,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 EMPTY:"操作符不能为空",
                 NOT_NUMBER:"操作数2的值必须为数字类型",
                 NEGATIVE:'值不能是负数',
-                POSITIVE_INTEGER:'值只能是非0正整数'
+                NO_ZERO_INTEGER:'值只能是非0整数'
             };
             var getTagValueType = function(tagName){
                 for(var i=0,il=tags.length;i<il;i++){
@@ -501,10 +501,10 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                         }
                         break;
                     case 'GOTO':
-                        var integerReg = /^[1-9]\d*$/;
+                        var integerReg = /^-?[1-9]\d*$/;
                         if(!integerReg.test(cmd[2].value)){
                             validateArr[index].pass = false;
-                            validateArr[index].tooltip = errTooltip['POSITIVE_INTEGER'];
+                            validateArr[index].tooltip = errTooltip['NO_ZERO_INTEGER'];
                             pass = false;
                         }
                         break;
