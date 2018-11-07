@@ -149,7 +149,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
-                <h4 class="modal-title" id="myModalLabel">工程选项</h4>
+                <h4 class="modal-title">工程选项</h4>
             </div>
             <div class="modal-body">
                 <div class="modal-row">
@@ -226,15 +226,17 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
                 <h4 class="modal-title" id="myFolderLabel">项目选项</h4>
             </div>
             <div class="modal-body">
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">名称</span><input id="folder-title" type="text" autocomplete="off" placeholder="项目名称" class="modal-input col-lg-10" />
+                    <span class="modal-label col-lg-3">名&emsp;称</span>
+                    <input id="folder-title" type="text" autocomplete="off" placeholder="请输入项目名称" class="modal-input col-lg-9" />
                 </div>
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">作者</span><input id="folder-author" type="text" placeholder="" class="modal-input col-lg-10" />
+                    <span class="modal-label col-lg-3">作&emsp;者</span>
+                    <input id="folder-author" type="text" placeholder="请输入作者名称" class="modal-input col-lg-9" />
                 </div>
             </div>
             <div class="modal-footer">
@@ -249,12 +251,12 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
                 <h4 class="modal-title" id="exampleModalLabel">确认删除?</h4>
             </div>
             <div class="modal-footer">
                 <button id="delete-project-confirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
@@ -279,11 +281,10 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="deleteFolderLabel">确认删除?</h4>
             </div>
             <div class="modal-body">
-                <h4 style="color: red;text-align: center">删除项目将会删除该项目中所有的工程！</h4>
+                <h4 style="color: #c9302c;text-align: center">删除项目将会删除该项目中所有的工程！</h4>
             </div>
             <div class="modal-footer">
                 <button id="deleteFolderConfirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
@@ -300,7 +301,7 @@
                 <h4 class="modal-title" id="uploadLabel">上传本地工程</h4>
             </div>
             <div class="modal-body">
-                <p>合法的本地工程，确定上传？</p>
+                <h4 style="color: #7d7d7d;text-align: center">合法的本地工程，确定上传？</h4>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="confirmReleaseBtn">确定</button>
@@ -314,19 +315,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">分享工程</h4>
             </div>
-            <div class="modal-body">
-                <button class="btn btn-default" id="share-button">开启分享</button>
-                <div id="share-wrap" style="margin-top: 20px">
+            <div class="modal-body" style="text-align: center">
+                <button class="btn btn-primary" id="share-button">开启分享</button>
+                <div id="share-wrap" style="margin-top: 20px;text-align: left;word-wrap:break-word">
                     <p id="share-url"></p>
                     <p id="share-key"></p>
                     <p id="readOnly-key"></p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="share-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="share-cancel" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -339,15 +339,21 @@
                 <h4 class="modal-title" id="myModalLabel">IDE编辑器检测到更新：<span id="update-new-version"></span></h4>
             </div>
             <div class="modal-body update-options-body">
-                <label class="btn btn-primary active">
-                    <input type="radio" name="update-options" id="update-option-1" class="update-option" value='1' autocomplete="off" > 不升级，打开旧版本
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="update-options" id="update-option-2" class="update-option" value='2' autocomplete="off"> 保存副本，升级工程
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="update-options" id="update-option-3" class="update-option" value='3' autocomplete="off"> 不保存副本，升级工程
-                </label>
+                <div class="modal-row">
+                    <label class="btn btn-primary active">
+                        <input type="radio" name="update-options" id="update-option-1" class="update-option" value='1' autocomplete="off" > 不升级，打开旧版本
+                    </label>
+                </div>
+                <div class="modal-row">
+                    <label class="btn btn-primary">
+                        <input type="radio" name="update-options" id="update-option-2" class="update-option" value='2' autocomplete="off"> 保存副本，升级工程
+                    </label>
+                </div>
+                <div class="modal-row">
+                    <label class="btn btn-primary">
+                        <input type="radio" name="update-options" id="update-option-3" class="update-option" value='3' autocomplete="off"> 不保存副本，升级工程
+                    </label>
+                </div>
                 <div >
                     <span class="update-alert"></span>
                 </div>
@@ -359,6 +365,7 @@
         </div>
     </div>
 </div>
+
 <script>
     //        for local
     try{

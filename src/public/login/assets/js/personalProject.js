@@ -1467,7 +1467,7 @@ $(function(){
                     shareButton.html('取消分享');
                     shareWrap.show();
                 }else{
-                    shareButton.html('开始分享');
+                    shareButton.html('开启分享');
                     shareWrap.hide();
                 }
             },
