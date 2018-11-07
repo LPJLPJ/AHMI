@@ -6,43 +6,22 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
     <title>模板中心</title>
-    <script src="/public/login/assets/js/jquery-1.10.2.js"></script>
-    <!--  Core Bootstrap Script -->
-    <script src="/public/login/assets/js/bootstrap.js"></script>
-
-
-    <!-- BOOTSTRAP CORE STYLE CSS -->
     <link href="/public/login/assets/css/bootstrap.css" rel="stylesheet"/>
-
-
     <link href="/public/login/assets/css/style.css" rel="stylesheet"/>
-
-    <script src="/public/ide/modules/templateCenter/templateCenter.js"></script>
-
+    <link rel="stylesheet" href="/public/login/assets/css/header.css"/>
     <link rel="stylesheet" href="/public/ide/modules/templateCenter/templateCenter.css" />
 
-
+    <script src="/public/login/assets/js/jquery-1.10.2.js"></script>
+    <script src="/public/login/assets/js/bootstrap.js"></script>
+    <script src="/public/ide/modules/templateCenter/templateCenter.js"></script>
 </head>
 <body>
-<div class="content">
-    <div class="navbar navbar-inverse " id="menu">
-        <div class="container container-zyj1">
-            <div class="navbar-header">
-                <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>-->
-                <a class="navbar-brand" href="/"><img class="logo-custom" src="/public/login/assets/img/速显微.png" alt=""/></a>
-            </div>
-            <div class="navbar-collapse collapse move-me">
-                <ul class="nav navbar-nav navbar-right findback">
-                    <li><a href="/private/space">个人空间</a></li>
-                </ul>
-            </div>
 
-        </div>
-    </div>
+<header>
+    <% include ../all/header.html %>
+</header>
+
+<div class="content">
     <!--NAVBAR SECTION END-->
     <div class="subtitle" style="text-align: center">
         <h2 id="form-title" class="title">模板中心</h2>
@@ -67,7 +46,6 @@
     <footer>
         <% include ../all/footer.html %>
     </footer>
-
 </div>
 
 <!-- FOOTER SECTION END-->

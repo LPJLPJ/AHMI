@@ -844,8 +844,10 @@ $(function(){
                 success:function (data, status, xhr){
                     //delete ok
                     //console.log(data)
-                    curPanel.remove()
-
+                    curPanel.remove();
+                    if($('#project-list').find('.project-list__item').length<1){
+                        $('#project-empty').show();
+                    }
                 },
                 error: function (err, status, xhr) {
                     console.log(err)
@@ -998,8 +1000,10 @@ $(function(){
 
     function addNewProject(newProject){
         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
-        var folder=$('#project-list').find('.folder-panel');
         $('#project-list').prepend(html);
+        if($('#project-list').find('.project-list__item').length){
+            $('#project-empty').hide();
+        }
     }
 
     //edit by lixiang
@@ -1297,6 +1301,9 @@ $(function(){
                 var newFolder = JSON.parse(data);
                 var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:newFolder});
                 folderListWrap.prepend(html);
+                if($('#folder-list').find('.project-list__item').length){
+                    $('#folder-empty').hide();
+                }
             },
             error: function (err, status, xhr) {
                 console.log(err)
@@ -1339,7 +1346,10 @@ $(function(){
             url:'/folder/delete',
             data:{folderId:folder._id},
             success:function (data, status, xhr){
-                curFolder.remove()
+                curFolder.remove();
+                if($('#folder-list').find('.project-list__item').length<1){
+                    $('#folder-empty').show();
+                }
             },
             error: function (err, status, xhr) {
                 console.log(err);

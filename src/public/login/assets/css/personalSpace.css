@@ -135,6 +135,27 @@ a img {
     height: auto;
 }
 
+.empty-prompt{
+    height: auto;
+}
+
+.empty-prompt>img{
+    display: block;
+    margin: 200px auto 50px auto;
+}
+
+.empty-prompt>p{
+    font-size: 20px;
+    font-weight: 500;
+    color: #7d7d7d;
+    text-align: center;
+}
+
+.prompt-add-project{
+    color: #005599;
+    font-weight: 600;
+}
+
 /*项目顶部操作*/
 .project-content {
     width: 1106px;

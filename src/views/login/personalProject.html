@@ -91,6 +91,12 @@
                 </li>
                 <%}%>
             </ul>
+            <%if(!projects.length){%>
+                <div class="empty-prompt" id="project-empty">
+                    <img src="../../public/login/assets/images/empty.png"/>
+                    <p>你还没有工程，请点击<span class="prompt-add-project">&nbsp;新建工程&nbsp;</span>创建你的工程吧！</p>
+                </div>
+            <%}%>
         </div>
         <!--项目列表-->
         <div class="folder-list-wrap" id="folder-list-wrap" name="folder-list-wrap">
@@ -121,6 +127,13 @@
                 </li>
                 <%}%>
             </ul>
+            <%if(!folders.length){%>
+            <div class="empty-prompt" id="folder-empty">
+                <img src="../../public/login/assets/images/empty.png"/>
+                <p>你还没有项目，请点击<span class="prompt-add-project">&nbsp;新建项目&nbsp;</span>创建你的项目吧！</p>
+                <p style="font-size: 18px;color: #666666">项目相当于一个工程分类,可以在项目里创建工程,便于管理工程。</p>
+            </div>
+            <%}%>
         </div>
     </div>
 </div>

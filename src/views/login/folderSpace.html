@@ -79,6 +79,14 @@
                 </li>
                 <%}%>
             </ul>
+
+            <!--空提示-->
+            <%if(!projects.length){%>
+            <div class="empty-prompt" id="empty-prompt">
+                <img src="../../public/login/assets/images/empty.png"/>
+                <p>你的项目里面还没有工程，请点击<span class="prompt-add-project">&nbsp;新建工程&nbsp;</span>创建你的工程吧！</p>
+            </div>
+            <%}%>
         </div>
     </div>
 </div>
