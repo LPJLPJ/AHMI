@@ -175,14 +175,17 @@ ideServices
                     currentSliceIdx:0,
                     name:'背景',
                     slices:[{
-                        color:'rgba(150,150,150,1)',
+                        color:'rgba(63,63,63,1)',
                         imgSrc:'',
-                        name:'背景'
-                    },
-                    {
-                        color:'rgba(0,150,0,1)',
+                        name:'滑块背景'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'指针',
+                    slices:[{
+                        color:'rgba(180,180,180,1)',
                         imgSrc:'',
-                        name:'指示'
+                        name:'滑块'
                     }]
                 }]
             },

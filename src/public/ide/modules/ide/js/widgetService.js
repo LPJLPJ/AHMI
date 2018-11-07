@@ -2064,11 +2064,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.hasRotatingPoint=false;
             this.backgroundColor=level.texList[0].slices[0].color;
             
-            this.pointerColor = level.texList[0].slices[1].color
+            this.pointerColor = level.texList[1].slices[0].color
 
 
             this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
-            this.pointerElement = ResourceService.getResourceFromCache(level.texList[0].slices[1].imgSrc);
+            this.pointerElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
             if (this.imageElement) {
                 this.loaded = true;
                 this.setCoords();
@@ -2080,13 +2080,22 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var _callback=arg.callback;
 
                 var tex=level.texList[0];
-                self.backgroundColor=tex.slices[0].color;
-
-                self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
                 
-                self.pointerColor = tex.slices[1].color
+                
+                
 
-                self.pointerElement = ResourceService.getResourceFromCache(level.texList[0].slices[1].imgSrc);
+
+                if(level.texList&&level.texList[0]){
+                    self.backgroundColor=level.texList[0].slices[0].color;
+
+                    self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[1]){
+                    self.pointerColor = level.texList[1].slices[0].color
+
+                    self.pointerElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                }
 
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
