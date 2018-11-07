@@ -135,23 +135,23 @@ a img {
     height: auto;
 }
 
-.empty-prompt{
+.empty-prompt {
     height: auto;
 }
 
-.empty-prompt>img{
+.empty-prompt > img {
     display: block;
     margin: 200px auto 50px auto;
 }
 
-.empty-prompt>p{
+.empty-prompt > p {
     font-size: 20px;
     font-weight: 500;
     color: #7d7d7d;
     text-align: center;
 }
 
-.prompt-add-project{
+.prompt-add-project {
     color: #005599;
     font-weight: 600;
 }
@@ -523,7 +523,7 @@ a img {
 }
 
 /*模态框*/
-.modal-content{
+.modal-content {
     width: 500px;
     margin: 0 auto;
     padding: 10px 25px;
@@ -544,11 +544,11 @@ a img {
     color: #7d7d7d;
 }
 
-.modal-label{
+.modal-label {
     font-size: 16px;
 }
 
-.compatibility-show>span{
+.compatibility-show > span {
     font-size: 16px;
     font-weight: 600;
     display: inline-block;
@@ -576,34 +576,3 @@ a img {
     height: 50px;
     margin-top: 5px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
