@@ -411,21 +411,21 @@ body {
     text-align: center;
     background-color: rgba(229, 229, 229, .6);
     position: absolute;
-    top: calc(50% - 20px);
     box-sizing: border-box;
     z-index: 999;
     cursor: pointer;
     display: none;
 }
 
-.thumb-view {
-    right: 0;
-    border-radius: 50% 0 0 50%;
-    box-shadow: 1px 1px 1px #cccccc;
+.view-wrap > img {
+    margin-top: 15px;
 }
 
-.thumb-view > img {
-    margin-top: 15px;
+.thumb-view {
+    top: calc(50% - 40px);
+    right: 0;
+    border-radius: 6px 0 0 6px;
+    box-shadow: 1px 1px 1px #cccccc;
 }
 
 .thumb-view > .open, .content-wrap.my-left-hide .thumb-view > .pack {
@@ -438,7 +438,7 @@ body {
 
 .content-wrap.my-left-hide .thumb-view {
     right: -16px;
-    border-radius: 0 50% 50% 0;
+    border-radius: 0 6px 6px 0;
     border: 1px solid #cccccc;
 }
 
@@ -590,15 +590,6 @@ body {
     top: 0;
 }
 
-.attribute-view {
-    right: 0;
-    display: block;
-}
-
-.attribute-view > img {
-    margin-top: 15px;
-}
-
 /*###右侧属性栏###*/
 .attr-default-btn {
     height: 26px;
@@ -618,7 +609,32 @@ body {
     background-color: #ffffff;
     box-sizing: border-box;
     position: relative;
+}
+
+.attribute-content {
+    height: 100%;
+    width: 100%;
     overflow: hidden;
+}
+
+.attribute-view {
+    top: calc(50% - 20px);
+    left: -16px;
+    z-index: 999 !important;
+    border-radius: 5px 0 0 5px;
+    box-shadow: -0.5px 1px 1px rgba(0, 0, 0, .2), 0 -0.5px 1px rgba(0, 0, 0, .2);
+}
+
+.attribute-view > .open, .content-wrap.my-right-hide .attribute-view > .pack {
+    display: none;
+}
+
+.content-wrap.my-right-hide .attribute-view > .open, .content-wrap.my-right-hide .attribute-view {
+    display: block;
+}
+
+.attribute-wrap:hover .attribute-view {
+    display: block;
 }
 
 .attribute-wrap.top-menu-content-show {
@@ -1273,20 +1289,29 @@ body {
 .layer-menu-view--open {
     width: 60px;
     height: 16px;
-    background-color: rgba(229, 229, 229, .6);
+    background-color: rgba(229, 229, 229, .3);
     text-align: center;
     line-height: 16px;
     position: absolute;
     left: calc(50% - 30px);
     top: -16px;
     border: 1px solid #cccccc;
-    border-radius: 50% 50% 0 0;
+    border-radius: 6px 6px 0 0;
     cursor: pointer;
     display: none;
 }
 
 .attribute-wrap.my-bottom-hide .layer-menu-view--open {
     display: block;
+}
+
+.layer-menu-view__bar {
+    display: block;
+    width: 20px;
+    height: 5px;
+    background-color: #7d7d7d;
+    margin-top: 11px;
+    border-radius: 10px;
 }
 
 .bottom-layer-menu {
