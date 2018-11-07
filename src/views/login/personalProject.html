@@ -141,25 +141,26 @@
         </div>
     </div>
 </div>
+
 <!-- 模态框 -->
 <!--新建、修改工程-->
 <div class="modal fade" id="project-info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">基础选项</h4>
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                <h4 class="modal-title" id="myModalLabel">工程选项</h4>
             </div>
             <div class="modal-body">
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">名称</span><input id="basicinfo-title" type="text" autocomplete="off" placeholder="工程名称" class="modal-input col-lg-10" />
+                    <span class="modal-label col-lg-3">名&emsp;称</span><input id="basicinfo-title" type="text" autocomplete="off" placeholder="请输入工程名称" class="modal-input col-lg-9" />
                 </div>
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">作者</span><input id="basicinfo-author" type="text" placeholder="" class="modal-input col-lg-10" />
+                    <span class="modal-label col-lg-3">作&emsp;者</span><input id="basicinfo-author" type="text" placeholder="请输入作者名称" class="modal-input col-lg-9" />
                 </div>
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">分辨率</span>
-                    <select id="basicinfo-resolution" class="col-lg-10 modal-input">
+                    <span class="modal-label col-lg-3">分辨率</span>
+                    <select id="basicinfo-resolution" class="col-lg-9 modal-input">
                         <option value="1280*480">1280 * 480</option>
                         <option value="1280*800">1280 * 800</option>
                         <option value="1920*1080">1920 * 1080</option>
@@ -172,25 +173,25 @@
                     </select>
                 </div>
                 <div class="modal-row" id="basicinfo-customResolution">
-                    <span class="modal-label col-lg-2">自定义</span>
+                    <span class="modal-label col-lg-3">自定义</span>
                     <span class="modal-label col-lg-1">宽</span>
                     <input type="number" class="col-lg-4 modal-input" id="customWidth" placeholder="1~1920"/>
                     <span class="modal-label col-lg-1">高</span>
                     <input type="number" class="col-lg-4 modal-input" id="customHeight" placeholder="1~1920">
                 </div>
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">IDE版本</span>
-                    <select id="basicinfo-ideversion" class="col-lg-10 modal-input" value="">
+                    <span class="modal-label col-lg-3">IDE版本</span>
+                    <select id="basicinfo-ideversion" class="col-lg-9 modal-input" value="">
                         <option value="">---</option>
                     </select>
                 </div>
                 <div class="modal-row compatibility-container">
-                    <span class="modal-label col-lg-8">一体化软件兼容性</span>
-                    <div class="compatibility-show col-lg-12"></div>
+                    <span class="modal-label col-lg-6">一体化软件兼容性</span>
+                    <span class="compatibility-show col-lg-6"></span>
                 </div>
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">模板</span>
-                    <select id="basicinfo-template" class="col-lg-10 modal-input" value="">
+                    <span class="modal-label col-lg-3">模&emsp;板</span>
+                    <select id="basicinfo-template" class="col-lg-9 modal-input" value="">
                         <option value="">---</option>
                         <option value="defaultTemplate">默认模板</option>
                         <option value="collectedTemplate">收藏模板</option>
@@ -203,8 +204,8 @@
                     </div>
                 </div>
                 <div class="modal-row">
-                    <span class="modal-label col-lg-2">触屏</span>
-                    <select id="basicinfo-supportTouch" class="col-lg-10 modal-input" value="">
+                    <span class="modal-label col-lg-3">触&emsp;屏</span>
+                    <select id="basicinfo-supportTouch" class="col-lg-9 modal-input" value="">
                         <option value="true">触屏设备</option>
                         <option value="false">非触屏设备</option>
                     </select>

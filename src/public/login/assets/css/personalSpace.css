@@ -523,8 +523,17 @@ a img {
 }
 
 /*模态框*/
+.modal-content{
+    width: 500px;
+    margin: 0 auto;
+    padding: 10px 25px;
+}
+
 .modal-title {
     text-align: center;
+    color: #7d7d7d;
+    font-size: 20px;
+    font-weight: 600;
 }
 
 .modal-input, .modal-label {
@@ -532,6 +541,18 @@ a img {
     line-height: 2em;
     text-align: left;
     vertical-align: middle;
+    color: #7d7d7d;
+}
+
+.modal-label{
+    font-size: 16px;
+}
+
+.compatibility-show>span{
+    font-size: 16px;
+    font-weight: 600;
+    display: inline-block;
+    line-height: 30px;
 }
 
 .modal-input {
@@ -552,9 +573,8 @@ a img {
 }
 
 .modal-row {
-    width: 555px;
     height: 50px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 
