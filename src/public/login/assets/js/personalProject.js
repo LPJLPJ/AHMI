@@ -1047,7 +1047,9 @@ $(function(){
             }else{
                 project.resolution = resolution.val().trim();
             }
-            project.ideVersion = ideVersion.val().trim();
+            //console.log(ideVersion.val())
+            project.ideVersion = ideVersion.val();
+            project.ideVersion = project.ideVersion && project.ideVersion.trim()||''
             project.supportTouch = supportTouch.val().trim();
             var updateSuccess = false;
             if (local){

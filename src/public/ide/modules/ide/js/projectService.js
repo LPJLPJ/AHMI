@@ -3144,8 +3144,11 @@ ideServices
                 }
                 else if(level.type==Type.MyDashboard||level.type==Type.MyRotateImg){
                     //重置旋转中心
-                    level.info.posRotatePointX = Math.round(level.info.width/2)
-                    level.info.posRotatePointY = Math.round(level.info.height/2)
+                    if(width!=level.info.width || height != level.info.height){
+                        level.info.posRotatePointX = Math.round(level.info.width/2)
+                        level.info.posRotatePointY = Math.round(level.info.height/2)
+                    }
+                    
                 }
 
 
