@@ -74,6 +74,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             case Type.MySlideBlock:
             case Type.MyTexNum:
             case Type.MyAlphaImg:
+            case Type.MyTouchTrack:
                 $scope.showActionPanel = true;
                 break;
             case Type.MySlide:

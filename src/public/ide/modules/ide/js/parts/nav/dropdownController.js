@@ -18,6 +18,7 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"开机动画",icon:"animation"},
         {name:"图层数字",icon:"tex-num"},
         {name:"图层时间",icon:"tex-time"},
+        {name:"触摸追踪",icon:"tex-time"}
         // {name:"透明图层",icon:"alpha-img"}
     ];
     $scope.addWidget = function (index) {

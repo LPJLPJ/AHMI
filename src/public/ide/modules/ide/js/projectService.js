@@ -1227,6 +1227,18 @@ ideServices
                         subLayerNode.renderAll.bind(subLayerNode)();
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MyTouchTrack){
+                    fabric.MyTouchTrack.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else if(_newWidget.type===Type.MyAlphaImg){
                     fabric.MyAlphaImg.fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
@@ -5396,6 +5408,9 @@ ideServices
                         break;
                     case 'MyTexTime':
                         node.add(new fabric.MyTexTime(dataStructure,initiator));
+                        break;
+                    case 'MyTouchTrack':
+                        fabric.MyTouchTrack.fromLevel(dataStructure, addFabWidget, initiator);
                         break;
                     case 'MyAlphaImg':
                         fabric.MyAlphaImg.fromLevel(dataStructure, addFabWidget, initiator);

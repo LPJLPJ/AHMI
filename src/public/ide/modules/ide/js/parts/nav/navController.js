@@ -824,6 +824,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             } else if (_index === 15) {
                 newWidget = TemplateProvider.getDefaultTexTime();
             } else if(_index === 16) {
+                newWidget = TemplateProvider.getDefaultTouchTrack();
+            }else if(_index === 17) {
                 newWidget = TemplateProvider.getDefaultAlphaImg();
             }
             else {
