@@ -979,6 +979,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.posRotatePointX = level.info.posRotatePointX||0
             this.posRotatePointY = level.info.posRotatePointY||0
 
+            this.innerRadius = level.info.innerRadius||0
+
             if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
                 this.backgroundColor=level.texList[0].slices[0].color;
 
@@ -1043,6 +1045,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeDashboardPointerInnerRadius',function(arg){
+                self.innerRadius = arg.innerRadius||0
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                arg.callback && arg.callback()
+            })
 
             this.on('changeDashboardValue', function (arg) {
                 if(arg.hasOwnProperty('value')){
@@ -1252,8 +1261,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if(this.clockwise=='0'){
                         angleOfPointer=-angleOfPointer;
                     }
-                    var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    var rotateRad = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)
+                    var rotateAngle = rotateRad*180/Math.PI;
                     angleOfPointer=angleOfPointer+rotateAngle;
+                    var innerW = this.innerRadius * Math.sin(rotateRad)
+                    var innerH = this.innerRadius * Math.cos(rotateRad)
                     // if(!(this.minCoverAngle==this.maxCoverAngle)){
                     //     var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
                     //     var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
@@ -1277,6 +1289,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     //ctx.save()
                     ctx.translate((-this.width/2+(this.posRotatePointX||0)/this.scaleX),(-this.height/2+(this.posRotatePointY||0)/this.scaleY))
                     ctx.rotate(angleOfPointer*Math.PI/180);
+                    ctx.translate(innerW/this.scaleX,innerH/this.scaleY)
                     ctx.scale(this.scaleX,this.scaleY);
                     //ctx.restore()
                     ctx.fillStyle=this.pointerColor;

@@ -3144,8 +3144,11 @@ ideServices
                 }
                 else if(level.type==Type.MyDashboard||level.type==Type.MyRotateImg){
                     //重置旋转中心
-                    level.info.posRotatePointX = Math.round(level.info.width/2)
-                    level.info.posRotatePointY = Math.round(level.info.height/2)
+                    if(width!=level.info.width || height != level.info.height){
+                        level.info.posRotatePointX = Math.round(level.info.width/2)
+                        level.info.posRotatePointY = Math.round(level.info.height/2)
+                    }
+                    
                 }
 
 
@@ -3532,6 +3535,19 @@ ideServices
 
 
             };
+
+            this.ChangeAttributeDashboardInnerRadius = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var innerRadius=_option.innerRadius;
+                
+                selectObj.level.info.innerRadius=innerRadius;
+
+                var arg={
+                    innerRadius:innerRadius,
+                    callback:_successCallback
+                }
+                selectObj.target.fire('changeDashboardPointerInnerRadius',arg);
+            }
 
             this.ChangeAttributeKnobSize = function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();

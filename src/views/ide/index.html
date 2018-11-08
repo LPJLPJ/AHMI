@@ -1673,18 +1673,27 @@
                                    type="number">
                         </div>
                         <div class="my-attr-item">
-                            <span class="my-attr-title">指针原点X</span>
+                            <span class="my-attr-title">旋转中心X</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.posRotatePointX"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
                                    type="number">
-                        </div><div class="my-attr-item">
-                            <span class="my-attr-title">指针原点Y</span>
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">旋转中心Y</span>
                             <input class="my-attr-number-input form-control short-input"
                                    ng-model="component.object.level.info.posRotatePointY"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">旋转内径</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.innerRadius"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardInnerRadius($event)"
                                    type="number">
                         </div>
                         <div class="my-attr-item ">
