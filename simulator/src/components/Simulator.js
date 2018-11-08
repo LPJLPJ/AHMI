@@ -3797,7 +3797,7 @@ module.exports = React.createClass({
             
             this.drawBg(curX,curY,width,height,widget.texList[0].slices[0].imgSrc,widget.texList[0].slices[0].color,offctx)
 
-            this.drawBg(curX+x-pointL/2,curY+y-pointL/2,pointL,pointL,widget.texList[0].slices[1].imgSrc,widget.texList[0].slices[1].color,offctx)
+            this.drawBg(curX+x-pointL/2,curY+y-pointL/2,pointL,pointL,widget.texList[1].slices[0].imgSrc,widget.texList[1].slices[0].color,offctx)
             offctx.restore()
 
         }
@@ -4910,6 +4910,11 @@ module.exports = React.createClass({
                 needRedraw = true;
                 this.setTagByName(widget.tag, widget.curValue || 0);
                 break;
+            case 'MyTouchTrack':
+                this.handleTouchTrackInnerPress(widget, relativeX, relativeY);
+                widget.mouseState = mouseState;
+                needRedraw = true;
+                break
         }
 
         if (needRedraw) {

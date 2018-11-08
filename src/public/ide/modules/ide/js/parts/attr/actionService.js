@@ -67,6 +67,9 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyTexNum:
                 triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm,tTagChange];
                 break;
+            case Type.MyTouchTrack:
+                triggers = [tTagChange]
+                break;
             default:
                 triggers = [tEnter,tLeave]
         }
