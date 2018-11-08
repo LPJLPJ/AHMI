@@ -115,6 +115,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterBackgroundMode: enterBackgroundMode,
                     enterPointerLength: enterPointerLength,
                     enterDashboardPointerPos:enterPointerOffset.bind(null,'dashboard'),
+                    enterDashboardInnerRadius:enterDashboardInnerRadius,
                     enterMinCoverAngle: enterMinCoverAngle,
                     enterMaxCoverAngle: enterMaxCoverAngle
                 },
@@ -1809,6 +1810,32 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 var oldOperate = ProjectService.SaveCurrentOperate();
 
                 ProjectService.ChangeAttributePointerOffset(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+                
+
+            }
+        }
+
+        function enterDashboardInnerRadius(e){
+            if (e.keyCode == 13) {
+                
+                var innerRadius = $scope.component.object.level.info.innerRadius||0;
+                //判断输入是否合法
+                if (!_.isInteger(Number(innerRadius))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    innerRadius:innerRadius
+                };
+                //console.log(option);
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                ProjectService.ChangeAttributeDashboardInnerRadius(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
 
                 })

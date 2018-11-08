@@ -3536,6 +3536,19 @@ ideServices
 
             };
 
+            this.ChangeAttributeDashboardInnerRadius = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var innerRadius=_option.innerRadius;
+                
+                selectObj.level.info.innerRadius=innerRadius;
+
+                var arg={
+                    innerRadius:innerRadius,
+                    callback:_successCallback
+                }
+                selectObj.target.fire('changeDashboardPointerInnerRadius',arg);
+            }
+
             this.ChangeAttributeKnobSize = function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
                 var value=_option.knobSize;

@@ -157,6 +157,10 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 info.posRotatePointY = Math.round(info.height/2)
                 
             }
+
+            if(info.innerRadius === undefined){
+                info.innerRadius = 0
+            }
             
         },
         button: function () {
