@@ -28,6 +28,11 @@
 <!--工程列表-->
 <div class="wrapper" id="filedrag">
     <div class="project-content <%=path%>">
+        <!--<div class="recycle-wrap">
+            <img class="default" src="../../public/login/assets/images/recycle.png"/>
+            <img class="active" src="../../public/login/assets/images/recycle-active.png"/>
+            <span>回收站</span>
+        </div>-->
         <div class="project-content__operate clearfix">
             <div class="project-operate__view clearfix">
                 <a class="project-operate__folder view-switch">
@@ -214,8 +219,8 @@
                 <!--</div>-->
             </div>
             <div class="modal-footer">
-                <button id="project-info-confirm" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
-                <button id="modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="project-info-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">创建</button>
+                <button id="modal-cancel" type="button" class="btn-cancel modal-btn" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
@@ -239,8 +244,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="folder-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
-                <button id="folder-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="folder-ok" type="button" class="btn-confirm modal-btn" data-dismiss="modal">创建</button>
+                <button id="folder-cancel" type="button" class="modal-btn" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
@@ -251,11 +256,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
-                <h4 class="modal-title" id="exampleModalLabel">确认删除?</h4>
+                <h4 class="modal-title" id="exampleModalLabel">删除工程</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-text-h">您确定要删除&nbsp;<span class="project-delete__prompt"></span>&nbsp;吗?</h4>
+                <!--<p>删除后可在回收站找回</p>-->
             </div>
             <div class="modal-footer">
-                <button id="delete-project-confirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="delete-project-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
@@ -269,8 +278,8 @@
                 <h4 class="modal-title" id="template-modal-delete">确认删除?</h4>
             </div>
             <div class="modal-footer">
-                <button id="template-modal-confirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="template-modal-confirm" type="button" class="modal-btn btn-confirm" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -280,14 +289,15 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="deleteFolderLabel">确认删除?</h4>
+                <h4 class="modal-title" id="deleteFolderLabel">删除项目</h4>
             </div>
             <div class="modal-body">
+                <h4 class="modal-text-h">你确定要删除&nbsp;<span class="folder-delete__prompt"></span>&nbsp;吗？</h4>
                 <h4 style="color: #c9302c;text-align: center">删除项目将会删除该项目中所有的工程！</h4>
             </div>
             <div class="modal-footer">
-                <button id="deleteFolderConfirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="deleteFolderConfirm" type="button" class="modal-btn btn-confirm" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -303,8 +313,8 @@
                 <h4 style="color: #7d7d7d;text-align: center">合法的本地工程，确定上传？</h4>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="confirmReleaseBtn">确定</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
+                <button type="button" class="modal-btn btn-confirm" id="confirmReleaseBtn">确定</button>
+                <button type="button" class="modal-btn" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
             </div>
         </div>
     </div>
@@ -318,14 +328,14 @@
             </div>
             <div class="modal-body" style="text-align: center">
                 <button class="btn btn-primary" id="share-button">开启分享</button>
-                <div id="share-wrap" style="margin-top: 20px;text-align: left;word-wrap:break-word">
+                <div class="share-wrap" id="share-wrap">
                     <p id="share-url"></p>
                     <p id="share-key"></p>
                     <p id="readOnly-key"></p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="share-cancel" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="share-cancel" type="button" class="modal-btn" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -358,8 +368,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="updateConfirmBtn">确定</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="updateCancelBtn">取消</button>
+                <button type="button" class="modal-btn btn-confirm" id="updateConfirmBtn">确定</button>
+                <button type="button" class="modal-btn" data-dismiss="modal" id="updateCancelBtn">取消</button>
             </div>
         </div>
     </div>

@@ -647,6 +647,7 @@ $(function(){
         var project = $(this).parents('.project-panel').attr('data-project');
         project = JSON.parse(project);
         curProject = project;
+        $('.project-delete__prompt').text(project.name);
         closeModal.modal('show');
     });
 
@@ -1250,6 +1251,7 @@ $(function(){
         var fol = curFolder.attr('data-folder');
         fol = JSON.parse(fol);
         folder=fol;
+        $('.folder-delete__prompt').text(fol.name);
         deleteFolderModal.modal('show');
     });
     deleteFolderConfirm.on('click',function(){

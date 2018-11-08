@@ -128,10 +128,9 @@
                     </select>
                 </div>
                 <div class="modal-row" id="basicinfo-customResolution">
-                    <span class="modal-label col-lg-3">自定义</span>
-                    <span class="modal-label col-lg-1">宽</span>
+                    <span class="modal-label col-lg-2">宽度:</span>
                     <input type="number" class="col-lg-4 modal-input" id="customWidth" placeholder="1~1920"/>
-                    <span class="modal-label col-lg-1">高</span>
+                    <span class="modal-label col-lg-2">高度:</span>
                     <input type="number" class="col-lg-4 modal-input" id="customHeight" placeholder="1~1920">
                 </div>
                 <div class="modal-row">
@@ -170,8 +169,8 @@
                 <!--</div>-->
             </div>
             <div class="modal-footer">
-                <button id="project-info-confirm" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
-                <button id="modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="project-info-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">创建</button>
+                <button id="modal-cancel" type="button" class="btn-cancel modal-btn" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
@@ -182,11 +181,30 @@
         <div class="modal-content">
             <div class="modal-header">
                 <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
-                <h4 class="modal-title" id="exampleModalLabel">确认删除?</h4>
+                <h4 class="modal-title" id="exampleModalLabel">删除工程</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-text-h">您确定要删除&nbsp;<span class="project-delete__prompt"></span>&nbsp;吗?</h4>
+                <!--<p>删除后可在回收站找回</p>-->
             </div>
             <div class="modal-footer">
-                <button id="delete-project-confirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button id="delete-project-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--删除模板-->
+<div class="modal fade" id="template-modal" tabindex="-1" role="dialog" aria-labelledby="template-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="template-modal-delete">确认删除?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="template-modal-confirm" type="button" class="modal-btn btn-confirm" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -202,8 +220,8 @@
                 <h4 style="color: #7d7d7d;text-align: center">合法的本地工程，确定上传？</h4>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="confirmReleaseBtn">确定</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
+                <button type="button" class="modal-btn btn-confirm" id="confirmReleaseBtn">确定</button>
+                <button type="button" class="modal-btn" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
             </div>
         </div>
     </div>
@@ -217,14 +235,14 @@
             </div>
             <div class="modal-body" style="text-align: center">
                 <button class="btn btn-primary" id="share-button">开启分享</button>
-                <div id="share-wrap" style="margin-top: 20px;text-align: left;word-wrap:break-word">
+                <div class="share-wrap" id="share-wrap">
                     <p id="share-url"></p>
                     <p id="share-key"></p>
                     <p id="readOnly-key"></p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="share-cancel" type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="share-cancel" type="button" class="modal-btn" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -257,8 +275,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="updateConfirmBtn">确定</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="updateCancelBtn">取消</button>
+                <button type="button" class="modal-btn btn-confirm" id="updateConfirmBtn">确定</button>
+                <button type="button" class="modal-btn" data-dismiss="modal" id="updateCancelBtn">取消</button>
             </div>
         </div>
     </div>

@@ -15,6 +15,10 @@ body {
     font-family: SOURCEHANSANSCN-NORMAL;
     background-color: #f5f4f6;
     box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 a, a:hover, a:focus {
@@ -131,7 +135,6 @@ a img {
 
 /*拖拽上传*/
 .wrapper {
-    width: 100%;
     height: auto;
 }
 
@@ -160,6 +163,39 @@ a img {
 .project-content {
     width: 1106px;
     margin: 0 auto;
+    position: relative;
+}
+
+/*回收站*/
+.recycle-wrap {
+    padding: 5px 10px;
+    position: fixed;
+    right: 10px;
+    bottom: 15%;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    background-color: #ffffff;
+    font-size: 15px;
+    color: #7d7d7d;
+    cursor: pointer;
+}
+
+.recycle-wrap > .active, .recycle-wrap:hover > .default {
+    display: none;
+}
+
+.recycle-wrap:hover {
+    color: #005599;
+    border: 1px solid #005599;
+}
+
+.recycle-wrap:hover > .active {
+    display: inline-block;
+}
+
+.recycle-wrap > img {
+    display: inline-block;
+    vertical-align: -5px;
 }
 
 .project-content__operate {
@@ -515,11 +551,22 @@ a img {
 }
 
 .compatibility-ok {
-    color: #0fff3e;
+    color: #005599;
 }
 
 .compatibility-warning {
     color: #ffcd06;
+}
+
+/*分享*/
+.share-wrap {
+    margin-top: 20px;
+    text-align: left;
+    word-wrap: break-word;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 /*模态框*/
@@ -556,11 +603,15 @@ a img {
 }
 
 .modal-input {
-    padding: 0px 10px;
+    padding: 0 10px;
     border-radius: 5px;
     border: 1px solid #A9A9A9;
     color: rgba(0, 0, 0, .7);
+}
+
+.modal-input:focus {
     outline: none;
+    border: 1px solid #005599 !important;
 }
 
 .modal-text {
@@ -575,4 +626,39 @@ a img {
 .modal-row {
     height: 50px;
     margin-top: 5px;
+}
+
+.modal-text-h {
+    color: #7d7d7d;
+    font-size: 18px;
+    text-align: center;
+}
+
+.modal-btn {
+    padding: 5px 0;
+    margin: 0 10px;
+    background-color: transparent;
+    border: 0;
+    font-size: 16px;
+    outline: none;
+    font-weight: 500;
+    color: #7d7d7d;
+}
+
+.modal-btn:hover {
+    text-shadow: 0 0 0 #7d7d7d;
+}
+
+.btn-confirm:hover {
+    text-shadow: 0 0 0 #005599;
+}
+
+.btn-confirm {
+    color: #005599;
+    border-bottom: 1.5px solid #005599;
+}
+
+.project-delete__prompt, .folder-delete__prompt {
+    color: #005599;
+    font-weight: 600;
 }

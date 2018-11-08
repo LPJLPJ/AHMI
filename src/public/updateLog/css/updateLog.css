@@ -1,5 +1,4 @@
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
@@ -427,9 +426,9 @@ ul > li {
     height: 42px;
     padding: 0;
     background: #c2bdbd;
-    vertical-align: middle;
     line-height: 42px;
     text-align: center;
+    margin: 0;
 }
 
 .footer > p {
