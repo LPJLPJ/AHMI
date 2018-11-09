@@ -148,6 +148,20 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             if (level.backgroundModeId === undefined) {
                 level.backgroundModeId = '0';
             }
+
+            if(info.posRotatePointX === undefined){
+                info.posRotatePointX = Math.round(info.width/2)
+                
+            }
+            if(info.posRotatePointY === undefined){
+                info.posRotatePointY = Math.round(info.height/2)
+                
+            }
+
+            if(info.innerRadius === undefined){
+                info.innerRadius = 0
+            }
+            
         },
         button: function () {
             var level = arguments[0];
@@ -179,6 +193,15 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
             var info = level.info;
             if(info.clockwise == undefined) {
                 info.clockwise = 1;
+            }
+
+            if(info.posRotatePointX === undefined){
+                info.posRotatePointX = Math.round(info.width/2)
+                
+            }
+            if(info.posRotatePointY === undefined){
+                info.posRotatePointY = Math.round(info.height/2)
+                
             }
         },
         mySwitch: function () {

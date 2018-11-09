@@ -1705,6 +1705,30 @@
                                    ng-keypress="component.dashboard.enterMinCoverAngle($event)"
                                    type="number">
                         </div>
+                        <div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">旋转中心X</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.posRotatePointX"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div>
+                        <div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">旋转中心Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.posRotatePointY"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div>
+                        <div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">旋转内径</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.innerRadius"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardInnerRadius($event)"
+                                   type="number">
+                        </div>
                             <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">起始角度</p>
                                 <input class="attr-item__cell-input form-control"
@@ -2651,6 +2675,21 @@
                                        ng-keypress="component.rotateImg.enterInitValue($event)"/>
                             </div>
 
+                        <div class="attr-item__cell-wrap lg">
+                            <p class="attr-item__cell-title">旋转中心X</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.posRotatePointX"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.rotateImg.enterRotateImgPointerPos($event)"
+                                   type="number">
+                        </div><div class="attr-item__cell-wrap lg">
+                        <p class="attr-item__cell-title">旋转中心Y</p>
+                        <input class="attr-item__cell-input form-control"
+                               ng-model="component.object.level.info.posRotatePointY"
+                               ng-blur="component.restore()"
+                               ng-keypress="component.rotateImg.enterRotateImgPointerPos($event)"
+                               type="number">
+                    </div>
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">旋转方向</p>
                                 <select class="attr-item__cell-input form-control"
