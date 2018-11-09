@@ -3160,6 +3160,14 @@ ideServices
                         level.info.height = (Math.abs(fabNode.getWidth()-width)<=1)?width:Math.round(fabNode.getWidth());
                     }
                 }
+                else if(level.type==Type.MyDashboard||level.type==Type.MyRotateImg){
+                    //重置旋转中心
+                    if(width!=level.info.width || height != level.info.height){
+                        level.info.posRotatePointX = Math.round(level.info.width/2)
+                        level.info.posRotatePointY = Math.round(level.info.height/2)
+                    }
+                    
+                }
 
 
             }
@@ -3513,6 +3521,51 @@ ideServices
 
 
             };
+
+            this.ChangeAttributePointerOffset= function (_option, _successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+                var posRotatePointX=_option.posRotatePointX;
+                var posRotatePointY = _option.posRotatePointY;
+
+                var fabDashboardObj = getFabricObject(selectObj.level.id,true);
+                //console.log(fabDashboardObj,fabDashboardObj.getWidth(),fabDashboardObj.getHeight(),fabDashboardObj.getScaleX(),fabDashboardObj.getScaleY());
+
+                selectObj.level.info.posRotatePointX=posRotatePointX;
+                selectObj.level.info.posRotatePointY=posRotatePointY;
+
+                var arg={
+                    posRotatePointX:posRotatePointX,
+                    posRotatePointY:posRotatePointY,
+                    // scaleX:fabDashboardObj.getScaleX(),
+                    // scaleY:fabDashboardObj.getScaleY(),
+                    callback:_successCallback
+                }
+                switch(selectObj.type){
+                    case Type.MyDashboard:
+                        selectObj.target.fire('changeDashboardPointerOffset',arg);
+                    break
+                    case Type.MyRotateImg:
+                        selectObj.target.fire('changeRotateImgPointerOffset',arg);
+                    break
+                }
+                // _successCallback()
+                //selectObj.target.fire('changeDashboardPointerOffset',arg);
+
+
+            };
+
+            this.ChangeAttributeDashboardInnerRadius = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var innerRadius=_option.innerRadius;
+                
+                selectObj.level.info.innerRadius=innerRadius;
+
+                var arg={
+                    innerRadius:innerRadius,
+                    callback:_successCallback
+                }
+                selectObj.target.fire('changeDashboardPointerInnerRadius',arg);
+            }
 
             this.ChangeAttributeKnobSize = function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
@@ -4779,13 +4832,41 @@ ideServices
                         fabWidget.set({height:_option.height,scaleY:1});
                         currentWidget.info.height = _option.height;
                     }
-                    subLayerNode.renderAll();
+                    
+                    var arg={
+                        posRotatePointX:Math.round(currentWidget.info.width/2),
+                        posRotatePointY:Math.round(currentWidget.info.height/2),
+                        // scaleX:fabDashboardObj.getScaleX(),
+                        // scaleY:fabDashboardObj.getScaleY(),
+                        callback:function(){
+                            OnWidgetSelected(currentWidget, function () {
+                                _successCallback && _successCallback(currentOperate);
+        
+                            });
+                        }
+                    }
+                    switch(object.type){
+                        case Type.MyDashboard:
+                            object.level.info.posRotatePointX = arg.posRotatePointX
+                            object.level.info.posRotatePointY = arg.posRotatePointY
+                            object.target.fire('changeDashboardPointerOffset',arg);
+                        break
+                        case Type.MyRotateImg:
+                            object.level.info.posRotatePointX = arg.posRotatePointX
+                            object.level.info.posRotatePointY = arg.posRotatePointY
+                            object.target.fire('changeRotateImgPointerOffset',arg);
+                        break
+                        default:
+                            subLayerNode.renderAll();
 
-                    // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
-                    OnWidgetSelected(currentWidget, function () {
-                        _successCallback && _successCallback(currentOperate);
+                            // currentSubLayer.proJsonStr= JSON.stringify(subLayerNode.toJSON());
+                            OnWidgetSelected(currentWidget, function () {
+                                _successCallback && _successCallback(currentOperate);
+        
+                            });
+                    }
 
-                    });
+                    
                 }
 
 

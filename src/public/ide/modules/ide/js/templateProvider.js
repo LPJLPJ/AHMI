@@ -123,7 +123,9 @@ ideServices
                     pointerLength:185,
                     enableAnimation:false,
                     pointerImgWidth:0,
-                    pointerImgHeight:0
+                    pointerImgHeight:0,
+                    posRotatePointX:50,
+                    posRotatePointY:50
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -151,7 +153,9 @@ ideServices
                     originX: 'center', originY: 'center',
                     minValue:0,maxValue:360,
                     initValue:0,
-                    clockwise:1
+                    clockwise:1,
+                    posRotatePointX:50,
+                    posRotatePointY:50
                 },
                 texList:[{
                     currentSliceIdx:0,

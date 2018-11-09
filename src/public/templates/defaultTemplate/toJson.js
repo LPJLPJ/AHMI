@@ -94,7 +94,9 @@ var defaultTemplate ={
             lowAlarmValue:0,highAlarmValue:360,
             value:45,
             offsetValue:0,
-            pointerLength:185
+            pointerLength:185,
+            posRotatePointX:125,
+            posRotatePointY:125
         },
         texList:[{
             currentSliceIdx:0,
@@ -121,7 +123,9 @@ var defaultTemplate ={
             left: 0, top: 0,
             originX: 'center', originY: 'center',
             minValue:0,maxValue:360,
-            initValue:0
+            initValue:0,
+            posRotatePointX:50,
+            posRotatePointY:50
         },
         texList:[{
             currentSliceIdx:0,
