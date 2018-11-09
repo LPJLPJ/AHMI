@@ -267,7 +267,7 @@ a img {
 .project-operate__create-item > img {
     height: 17px;
     width: 17px;
-    vertical-align: middle;
+    vertical-align: -4px;
 }
 
 .project-operate__create-item > .active-img, .project-operate__create-item:hover > .default-img {

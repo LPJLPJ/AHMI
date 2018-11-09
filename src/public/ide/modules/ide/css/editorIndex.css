@@ -26,8 +26,20 @@ ul > li {
     float: right;
 }
 
-.cp {
+.c-p {
     cursor: pointer;
+}
+
+.p-0 {
+    padding: 0;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.font-b {
+    font-weight: bold;
 }
 
 body {
@@ -593,9 +605,10 @@ body {
 /*###右侧属性栏###*/
 .attr-default-btn {
     height: 26px;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     line-height: 26px !important;
     padding: 0 14px;
+    color: #666666;
 }
 
 .attribute-wrap {
@@ -760,10 +773,16 @@ body {
 
 .attr-item__cell-input {
     height: 26px;
-    border: 1px solid #7d7d7d !important;
+    border: 1px solid #a9a9a9 !important;
     border-radius: 5px;
     color: #7d7d7d;
     padding: 2px 12px;
+}
+
+.attr-item__cell-input:focus {
+    border: 1px solid #005599 !important;
+    outline: none;
+    box-shadow: none !important;
 }
 
 .attr-item__cell-wrap > .attr-item__cell-input {
@@ -811,7 +830,7 @@ body {
 
 .tex-list > li {
     background-color: white;
-    border: 1px solid #7D7D7D;
+    border: 1px solid #a9a9a9;
     font-size: 14px;
     min-height: 25px;
     padding-left: 10px;
@@ -903,7 +922,7 @@ body {
 }
 
 .attr-item__matte-wrap {
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     border-radius: 4px;
     width: 100%;
     padding: 10px;
@@ -924,17 +943,24 @@ body {
     width: calc(100% - 60px) !important;
     height: 28px;
     display: inline !important;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     line-height: 28px;
     padding: 0;
+}
+
+.attr-item__matte-input:focus {
+    border: 1px solid #005599 !important;
+    outline: none;
+    box-shadow: none;
 }
 
 .attr-item__matte-range {
     width: calc(100% - 60px) !important;
     height: 20px;
-    display: inline !important;
+    display: inline-block !important;
     outline: none;
     cursor: pointer;
+    vertical-align: -4px;
 }
 
 .attr-item__matte-color {
@@ -944,7 +970,7 @@ body {
 
 /*变量*/
 .tagSelect-main-wrap {
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     border-radius: 4px;
     padding: 10px;
     width: 100%;
@@ -958,20 +984,26 @@ body {
 .tagSelect__select, .tagSelect__title > button {
     padding: 0;
     height: 30px;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     line-height: 30px;
     color: #7d7d7d;
+}
+
+.tagSelect__select:focus {
+    border: 1px solid #005599 !important;
+    outline: none;
+    box-shadow: none;
 }
 
 .tagSelect__title > button {
     padding: 0 12px !important;
     text-align: center;
     outline: none !important;
-    color: #000209;
+    color: #666666;
 }
 
 .action-operate__cell {
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     padding: 10px;
     border-radius: 5px;
     min-height: 144px;
@@ -1006,7 +1038,7 @@ body {
 }
 
 .action-wrap .action-item__action-list li {
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     border-radius: 4px;
     min-height: 25px;
     padding: 3px 0 0 10px;
@@ -1050,7 +1082,13 @@ body {
 
 .attr-item__cell-input-inline {
     width: 30%;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
+}
+
+.attr-item__cell-input-inline:focus {
+    border: 1px solid #005599 !important;
+    outline: none;
+    box-shadow: none;
 }
 
 .action-operate-table {
@@ -1081,14 +1119,12 @@ body {
 
 .action-item__list {
     margin-top: 10px;
-}
-
-.action-item__list-table {
-
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .action-item__list-table > thead > tr > td, .action-item__list-table > tbody > tr > td, .action-item__list-table {
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
 }
 
 .op-selected {
@@ -1121,6 +1157,7 @@ body {
     display: inline-block;
     vertical-align: 0;
     float: right;
+    color: #666666;
 }
 
 .tag-item__timer-wrap {
@@ -1151,26 +1188,26 @@ body {
     line-height: 26px;
     text-align: center;
     color: #7d7d7d;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
 }
 
 .tag-item__timer-num > input {
     text-align: center;
     height: 26px;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
 }
 
 .tag-item__timer-num > span > button {
     padding: 0 14px;
     line-height: 26px;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     height: 26px !important;
 }
 
 .attr-item__table-wrap {
     margin-top: 20px;
     padding: 0;
-    border: 1px solid #7d7d7d;
+    border: 1px solid #a9a9a9;
     border-radius: 5px;
     overflow: hidden;
 }
@@ -1259,6 +1296,10 @@ body {
     text-align: center;
     line-height: 28px;
     border: 1px solid #7d7d7d;
+}
+
+.resource-operate__all-select {
+    color: #7d7d7d;
 }
 
 /*右侧属性栏__底部图层菜单*/
@@ -1796,6 +1837,7 @@ div.wrapper-custom {
     font-weight: 100;
     position: absolute;
     left: 15px;
+    padding: 0 12px;
 }
 
 .lx-modal-title {
@@ -1836,6 +1878,7 @@ div.wrapper-custom {
     position: relative;
     display: inline-block;
     width: 100%;
+    border-radius: 5px;
 }
 
 .modal-uploadfile-wrapper {
@@ -1950,14 +1993,95 @@ div.wrapper-custom {
     font-size: 35px !important;
 }
 
+/*模态框*/
+.modal-title {
+    font-weight: 600;
+    text-align: center;
+    font-size: 20px;
+    margin: 0;
+}
 
+.modal-prompt {
+    padding: 0;
+    font-size: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #005599;
+}
 
+.modal-md .modal-content {
+    width: 500px;
+    padding: 10px 25px;
+    color: #7d7d7d;
+}
 
+.modal-lg .modal-content {
+    width: 900px;
+    padding: 10px 25px;
+    color: #7d7d7d;
+}
 
+.modal-sm .modal-content {
+    padding: 10px 25px;
+    color: #7d7d7d;
+}
 
+.modal-row {
+    height: 50px;
+    margin-top: 5px;
+}
 
+.modal-label {
+    font-size: 16px;
+}
 
+.modal-input, .modal-label {
+    height: 30px;
+    line-height: 2em;
+    text-align: left;
+    vertical-align: middle;
+    color: #7d7d7d;
+}
 
+.modal-input {
+    padding: 0 10px;
+    border-radius: 5px;
+    border: 1px solid #A9A9A9;
+    color: rgba(0, 0, 0, .7);
+}
 
+.modal-input:focus {
+    outline: none;
+    border: 1px solid #005599 !important;
+}
 
+.modal-btn {
+    padding: 5px 0;
+    margin: 0 10px;
+    background-color: transparent;
+    border: 0;
+    font-size: 16px;
+    outline: none;
+    font-weight: 500;
+    color: #7d7d7d;
+}
 
+.modal-checkbox {
+    cursor: pointer;
+    vertical-align: -2px;
+    width: 15px;
+    height: 15px;
+}
+
+.modal-btn:hover {
+    text-shadow: 0 0 0 #7d7d7d;
+}
+
+.btn-confirm:hover {
+    text-shadow: 0 0 0 #005599;
+}
+
+.btn-confirm {
+    color: #005599;
+    border-bottom: 1.5px solid #005599;
+}

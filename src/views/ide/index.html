@@ -46,11 +46,7 @@
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/editorIndex.css">
-    <!--<link rel="stylesheet" href="../../public/ide/modules/ide/css/style.css">-->
-    <!--<link rel="stylesheet" href="../../public/ide/modules/ide/css/iconfont.css"/>-->
-    <!--<link rel="stylesheet" href="../../public/ide/modules/ide/css/tags.css"/>-->
-    <!--<link rel="stylesheet" href="../../public/ide/modules/ide/css/dengPage.css"/>-->
-    <!--<link rel="stylesheet" href="../../public/ide/modules/ide/css/xiangPage.css"/>-->
+    <link rel="stylesheet" href="../../public/ide/modules/ide/css/iconfont.css"/>
     <!--add-->
     <link rel="stylesheet" href="../../public/ide/tools/css/ruler.css"/>
 
@@ -224,71 +220,65 @@
                 </a>
                 <script type="text/ng-template" id="saveAsModal.html">
                     <div class="modal-header">
-                        <h3 class="modal-title">另存为</h3>
-                        <h6 class="modal-title">将已经保存的工程另存为一份副本</h6>
+                        <h4 class="modal-title">另存为</h4>
                     </div>
-                    <div class="modal-body dengModel-body">
-                        <div class="modal-title form-group modelPart">
-                            <form>
-                                <div class="form-group">
-                                    <label for="projectName" class="control-label">工程名:</label>
-                                    <input type="text" class="form-control" id="projectName" ng-model="saveAsName">
+                    <div class="modal-body">
+                        <div>
+                            <p class="modal-prompt">将已经保存的工程另存为一份副本</p>
+                        </div>
+                        <div class="modal-row">
+                            <span class="modal-label col-lg-3">工程名</span>
+                            <input type="text" class="modal-input col-lg-9" id="projectName" ng-model="saveAsName">
+                        </div>
+                        <div class="modal-row">
+                            <span class="modal-label col-lg-3">作&emsp;者</span>
+                            <input type="text" class="modal-input col-lg-9" id="author" ng-model="saveAsAuthor">
+                        </div>
+                        <div class="modal-row">
+                            <span class="modal-label col-lg-12 font-b">选择其它分辨率保存：<input type="checkbox" class="modal-checkbox" ng-model="isScale"/></span>
+                        </div>
+                        <div ng-show="isScale">
+                            <div class="modal-row">
+                                <select id="saveAs-resolution" class="modal-input col-lg-12" ng-model="selectCustomResolution">
+                                    <option value="1280*480" ng-selected="true">1280 * 480</option>
+                                    <option value="1280*800">1280 * 800</option>
+                                    <option value="1920*1080">1920 * 1080</option>
+                                    <option value="1000*600">1000 * 600</option>
+                                    <option value="800*600">800 * 600</option>
+                                    <option value="800*480">800 * 480</option>
+                                    <option value="480*272">480 * 272</option>
+                                    <option value="320*240">320 * 240</option>
+                                    <option value="custom">自定义:{{saveAsWidth}} * {{saveAsHeight}}</option>
+                                </select>
+                            </div>
+                            <div ng-show="selectCustomResolution=='custom'" class="row" style="margin-bottom: 20px">
+                                <div class="col-lg-6">
+                                    <span class="modal-label col-lg-6">宽&emsp;度</span>
+                                    <input type="number" placeholder="1~1920" class="modal-input col-lg-6" ng-model="saveAsWidth" min="0" max="1920"/>
                                 </div>
-                                <div class="form-group">
-                                    <label for="author" class="control-label">作者:</label>
-                                    <input type="text" class="form-control" id="author" ng-model="saveAsAuthor">
+                                <div class="col-lg-6">
+                                    <span class="modal-label col-lg-6">高&emsp;度</span>
+                                    <input type="number" placeholder="1~1920" class="modal-input col-lg-6" ng-model="saveAsHeight" min="0" max="1920"/>
                                 </div>
-                                <div class="form-group projectScale">
-                                    <label class="control-label">选择其它分辨率保存：</label>
-                                    <input type="checkbox" ng-model="isScale"/>
-                                </div>
-                                <div ng-show="isScale">
-                                    <div class="form-group">
-                                        <select id="saveAs-resolution" class="form-control" ng-model="selectCustomResolution">
-                                            <option value="1280*480" ng-selected="true">1280 * 480</option>
-                                            <option value="1280*800">1280 * 800</option>
-                                            <option value="1920*1080">1920 * 1080</option>
-                                            <option value="1000*600">1000 * 600</option>
-                                            <option value="800*600">800 * 600</option>
-                                            <option value="800*480">800 * 480</option>
-                                            <option value="480*272">480 * 272</option>
-                                            <option value="320*240">320 * 240</option>
-                                            <option value="custom">自定义:{{saveAsWidth}} * {{saveAsHeight}}</option>
-                                        </select>
-                                    </div>
-                                    <div ng-show="selectCustomResolution=='custom'" class="customResolutionWrap">
-                                        <div class="form-group row">
-                                            <label class="col-sm-2">自定义宽度：</label>
-                                            <input type="number" placeholder="1~1920" class="form-control col-sm-4" ng-model="saveAsWidth" min="0" max="1920"/>
-                                        </div>
-                                        <div class="form-group row">
-                                            <label class="col-sm-2">自定义高度：</label>
-                                            <input type="number" placeholder="1~1920" class="form-control col-sm-4" ng-model="saveAsHeight" min="0" max="1920"/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group projectScale">
-                                    <label class="control-label">图层、控件尺寸拉伸：</label>
-                                    <input type="checkbox" ng-model="isPulling"/>
-                                </div>
-                                <div ng-show="isPulling" class="pullingWrap">
-                                    <div class="form-group row">
-                                        <label for="pullingWidth" class="col-sm-2">宽度比例 1:</label>
-                                        <input type="number" class="form-control col-sm-4" id="pullingWidth" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label for="pullingHeight" class="col-sm-2">高度比例 1:</label>
-                                        <input type="number" class="form-control col-sm-4" id="pullingHeight" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
-                                    </div>
-                                </div>
-
-                            </form>
+                            </div>
+                        </div>
+                        <div class="modal-row">
+                            <span class="modal-label col-lg-12 font-b">图层、控件尺寸拉伸：<input type="checkbox" class="modal-checkbox" ng-model="isPulling"/></span>
+                        </div>
+                        <div ng-show="isPulling" class="row">
+                            <div class="col-lg-6">
+                                <span class="modal-label col-lg-6">宽度比1:</span>
+                                <input type="number" class="modal-input col-lg-6" id="pullingWidth" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
+                            </div>
+                            <div class="col-lg-6">
+                                <span class="modal-label col-lg-6">高度比1:</span>
+                                <input type="number" class="modal-input col-lg-6" id="pullingHeight" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" type="button" ng-click="ok()">确认</button>
-                        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        <button class="btn-confirm modal-btn" type="button" ng-click="ok()">确认</button>
+                        <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                     </div>
                 </script>
                 <!--<a ng-controller="ProjectFileCtrl" ng-click="open()" class="my-cmd-item" data-toggle="modal"-->
@@ -322,48 +312,50 @@
                 </a>
                 <script type="text/ng-template" id="navModal.html">
                     <div class="modal-header">
-                        <h3 class="modal-title">导出工程</h3>
+                        <h4 class="modal-title">导出工程</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="attr-item__cell-wrap">
-                            <p class="attr-item__cell-title">工程类型</p>
-                            <select class="form-control attr-item__cell-input" ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                        <div class="modal-row">
+                            <span class="modal-label col-lg-4">工程类型</span>
+                            <select class="modal-input col-lg-8" ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
                         </div>
-                        <div class="attr-item__cell-wrap export-project__ratio" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
-                            <p class="attr-item__cell-title">像素宽高比</p>
-                            <span>1&nbsp;:&nbsp;</span><input type="number" class="attr-item__cell-input" ng-model="verticalPixelRatio">
+                        <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                            <span class="modal-label col-lg-4">像素宽高比&nbsp;1&nbsp;:</span>
+                            <input type="number" class="modal-input col-lg-8" ng-model="verticalPixelRatio">
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" type="button" ng-click="ok()">确认</button>
-                        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        <button class="modal-btn btn-confirm" type="button" ng-click="ok()">确认</button>
+                        <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                     </div>
                 </script>
                 <script type="text/ng-template" id="shareModal.html">
                     <div class="modal-header">
-                        <h3 class="modal-title">分享工程</h3>
+                        <h4 class="modal-title">分享工程</h4>
                     </div>
-                    <div class="modal-body dengModel-body">
-                        <div class="modal-title form-group modelPart">{{message}}</div>
+                    <div class="modal-body">
+                        <div class="">{{message}}</div>
                         <!--<div class="modal-title form-group modelPart">-->
                             <!--开启分享-->
                         <!--</div>-->
                         <div ng-show="!loading">
-                            <button class='btn btn-default' ng-show="shareInfo.own" ng-click="toggleShare()" ng-disabled="processing">{{shareInfo.shared?'取消分享':'开启分享'}}</button>
-                            <div class='sharedUrl' ng-show="shareInfo.shared">路径：{{sharedUrl}}</div>
+                            <button class='btn btn-default' ng-show="shareInfo.own" ng-click="toggleShare()"
+                                    style="display: block;margin: 0 auto"
+                                    ng-disabled="processing">{{shareInfo.shared?'取消分享':'开启分享'}}</button>
+                            <div class='sharedUrl' ng-show="shareInfo.shared" style="word-break: break-all">路径：{{sharedUrl}}</div>
                             <div class='sharedKey' ng-show="shareInfo.shared">密码：{{shareInfo.sharedKey}}</div>
                             <div class='sharedKey' ng-show="shareInfo.shared">只读密码：{{shareInfo.readOnlySharedKey}}</div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
+                        <button class="modal-btn" type="button" ng-click="cancel()">关闭</button>
                     </div>
                 </script>
                 <script type="text/ng-template" id="validateModal.html">
                     <div class="modal-header">
-                        <h3 class="modal-title">验证生成压缩包</h3>
+                        <h4 class="modal-title">验证生成压缩包</h4>
                     </div>
-                    <div class="modal-body dengModel-body">
+                    <div class="modal-body">
                         <span class="modal-dragzone"  ngf-drag-over-class="‘modal-dragzone-accept’"  ngf-drop='validateZipFile($files)'>
                             拖拽或上传生成压缩包以验证
                             <input type='file' class="modal-dragzone-input" ngf-select='validateZipFile($files)'  />
@@ -380,7 +372,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-warning" type="button" ng-click="cancel()">关闭</button>
+                        <button class="modal-btn" type="button" ng-click="cancel()">关闭</button>
                     </div>
                 </script>
                 <script type="text/ng-template" id="navCANModal.html">
@@ -3372,25 +3364,25 @@
                         <!--//last edtor: liuhuan 2017/8/17-->
                         <script type="text/ng-template" id="imageSelectorModal.html">
                             <div class="modal-header">
-                                <h3 class="modal-title">选择图片</h3>
+                                <h4 class="modal-title">选择图片</h4>
                             </div>
 
                             <div class="modal-body">
                                 <table class="table table-bordered">
                                     <thead>
-                                    <tr>
+                                    <tr align="center">
                                         <td class="col-xs-1">#</td>
-                                        <td class="col-xs-1">名称</td>
-                                        <td class="col-xs-1">背景图片</td>
-                                        <td class="col-xs-1">背景色</td>
-                                        <td class="col-xs-1">预览</td>
+                                        <td class="col-xs-2">名称</td>
+                                        <td class="col-xs-2">背景图片</td>
+                                        <td class="col-xs-2">背景色</td>
+                                        <td class="col-xs-2">预览</td>
                                         <td class="col-xs-1">操作</td>
                                     </tr>
                                     </thead>
 
                                     <tbody>
                                     <tr class="texRow"  ng-repeat="slice in tex.slices" ng-click="selectItem($index)" ng-class="{'active':$index===curIndex}">
-                                        <td>{{$index}}</td>
+                                        <td align="center" style="vertical-align: middle;">{{$index}}</td>
                                         <td>
                                             <div class="form-group">
                                                 <input class="form-control"
@@ -3415,15 +3407,15 @@
                                         <!--color-->
                                         <td><input class="form-control" colorpicker="rgba" type="text"
                                                    ng-model="slice.color" ng-disabled="slice.imgSrc!==''"/></td>
-                                        <td style="background-color: #B0B0B0">
+                                        <td style="background-color: #B0B0B0" align="center">
                                             <div style="background-color:{{slice.color}};width:100px;height:100px;">
                                                 <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
                                                      height="100px"/>
                                             </div>
                                         </td>
-                                        <td>
-                                            <span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont" style="font-size: 30px">&#xe646;</span>
-                                            <span ng-click="downloadFile($index)" class="iconfont" style="font-size: 22px">&#xe666;</span>
+                                        <td align="center" style="vertical-align: middle;">
+                                            <span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont c-p" style="font-size: 30px">&#xe646;</span>
+                                            <span ng-click="downloadFile($index)" class="iconfont c-p" style="font-size: 22px">&#xe666;</span>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -3435,19 +3427,19 @@
 
                             <div class="modal-footer my-row-left">
                             <span class="fl">
-                                <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">
+                                <button type="button" class="attr-default-btn btn btn-default" ng-show="canAddNewSlice" ng-click="addSlice()">
                                     向下插入
                                 </button>
-                                <button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlicePrev()">
+                                <button type="button" class="attr-default-btn btn btn-default" ng-show="canAddNewSlice" ng-click="addSlicePrev()">
                                     向上插入
                                 </button>
-                                <button type="button btn" ng-show="canBatchAddImg" style="margin-left: 20px" class="btn-sm btn" ng-click="batchSelect()">
+                                <button type="button" ng-show="canBatchAddImg" style="margin-left: 20px" class="attr-default-btn btn btn-default" ng-click="batchSelect()">
                                     批量插入
                                 </button>
                             </span>
                             <span  class="my-but-right">
-                                <button class="btn btn-primary" type="button" ng-click="save()">保存</button>
-                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                <button class="modal-btn btn-confirm" type="button" ng-click="save()">保存</button>
+                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </span>
                             </div>
 
@@ -3480,13 +3472,13 @@
                             </table>
                         </div>
                         <div class="modal-footer">
-                        <span class="my-but-left">
+                        <span class="fl">
                             <button class="btn btn-success" ng-click="selectAll()">全选</button>
                             <button class="btn btn-success" ng-click="invertSelect()">反选</button>
                         </span>
                         <span class="my-but-right">
-                            <button class="btn btn-primary" type="button" ng-click="add()">添加</button>
-                            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                            <button class="modal-btn btn-confirm" type="button" ng-click="add()">添加</button>
+                            <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                         </span>
                         </div>
                     </script>
@@ -3549,7 +3541,7 @@
 
                         <script type="text/ng-template" id="actionPanelModal.html" class="action-setting-wrap">
                             <div class="modal-header">
-                                <h3 class="modal-title">动作</h3>
+                                <h4 class="modal-title">动作</h4>
                             </div>
                             <div class="modal-body">
                                 <div class="form-group">
@@ -3605,8 +3597,6 @@
                                                            ng-model="chosenCmd[1].value"/>
                                                 </div>-->
                                                 </div>
-
-
                                             </div>
                                         </td>
 
@@ -3640,14 +3630,14 @@
                                 <div class="action-item__list">
                                     <table class="table table-hover action-item__list-table">
                                         <thead>
-                                        <tr align="center">
-                                            <td class="col-xs-1">#</td>
-                                            <td class="col-xs-2">操作</td>
-                                            <td class="col-xs-2">操作数1</td>
-                                            <td class="col-xs-2">操作数2</td>
-                                            <td class="col-xs-1">删除</td>
-                                            <td class="col-xs-1"></td>
-                                        </tr>
+                                            <tr align="center">
+                                                <td class="col-xs-1">#</td>
+                                                <td class="col-xs-2">操作</td>
+                                                <td class="col-xs-2">操作数1</td>
+                                                <td class="col-xs-2">操作数2</td>
+                                                <td class="col-xs-1">删除</td>
+                                                <td class="col-xs-1">提示</td>
+                                            </tr>
                                         </thead>
                                         <tbody>
                                         <tr ng-class="{'op-selected':$index==currentChosenIdx}"
@@ -3656,14 +3646,14 @@
                                             <td>{{cmd[0].symbol}}</td>
                                             <td>{{cmd[1].tag||cmd[1].value}}</td>
                                             <td align="center">{{cmd[2].tag||cmd[2].value}}</td>
-                                            <td align="center"><i class="iconfont cp" ng-click="deleteCmd($index)">
+                                            <td align="center"><i class="iconfont c-p" ng-click="deleteCmd($index)">
                                                 &#xe627;</i></td>
-                                            <td>
-                                            <span class="label label-danger"
-                                                  ng-show="!validateArr[$index].pass"
-                                                  tooltip-placement="top"
-                                                  uib-tooltip="{{validateArr[$index].tooltip}}"
-                                                  style="cursor: pointer;">!</span>
+                                            <td align="center">
+                                                <span class="label label-danger"
+                                                      ng-show="!validateArr[$index].pass"
+                                                      tooltip-placement="top"
+                                                      uib-tooltip="{{validateArr[$index].tooltip}}"
+                                                      style="cursor: pointer;">!</span>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -3672,8 +3662,8 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
-                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">保存</button>
+                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </div>
                         </script>
 
@@ -3987,8 +3977,8 @@
 
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-primary" type="button" ng-click="confirm(this)">保存</button>
-                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                <button class="modal-btn btn-confirm" type="button" ng-click="confirm(this)">保存</button>
+                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </div>
                         </script>
 
@@ -4044,7 +4034,9 @@
                         <div ng-hide="component.top.showDel">
                             <div class="attr-item__cell-wrap lg">
                                 <label class="resource-operate__all-select">
-                                    <input type="checkbox" ng-model="component.top.allSelected" ng-click="component.top.selectAll(component.top.allSelected)">
+                                    <input type="checkbox" ng-model="component.top.allSelected"
+                                           style="vertical-align: -2px"
+                                           ng-click="component.top.selectAll(component.top.allSelected)">
                                     <span>全选</span>
                                 </label>
                             <span>
@@ -4086,8 +4078,8 @@
                                         </p>
                                     </td>
                                     <td align="center"><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
-                                        <span class="iconfont img-option cp" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
-                                        <span class="iconfont img-option cp" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px">&#xe666;</span>
+                                        <span class="iconfont img-option c-p" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
+                                        <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px">&#xe666;</span>
                                         <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                             <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
                                         </label>
@@ -4108,8 +4100,8 @@
                             </div>
                             <!--<div class="modal-body">-->
                             <div class="modal-footer">
-                                <button class="btn btn-primary" type="button" ng-click="confirm()">确定</button>
-                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                <button class="modal-btn btn-confirm" type="button" ng-click="confirm()">确定</button>
+                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </div>
                         </script>
                     </div>
@@ -4125,8 +4117,8 @@
                             </div>
                             <!--<div class="modal-body">-->
                             <div class="modal-footer">
-                                <button class="btn btn-primary" type="button" ng-click="ok()">确定</button>
-                                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                <button class="modal-btn btn-confirm" type="button" ng-click="ok()">确定</button>
+                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </div>
                         </script>
 
@@ -4175,10 +4167,10 @@
                             <!--导入tags模板-->
                             <script type="text/ng-template" id="tagsImport.html">
                                 <div class="modal-header">
-                                    <h3 class="modal-title" style="margin-bottom: 5px">导入预设变量集<small></small></h3>
-                                    <p class="text-muted" style="margin-bottom: 0px">变量集将会追加到所有变量中，并自动归类到当前变量标签</p>
+                                    <h4 class="modal-title">导入预设变量集<small></small></h4>
                                 </div>
                                 <div class="modal-body">
+                                    <p class="modal-prompt">变量集将会追加到所有变量中，并自动归类到当前变量标签</p>
                                     <h5>选项:</h5>
                                     <div class="row" style="margin-bottom: 10px">
                                         <div class="col-xs-5">
@@ -4221,11 +4213,11 @@
 
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-primary"
+                                    <button class="modal-btn btn-confirm"
                                             type="button"
                                             ng-disabled="disableBtn"
                                             ng-click="ok()">{{btnText}}</button>
-                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                                 </div>
                             </script>
                             <script type="text/ng-template" id="customPreset.html">
@@ -4261,16 +4253,16 @@
                                     <button class="btn btn-success" ng-click="selectAll()">全选</button>
                                     <button class="btn btn-success" ng-click="invertSelect()">反选</button>
                                 </span>
-                                    <button class="btn btn-primary"
+                                    <button class="modal-btn btn-confirm"
                                             type="button"
                                             ng-disabled="disableBtn"
                                             ng-click="ok()">确定</button>
-                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                                 </div>
                             </script>
                             <script type="text/ng-template" id="tagModal.html">
                                 <div class="modal-header">
-                                    <h3 class="modal-title">变量</h3>
+                                    <h4 class="modal-title">变量</h4>
                                 </div>
 
                                 <div class="modal-body">
@@ -4316,9 +4308,9 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-primary" type="button" ng-show="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
-                                    <button class="btn btn-primary" type="button" ng-click="save(this)">保存</button>
-                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                    <button class="modal-btn btn-confirm" type="button" ng-show="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
+                                    <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">保存</button>
+                                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                                 </div>
                             </script>
                             <script type="text/ng-template" id="addToTagClassModal.html">
@@ -4336,8 +4328,8 @@
                                     </table>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-primary" type="button" ng-click="save(this)">确定</button>
-                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                    <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">确定</button>
+                                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                                 </div>
                             </script>
                             <script type="text/ng-template" id="editTagClasses.html">
@@ -4390,8 +4382,8 @@
                                     </table>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="btn btn-primary" type="button" ng-click="close()">确定</button>
-                                    <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                                    <button class="modal-btn btn-confirm" type="button" ng-click="close()">确定</button>
+                                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                                 </div>
                             </script>
 
@@ -4399,8 +4391,8 @@
                                 <table class="attr-item__table table table-bordered"ng-show="component.timerTagShow==false">
                                     <thead align="center">
                                     <tr>
-                                        <td>名称<span class="iconfont cp" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
-                                        <td>寄存器<span class="iconfont cp" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span></td>
+                                        <td>名称<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
+                                        <td>寄存器<span class="iconfont c-p" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span></td>
                                         <td>启用</td>
                                         <td>标签</td>
                                         <td>删除</td>
