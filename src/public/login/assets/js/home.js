@@ -34,7 +34,7 @@
             }
             return null;
         }
-    }
+    };
     // 轮播图class前缀
     var classPrefix = "slide-item ";
 
@@ -43,12 +43,12 @@
         return new Promise(function (resolve) {
             setTimeout(resolve, time);
         })
-    }
+    };
 
     // 获取元素当对于视口的offsettop
     var getOffsetTop = (elem) => {
         return elem && elem.getBoundingClientRect && elem.getBoundingClientRect().top || 0;
-    }
+    };
 
     // 标题栏元素引用
     var titleElem = document.querySelector('.title');
@@ -70,7 +70,7 @@
 
     // introduce 引用
     var introduceList = document.querySelector('.introduce-list');
-
+    
 
     // 轮播图元素引用
     var selectorElem = document.querySelector('.slide');
@@ -82,17 +82,15 @@
     var rightBtn = selectorElem.querySelector('.right-icon');
 
 
-
-
     // 初始化函数
     var initialize = function () {
         animateTitle();
         animateVido();
         animateFeatureList();
         animateIntroduceList();
-        animateCarousel()
+        animateCarousel();
         initCarousel();
-    }
+    };
 
     // 轮播图左按钮点击事件处理
     var hanldeLeftClick = function (e) {
@@ -101,7 +99,7 @@
         item2.className = classPrefix + state.item2;
         item3.className = classPrefix + state.item3;
         handleGifState();
-    }
+    };
 
     // 轮播图右按钮点击事件处理
     var handleRightClick = function (e) {
@@ -110,13 +108,13 @@
         item2.className = classPrefix + state.item2;
         item3.className = classPrefix + state.item3;
         handleGifState()
-    }
+    };
 
     // 处理Gif的状态
     var handleGifState = function () {
         item1.stop();
         item2.stop();
-        item3.stop()
+        item3.stop();
         setTimeout(function () {
             var current = state.getCurrentItemName();
             switch (current) {
@@ -134,7 +132,7 @@
             }
 
         }, 600)
-    }
+    };
 
 
     var handleScroll = function (e) {
@@ -153,14 +151,15 @@
         if (!animateCarousel.triggered) {
             animateCarousel();
         }
-    }
+
+    };
 
     // 初始化轮播图
     var initCarousel = function () {
         item1.start(true);
         item2.start();
         item3.start();
-    }
+    };
 
     // tilte 动画
     var animateTitle = function () {
@@ -183,7 +182,7 @@
             .catch((err) => {
                 console.log('err', err);
             })
-    }
+    };
 
     // 列表出现动画
     var animateJumbotronList = function () {
@@ -206,7 +205,7 @@
                     listItems[2].className += " active";
                 })
         }
-    }
+    };
 
     // 主视频动画出现
     var animateVido = function () {
@@ -217,7 +216,7 @@
             animateVido.triggered = true;
             videoElem.className += " active";
         }
-    }
+    };
 
     // 特点列表动画
     var animateFeatureList = function () {
@@ -244,7 +243,7 @@
                     listItems[3].className += " active";
                 })
         }
-    }
+    };
 
     // 介绍列表动画
     var animateIntroduceList = function () {
@@ -267,7 +266,7 @@
                     listItems[2].className += " active";
                 })
         }
-    }
+    };
 
     // 轮播图出现动画
     var animateCarousel = function () {
@@ -278,7 +277,8 @@
             animateCarousel.triggered = true;
             selectrorContainer.className += " active";
         }
-    }
+    };
+
 
     // 事件绑定
     leftBtn.addEventListener('click', hanldeLeftClick, false);
@@ -288,4 +288,4 @@
     // 执行初始化函数
     initialize();
 
-})()
+})();
