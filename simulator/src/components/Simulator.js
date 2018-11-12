@@ -1446,6 +1446,9 @@ module.exports = React.createClass({
                 case 'MySlide':
                     this.drawSlide(curX, curY, widget, options, cb);
                     break;
+                case 'MyAlphaSlide':
+                    this.drawAlphaSlide(curX,curY,widget,options,cb);
+                    break;
                 case 'MyButton':
                     this.drawButton(curX, curY, widget, options, cb);
                     break;
@@ -1549,6 +1552,9 @@ module.exports = React.createClass({
             case 'MySlide':
                 this.paintSlide(curX, curY, widget, options, cb);
                 break;
+            case 'MyAlphaSlide':
+                this.paintAlphaSlide(curX, curY, widget, options, cb);
+                break;    
             case 'MyButton':
                 this.paintButton(curX, curY, widget, options, cb);
                 break;
@@ -1696,6 +1702,11 @@ module.exports = React.createClass({
         var slideIdx = (tag && tag.value) || 0;
         widget.curSlideIdx = slideIdx;
     },
+    drawAlphaSlide:function(curX,curY,widget,options,cb){
+        var tag = this.findTagByName(widget.tag);
+        var slideIdx = (tag && tag.value) || 0;
+        widget.curSlideIdx = slideIdx;
+    },
     paintSlide: function (curX, curY, widget, options, cb) {
         var slideSlices = widget.texList[0].slices;
         var slideIdx = widget.curSlideIdx;
@@ -1712,6 +1723,40 @@ module.exports = React.createClass({
             var width = widget.info.width;
             var height = widget.info.height;
             this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+            text = curSlice.text;
+            if (!!text) {
+                this.drawTextByTempCanvas(curX, curY, width, height, text, font, 'horizontal');
+            }
+        }
+        cb && cb();
+    },
+    paintAlphaSlide: function (curX, curY, widget, options, cb) {
+        var slideSlices = widget.texList[0].slices;
+        var slideIdx = widget.curSlideIdx;
+        var text = '';
+        var font = {};
+        font['font-style'] = widget.info.fontItalic;
+        font['font-weight'] = widget.info.fontBold;
+        font['font-size'] = widget.info.fontSize;
+        font['font-family'] = widget.info.fontFamily;
+        font['font-color'] = widget.info.fontColor;
+
+        if (slideIdx >= 0 && slideIdx < slideSlices.length) {
+            var curSlice = slideSlices[slideIdx];
+            var width = widget.info.width;
+            var height = widget.info.height;
+            var tempcanvas = this.refs.tempcanvas;
+            tempcanvas.width = width;
+            tempcanvas.height = height;
+            var tempctx = tempcanvas.getContext('2d');
+            tempctx.save();
+            tempctx.clearRect(0,0,width,height)
+            this.drawBgImg(0,0,width,height,curSlice.imgSrc,tempctx)
+            tempctx.globalCompositeOperation = 'source-in'
+            tempctx.fillStyle = widget.texList[1].slices[0].color
+            tempctx.fillRect(0,0,width,height)
+            tempctx.restore();
+            this.offctx.drawImage(tempcanvas, curX, curY, width, height);
             text = curSlice.text;
             if (!!text) {
                 this.drawTextByTempCanvas(curX, curY, width, height, text, font, 'horizontal');
