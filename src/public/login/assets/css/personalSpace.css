@@ -643,19 +643,26 @@ a img {
     outline: none;
     font-weight: 500;
     color: #7d7d7d;
+    border-bottom: 1.5px solid transparent;
+    -webkit-transition: all .2s;
+    -moz-transition: all .2s;
+    -ms-transition: all .2s;
+    -o-transition: all .2s;
+    transition: all .2s;
 }
 
 .modal-btn:hover {
     text-shadow: 0 0 0 #7d7d7d;
+    border-bottom: 1.5px solid #7d7d7d;
 }
 
 .btn-confirm:hover {
     text-shadow: 0 0 0 #005599;
+    border-bottom: 1.5px solid #005599;
 }
 
-.btn-confirm {
+.btn-confirm{
     color: #005599;
-    border-bottom: 1.5px solid #005599;
 }
 
 .project-delete__prompt, .folder-delete__prompt {

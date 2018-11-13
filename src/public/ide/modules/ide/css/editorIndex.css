@@ -2055,6 +2055,13 @@ div.wrapper-custom {
     border: 1px solid #005599 !important;
 }
 
+.modal-checkbox {
+    cursor: pointer;
+    vertical-align: -2px;
+    width: 15px;
+    height: 15px;
+}
+
 .modal-btn {
     padding: 5px 0;
     margin: 0 10px;
@@ -2064,24 +2071,24 @@ div.wrapper-custom {
     outline: none;
     font-weight: 500;
     color: #7d7d7d;
-}
-
-.modal-checkbox {
-    cursor: pointer;
-    vertical-align: -2px;
-    width: 15px;
-    height: 15px;
+    border-bottom: 1.5px solid transparent;
+    -webkit-transition: all .2s;
+    -moz-transition: all .2s;
+    -ms-transition: all .2s;
+    -o-transition: all .2s;
+    transition: all .2s;
 }
 
 .modal-btn:hover {
     text-shadow: 0 0 0 #7d7d7d;
+    border-bottom: 1.5px solid #7d7d7d;
 }
 
 .btn-confirm:hover {
     text-shadow: 0 0 0 #005599;
+    border-bottom: 1.5px solid #005599;
 }
 
-.btn-confirm {
+.btn-confirm{
     color: #005599;
-    border-bottom: 1.5px solid #005599;
 }
