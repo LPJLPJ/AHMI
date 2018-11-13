@@ -97,6 +97,10 @@ a img {
     margin-right: 25px;
 }
 
+.top-menu__item:last-of-type{
+    margin-right: 0;
+}
+
 .top-menu__item > a {
     font-size: 16px;
     color: #898989;
@@ -131,6 +135,85 @@ a img {
 
 .top-nav__personal-space > img {
     vertical-align: -5px;
+}
+
+.personal-info{
+    width: 80px;
+    height: 100%;
+    margin: 0 20px;
+    float: right;
+    color: #606c80;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+    line-height: 68px;
+    text-align: center;
+}
+
+.personal-info__name{
+
+}
+
+.personal-info__icon{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%!important;
+}
+
+.personal-info__drop-down{
+    width: 140px;
+    height: 0;
+    position: absolute;
+    left: -30px;
+    top: 68px;
+    transition: height .2s;
+    background-color: #fff;
+    z-index: 99999;
+    overflow: hidden;
+    box-shadow: 2px 2px 5px rgba(0,0,0,.1);
+}
+
+.personal-info:hover .personal-info__drop-down{
+    border: 1px solid #CCCCCC;
+    width: 142px;
+    height: 120px;
+    left: -31px;
+    top: 67px;
+}
+
+.personal-info__content{
+    height: 120px;
+}
+
+.personal-info__list{
+    margin: 0;
+    padding: 0;
+}
+
+.personal-info__list>li{
+    height: 40px;
+    box-sizing: border-box;
+    line-height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+.personal-info__list>li:last-of-type{
+    border-top: 1px solid #cccccc;
+}
+
+.personal-info__list>li:hover{
+    background-color: #dadfe6;
+}
+
+.personal-info__logout,.personal-info__logout:hover{
+    color: #606c80;
+}
+
+.personal-info__list .iconfont{
+    font-size: 18px;
+    padding: 0 10px;
 }
 
 /*拖拽上传*/
