@@ -28,6 +28,9 @@ var loginAPI = require('./api/loginAPI');
 var projectInfo = require('./projectinfo');
 var generateProject = require('./generateProject');
 
+//recycle
+var recycle = require('./route_recycle');
+
 //CAN projects
 var CANProjectInfo = require('./CANProjectInfo');
 
@@ -268,6 +271,10 @@ router.route('/folder/getFolderList')
     .get(projectInfo.getFolderList);
 router.route('/folder/:id/space')
     .get(folder_space);
+
+//project recycle
+router.route('/project/recycle')
+    .get(recycle.getRecycle);
 
 
 //CAN project
