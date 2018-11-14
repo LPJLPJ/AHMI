@@ -52,9 +52,9 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyVideo:"video",
             MyAnimation:"animation",
             MyTexNum:"tex-num",
-            MyTexTime:"tex-time"
+            MyTexTime:"tex-time",
             //MyAlphaImg:"alpha-img"
-            MyAlphaSlide:"&#xe669;"
+            MyAlphaSlide:"slide"
         };
     }
 
