@@ -326,6 +326,11 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 return;
             }
 
+            //判断指令数量，若无指令则取消触发方式
+            if($scope.action.commands.length == 0){
+                $scope.action.trigger = '';
+            }
+
             //判断是否和初始一样
             if(th.action.newAction===false){
                 if (th.action.title===restoreValue){

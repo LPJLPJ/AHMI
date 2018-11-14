@@ -3389,7 +3389,9 @@
                             <div class="modal-title form-group modelPart">
                                 <span class="my-action-span">触发条件</span>
                                 <select class="form-control dengModel-trigger" ng-model="action.trigger"
-                                        ng-options="trigger.value as trigger.name for trigger in triggers"></select>
+                                        ng-options="trigger.value as trigger.name for trigger in triggers">
+                                    <option value="">----</option>
+                                </select>
                             </div>
 
                             <table class="table dengModal-table">
