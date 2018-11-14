@@ -1183,6 +1183,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
         switch (currentSelectedObject.type) {
             case Type.MyNumber:
             case Type.MySlide:
+            case Type.MyAlphaSlide:
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyButtonGroup:

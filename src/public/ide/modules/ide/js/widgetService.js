@@ -976,6 +976,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.maxCoverAngle=level.info.maxCoverAngle;
             }
 
+            this.posRotatePointX = level.info.posRotatePointX||0
+            this.posRotatePointY = level.info.posRotatePointY||0
+
+            this.innerRadius = level.info.innerRadius||0
+
             if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
                 this.backgroundColor=level.texList[0].slices[0].color;
 
@@ -1007,6 +1012,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
             }
 
+            this.on('OnRelease', function () {
+                // level.info.posRotatePointX = Math.round(level.info.width/2)
+                // level.info.posRotatePointY = Math.round(level.info.height/2)
+                self.posRotatePointX = level.info.posRotatePointX
+                self.posRotatePointY = level.info.posRotatePointY
+                //subLayerNode.renderAll();
+                // this.fire('changeDashboardPointerOffset',{
+                //     posRotatePointX:level.info.posRotatePointX,
+                //     posRotatePointY:level.info.posRotatePointY
+                // })
+            });
+
             this.on('changeDashboardOffsetValue', function (arg) {
                 if(arg.offsetValue||arg.offsetValue==0){
                     self.offsetValue=arg.offsetValue;
@@ -1019,6 +1036,22 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeDashboardPointerOffset', function (arg) {
+                self.posRotatePointX = arg.posRotatePointX
+                self.posRotatePointY = arg.posRotatePointY
+                var _callback=arg.callback;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeDashboardPointerInnerRadius',function(arg){
+                self.innerRadius = arg.innerRadius||0
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                arg.callback && arg.callback()
+            })
 
             this.on('changeDashboardValue', function (arg) {
                 if(arg.hasOwnProperty('value')){
@@ -1228,51 +1261,58 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     if(this.clockwise=='0'){
                         angleOfPointer=-angleOfPointer;
                     }
-                    var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    var rotateRad = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)
+                    var rotateAngle = rotateRad*180/Math.PI;
                     angleOfPointer=angleOfPointer+rotateAngle;
-                    if(!(this.minCoverAngle==this.maxCoverAngle)){
-                        var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
-                        var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.moveTo(0,0);
-                        ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
-                        ctx.closePath();
-                        ctx.fillStyle='rgba(244,244,244,0.3)';
-                        ctx.fill();
-                        ctx.restore();
-                        ctx.beginPath();
-                        ctx.moveTo(0,0);
-                        ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
-                        ctx.closePath();
-                        //ctx.stroke();
-                        ctx.clip();
-                    }
+                    var innerW = this.innerRadius * Math.sin(rotateRad)
+                    var innerH = this.innerRadius * Math.cos(rotateRad)
+                    // if(!(this.minCoverAngle==this.maxCoverAngle)){
+                    //     var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                    //     var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                    //     ctx.save();
+                    //     ctx.beginPath();
+                    //     ctx.moveTo(0,0);
+                    //     ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
+                    //     ctx.closePath();
+                    //     ctx.fillStyle='rgba(244,244,244,0.3)';
+                    //     ctx.fill();
+                    //     ctx.restore();
+                    //     ctx.beginPath();
+                    //     ctx.moveTo(0,0);
+                    //     ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
+                    //     ctx.closePath();
+                    //     //ctx.stroke();
+                    //     ctx.clip();
+                    // }
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     //var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    //ctx.save()
+                    ctx.translate((-this.width/2+(this.posRotatePointX||0)/this.scaleX),(-this.height/2+(this.posRotatePointY||0)/this.scaleY))
                     ctx.rotate(angleOfPointer*Math.PI/180);
+                    ctx.translate(innerW/this.scaleX,innerH/this.scaleY)
                     ctx.scale(this.scaleX,this.scaleY);
+                    //ctx.restore()
                     ctx.fillStyle=this.pointerColor;
                     ctx.fillRect(
                         0,
                         0,
                         this.width/2,
-                        this.width/2
+                        this.height/2
                     );
                     ctx.drawImage(this.pointerImageElement, 0, 0,this.pointerImageElement.width/this.scaleX,this.pointerImageElement.height/this.scaleY);
                     ctx.restore();
                 }
                 //将图片超出canvas的部分裁剪
-                this.clipTo = function (ctx) {
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.rect(-this.width / 2,
-                        -this.height / 2,
-                        this.width,
-                        this.height);
-                    ctx.closePath();
-                    ctx.restore();
-                };
+                // this.clipTo = function (ctx) {
+                //     ctx.save();
+                //     ctx.beginPath();
+                //     ctx.rect(-this.width / 2,
+                //         -this.height / 2,
+                //         this.width,
+                //         this.height);
+                //     ctx.closePath();
+                //     ctx.restore();
+                // };
 
             }
             catch(err){
@@ -1639,7 +1679,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxValue=level.info.maxValue;
             this.initValue=level.info.initValue;
             this.clockwise=level.info.clockwise;
-
+            this.posRotatePointX = level.info.posRotatePointX||0
+            this.posRotatePointY = level.info.posRotatePointY||0
 
             this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.imageElement) {
@@ -1675,6 +1716,28 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             })
+
+            this.on('OnRelease', function () {
+                // level.info.posRotatePointX = Math.round(level.info.width/2)
+                // level.info.posRotatePointY = Math.round(level.info.height/2)
+                self.posRotatePointX = level.info.posRotatePointX
+                self.posRotatePointY = level.info.posRotatePointY
+                //subLayerNode.renderAll();
+                // this.fire('changeDashboardPointerOffset',{
+                //     posRotatePointX:level.info.posRotatePointX,
+                //     posRotatePointY:level.info.posRotatePointY
+                // })
+            });
+
+            this.on('changeRotateImgPointerOffset', function (arg) {
+                self.posRotatePointX = arg.posRotatePointX
+                self.posRotatePointY = arg.posRotatePointY
+                var _callback=arg.callback;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1686,16 +1749,27 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(this.clockwise==0){
                     rotateAngle = -rotateAngle;
                 }
+                ctx.save()
+                
+                ctx.translate(-this.width/2,-this.height/2)
+                ctx.scale(1/this.scaleX,1/this.scaleY)
+                var posRotatePointX = this.posRotatePointX||0
+                var posRotatePointY = this.posRotatePointY||0
+                ctx.translate(posRotatePointX,posRotatePointY)
+                
                 ctx.rotate(rotateAngle);
+                ctx.translate(-posRotatePointX,-posRotatePointY)
+                ctx.scale(this.scaleX,this.scaleY)
                 ctx.fillStyle=this.backgroundColor;
                 ctx.fillRect(
-                    -(this.width / 2),
-                    -(this.height / 2) ,
+                   0,
+                    0,
                     this.width ,
                     this.height);
                 if (this.imageElement){
-                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    ctx.drawImage(this.imageElement, 0, 0,this.width,this.height);
                 }
+                ctx.restore()
             }
             catch(err){
                 console.log('错误描述',err);
@@ -4280,6 +4354,152 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MySlide(level, object));
     };
     fabric.MySlide.async = true;
+
+    //myAplaSlide
+    fabric.MyAlphaSlide = fabric.util.createClass(fabric.Object, {
+        type: Type.MyAlphaSlide,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+
+            var tex=level.texList[0];
+            this.currentColor=tex.slices[tex.currentSliceIdx].color;
+
+            this.text=tex.slices[0].text||'';
+            this.fontFamily=level.info.fontFamily||"宋体";
+            this.fontSize=level.info.fontSize||20;
+            this.fontColor=level.info.fontColor||'rgba(0,0,0,1)';
+            this.fontBold=level.info.fontBold||"100";
+            this.fontItalic=level.info.fontItalic||"";
+
+            this.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+
+            this.bgColor = level.texList[1].slices[0].color
+
+            this.offsetFrabricCanvas = this.offsetFrabricCanvas || document.createElement('canvas')
+
+            if (this.currentImageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+            this.on('changeTex', function (arg) {
+
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.currentColor=tex.slices[tex.currentSliceIdx].color;
+                self.currentImageElement = ResourceService.getResourceFromCache(tex.slices[tex.currentSliceIdx].imgSrc);
+                self.text = tex.slices[0].text;
+                self.bgColor = level.texList[1].slices[0].color
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            this.on('changeFontStyle',function(arg){
+                if(arg.hasOwnProperty('text')){
+                    self.text=arg.text;
+                }
+                if(arg.fontFamily){
+                    self.fontFamily=arg.fontFamily;
+                }
+                if(arg.fontBold){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+                if(arg.fontSize){
+                    self.fontSize=arg.fontSize;
+                }
+                if(arg.fontColor){
+                    self.fontColor=arg.fontColor;
+                }
+                var _callback=arg.callback;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                this.offsetFrabricCanvas.width = this.width
+                this.offsetFrabricCanvas.height = this.height
+                var offsetCtx = this.offsetFrabricCanvas.getContext('2d')
+                offsetCtx.save()
+                offsetCtx.clearRect(0,0,this.width,this.height)
+                offsetCtx.fillStyle = this.bgColor
+                
+                
+                if (this.currentImageElement){
+                    
+                    //offsetCtx.globalAlpha = 0
+                    offsetCtx.drawImage(this.currentImageElement,0,0,this.width,this.height)
+                    
+                    offsetCtx.globalCompositeOperation = 'source-in'
+                    offsetCtx.fillRect(0,0,this.width,this.height)
+                }
+                offsetCtx.restore()
+                ctx.save();
+                //ctx.fillStyle=this.currentColor;
+                
+                if (this.currentImageElement){
+                    ctx.drawImage(this.offsetFrabricCanvas, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                ctx.restore();
+
+                if(this.text){
+                    ctx.save();
+                    ctx.fillStyle=this.fontColor;
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+'"'+this.fontFamily+'"';
+                    // console.log('button font',fontString)
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.text,0,0);
+                    ctx.restore();
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染Slide出错');
+            }
+        }
+    });
+    fabric.MyAlphaSlide.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyAlphaSlide(level, option));
+    }
+    fabric.MyAlphaSlide.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                currentColor:this.currentColor,
+                currentImageElement:this.currentImageElement
+            });
+        }
+    })(fabric.MyAlphaSlide.prototype.toObject);
+    fabric.MyAlphaSlide.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyAlphaSlide(level, object));
+    };
+    fabric.MyAlphaSlide.async = true;
 
     //myAnimation
     fabric.MyAnimation = fabric.util.createClass(fabric.Object, {

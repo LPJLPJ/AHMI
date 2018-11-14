@@ -123,7 +123,9 @@ ideServices
                     pointerLength:185,
                     enableAnimation:false,
                     pointerImgWidth:0,
-                    pointerImgHeight:0
+                    pointerImgHeight:0,
+                    posRotatePointX:50,
+                    posRotatePointY:50
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -151,7 +153,9 @@ ideServices
                     originX: 'center', originY: 'center',
                     minValue:0,maxValue:360,
                     initValue:0,
-                    clockwise:1
+                    clockwise:1,
+                    posRotatePointX:50,
+                    posRotatePointY:50
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -375,6 +379,59 @@ ideServices
 
             }
         };
+
+
+        this.getDefaultAlphaSlide = function () {
+            var info = {
+                width:200, height: 150,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+
+                fontFamily:"宋体",
+                fontSize:20,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:'',
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                subSlides: [],
+                name: 'NewAlphaSlide',
+                type: Type.MyAlphaSlide,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[
+                    {
+                        name:'纹理',
+                        currentSliceIdx:0,
+                        slices:[
+                            {
+                                color:'rgba(255,255,255,1)',
+                                imgSrc:'',
+                                name:'图片'
+                            }
+                        ]
+                    },
+                    {
+                        name:'底色',
+                        currentSliceIdx:0,
+                        slices:[
+                            {
+                                color:'rgba(239,162,68,1)',
+                                imgSrc:'',
+                                name:'图片'
+                            }
+                        ]
+                    }
+                ]
+
+            }
+        };
+
+
+
 
 
         this.getDefaultButton= function () {
