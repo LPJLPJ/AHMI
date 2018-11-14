@@ -560,6 +560,7 @@ body {
     line-height: 30px;
     background-color: transparent;
     outline: none;
+    cursor: pointer;
 }
 
 .stage__project-title > p {

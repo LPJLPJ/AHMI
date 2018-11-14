@@ -681,10 +681,6 @@
         </div>
         <div class="stage-content-wrap">
             <div class="stage-content" ng-show="status.editPage" id="myStageTable">
-                <!--<div class="attribute-view view-wrap" ng-click="showRight()">
-                    <img class="pack" src="../../public/ide/modules/ide/images/left.png"/>
-                    <img class="open" src="../../public/ide/modules/ide/images/right.png"/>
-                </div>-->
                 <table width="100%" height="100%">
                     <tr>
                         <td align="center" valign="middle">
@@ -3659,7 +3655,9 @@
                                 <div class="form-group">
                                     <span class="attr-item__cell-title-inline">触发条件</span>
                                     <select class="form-control attr-item__cell-input-inline" ng-model="action.trigger"
-                                            ng-options="trigger.value as trigger.name for trigger in triggers"></select>
+                                            ng-options="trigger.value as trigger.name for trigger in triggers">
+                                        <option value="">----</option>
+                                    </select>
                                 </div>
 
                                 <table class="table action-operate-table">

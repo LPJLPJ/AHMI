@@ -53,7 +53,8 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyAnimation:"animation",
             MyTexNum:"tex-num",
             MyTexTime:"tex-time",
-            //MyAlphaImg:"alpha-img"
+            //MyAlphaImg:"alpha-img",
+            MyTouchTrack:"tex-time",
             MyAlphaSlide:"slide"
         };
     }
