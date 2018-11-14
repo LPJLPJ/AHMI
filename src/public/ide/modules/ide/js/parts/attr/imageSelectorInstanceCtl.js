@@ -16,7 +16,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
         enterColor(op);
     });
     $scope.$on('colorpicker-closed',function(e,op){
-        restore(op);
+        restore();
     });
     $scope.$on('colorpicker-shown',function(e,op){
         cloneSlice();
@@ -45,6 +45,12 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
             break;
         case Type.MySlide:
             initConfigure(true,true,2,widgetInfo.tex,false,false,false,false);
+            break;
+        case Type.MyAlphaSlide:
+            initConfigure(true,false,2,widgetInfo.tex,false,false,false,false);
+            if(widgetInfo.tex.name==='底色'){
+                initConfigure(false,false,1,widgetInfo.tex,true,true,false,false);
+            }
             break;
         case Type.MyNumber:
             initConfigure(false,false,13,widgetInfo.tex,false,false,false,false);

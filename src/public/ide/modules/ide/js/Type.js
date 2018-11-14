@@ -34,6 +34,8 @@ ideServices.
         var MyTexTime = this.MyTexTime = 'MyTexTime';
         var MyAlphaImg = this.MyAlphaImg = 'MyAlphaImg';
         var MyTouchTrack = this.MyTouchTrack = 'MyTouchTrack'
+        this.MyAlphaSlide = 'MyAlphaSlide';
+
 
 
     this.getFabWidgetByName= function (_typeStr) {
@@ -48,7 +50,7 @@ ideServices.
             _typeStr==this.MyProgress||_typeStr==this.MyNumber||_typeStr==this.MyButtonGroup||_typeStr == this.MyDashboard||
             _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope||_typeStr==this.MyImage||
             _typeStr==this.MySwitch||_typeStr==this.MyRotateImg||_typeStr==this.MyDateTime||_typeStr==this.MyScriptTrigger||_typeStr==this.MySlideBlock||
-            _typeStr==this.MyVideo||_typeStr==this.MyAnimation||_typeStr==this.MyTexNum||_typeStr==this.MyTexTime||_typeStr==this.MyAlphaImg||_typeStr==this.MyTouchTrack){
+            _typeStr==this.MyVideo||_typeStr==this.MyAnimation||_typeStr==this.MyTexNum||_typeStr==this.MyTexTime||_typeStr==this.MyAlphaImg||_typeStr==this.MyTouchTrack||_typeStr==this.MyAlphaSlide){
             return true;
         }
         return false

@@ -54,6 +54,7 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyTexNum:"tex-num",
             MyTexTime:"tex-time"
             //MyAlphaImg:"alpha-img"
+            MyAlphaSlide:"&#xe669;"
         };
     }
 

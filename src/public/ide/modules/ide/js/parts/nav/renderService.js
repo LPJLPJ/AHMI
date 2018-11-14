@@ -1351,6 +1351,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 this.renderButtonGroup(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             case 'MySlide':
+            case 'MyAlphaSlide':
                 this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             case 'MyAnimation':
