@@ -1183,6 +1183,7 @@ projectRoute.generateLocalProject = function (req, res) {
                 tempPro.template = project.template;
                 tempPro.supportTouch = project.supportTouch;
                 tempPro.resolution = project.resolution;
+                tempPro.ideVersion = project.ideVersion;
                 tempPro._id = project._id;
                 tempPro.createTime = new Date().toLocaleString();
                 tempPro.lastModifiedTime = new Date().toLocaleString();

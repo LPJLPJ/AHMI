@@ -10,7 +10,7 @@ module.exports = function (req, res) {
     var classId='space';
 	if (_user && _user.id) {
 
-        //edit by tang   ��δ�������Ŀ���ڸ������Ľ���
+        //edit by tang   ��δ�������Ŀ���ڸ������Ľ���?
         ProjectModel.findProInfo(_user.id,classId,function (err, projects) {
             if (err){
                 console.log(err);
