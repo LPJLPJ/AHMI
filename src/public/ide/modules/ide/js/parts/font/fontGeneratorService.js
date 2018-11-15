@@ -110,7 +110,19 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             idxInCanvas += curRange[1] - curRange[0] + 1
         }
 
-        return fontCanvas.toDataURL()
+        //return fontCanvas.toDataURL()
+    }
+
+
+    function drawCharsWithRangesFrom(idxInCanvas,ranges,fontSize,fontStr,options){
+        //var idxInCanvas = 0
+        for(var i=0;i<ranges.length;i++){
+            var curRange = ranges[i]
+            drawCharsWithRange(idxInCanvas,curRange[0],curRange[1],fontSize,fontStr,options)
+            idxInCanvas += curRange[1] - curRange[0] + 1
+        }
+
+        //return fontCanvas.toDataURL()
     }
 
     /**
@@ -219,7 +231,6 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             switch (options.encoding){
                 case 'utf-8':
                     charRanges = [
-                        [0,127],
                         [0x4e00,0x9fff]
                     ]
                     
@@ -232,28 +243,28 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                 default:
                     //ascii
                     charRanges = [
-                        [0,127]
                     ]
     
             }
         }else{
-            switch (options.encoding){
+            // switch (options.encoding){
                 
-                case 'gb2312':
-                    charRanges = [
-                        [0xa1a1,0xfefe]
-                    ]
-                break;
-                default:
-                    //ascii
-                    charRanges = [
-                        [0,127]
-                    ]
+            //     case 'gb2312':
+            //         charRanges = [
+            //             [0xa1a1,0xfefe]
+            //         ]
+            //     break;
+            //     default:
+            //         //ascii
+            //         charRanges = [
+            //             [0,127]
+            //         ]
     
-            }
+            // }
+            charRanges = []
         }
 
-        totalChars = getTotalCharsByRangs(charRanges)
+        totalChars = getTotalCharsByRangs(charRanges) + getTotalCharsByRangs([[0,127]])
 
         
         gridSize = calCanvasSize(paddingFontSize,totalChars);
@@ -262,7 +273,13 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             var fontStr = (font['font-italic'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-bold'] || '') + ' ' + (fontSize) + 'px' + ' ' + ('"' + font['font-family'] + '"');
             //padding
             //return drawChars(paddingFontSize,fontStr,options)
-            return drawCharsWithRanges(charRanges,paddingFontSize,fontStr,options)
+            //draw ascii
+            var ogEncoding = options.encoding
+            options.encoding = 'utf-8'
+            drawCharsWithRangesFrom(0,[[0,127]],paddingFontSize,fontStr,options)
+            options.encoding = ogEncoding
+            drawCharsWithRangesFrom(128,charRanges,paddingFontSize,fontStr,options)
+            return fontCanvas.toDataURL()
         }else{
             //
             console.log('font num invalid')

@@ -1420,10 +1420,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             fontFamily = str;
         }
 
-        var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
+        var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'-'+(font['fullFont']?'full':'short')+'.png';
         var options = {
             full:font.fullFont||false,
-            encoding:font.encoding||'ascii',
+            encoding:font.encoding,
             showGrid:false
         };
         var stream = '';

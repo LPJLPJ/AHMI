@@ -1002,12 +1002,13 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 })
 
             }else{
-                generateData(format,physicalPixelRatio);
+                
                 if (window) {
                     if (window.spinner) {
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
                         showSpinner();
                     }
+                    generateData(format,physicalPixelRatio);
                     RenderSerive.renderProject(window.projectData, function () {
                         toastr.info('生成成功');
                         window.spinner && window.spinner.hide();
@@ -1018,6 +1019,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 } else {
                     saveProject(function () {
                         showSpinner();
+                        generateData(format,physicalPixelRatio);
                         $http({
                             method: 'POST',
                             url: '/project/' + $scope.project.projectId + '/generate',
