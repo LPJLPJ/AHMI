@@ -675,6 +675,7 @@ $(function(){
         var ideVersion = $('#basicinfo-ideversion');
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
+        var encoding = $('#basicinfo-encoding');
         title.val(project.name);
         author.val(project.author);
         if(identifyCustomResolution(project.resolution)){
@@ -693,6 +694,7 @@ $(function(){
         template.attr('disabled',true);
         supportTouch.val(project.supportTouch);
         supportTouch.attr('disabled',true);
+        encoding.val(project.encoding)
         $('#project-info-modal').modal('show');
     }
 
@@ -712,6 +714,7 @@ $(function(){
         $('#basicinfo-author').val('');
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
+        $('#basicinfo-encoding').val('ascii')
         $('#basicinfo-resolution').val('800*480');
         $('#basicinfo-ideversion').val(curIDEVersion);
         //trigger change
@@ -750,6 +753,7 @@ $(function(){
         var template = $('#basicinfo-template');
         var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
+        var encoding = $('#basicinfo-encoding');
         var resolution = $('#basicinfo-resolution');
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
@@ -761,13 +765,14 @@ $(function(){
             project.classId='space';
         }
 
-        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
+        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''&&encoding.val().trim()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
             project.ideVersion = ideVersion.val().trim();
             project.supportTouch = supportTouch.val().trim();
+            project.encoding = encoding.val().trim();
             if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
                 return;
@@ -930,9 +935,10 @@ $(function(){
         var template = $('#basicinfo-template');
         var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
+        var encoding = $('#basicinfo-encoding');
         var thumbnailDOM = curPanel.find('.project-thumb');
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
-        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim() || project.ideVersion != ideVersion.val().trim()){
+        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim() || project.ideVersion != ideVersion.val().trim()||project.encoding!=encoding.val().trim()){
             //changed
             project.name = title.val().trim();
             project.author = author.val().trim();
@@ -958,6 +964,7 @@ $(function(){
                 project.ideVersion = '';
             }
             project.supportTouch = supportTouch.val().trim();
+            project.encoding = encoding.val().trim();
             var updateSuccess = false;
             if (local){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');

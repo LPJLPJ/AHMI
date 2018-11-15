@@ -313,7 +313,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             if (data.content) {
                 //var globalProject = GlobalService.getBlankProject()
                 var globalProject = JSON.parse(data.content);
-                timeStamp = Date.now();
+                var timeStamp = Date.now();
                 MiddleWareService.useMiddleWare(globalProject);
                 console.log('time costs in inject Data:', Date.now() - timeStamp);
 
@@ -333,6 +333,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 }
                 globalProject.maxSize = data.maxSize;
                 globalProject.projectId = id;
+                globalProject.encoding = data.encoding;
                 //console.log('globalProject',globalProject);
                 var resourceList = globalProject.resourceList;
                 // console.log('resourceList',resourceList);
