@@ -19,8 +19,98 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
     }
 
     function drawChar(charCode,x,y) {
-        console.log(charCode,String.fromCharCode(charCode));
+        //console.log(charCode,String.fromCharCode(charCode));
         ctx.fillText(String.fromCharCode(charCode),x,y)
+    }
+
+    function drawCharWithChar(c,x,y) {
+        //console.log(charCode,String.fromCharCode(charCode));
+        ctx.fillText(c,x,y)
+    }
+
+
+    //decode charCode with encoding to str
+    function decodeCharCode(charCode,encoding){
+        var charCodeArr = []
+        do{
+            charCodeArr.unshift(charCode%256)
+            charCode = charCode>>8
+        }while(charCode!=0)
+        return new TextDecoder(encoding).decode(Uint8Array.from(charCodeArr));
+    }
+
+
+    function drawCharsWithRange(startIdx,from,to,fontSize,fontStr,options){
+        ctx.font = fontStr;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        var x=0,y=0;
+        var column = 0;
+        var row = 0;
+        options = options||{}
+        var curIdx,curCharCode
+        var encoding = options.encoding||'utf-8'
+        switch(encoding){
+            case 'gb2312':
+                for(var i = 0;i<(to-from+1);i++){
+                    curIdx = i + startIdx
+                    row = Math.ceil(curIdx/gridSize.w);
+                    column = curIdx - (row-1)*gridSize.w;
+                    if (options.showGrid) {
+                        ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
+                    }
+                    curCharCode = i + from 
+                    //convert to utf-8
+                    
+                    
+                    var c = decodeCharCode(curCharCode,encoding)
+                    
+                    if(c==='.'){
+                        //小数点往左边偏移百分之20%
+                        drawCharWithChar(c,(column-0.7)*fontSize,(row-0.5)*fontSize)
+                    }else {
+                        drawCharWithChar(c,(column-0.5)*fontSize,(row-0.5)*fontSize)
+                    }
+                    
+        
+                }
+            break;
+            default:
+                for(var i = 0;i<(to-from+1);i++){
+                    curIdx = i + startIdx
+                    row = Math.ceil(curIdx/gridSize.w);
+                    column = curIdx - (row-1)*gridSize.w;
+                    if (options.showGrid) {
+                        ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
+                    }
+                    curCharCode = i + from
+                    
+                    
+                    if(curCharCode===46){
+                        //小数点往左边偏移百分之20%
+                        drawChar(curCharCode,(column-0.7)*fontSize,(row-0.5)*fontSize)
+                    }else {
+                        drawChar(curCharCode,(column-0.5)*fontSize,(row-0.5)*fontSize)
+                    }
+                    
+        
+                }
+                
+        }
+        
+        
+
+    }
+
+    function drawCharsWithRanges(ranges,fontSize,fontStr,options){
+        var idxInCanvas = 0
+        for(var i=0;i<ranges.length;i++){
+            var curRange = ranges[i]
+            drawCharsWithRange(idxInCanvas,curRange[0],curRange[1],fontSize,fontStr,options)
+            idxInCanvas += curRange[1] - curRange[0] + 1
+        }
+
+        return fontCanvas.toDataURL()
     }
 
     /**
@@ -36,6 +126,31 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         var x=0,y=0;
         var column = 0;
         var row = 0;
+        options = options||{}
+
+        var restStart,restCharNum
+        if(options.full){
+            switch (options.encoding){
+                case 'utf-8':
+                    restStart = 0x9fff
+                    restCharNum = 0x9fff - 0x4e00+1
+                break;
+                case 'gb2312':
+                    restStart = 129
+                    restCharNum = 7445-128
+                break;
+                default:
+                    //ascii
+                    restStart = 0
+                    restCharNum = 0
+    
+            }
+        }else{
+            restStart = 0
+            restCharNum = 0
+        }
+
+        //normal 128 chars
         for(var i = 0;i<128;i++){
             row = Math.ceil(i/gridSize.w);
             column = i - (row-1)*gridSize.w;
@@ -54,6 +169,20 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             }
 
         }
+
+        var curCharIdx,curCharCode
+        for(i = 0;i<restCharNum;i++){
+            curCharIdx = i + 128
+            curCharCode = i + 0x4e00
+            row = Math.ceil(curCharIdx/gridSize.w);
+            column = curCharIdx - (row-1)*gridSize.w;
+            if (options.showGrid) {
+                ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
+            }
+
+            drawChar(curCharCode,(column-0.5)*fontSize,(row-0.5)*fontSize)
+
+        }
         return fontCanvas.toDataURL()
     }
 
@@ -69,19 +198,71 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         }
     }
 
+    function getTotalCharsByRangs(ranges){
+        var num = 0
+        for(var i=0;i<ranges.length;i++){
+            num += ranges[i][1] - ranges[i][0] + 1
+        }
+
+        return num
+    }
+
     function generateSingleFont(font,options) {
         var fontSize = font['font-size']||24;
         options = options||{};
         //add padding
         var paddingRatio = options.paddingRatio||1.0;
         var paddingFontSize= Math.ceil(paddingRatio*fontSize);
-        gridSize = calCanvasSize(paddingFontSize,128);
+        var totalChars 
+        var charRanges = []
+        if(options.full){
+            switch (options.encoding){
+                case 'utf-8':
+                    charRanges = [
+                        [0,127],
+                        [0x4e00,0x9fff]
+                    ]
+                    
+                break;
+                case 'gb2312':
+                    charRanges = [
+                        [0xa1a1,0xfefe]
+                    ]
+                break;
+                default:
+                    //ascii
+                    charRanges = [
+                        [0,127]
+                    ]
+    
+            }
+        }else{
+            switch (options.encoding){
+                
+                case 'gb2312':
+                    charRanges = [
+                        [0xa1a1,0xfefe]
+                    ]
+                break;
+                default:
+                    //ascii
+                    charRanges = [
+                        [0,127]
+                    ]
+    
+            }
+        }
+
+        totalChars = getTotalCharsByRangs(charRanges)
+
+        
+        gridSize = calCanvasSize(paddingFontSize,totalChars);
         if (gridSize) {
             initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize);
             var fontStr = (font['font-italic'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-bold'] || '') + ' ' + (fontSize) + 'px' + ' ' + ('"' + font['font-family'] + '"');
             //padding
-            return drawChars(paddingFontSize,fontStr,options)
-
+            //return drawChars(paddingFontSize,fontStr,options)
+            return drawCharsWithRanges(charRanges,paddingFontSize,fontStr,options)
         }else{
             //
             console.log('font num invalid')
@@ -97,7 +278,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         var fontWidgets,
             fonts = [];
         fontWidgets = widgets.filter(function(widget){
-            return ((widget.subType===Type.MyNum)||(widget.subType===Type.MyDateTime))
+            return ((widget.subType===Type.MyNum)||(widget.subType===Type.MyDateTime)||(widget.subType===Type.MyTextInput))
         });
         fontWidgets.forEach(function(widget){
             var info = widget.info,
@@ -121,15 +302,33 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             widget.originFont.paddingX = Math.ceil(info.fontSize*(paddingRatio-1)/2);
             widget.originFont.paddingY = Math.ceil(info.fontSize*(paddingRatio-1)/2);
 
+            //font type, isFull
+            info.fullFont = (widget.subType===Type.MyTextInput)
+
             widget.originFont.paddingRatio = paddingRatio;
             result = fonts.some(function(item){
                 return ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic));
             });
-            if(!result){
+
+            var added = false
+            for(var i=0;i<fonts.length;i++){
+                var curFont = fonts[i]
+                if ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic)){
+                    //same infomation
+                    //fullFont overlap not full font
+                    if(!curFont.fullFont&&info.fullFont){
+                        curFont.fullFont = true
+                    }
+                    added = true
+                    break
+                }
+            }
+            if(!added){
                 font['font-family'] = info.fontFamily;
                 font['font-size'] = info.fontSize;
                 font['font-bold'] = info.fontBold;
                 font['font-italic'] = info.fontItalic;
+                font.fullFont = info.fullFont
                 fonts.push(font);
             }
         });
