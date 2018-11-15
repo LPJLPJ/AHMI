@@ -3,7 +3,8 @@ var StringConverter = {}
 
 var supportedEncodings = {
     ascii:'ascii',
-    'utf-8':'utf-8'
+    'utf-8':'utf-8',
+    gb2312:'gb2312'
 }
 
 var convertStrToUint8Array=function (str,encoding) {
@@ -11,6 +12,7 @@ var convertStrToUint8Array=function (str,encoding) {
     var uint8array
     switch (encoding) {
         case supportedEncodings.ascii:
+        case supportedEncodings.gb2312:
             uint8array = new TextEncoder(encoding, {NONSTANDARD_allowLegacyEncoding: true}).encode(str);
             break;
         case supportedEncodings['utf-8']:
@@ -29,6 +31,7 @@ var convertUint8ArrayToStr=function (buf,encoding) {
         switch (encoding){
             case supportedEncodings.ascii:
             case supportedEncodings['utf-8']:
+            case supportedEncodings.gb2312:
                 str = new TextDecoder(encoding).decode(buf);
                 break;
 
