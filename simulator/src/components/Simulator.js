@@ -5877,9 +5877,11 @@ module.exports = React.createClass({
                         </div>
                     </div>
                     <div className="simulator-tag-wrapper">
-                        < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
+                        < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag} encoding={this.encoding}  />
                         <RegisterList registers={this.state.registers || {}}
-                                      handleRegisterChange={this.handleRegisterChange}/>
+                                      handleRegisterChange={this.handleRegisterChange}
+                                      encoding={this.encoding}
+                                      />
                     </div>
                 </div>
 
