@@ -4103,6 +4103,16 @@
                                             <span style="margin-left: 2px;font-weight:100">ms</span>
                                         </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">时间曲线</div>
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <select class="form-control"
+                                                    ng-model="animation.timingFun"
+                                                    ng-options="timingFun for timingFun in timingFuns">
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
