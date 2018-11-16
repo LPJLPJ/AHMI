@@ -24,6 +24,7 @@ module.exports = React.createClass({
     },
     componentWillReceiveProps:function (newProps) {
         this.setState({registers:newProps.registers})
+        this.encoding = newProps.encoding
     },
     handleInputKeyRelease:function (key, e) {
         if (e.keyCode == 13){
@@ -31,7 +32,7 @@ module.exports = React.createClass({
             var registers = this.state.registers
             if (registers[key].inputType == 1){
                 //string
-                this.props.handleRegisterChange(key, StringConverter.convertStrToUint8Array(e.target.value).slice(0,32)||0);
+                this.props.handleRegisterChange(key, StringConverter.convertStrToUint8Array(e.target.value,this.encoding).slice(0,32)||0);
             }else{
                 //num
                 this.props.handleRegisterChange(key, Number(e.target.value)||0);
@@ -73,7 +74,7 @@ module.exports = React.createClass({
                                     curValue = register.value
                                 }else {
                                     if (register.inputType == 1){
-                                        curValue = StringConverter.convertUint8ArrayToStr(register.value)
+                                        curValue = StringConverter.convertUint8ArrayToStr(register.value,this.encoding)
                                     }else{
                                         curValue = register.value
                                     }

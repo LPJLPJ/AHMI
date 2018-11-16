@@ -574,6 +574,7 @@ function getProjectInfo(newProject) {
     info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
     info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
     info.supportTouch = newProject.supportTouch;
+    info.encoding = newProject.encoding;
     info.author = newProject.author;
     return info
 }

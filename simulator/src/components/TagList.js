@@ -18,7 +18,7 @@ module.exports = React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
+                    return StringConverter.convertUint8ArrayToStr(tag.value,this.encoding)
                 default:
                     console.log('tag type unsupported')
             }
@@ -88,6 +88,8 @@ module.exports = React.createClass({
         if (!inputingTag){
             this.setState({tagList: nextProps.tagList});
         }
+
+        this.encoding = nextProps.encoding
 
 
     },

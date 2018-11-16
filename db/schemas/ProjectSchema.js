@@ -14,6 +14,7 @@ var ProjectSchema = new mongoose.Schema({
     ideVersion:String,
     originalSite:String,
     supportTouch:String,
+    encoding:String,
     curSize:String,
     maxSize:String,
     thumbnail:String,

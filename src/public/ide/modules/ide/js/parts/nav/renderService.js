@@ -1420,8 +1420,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             fontFamily = str;
         }
 
-        var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'.png';
-        var options = {};
+        var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'-'+(font['fullFont']?'full':'short')+'.png';
+        var options = {
+            full:font.fullFont||false,
+            encoding:font.encoding,
+            showGrid:false
+        };
         var stream = '';
         var outpath = path.join(dstDir,imgName);
         options.paddingRatio = 1.2;
@@ -1478,7 +1482,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }.bind(this));
         }
 
-
+        var encoding = dataStructure.encoding||'ascii'
         var ProjectBaseUrl = ResourceService.getProjectUrl();
         var ResourceUrl = ResourceService.getResourceUrl();
         var DataFileUrl = path.join(ResourceUrl,'data.json');
@@ -1574,7 +1578,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
                 if(fontList.length!==0){
                     for(m=0;m<fontList.length;m++){
-                        curFont = fontList[m];
+                        fontList[m].encoding = encoding
                         Renderer.renderFontPng(fontList[m],ViewUrl,ResourceUrl,ResourceUrl,cb);
                     }
                 }
@@ -1593,7 +1597,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 //生成不同种类的字符列表
                 if(fontList.length!==0){
                     for(m=0;m<fontList.length;m++){
-                        curFont = fontList[m];
+                        fontList[m].encoding = encoding
                         Renderer.renderFontPng(fontList[m],'/',ResourceUrl,ResourceUrl,cb);
                     }
                 }

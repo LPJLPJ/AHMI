@@ -92,7 +92,8 @@ module.exports = React.createClass({
         lg('initializing: ', data)
         //initialize canvas context
 
-
+        //encoding
+        this.encoding = data.encoding||'ascii'
         //initialize inputkeyboard
         var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
         // console.log(keyboardData);
@@ -5178,7 +5179,7 @@ module.exports = React.createClass({
             switch (tag.valueType){
                 case 1:
                     //str
-                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding||StringConverter.supportedEncodings['utf-8']).slice(0,32)
+                     tag.value = StringConverter.convertStrToUint8Array(_value,this.encoding).slice(0,32)
                     break;
                 default:
                     //num
@@ -5195,7 +5196,7 @@ module.exports = React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
+                    return StringConverter.convertUint8ArrayToStr(tag.value,this.encoding)
                 default:
                     console.log('tag type unsupported')
             }
@@ -5284,7 +5285,7 @@ module.exports = React.createClass({
       if (typeof pValue === 'string'||typeof pValue === 'number'){
           return ''+pValue
       }else{
-          return StringConverter.convertUint8ArrayToStr(pValue,StringConverter.supportedEncodings['utf-8'])
+          return StringConverter.convertUint8ArrayToStr(pValue,this.encoding)
       }
     },
     process: function (cmds,index) {
@@ -5876,9 +5877,11 @@ module.exports = React.createClass({
                         </div>
                     </div>
                     <div className="simulator-tag-wrapper">
-                        < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
+                        < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag} encoding={this.encoding}  />
                         <RegisterList registers={this.state.registers || {}}
-                                      handleRegisterChange={this.handleRegisterChange}/>
+                                      handleRegisterChange={this.handleRegisterChange}
+                                      encoding={this.encoding}
+                                      />
                     </div>
                 </div>
 
