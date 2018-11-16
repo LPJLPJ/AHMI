@@ -22,6 +22,10 @@ var ProjectSchema = new mongoose.Schema({
     readOnlyState:{type:Boolean,default:false},
     sharedKey:{type:String},
     readOnlySharedKey:{type:String},
+    recycle: {
+        recycleStatus: {type: Boolean, default: false},
+        recycleTime: {type: Date}
+    },
     content:{type:String},
     backups:[{
         time:Date,
@@ -40,11 +44,7 @@ ProjectSchema.pre('save',function(next){
     }else{
         this.lastModifiedTime = Date.now()
     }
-
     next()
-
-
-
 });
 
 
@@ -91,24 +91,50 @@ ProjectSchema.statics = {
             .remove({_id:_projectId})
             .exec(cb)
     },
-    findProInfo:function(_userId,_classId,cb){//add by tang  ����userId��classId����(!classId||classId=='space')
+    /*findProInfo:function(_userId,_classId,cb){//add by tang
         return this
             .find({userId:_userId,"$or":[{classId: {$exists: false}},{classId:_classId}]},{content:0,backups:0})
             .sort({'createTime':-1})
             .exec(cb)
-    },
+    },*/
     findProByClass:function(_userId,_classId,cb){
         return this
-            .find({userId:_userId,classId:_classId},{content:0,backups:0})
+            .find({userId:_userId,classId:_classId,"$or": [{recycle: {$exists: false}}, {"recycle.recycleStatus":false}]},{content:0,backups:0})
             .sort({'createTime':-1})
             .exec(cb)
     },
-    deleteByClass:function(_classId,cb){//batch delete
+    /*deleteByClass:function(_classId,cb){//batch delete
         return this
-            .remove({classId:_classId})
+            .findAndUpdate({classId:_classId})
+            .exec(cb)
+    },*/
+    findPro:function(_userId,_classId,cb){
+        return this
+            .find({userId:_userId,"$and":[
+                {"$or": [//no classId or specified classId
+                    {classId: {$exists: false}},
+                    {classId:_classId}
+                ]},
+                {"$or": [//no recycle or recycle is false
+                    {recycle: {$exists: false}},
+                    {"recycle.recycleStatus":false}
+                ]}
+            ]},{content:0,backups:0})
+            .sort({'createTime':-1})
+            .exec(cb)
+    },
+    findRecycle:function(_userId,cb){
+        return this
+            .find({userId:_userId,"recycle.recycleStatus":true})
+            .sort({'recycle.recycleTime':-1})
+            .exec(cb)
+    },
+    clearRecycle:function(_userId,cb){
+        return this
+            .remove({userId:_userId,"recycle.recycleStatus":true})
             .exec(cb)
     }
 
-}
+};
 
-module.exports= ProjectSchema
+module.exports= ProjectSchema;

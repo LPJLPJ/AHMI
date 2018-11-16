@@ -275,6 +275,12 @@ router.route('/folder/:id/space')
 //project recycle
 router.route('/project/recycle')
     .get(recycle.getRecycle);
+router.route('/recycle/delete')
+    .post(recycle.deleteRecycle);
+router.route('/recycle/refund')
+    .post(recycle.refundRecycle);
+router.route('/recycle/clear')
+    .post(recycle.clearRecycle);
 
 
 //CAN project

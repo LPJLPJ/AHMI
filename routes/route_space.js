@@ -21,7 +21,7 @@ module.exports = function (req, res) {
                 userInfo.email = user.email;
                 userInfo.type = user.type;
 
-                ProjectModel.findProInfo(_user.id,classId,function (err, projects) {
+                ProjectModel.findPro(_user.id,classId,function (err, projects) {
                     if (err){
                         console.log(err);
                         res.status(500).end()
@@ -98,8 +98,7 @@ module.exports = function (req, res) {
                             }
                         });
                     }
-
-                })
+                });
             }
         });
 	}else{

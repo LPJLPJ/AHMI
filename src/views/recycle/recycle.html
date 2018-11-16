@@ -2,13 +2,15 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>资源回收</title>
+    <title>回收站</title>
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
     <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css" type="text/css" />
     <link rel="stylesheet" href="../../public/recycle/css/recycle.css"/>
     <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
     <script src="../../public/login/assets/js/bootstrap.js"></script>
     <script src="../../public/login/assets/js/ejs_production.js"></script>
+    <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
     <script src="../../public/recycle/js/recycle.js"></script>
 </head>
 <body>
@@ -18,6 +20,13 @@
 
     <div class="recycle-wrap">
         <div class="recycle-content">
+            <div class="recycle__clear">
+                <div class="clear-recycle">
+                    <button class="btn btn-info" id="clear" data-toggle="modal" data-target="#clear-modal">
+                        <span class="iconfont">&#xe627; </span>清空回收站
+                    </button>
+                </div>
+            </div>
             <ul class="recycle-list" id="recycle-list">
                 <li class="recycle-list_item clearfix recycle-list_item-title">
                     <div class="col col-1">工程名称</div>
@@ -25,15 +34,17 @@
                     <div class="col col-3">有效期</div>
                     <div class="col col-4">操作</div>
                 </li>
-                <li class="recycle-list_item clearfix">
-                    <div class="col col-1 recycle_name">大垃圾</div>
-                    <div class="col col-2 recycle_delete-time">2018.11.11</div>
+                <%for(var i=0;i<projects.length;i++){%>
+                <li class="recycle-list_item clearfix project" project-id="<%= projects[i].projectInfo._id %>">
+                    <div class="col col-1 recycle_name"><%= projects[i].projectInfo.name %></div>
+                    <div class="col col-2 recycle_delete-time"><%= projects[i].projectInfo.recycleTime %></div>
                     <div class="col col-3 recycle_valid-time">30天</div>
                     <div class="col col-4 recycle_operate">
                         <span class="iconfont refund" title="恢复">&#xe67d;</span>
                         <span class="iconfont delete" title="彻底删除">&#xe627;</span>
                     </div>
                 </li>
+                <%}%>
             </ul>
         </div>
     </div>
@@ -70,6 +81,23 @@
                 <div class="modal-footer">
                     <button id="refund-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">确认</button>
                     <button id="refund-cancel" type="button" class="modal-btn" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--恢复-->
+    <div class="modal fade" id="clear-modal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myFolderLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">清空回收站</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="modal-prompt">确认删除回收站里的所有文件？</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="clear-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">确认</button>
+                    <button id="clear-cancel" type="button" class="modal-btn" data-dismiss="modal">取消</button>
                 </div>
             </div>
         </div>

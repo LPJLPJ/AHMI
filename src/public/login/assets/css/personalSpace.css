@@ -299,6 +299,14 @@ a img {
     margin-top: 22px;
 }
 
+.recycle-text{
+    color: #7d7d7d;
+}
+
+.recycle-wrap:hover .recycle-text{
+    color: inherit;
+}
+
 .project-content.project .project-operate__folder > img.active-img, .project-content.folder .project-operate__project > img.active-img {
     display: none;
 }

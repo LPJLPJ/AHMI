@@ -674,30 +674,18 @@ projectRoute.deleteProject = function (req, res) {
     var projectId = req.body.projectId;
     //console.log(projectId)
     if (projectId) {
-        //exitst
-        ProjectModel.deleteById(projectId, function (err) {
+        ProjectModel.findById(projectId, function (err,project) {
             if (err) {
                 errHandler(res, 500, 'delete error')
             }
-            //delete directory
-            var targetDir = path.join(__dirname, '../project/', String(projectId))
-            fs.stat(targetDir, function (err, stats) {
-                if (stats && stats.isDirectory && stats.isDirectory()) {
-                    //exists
-                    //delete
-                    rmdirAsync(targetDir, function (rmErr) {
-                        if (rmErr) {
-                            errHandler(res, 500, 'rm directory error')
-                        } else {
-                            res.end('ok')
-                        }
-                    })
+            project.update({recycle: {recycleStatus: true, recycleTime: Date.now()}}, function (err, docs) {
+                if (err) {
+                    errHandler(res, 500, 'delete error');
                 } else {
-                    res.end('ok')
+                    res.end('ok');
                 }
             })
-
-        })
+        });
     } else {
         errHandler(res, 500, 'invalid project id')
     }
@@ -1566,50 +1554,24 @@ projectRoute.updateFolder = function (req, res) {
     }
 };
 projectRoute.deleteFolder = function (req, res) {
-    var folderId = req.body.folderId;
+    var classId = req.body.folderId;
     var _user = req.session.user;
-    if (folderId) {
-        //删除分类
-        ClassModel.deleteById(folderId, function (err) {
+    if (classId) {
+        ClassModel.deleteById(classId, function (err) {
             if (err) {
                 errHandler(res, 500, 'delete folder err')
             } else {
-                //查找分类下的project
-                ProjectModel.findProByClass(_user.id, folderId, function (err, projects) {
+                ProjectModel.update({classId: classId}, {
+                    recycle: {
+                        recycleStatus: true,
+                        recycleTime: Date.now()
+                    },
+                    classId:'space'
+                }, {multi: true}, function (err, docs) {
                     if (err) {
-                        errHandler(res, 500, 'delete folder err')
+                        errHandler(res, 500, 'delete folder err');
                     } else {
-                        if (projects != '') {
-                            var proArr = _.cloneDeep(projects).map(function (project) {
-                                return project._id;
-                            });
-                            //删除project
-                            ProjectModel.deleteByClass(folderId, function (err) {
-                                if (err) {
-                                    errHandler(res, 500, 'delete folder err')
-                                } else {
-                                    //删除project文件夹
-                                    proArr.map(function (pro) {
-                                        var targetDir = path.join(__dirname, '../project/', String(pro));
-                                        fs.stat(targetDir, function (err, stats) {
-                                            if (stats && stats.isDirectory && stats.isDirectory()) {
-                                                rmdirAsync(targetDir, function (rmErr) {
-                                                    if (rmErr) {
-                                                        errHandler(res, 500, 'rm directory error')
-                                                    } else {
-                                                        res.end('ok')
-                                                    }
-                                                })
-                                            } else {
-                                                res.end('ok')
-                                            }
-                                        })
-                                    });
-                                }
-                            });
-                        } else {
-                            res.end('delete folder ok')
-                        }
+                        res.end('ok');
                     }
                 });
             }
