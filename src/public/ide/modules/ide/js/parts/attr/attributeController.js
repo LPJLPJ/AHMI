@@ -653,6 +653,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.transition.duration = 0;
                         //     $scope.component.object.level.transition.duration = 0;
                         // }
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyDateTime:
                         $scope.component.dateTime.arrangeModel = $scope.component.object.level.info.arrange;
