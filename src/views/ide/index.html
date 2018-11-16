@@ -794,6 +794,16 @@
                                 </select>
                             </div>
 
+                            <div class="attr-item__cell-wrap lg" ng-hide="component.transitionName=='NO_TRANSITION'||component.transitionName==null">
+                                <p class="attr-item__cell-title">时间曲线</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-options="timingFun as timingFun for timingFun in component.timingFuns"
+                                        ng-model="component.timingFun"
+                                        ng-change="component.changeTimingFun()"
+                                        ng-disabled="animationsDisabled">
+                                </select>
+                            </div>
+                            
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">持续时间(ms)</p>
                                 <input class="attr-item__cell-input form-control"
@@ -874,6 +884,16 @@
                                         ng-options="transition.name as transition.show for transition in component.transitionMode"
                                         ng-model="component.transitionName"
                                         ng-change="component.changeTransitionName()"
+                                        ng-disabled="animationsDisabled">
+                                </select>
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg" ng-hide="component.transitionName=='NO_TRANSITION'||component.transitionName==null">
+                                <p class="attr-item__cell-title">时间曲线</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-options="timingFun as timingFun for timingFun in component.timingFuns"
+                                        ng-model="component.timingFun"
+                                        ng-change="component.changeTimingFun()"
                                         ng-disabled="animationsDisabled">
                                 </select>
                             </div>
@@ -1800,6 +1820,17 @@
                                     </option>
                                 </select>
                             </div>
+
+                            <div class="attr-item__cell-wrap lg" ng-show="component.dashboard.enableAnimationModeId=='0'">
+                                <p class="attr-item__cell-title">时间曲线</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-options="timingFun as timingFun for timingFun in component.timingFuns"
+                                        ng-model="component.timingFun"
+                                        ng-change="component.changeTimingFun()"
+                                        ng-disabled="animationsDisabled">
+                                </select>
+                            </div>
+                            
 
                             <div class="attr-item__cell-wrap lg" ng-show="component.dashboard.enableAnimationModeId=='0'">
                                 <p class="attr-item__cell-title">持续时间(ms)</p>
