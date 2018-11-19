@@ -311,7 +311,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                 fontFamily = str;
             }
             widget.originFont = {};
-            widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'.png';
+            widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'-'+(font['fullFont']?'full':'short')+'.png';
             widget.originFont.w = info.fontSize;
             widget.originFont.h = info.fontSize;
             widget.originFont.W = Math.ceil(info.fontSize*paddingRatio);
@@ -323,19 +323,19 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             info.fullFont = (widget.subType===Type.MyTextInput)
 
             widget.originFont.paddingRatio = paddingRatio;
-            result = fonts.some(function(item){
-                return ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic));
-            });
+            // result = fonts.some(function(item){
+            //     return ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic));
+            // });
 
             var added = false
             for(var i=0;i<fonts.length;i++){
-                var curFont = fonts[i]
-                if ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic)){
+                var item = fonts[i]
+                if ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic)&&(item.fullFont === info.fullFont)){
                     //same infomation
                     //fullFont overlap not full font
-                    if(!curFont.fullFont&&info.fullFont){
-                        curFont.fullFont = true
-                    }
+                    // if(!curFont.fullFont&&info.fullFont){
+                    //     curFont.fullFont = true
+                    // }
                     added = true
                     break
                 }
