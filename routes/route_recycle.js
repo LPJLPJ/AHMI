@@ -66,14 +66,41 @@ recycleRoute.getRecycle = function (req, res) {
                     info._id = project._id;
                     info.name = project.name;
                     info.recycleTime = moment(recycle.recycleTime).format('YYYY-MM-DD HH:mm');
+                    info.indate = getIndate(recycle.recycleTime, 30);
                     info.author = project.author;
-                    var thumbnail = project.thumbnail;
+                    //delete expire
+                    if (!info.indate) {
+                        ProjectModel.deleteById(info._id, function (err) {
+                            if (err) {
+                                errHandler(res, 500, 'delete error')
+                            }
+                            //delete directory
+                            var targetDir = path.join(__dirname, '../project/', String(info._id));
+                            fs.stat(targetDir, function (err, stats) {
+                                if (stats && stats.isDirectory && stats.isDirectory()) {
+                                    rmdirAsync(targetDir, function (rmErr) {
+                                        if (rmErr) {
+                                            errHandler(res, 500, 'rm directory error')
+                                        } else {
+                                            res.end('ok')
+                                        }
+                                    })
+                                } else {
+                                    res.end('ok')
+                                }
+                            })
+                        })
+                    }
+
                     return {
-                        projectInfo: info,
-                        thumbnail: thumbnail
+                        projectInfo: info
                     }
                 });
-                res.render('recycle/recycle.html', {projects: processedProjects});
+
+                var finalProjects = processedProjects.filter(function (project) {
+                    return project.projectInfo.indate;
+                });
+                res.render('recycle/recycle.html', {projects: finalProjects});
             }
         })
     } else {
@@ -81,6 +108,18 @@ recycleRoute.getRecycle = function (req, res) {
         res.redirect('/user/login');
     }
 };
+
+//recycle indate
+function getIndate(date, indate) {
+    var dateNow = Date.now();
+    var days = dateNow - date;
+    var day = parseInt(days / (1000 * 60 * 60 * 24));
+
+    if (day >= indate) {
+        return false;
+    }
+    return indate - day;
+}
 
 recycleRoute.deleteRecycle = function (req, res) {
     var projectId = req.body.projectId;
@@ -119,7 +158,7 @@ recycleRoute.refundRecycle = function (req, res) {
             if (err) {
                 errHandler(res, 500, 'find error')
             }
-            project.update({recycle: {recycleStatus: false, recycleTime: ''},createTime:Date.now()}, function (err) {
+            project.update({recycle: {recycleStatus: false, recycleTime: ''}, createTime: Date.now()}, function (err) {
                 if (err) {
                     errHandler(res, 500, 'update error');
                 } else {
@@ -135,7 +174,7 @@ recycleRoute.refundRecycle = function (req, res) {
 recycleRoute.clearRecycle = function (req, res) {
     var _user = req.session.user;
 
-    if(_user&&_user.id){
+    if (_user && _user.id) {
         ProjectModel.findRecycle(_user.id, function (err, projects) {
             if (err) {
                 errHandler(res, 500, 'delete folder err')
@@ -145,7 +184,7 @@ recycleRoute.clearRecycle = function (req, res) {
                         return project._id;
                     });
 
-                    ProjectModel.clearRecycle(_user.id, function (err,docs) {
+                    ProjectModel.clearRecycle(_user.id, function (err, docs) {
                         if (err) {
                             errHandler(res, 500, 'clear recycle err')
                         } else {
@@ -171,7 +210,7 @@ recycleRoute.clearRecycle = function (req, res) {
                 }
             }
         });
-    }else{
+    } else {
         res.redirect('/user/login')
     }
 };

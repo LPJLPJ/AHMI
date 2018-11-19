@@ -436,8 +436,8 @@ body {
 .thumb-view {
     top: calc(50% - 40px);
     right: 0;
-    border-radius: 5px 0 0 5px;
-    box-shadow: 1px 1px 1px #cccccc;
+    border-radius: 3px 0 0 3px;
+    box-shadow: -1px 1px 1px #cccccc;
 }
 
 .thumb-view > .open, .content-wrap.my-left-hide .thumb-view > .pack {
@@ -450,8 +450,9 @@ body {
 
 .content-wrap.my-left-hide .thumb-view {
     right: -16px;
-    border-radius: 0 5px 5px 0;
+    border-radius: 0 3px 3px 0;
     border: 1px solid #cccccc;
+    box-shadow: none;
 }
 
 .thumb-content-list__item {
@@ -635,7 +636,7 @@ body {
     top: calc(50% - 20px);
     left: -16px;
     z-index: 999 !important;
-    border-radius: 5px 0 0 5px;
+    border-radius: 3px 0 0 3px;
     box-shadow: -0.5px 1px 1px rgba(0, 0, 0, .2), 0 -0.5px 1px rgba(0, 0, 0, .2);
 }
 
@@ -1338,7 +1339,7 @@ body {
     left: calc(50% - 30px);
     top: -16px;
     border: 1px solid #cccccc;
-    border-radius: 6px 6px 0 0;
+    border-radius: 3px 3px 0 0;
     cursor: pointer;
     display: none;
 }
@@ -2090,6 +2091,6 @@ div.wrapper-custom {
     border-bottom: 1.5px solid #005599;
 }
 
-.btn-confirm{
+.btn-confirm {
     color: #005599;
 }

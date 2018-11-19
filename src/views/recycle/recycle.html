@@ -38,7 +38,7 @@
                 <li class="recycle-list_item clearfix project" project-id="<%= projects[i].projectInfo._id %>">
                     <div class="col col-1 recycle_name"><%= projects[i].projectInfo.name %></div>
                     <div class="col col-2 recycle_delete-time"><%= projects[i].projectInfo.recycleTime %></div>
-                    <div class="col col-3 recycle_valid-time">30天</div>
+                    <div class="col col-3 recycle_valid-time"><%= projects[i].projectInfo.indate %>天</div>
                     <div class="col col-4 recycle_operate">
                         <span class="iconfont refund" title="恢复">&#xe67d;</span>
                         <span class="iconfont delete" title="彻底删除">&#xe627;</span>
