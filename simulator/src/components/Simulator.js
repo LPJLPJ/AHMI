@@ -540,13 +540,16 @@ module.exports = React.createClass({
     compareZIndex: function (canvasA, canvasB) {
         return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
     },
+    getEasingFunc:function(elem){
+        return (elem.transition && elem.transition.timingFun )||'easeInOutCubic';
+    },
     drawPage: function (page, options) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var canvas = this.refs.canvas;
         var ctx = this.ctx;
         var frames = 30;
-        var easing = 'easeInOutCubic';
+        var easing = this.getEasingFunc(page)
         var method = page.transition && page.transition.name;
         var duration = (page.transition && page.transition.duration ) || 1000;
         var count = frames;
@@ -923,6 +926,7 @@ module.exports = React.createClass({
         var dstTranslate = (animationAttrs.translate&&animationAttrs.translate.dstPos&&this.getAnimationAtrr(animationAttrs.translate.dstPos))||{x:0,y:0};
         var type = target.type;
         var duration = (animation && animation.duration) || 1000;
+        var easingFunc = (animation && animation.timingFun) || 'easeInOutCubic';
         // console.log(scale,translate,duration)
         var frames = 30;
         var srcTransformObj = {};
@@ -1010,7 +1014,7 @@ module.exports = React.createClass({
         ]))
 
 
-        var easingFunc = 'easeInOutCubic';
+        //var easingFunc = 'easeInOutCubic';
         // console.log('anAttr',animationAttrs)
         // console.log('srcT',srcTransformObj,'dstT',dstTransformObj)
 
@@ -1232,7 +1236,7 @@ module.exports = React.createClass({
             var method = transition && transition.name;
             var duration = (transition && transition.duration ) || 1000;
             var frames = 30;
-            var easing = 'easeInOutCubic';
+            var easing = this.getEasingFunc(subCanvas)
             var hWidth = w / 2 + x
             var hHeight = h / 2 + y
             if (!firstSubCanvas && (!options || (options && !options.pageAnimate))) {
@@ -2891,6 +2895,7 @@ module.exports = React.createClass({
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
         var enableAnimation = widget.info.enableAnimation;
+        var easing = this.getEasingFunc(widget)
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -2929,24 +2934,37 @@ module.exports = React.createClass({
                         widget.curTotalFrameNum = totalFrameNum
                         // var startTime = new Date()
                         // console.log('start time',startTime)
-                        widget.animateTimerId = setInterval(function () {
-                            if (widget.curFrameNum != undefined) {
-                                widget.curFrameNum += 1
-                            } else {
-                                widget.curFrameNum = 1
-                            }
-                            if (widget.curFrameNum > totalFrameNum - 1) {
-                                clearInterval(widget.animateTimerId)
-                                // var endTime = new Date()
-                                // console.log('end time',endTime,endTime-startTime)
 
-                                widget.animateTimerId = 0
-                                widget.curFrameNum = 0
-
-                            }
+                        widget.animateTimerId = AnimationManager.stepValue(0, totalFrameNum, duration, 30, easing, function (obj) {
+                            widget.curFrameNum = Math.round(obj.curX)
                             this.draw()
-                        }.bind(this), 1000 / fps)
+                        }.bind(this), function () {
+                            widget.curFrameNum = 0
+                            widget.animateTimerId = 0
+        
+                        }.bind(this))
+
+                        // widget.animateTimerId = setInterval(function () {
+                        //     if (widget.curFrameNum != undefined) {
+                        //         widget.curFrameNum += 1
+                        //     } else {
+                        //         widget.curFrameNum = 1
+                        //     }
+                        //     if (widget.curFrameNum > totalFrameNum - 1) {
+                        //         clearInterval(widget.animateTimerId)
+                        //         // var endTime = new Date()
+                        //         // console.log('end time',endTime,endTime-startTime)
+
+                        //         widget.animateTimerId = 0
+                        //         widget.curFrameNum = 0
+
+                        //     }
+                        //     this.draw()
+                        // }.bind(this), 1000 / fps)
                     }
+
+
+                    
                 }
 
             }
@@ -3072,7 +3090,7 @@ module.exports = React.createClass({
                         newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
-                    oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
+                    var oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
                     if (oleWidth > 0) {
                         offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight)
                     }
@@ -3144,21 +3162,37 @@ module.exports = React.createClass({
                     totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        // console.log(totalFrameNum)
                         widget.curTotalFrameNum = totalFrameNum
-                        widget.animateTimerId = setInterval(function () {
-                            if (widget.curFrameNum != undefined) {
-                                widget.curFrameNum += 1
-                            } else {
-                                widget.curFrameNum = 1
-                            }
-                            if (widget.curFrameNum > totalFrameNum - 1) {
-                                clearInterval(widget.animateTimerId)
-                                widget.animateTimerId = 0
-                                widget.curFrameNum = 0
+                        // var startTime = new Date()
+                        // console.log('start time',startTime)
 
-                            }
+                        widget.animateTimerId = AnimationManager.stepValue(0, totalFrameNum, duration, 30, easing, function (obj) {
+                            widget.curFrameNum = Math.round(obj.curX)
                             this.draw()
-                        }.bind(this), 1000 / fps)
+                        }.bind(this), function () {
+                            widget.curFrameNum = 0
+                            widget.animateTimerId = 0
+        
+                        }.bind(this))
+
+                        // widget.animateTimerId = setInterval(function () {
+                        //     if (widget.curFrameNum != undefined) {
+                        //         widget.curFrameNum += 1
+                        //     } else {
+                        //         widget.curFrameNum = 1
+                        //     }
+                        //     if (widget.curFrameNum > totalFrameNum - 1) {
+                        //         clearInterval(widget.animateTimerId)
+                        //         // var endTime = new Date()
+                        //         // console.log('end time',endTime,endTime-startTime)
+
+                        //         widget.animateTimerId = 0
+                        //         widget.curFrameNum = 0
+
+                        //     }
+                        //     this.draw()
+                        // }.bind(this), 1000 / fps)
                     }
                 }
 
@@ -3573,7 +3607,7 @@ module.exports = React.createClass({
         var maxValue = widget.info.maxValue;
         var curDashboardTag = this.findTagByName(widget.tag);
         var curDashboardTagValue;
-
+        var easing = this.getEasingFunc(widget)
 
         curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
 
@@ -3606,7 +3640,7 @@ module.exports = React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, duration, 30, null, function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, duration, 30, easing, function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this), function () {

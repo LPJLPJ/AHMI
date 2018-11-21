@@ -4381,6 +4381,8 @@ ideServices
                     selectObj.level.transition.show=_option.show;
                 }else if(_option.hasOwnProperty('duration')){
                     selectObj.level.transition.duration=_option.duration;
+                }else if(_option.hasOwnProperty('timingFun')){
+                    selectObj.level.transition.timingFun=_option.timingFun;
                 }
                 _successCallback&&_successCallback(currentOperate);
             };
