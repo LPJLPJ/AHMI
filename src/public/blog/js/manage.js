@@ -68,35 +68,30 @@ function bindEvent() {
         })
     })
 
+    var curLi;
+    var $deletemodal = $('#deletemodal');
     $('.blog-list').on('click','.blog-panel-menuitem-delete',function (e) {
-        var $deletemodal = $('#deletemodal');
-        $('.modal-body').html("确认删除吗？")
-        $deletemodal.modal('show')
-        var curLi = $(e.target).closest('.blog-list-li')
-        var deleteHandler = function () {
-            var id=curLi.data('id')
-            $.ajax({
-                type:"DELETE",
-                url:'/blog/deleteblog',
-                data:{
-                    blogId:id
-                },
-                success:function (msg) {
-                    curLi.remove()
-                },
-                error:function (xhr) {
-                    console.log(xhr)
-                }
-            })
-        }
-        $('#modal-confirm').on('click',deleteHandler)
+        $('.modal-body').html("确认删除吗？");
+        $deletemodal.modal('show');
+        curLi = $(this).parents('.blog-list-li');
+    });
 
-        $deletemodal.on('hide.bs.modal',function () {
-            $('#modal-confirm').off('#modal-confirm','click',deleteHandler)
+    $('#modal-confirm').on('click',function () {
+        var id = curLi.attr('data-id');
+        $.ajax({
+            type:"post",
+            url:'/blog/deleteblog',
+            data:{
+                blogId:id
+            },
+            success:function (msg) {
+                curLi.remove()
+            },
+            error:function (xhr) {
+                console.log(xhr)
+            }
         })
-
-
-    })
+    });
 
     $('#create').click(function (e) {
         var newWindow = window.open("","_blank");
