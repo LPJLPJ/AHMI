@@ -1123,7 +1123,7 @@
                             <!--<option value="vertical">竖直</option>-->
                             <!--</select>-->
                             <!--</div>-->
-                            <div class="attr-item__cell-wrap lg">
+                            <!--<div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">模式</p>
                                 <select class="attr-item__cell-input form-control"
                                         ng-model="component.button.buttonModeId"
@@ -1132,7 +1132,7 @@
                                         {{mode.name}}
                                     </option>
                                 </select>
-                            </div>
+                            </div>-->
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">文本</p>
                                 <input type="text"
@@ -1701,8 +1701,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
                                    type="number">
-                        </div>
-                        <div class="attr-item__cell-wrap">
+                        </div><div class="attr-item__cell-wrap">
                             <p class="attr-item__cell-title">旋转中心Y</p>
                             <input class="attr-item__cell-input form-control"
                                    ng-model="component.object.level.info.posRotatePointY"
@@ -1710,7 +1709,7 @@
                                    ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
                                    type="number">
                         </div>
-                        <div class="attr-item__cell-wrap">
+                        <div class="attr-item__cell-wrap lg">
                             <p class="attr-item__cell-title">旋转内径</p>
                             <input class="attr-item__cell-input form-control"
                                    ng-model="component.object.level.info.innerRadius"
@@ -4213,9 +4212,11 @@
                     <div ng-controller="TagCtrl">
                         <script type="text/ng-template" id="generateExcel.html">
                             <div class="modal-header">
-                                <h3 class="modal-title">确定生成Excel？</h3>
+                                <h3 class="modal-title">确定生成excel？</h3>
                             </div>
-                            <!--<div class="modal-body">-->
+                            <div class="modal-body">
+                                <p class="modal-prompt">将会生成一个excel表格，显示tag的寄存器号以及所绑定的元素的最小值、最大值和当前值。</p>
+                            </div>
                             <div class="modal-footer">
                                 <button class="modal-btn btn-confirm" type="button" ng-click="ok()">确定</button>
                                 <button class="modal-btn" type="button" ng-click="cancel()">取消</button>

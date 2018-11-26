@@ -3,7 +3,7 @@
  */
 ideServices.service('TagService', [function () {
 
-    function Tag(name, register, indexOfRegister, writeOrRead, value, type, bindMod, lockTag, valueType) {
+    function Tag(name, register, indexOfRegister, writeOrRead, value, type, bindMod, valueType, lockTag) {
         this.name = name;
         this.register = register;
         this.indexOfRegister = indexOfRegister;
@@ -16,14 +16,14 @@ ideServices.service('TagService', [function () {
     }
 
     var defaultTag = new Tag('', false, null, 'true', null, 'custom', 'default');
-    var videoTag = new Tag('视频', false, 1, 'true', 0, 'system', 'forbidden',  true);
-    var curPageTag = new Tag('当前页面序号', false, 2, 'true', 0, 'system', 'forbidden', true);
-    var keyCode = new Tag('传递按键编码', false, 3, 'true', 0, 'system', 'forbidden', true);
-    var RTCTag1 = new Tag('时钟变量年月日', false, 4, 'true', 0, 'system', true);
-    var RTCTag2 = new Tag('时钟变量时分秒', false, 5, 'true', 0, 'system', true);
-    var buzzer = new Tag('蜂鸣器', false, 6, 'true', 0, 'system', true);
-    var backLight = new Tag('背光', false, 7, 'true', 0, 'system', true);
-    var fpsTag = new Tag('帧率', false, 8, 'true', 0, 'system', true);
+    var videoTag = new Tag('视频', false, 1, 'true', 0, 'system', 'forbidden', '', true);
+    var curPageTag = new Tag('当前页面序号', false, 2, 'true', 0, 'system', 'forbidden', '', true);
+    var keyCode = new Tag('传递按键编码', false, 3, 'true', 0, 'system', 'forbidden', '', true);
+    var RTCTag1 = new Tag('时钟变量年月日', false, 4, 'true', 0, 'system', '', '', true);
+    var RTCTag2 = new Tag('时钟变量时分秒', false, 5, 'true', 0, 'system', '', '', true);
+    var buzzer = new Tag('蜂鸣器', false, 6, 'true', 0, 'system', '', '', true);
+    var backLight = new Tag('背光', false, 7, 'true', 0, 'system', '', '', true);
+    var fpsTag = new Tag('帧率', false, 8, 'true', 0, 'system', '', '', true);
     var sysTags = [videoTag, curPageTag, keyCode, RTCTag1, RTCTag2, buzzer, backLight, fpsTag];
     var tags = sysTags;
     var timerTags = [];

@@ -897,6 +897,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     function generateExcel(){
             var modalInstance = $uibModal.open({
                 templateUrl: 'generateExcel.html',
+                size: 'md',
                 controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
                     $scope.ok = function(){
                         generateTagExcel();
