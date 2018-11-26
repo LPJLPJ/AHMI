@@ -3465,7 +3465,7 @@
                             </div>
 
                             <div class="modal-body">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered attr-item__table">
                                     <thead>
                                     <tr align="center">
                                         <td class="col-xs-1">#</td>
@@ -3534,7 +3534,7 @@
                                     批量插入
                                 </button>
                             </span>
-                            <span  class="my-but-right">
+                            <span  class="fr">
                                 <button class="modal-btn btn-confirm" type="button" ng-click="save()">保存</button>
                                 <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </span>
@@ -3551,7 +3551,7 @@
                             <span>说明：批量选择完成后将会按照文件名“例如：<span style="color: red">图片名(1)</span>”中的“()”里面的数字从小到大按顺序排列，请按示例样式命名文件。</span>
                         </div>
                         <div class="modal-body batch-select-wrap">
-                            <table class="table table-bordered batch-select-table">
+                            <table class="table table-bordered attr-item__table">
                                 <thead>
                                 <tr>
                                     <th class="col-xs-2">操作</th>
@@ -4176,9 +4176,9 @@
                                             <span>{{file.size/1024 | number:2}}K</span>
                                         </p>
                                     </td>
-                                    <td align="center"><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
+                                    <td align="center">
+                                        <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px;vertical-align: -2px;">&#xe666;</span>
                                         <span class="iconfont img-option c-p" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
-                                        <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px">&#xe666;</span>
                                         <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                             <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
                                         </label>
@@ -4326,7 +4326,7 @@
                                     <h3 class="modal-title" style="margin-bottom: 5px">预设tag列表<small></small></h3>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table table-striped">
+                                    <table class="table table-striped attr-item__table">
                                         <thead>
                                         <tr>
                                             <th>选择</th>
@@ -4350,7 +4350,7 @@
                                     </table>
                                 </div>
                                 <div class="modal-footer">
-                                <span class="my-but-left">
+                                <span class="fl">
                                     <button class="btn btn-success" ng-click="selectAll()">全选</button>
                                     <button class="btn btn-success" ng-click="invertSelect()">反选</button>
                                 </span>
@@ -4409,7 +4409,7 @@
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="modal-btn btn-confirm" type="button" ng-show="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
+                                    <button class="modal-btn btn-confirm" type="button" ng-if="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
                                     <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">保存</button>
                                     <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                                 </div>
@@ -4491,13 +4491,13 @@
                             <div class="attr-item__table-wrap" uib-collapse="status.collapsed">
                                 <table class="attr-item__table table table-bordered"ng-show="component.timerTagShow==false">
                                     <thead align="center">
-                                    <tr>
-                                        <td>名称<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
-                                        <td>寄存器<span class="iconfont c-p" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span></td>
-                                        <td>启用</td>
-                                        <td>标签</td>
-                                        <td>删除</td>
-                                    </tr>
+                                        <tr>
+                                            <td>名称<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
+                                            <td>寄存器<span class="iconfont c-p" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span></td>
+                                            <td>启用</td>
+                                            <td>标签</td>
+                                            <td>删除</td>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="tag in component.curTagClass.tagArray track by $index"

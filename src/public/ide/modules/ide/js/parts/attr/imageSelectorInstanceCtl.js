@@ -156,6 +156,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
         var modalInstance = $uibModal.open({
             templateUrl: 'batchSelectorModal.html',
+            size :"md",
             controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
                 $scope.batchSelectArr=[];
                 $scope.selectAll=function(){//全选
