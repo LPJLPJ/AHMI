@@ -4402,7 +4402,7 @@
                                         </fieldset>
                                         <fieldset class="attr-item__cell-wrap lg">
                                             <p for="indexOfRegister" class="attr-item__cell-title">寄存器序号</p>
-                                            <input ng-disabled="!tag.register||tag.theme" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
+                                            <input ng-disabled="!tag.register||tag.theme||tag.lockTag" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
                                                    ng-model="tag.indexOfRegister" class="attr-item__cell-input"/>
                                         </fieldset>
                                     </form>
