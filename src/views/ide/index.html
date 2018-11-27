@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
     <!--add-->
-    <script src="../../public/ide/tools/js/ruler.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+    <script src="../../public/ide/tools/js/ruler.js"></script>
 
     <script src="../../public/libs/md5.js"></script>
 
@@ -3534,7 +3534,7 @@
                                     批量插入
                                 </button>
                             </span>
-                            <span  class="fr">
+                            <span class="fr">
                                 <button class="modal-btn btn-confirm" type="button" ng-click="save()">保存</button>
                                 <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </span>
@@ -4488,8 +4488,18 @@
                                 </div>
                             </script>
 
+                            <!--tag鼠标悬浮提示框-->
+                            <script type="text/ng-template" id="tagBindStatus.html">
+                                <div class="tag-tooltip-wrap">
+                                    <p class="tag-tooltip-title">变量绑定情况</p>
+                                    <p ng-repeat="elem in tagBindStatusArr track by $index">
+                                        {{elem.name}}
+                                    </p>
+                                </div>
+                            </script>
+
                             <div class="attr-item__table-wrap" uib-collapse="status.collapsed">
-                                <table class="attr-item__table table table-bordered"ng-show="component.timerTagShow==false">
+                                <table class="attr-item__table table table-bordered" ng-show="component.timerTagShow==false">
                                     <thead align="center">
                                         <tr>
                                             <td>名称<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
@@ -4502,8 +4512,10 @@
                                     <tbody>
                                     <tr ng-repeat="tag in component.curTagClass.tagArray track by $index"
                                         ng-class="{'selected':selected==$id}">
-                                        <td ng-click="component.openPanel($index,'custom')">
-                                            <div class="tagName" style="padding: 0;margin: 0;width: 100%">{{tag.name}}</div>
+                                        <td ng-click="component.openPanel($index,'custom')" align="left" valign="middle">
+                                            <div ng-mouseover="component.showTagBindStatus($index)" class="tagName c-p"
+                                                 tooltip-placement="left"
+                                                 uib-tooltip-template="'tagBindStatus.html'">{{tag.name}}</div>
                                         </td>
                                         <td align="center">
                                             <div class="tagReg">{{tag.indexOfRegister}}</div>

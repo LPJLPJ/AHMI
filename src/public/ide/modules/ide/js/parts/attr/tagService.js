@@ -551,6 +551,91 @@ ideServices.service('TagService', [function () {
             }
         }
     }
+
+    /**
+     * 检测tag绑定情况
+     */
+
+    this.checkBindTag = function(selectTag,project,cb){
+        var bindNum = 0;
+        _.forEach(project.pages,function(page){
+            if(page.tag&&page.tag == selectTag){
+                bindNum += 1;
+            }
+
+            var layers = page.layers;
+            if(layers&&layers.length){
+                _.forEach(layers,function(layer){
+                    if(layer.tag&&layer.tag == selectTag){
+                        bindNum += 1;
+                    }
+
+                    var subLayers = layer.subLayers;
+                    _.forEach(subLayers,function(subLayer){
+                        var widgets = subLayer.widgets;
+                        if(widgets&&widgets.length){
+                            _.forEach(widgets,function(widget){
+                                if(widget.tag&&widget.tag == selectTag){
+                                    bindNum += 1;
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+        });
+
+        if(bindNum>0){
+            cb(bindNum+1);
+        }
+    };
+
+    this.getBindElement = function(selectTag,project,cb){
+        var tagData = [];
+        _.forEach(project.pages,function(page,index){
+            if(page.tag&&page.tag == selectTag){
+                var pageData = {
+                    name:page.name,
+                    type:page.type,
+                    index:index
+                };
+                tagData.push(pageData);
+            }
+
+            var layers = page.layers;
+            if(layers&&layers.length){
+                _.forEach(layers,function(layer,index){
+                    if(layer.tag&&layer.tag == selectTag){
+                        var layerData = {
+                            name:layer.name,
+                            type:layer.type,
+                            index:index
+                        };
+                        tagData.push(layerData);
+                    }
+
+                    var subLayers = layer.subLayers;
+                    _.forEach(subLayers,function(subLayer,index){
+                        var widgets = subLayer.widgets;
+                        if(widgets&&widgets.length){
+                            _.forEach(widgets,function(widget){
+                                if(widget.tag&&widget.tag == selectTag){
+                                    var widgetData = {
+                                        name:widget.name,
+                                        type:widget.type,
+                                        index:index
+                                    };
+                                    tagData.push(widgetData);
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+        });
+
+        cb(tagData);
+    }
 }
 
 ]);

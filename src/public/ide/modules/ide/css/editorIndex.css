@@ -2099,3 +2099,20 @@ div.wrapper-custom {
 .btn-confirm {
     color: #005599;
 }
+
+/*tag悬浮提示框*/
+.tagName{
+    margin: 0;
+    padding: 0;
+}
+
+.tag-tooltip-wrap{
+    padding: 10px;
+}
+
+.tag-tooltip-title{
+    text-align: center;
+    font-size: 14px;
+    color: #005599;
+    font-weight: 600;
+}
