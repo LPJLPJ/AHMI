@@ -3158,6 +3158,176 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MyTextArea.async = true;
 
+
+
+    fabric.MyTextInput = fabric.util.createClass(fabric.Object,{
+        type: Type.MyTextInput,
+        initialize: function (level, options) {
+            var self=this;
+            var ctrlOptions={
+                bl:false,
+                br:false,
+                mb:false,
+                ml:false,
+                mr:false,
+                mt:false,
+                tl:false,
+                tr:false
+            };
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
+            this.hasRotatingPoint=false;
+            this.backgroundColor=level.texList[0].slices[0].color;
+            this.arrange=level.info.arrange;
+
+            this.text=level.info.text;
+            this.fontFamily=level.info.fontFamily;
+            this.fontSize=level.info.fontSize;
+            this.fontColor=level.info.fontColor;
+            this.fontBold=level.info.fontBold;
+            this.fontItalic=level.info.fontItalic;
+            this.fontUnderline=level.info.fontUnderline;
+
+            this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            if (this.backgroundImageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.backgroundColor=tex.slices[0].color;
+
+                self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+            this.on('changeTextContent', function (arg) {
+                //console.log('enter on changeTextContent');
+                if(arg.text){
+                    self.text=arg.text;
+                }
+                if(arg.fontFamily){
+                    self.fontFamily=arg.fontFamily;
+                }
+                if(arg.fontSize){
+                    self.fontSize=arg.fontSize;
+                }
+                if(arg.fontColor){
+                    self.fontColor=arg.fontColor;
+                }
+                if(arg.fontBold){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+
+                //重新设置canvas的宽高
+                if(self.fontSize&&self.text){
+                    self.setWidth(self.fontSize*(self.text.length+1));
+                    self.setHeight(self.fontSize*2);
+                }
+
+                var _callback=arg.callback;
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+            this.on('changeArrange',function(arg){
+                var _callback=arg.callback;
+                self.arrange=arg.arrange;
+                if(arg.arrange=='vertical'){
+                    self.setAngle(90);
+                    self.set({
+                        originY:'bottom'
+                    });
+                }else if(arg.arrange=='horizontal'){
+                    self.setAngle(0);
+                    self.set({
+                        originY:'top'
+                    });
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                ctx.fillStyle=this.fontColor;
+                ctx.save();
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width,
+                    this.height);
+
+                if (this.backgroundImageElement){
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+                ctx.restore();
+                //var subLayerNode=CanvasService.getSubLayerNode();
+
+                if(this.text){
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    //console.log(fontString);
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    ctx.fillText(this.text,0,0);
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染文本出错');
+            }
+        }
+    });
+    fabric.MyTextInput.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyTextInput(level, option));
+    };
+    fabric.MyTextInput.prototype.toObject = (function (toObject){
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                backgroundImageElement: this.backgroundImageElement,
+                backgroundColor: this.backgroundColor
+            });
+        }
+    })(fabric.MyTextInput.prototype.toObject);
+    fabric.MyTextInput.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MyTextInput(level,object));
+    };
+    fabric.MyTextInput.async = true;
+
     fabric.MyNum = fabric.util.createClass(fabric.Object,{
         type: Type.MyNum,
         initialize: function (level, options) {

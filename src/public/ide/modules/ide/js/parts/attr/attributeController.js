@@ -35,7 +35,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 ],
                 transitionName: null,
                 timingFun: '',
-                timingFuns: ['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'],
+                timingFuns: ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'],
                 page: {
                     enterImage: enterBackgroundImage,
                     selectImage: 'demo20.png',
@@ -121,6 +121,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterMaxCoverAngle: enterMaxCoverAngle
                 },
                 textArea: {
+                    enterText: enterText,
+                    selectCharacterSetByIndex: selectCharacterSetByIndex,
+                    selectCharacterSetByName: selectCharacterSetByName,
+                    addCharacterSet: addCharacterSet,
+                    deleteCharacterSetByIndex: deleteCharacterSetByIndex,
+                    enterArrange: enterArrange
+                },
+                textInput: {
                     enterText: enterText,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,

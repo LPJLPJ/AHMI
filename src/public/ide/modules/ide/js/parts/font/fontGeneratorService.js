@@ -310,8 +310,11 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                 }
                 fontFamily = str;
             }
+            //font type, isFull
+            info.fullFont = (widget.subType===Type.MyTextInput)
+            
             widget.originFont = {};
-            widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'-'+(font['fullFont']?'full':'short')+'.png';
+            widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'-'+(info['fullFont']?'full':'short')+'.png';
             widget.originFont.w = info.fontSize;
             widget.originFont.h = info.fontSize;
             widget.originFont.W = Math.ceil(info.fontSize*paddingRatio);
@@ -319,8 +322,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             widget.originFont.paddingX = Math.ceil(info.fontSize*(paddingRatio-1)/2);
             widget.originFont.paddingY = Math.ceil(info.fontSize*(paddingRatio-1)/2);
 
-            //font type, isFull
-            info.fullFont = (widget.subType===Type.MyTextInput)
+            
 
             widget.originFont.paddingRatio = paddingRatio;
             // result = fonts.some(function(item){

@@ -2420,6 +2420,83 @@
 
                         </div>
 
+                        <div ng-show="component.object.type=='MyTextInput'&&!myMask">
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">名称</p>
+                                <input class="attr-item__cell-input form-control"
+                                       type="text"
+                                       ng-model="component.object.level.name"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterName($event)">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.left"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.top"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterY($event)"
+                                   type="number">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="position.absoluteX"
+                                       ng-blur="position.absoluteX=position.initAbsoluteX"
+                                       ng-keypress="component.enterAbsoluteX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">绝对坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="position.absoluteY"
+                                   ng-blur="position.absoluteY=position.initAbsoluteY"
+                                   ng-keypress="component.enterAbsoluteY($event)"
+                                   type="number">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">高度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                        </div>
+                            <!--<div class="attr-item__cell-wrap lg">-->
+                            <!--<span class="attr-item__cell-title">方向</span>-->
+
+                            <!--<select class="attr-item__cell-input form-control" ng-model="component.textArea.arrangeModel"-->
+                            <!--ng-change="component.textArea.enterArrange($event)">-->
+                            <!--<option value="horizontal">水平</option>-->
+                            <!--<option value="vertical">竖直</option>-->
+                            <!--</select>-->
+                            <!--</div>-->
+                            <!-- <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">文本</p>
+                                <input type="text"
+                                       class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.text"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.textArea.enterText($event)"/>
+                            </div> -->
+
+                        </div>
+
                         <div ng-show="component.object.type=='MyKnob'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -4648,6 +4725,80 @@
                                                    ng-model="character.fontName">
                                         <span class="btn btn-primary btn-sm badge"
                                               ng-click="component.textArea.deleteCharacterSetByIndex($event,$index)">
+                                         ×
+                                        </span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">字体</p>
+                                <select class="form-control attr-item__cell-input"
+                                        ng-model="component.object.level.info.fontFamily"
+                                        ng-change="component.enterFontFamily()">
+                                    <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}" ng-disabled="fontF.type=='disable'">{{fontF.name}}</option>
+                                </select>
+                            </div><div class="attr-item__cell-wrap">
+                            <a class="font-item__font-style"
+                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold==='bold']"
+                               ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
+                            <a class="font-item__font-style"
+                               ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic==='italic']"
+                               ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
+                        </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">字体大小</p>
+                                <input class="form-control attr-item__cell-input"
+                                       ng-model="component.object.level.info.fontSize"
+                                       type="number"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterFontSize($event)">
+                            </div>
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">字体颜色</p>
+                                <input colorpicker="rgba"
+                                       ng-model="component.object.level.info.fontColor"
+                                       type="text"
+                                       class="form-control attr-item__cell-input"/>
+                            </div>
+                        </div>
+
+                        <div ng-show="component.object.type=='MyTextInput'" ng-controller="characterSetCtrl">
+                            <div class=" dropdown attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">字符集</p>
+                                <button type="button"
+                                        class="btn btn-default dropdown-toggle form-control"
+                                        id="fontMenu"
+                                        data-toggle="dropdown"
+                                        aria-haspopup="true"
+                                        aria-expanded="true">
+                                    {{componentOfChar.character.fontName}}
+                                    <span class="caret" style="width: 0"></span>
+                                </button>
+
+                                <ul class="dropdown-menu list-group xiangPage-dropdown" aria-labelledby="fontMenu"
+                                    id="characterNameInput">
+                                    <li class="list-group-item">
+                                        添加样式
+                                    <span class="btn btn-default btn-primary badge"
+                                          ng-click="component.textInput.addCharacterSet($event)">+</span>
+
+                                    </li>
+                                    <li ng-repeat="character in componentOfChar.allCharacters track by $index"
+                                        class="list-group-item"
+                                        style="cursor: pointer;"
+                                        ng-click="component.textInput.selectCharacterSetByIndex($index)">
+                                        <div ng-click="componentOfChar.selectCharacterByIndex($index)">
+                                            <input type="text"
+                                                   class=""
+                                                   readonly="readonly"
+                                                   ng-dblclick="componentOfChar.enableInput($index)"
+                                                   ng-blur="componentOfChar.disableInput($index)"
+                                                   ng-model="character.fontName">
+                                        <span class="btn btn-primary btn-sm badge"
+                                              ng-click="component.textInput.deleteCharacterSetByIndex($event,$index)">
                                          ×
                                         </span>
                                         </div>

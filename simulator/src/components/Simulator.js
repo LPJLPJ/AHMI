@@ -1447,75 +1447,80 @@ module.exports = React.createClass({
             }
 
 
-            switch (subType) {
-                case 'MySlide':
-                    this.drawSlide(curX, curY, widget, options, cb);
-                    break;
-                case 'MyAlphaSlide':
-                    this.drawAlphaSlide(curX,curY,widget,options,cb);
-                    break;
-                case 'MyButton':
-                    this.drawButton(curX, curY, widget, options, cb);
-                    break;
-                case 'MySwitch':
-                    this.drawSwitch(curX, curY, widget, options, cb);
-                    break;
-                case 'MyButtonGroup':
-                    this.drawButtonGroup(curX, curY, widget, options, cb);
-                    break;
-                case 'MyNumber':
-                    this.drawNumber(curX, curY, widget, options, cb);
-                    break;
-                case 'MyProgress':
-                    //draw progressbar
-                    this.drawProgress(curX, curY, widget, options, cb);
-                    break;
-                case 'MyDashboard':
-                    this.drawDashboard(curX, curY, widget, options, cb);
-                    break;
-                case 'MyOscilloscope':
-                    this.drawOscilloscope(curX, curY, widget, options, cb);
-                    break;
-                case 'MyRotateImg':
-                    this.drawRotateImg(curX, curY, widget, options, cb);
-                    break;
-                case 'MyNum':
-                    this.drawNum(curX, curY, widget, options, cb)
-                    break;
-                case 'MyTexNum':
-                    this.drawTexNum(curX, curY, widget, options, cb)
-                    break;
-                case 'MyDateTime':
-                    this.drawTime(curX, curY, widget, options, cb);
-                    break;
-                case 'MyTexTime':
-                    this.drawTexTime(curX, curY, widget, options, cb);
-                    break;
-                case 'MyTextArea':
-                    this.drawTextArea(curX, curY, widget, options, cb);
-                    break;
-                case 'MySlideBlock':
-                    this.drawSlideBlock(curX, curY, widget, options, cb);
-                    break;
-                case 'MyScriptTrigger':
-                    this.drawScriptTrigger(curX, curY, widget, options, cb);
-                    break;
-                case 'MyVideo':
-                    this.drawVideo(curX, curY, widget, options, cb);
-                    break;
-                case 'MyInputKeyboard':
-                    this.drawInputKeyboard(curX, curY, widget, options, cb);
-                    break;
-                case 'MyAnimation':
-                    this.drawAnimation(curX, curY, widget, options, cb);
-                    break;
-                case 'MyTouchTrack':
-                    this.drawTouchTrack(curX, curY, widget, options, cb);
-                    break;
-                case 'MyAlphaImg':
-                    this.drawAlphaImg(curX, curY, widget, options, cb);
-                    break;
-            }
+            // switch (subType) {
+            //     case 'MySlide':
+            //         this.drawSlide(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyAlphaSlide':
+            //         this.drawAlphaSlide(curX,curY,widget,options,cb);
+            //         break;
+            //     case 'MyButton':
+            //         this.drawButton(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MySwitch':
+            //         this.drawSwitch(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyButtonGroup':
+            //         this.drawButtonGroup(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyNumber':
+            //         this.drawNumber(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyProgress':
+            //         //draw progressbar
+            //         this.drawProgress(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyDashboard':
+            //         this.drawDashboard(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyOscilloscope':
+            //         this.drawOscilloscope(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyRotateImg':
+            //         this.drawRotateImg(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyNum':
+            //         this.drawNum(curX, curY, widget, options, cb)
+            //         break;
+            //     case 'MyTexNum':
+            //         this.drawTexNum(curX, curY, widget, options, cb)
+            //         break;
+            //     case 'MyDateTime':
+            //         this.drawTime(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyTexTime':
+            //         this.drawTexTime(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyTextArea':
+            //         this.drawTextArea(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyTextInput':
+            //         this.drawTextInput(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MySlideBlock':
+            //         this.drawSlideBlock(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyScriptTrigger':
+            //         this.drawScriptTrigger(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyVideo':
+            //         this.drawVideo(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyInputKeyboard':
+            //         this.drawInputKeyboard(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyAnimation':
+            //         this.drawAnimation(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyTouchTrack':
+            //         this.drawTouchTrack(curX, curY, widget, options, cb);
+            //         break;
+            //     case 'MyAlphaImg':
+            //         this.drawAlphaImg(curX, curY, widget, options, cb);
+            //         break;
+            // }
+            var drawFunc = 'draw'+subType.slice(2)
+            this[drawFunc]&&this[drawFunc](curX, curY, widget, options, cb);
 
         }
 
@@ -1556,75 +1561,80 @@ module.exports = React.createClass({
         }
 
 
-        switch (subType) {
-            case 'MySlide':
-                this.paintSlide(curX, curY, widget, options, cb);
-                break;
-            case 'MyAlphaSlide':
-                this.paintAlphaSlide(curX, curY, widget, options, cb);
-                break;    
-            case 'MyButton':
-                this.paintButton(curX, curY, widget, options, cb);
-                break;
-            case 'MySwitch':
-                this.paintSwitch(curX, curY, widget, options, cb);
-                break;
-            case 'MyButtonGroup':
-                this.paintButtonGroup(curX, curY, widget, options, cb);
-                break;
-            case 'MyNumber':
-                this.paintNumber(curX, curY, widget, options, cb);
-                break;
-            case 'MyProgress':
-                //paint progressbar
-                this.paintProgress(curX, curY, widget, options, cb);
-                break;
-            case 'MyDashboard':
-                this.paintDashboard(curX, curY, widget, options, cb);
-                break;
-            case 'MyOscilloscope':
-                this.paintOscilloscope(curX, curY, widget, options, cb);
-                break;
-            case 'MyRotateImg':
-                this.paintRotateImg(curX, curY, widget, options, cb);
-                break;
-            case 'MyNum':
-                this.paintNum(curX, curY, widget, options, cb)
-                break;
-            case 'MyTexNum':
-                this.paintTexNum(curX, curY, widget, options, cb)
-                break;
-            case 'MyDateTime':
-                this.paintTime(curX, curY, widget, options, cb);
-                break;
-            case 'MyTexTime':
-                this.paintTexTime(curX, curY, widget, options, cb);
-                break;
-            case 'MyTextArea':
-                this.paintTextArea(curX, curY, widget, options, cb);
-                break;
-            case 'MySlideBlock':
-                this.paintSlideBlock(curX, curY, widget, options, cb);
-                break;
-            case 'MyScriptTrigger':
-                this.paintScriptTrigger(curX, curY, widget, options, cb);
-                break;
-            case 'MyVideo':
-                this.paintVideo(curX, curY, widget, options, cb);
-                break;
-            case 'MyInputKeyboard':
-                this.paintInputKeyboard(curX, curY, widget, options, cb);
-                break;
-            case 'MyAnimation':
-                this.paintAnimation(curX, curY, widget, options, cb);
-                break;
-            case 'MyTouchTrack':
-                this.paintTouchTrack(curX,curY,widget,options,cb);
-                break;
-            case 'MyAlphaImg':
-                this.paintAlphaImg(curX,curY,widget,options,cb);
-                break;
-        }
+        // switch (subType) {
+        //     case 'MySlide':
+        //         this.paintSlide(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyAlphaSlide':
+        //         this.paintAlphaSlide(curX, curY, widget, options, cb);
+        //         break;    
+        //     case 'MyButton':
+        //         this.paintButton(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MySwitch':
+        //         this.paintSwitch(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyButtonGroup':
+        //         this.paintButtonGroup(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyNumber':
+        //         this.paintNumber(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyProgress':
+        //         //paint progressbar
+        //         this.paintProgress(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyDashboard':
+        //         this.paintDashboard(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyOscilloscope':
+        //         this.paintOscilloscope(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyRotateImg':
+        //         this.paintRotateImg(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyNum':
+        //         this.paintNum(curX, curY, widget, options, cb)
+        //         break;
+        //     case 'MyTexNum':
+        //         this.paintTexNum(curX, curY, widget, options, cb)
+        //         break;
+        //     case 'MyDateTime':
+        //         this.paintTime(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyTexTime':
+        //         this.paintTexTime(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyTextArea':
+        //         this.paintTextArea(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyTextInput':
+        //         this.paintTextInput(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MySlideBlock':
+        //         this.paintSlideBlock(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyScriptTrigger':
+        //         this.paintScriptTrigger(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyVideo':
+        //         this.paintVideo(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyInputKeyboard':
+        //         this.paintInputKeyboard(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyAnimation':
+        //         this.paintAnimation(curX, curY, widget, options, cb);
+        //         break;
+        //     case 'MyTouchTrack':
+        //         this.paintTouchTrack(curX,curY,widget,options,cb);
+        //         break;
+        //     case 'MyAlphaImg':
+        //         this.paintAlphaImg(curX,curY,widget,options,cb);
+        //         break;
+        // }
+        var paintFunc = 'paint'+subType.slice(2)
+        this[paintFunc]&&this[paintFunc](curX,curY,widget,options,cb)
 
 
     },
@@ -1898,6 +1908,34 @@ module.exports = React.createClass({
             font['font-family'] = info.fontFamily;
             font['font-color'] = info.fontColor;
             this.drawTextByTempCanvas(curX, curY, width, height, info.text, font, arrange);
+        }
+        cb && cb();
+    },
+    drawTextInput: function (curX, curY, widget, options, cb) {
+        var tag = this.findTagByName(widget.tag)
+        if(tag){
+
+            widget.curValue = ''+this.getTagTrueValue(tag) //convert to string even is number tag
+
+        }
+    },
+    paintTextInput: function (curX, curY, widget, options, cb) {
+        var info = widget.info;
+        var width = info.width;
+        var height = info.height;
+        var bgSlice = widget.texList[0].slices[0];
+        var arrange = info.arrange === 'vertical' ? 'vertical' : 'horizontal';
+        this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
+        //draw text
+        if (info.text) {
+            //
+            var font = {};
+            font['font-style'] = info.fontItalic;
+            font['font-weight'] = info.fontBold;
+            font['font-size'] = info.fontSize;
+            font['font-family'] = info.fontFamily;
+            font['font-color'] = info.fontColor;
+            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange);
         }
         cb && cb();
     },

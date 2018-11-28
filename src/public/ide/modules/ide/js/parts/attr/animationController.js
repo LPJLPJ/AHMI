@@ -307,7 +307,7 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             }
         };
 
-        $scope.timingFuns = ['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'];
+        $scope.timingFuns = ['linear',  'easeInCubic', 'easeOutCubic', 'easeInOutCubic'];
 
         //修正数据，将为绑定tag的属性置空,将绑定了tag的属性的value置0
         function fixData(animation, switchButtons) {
