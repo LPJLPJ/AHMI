@@ -32,8 +32,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 if(op.hasOwnProperty('value')){
                     if(!reg.test(op.value)&&!!op.value){
                         //值为字符串
-                        op.value = convertStrToUint8Array(op.value,curProjectEncoding)
-                        op.valueArray = convertUint8ArrayToArray(op.value)
+                        var u8Value = convertStrToUint8Array(op.value,curProjectEncoding)
+                        op.valueArray = convertUint8ArrayToArray(u8Value)
                     }
                 }
             })

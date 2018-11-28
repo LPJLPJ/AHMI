@@ -5327,7 +5327,7 @@ module.exports = React.createClass({
                 if (param.tag) {
                     value = this.getValueByTagName(param.tag);
                 } else {
-                    value = Number(param.value);
+                    value = param.value;
                 }
             } else {
                 value = 0;
