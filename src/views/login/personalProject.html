@@ -70,7 +70,7 @@
             <p class="list-title">我的工程</p>
             <ul class="project-list clearfix" id="project-list">
                 <%for(var i=0;i<projects.length;i++){%>
-                <li class="project-list__item project-panel" data-project='<%= JSON.stringify(projects[i].projectInfo) %>'>
+                <li class="project-list__item project-panel project-tool" data-project='<%= JSON.stringify(projects[i].projectInfo) %>'>
                     <div class="project-item__thumb">
                         <div class="project-thumb-box thumb-img">
                             <img class="project-thumb" src=<%= projects[i].thumbnail||'../../public/login/assets/images/project.png' %> />
@@ -90,7 +90,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="project-item__title project-tool"
+                    <div class="project-item__title"
                          title="创建工具:<%=projects[i].projectInfo.originalSite%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
                         <p><%= projects[i].projectInfo.name %></p>
                     </div>

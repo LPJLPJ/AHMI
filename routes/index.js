@@ -31,6 +31,9 @@ var generateProject = require('./generateProject');
 //recycle
 var recycle = require('./route_recycle');
 
+//docs
+var docs = require('./route_docs');
+
 //CAN projects
 var CANProjectInfo = require('./CANProjectInfo');
 
@@ -282,6 +285,10 @@ router.route('/recycle/refund')
 router.route('/recycle/clear')
     .post(recycle.clearRecycle);
 
+//docs
+router.route('/docs')
+    .get(docs.getDocs);
+
 
 //CAN project
 router.route('/CANProject/create')
@@ -445,7 +452,11 @@ router.route('/blog/unpublish')
     .post(BlogRoute.unpublishBlog)
 router.route('/blog/deleteblog')
     .all(UserControl.admin)
-    .delete(BlogRoute.deleteBlog)
+    .post(BlogRoute.deleteBlog)
+router.route('/blog/getMyBlog')
+    .get(BlogRoute.getMyBlog);
+router.route('/blog/getRecommend')
+    .get(BlogRoute.getRecommendBlog);
 
 
 //blog library

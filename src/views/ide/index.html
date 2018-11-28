@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
     <!--add-->
-    <script src="../../public/ide/tools/js/ruler.js"></script>
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+    <script src="../../public/ide/tools/js/ruler.js"></script>
 
     <script src="../../public/libs/md5.js"></script>
 
@@ -1143,7 +1143,7 @@
                             <!--<option value="vertical">竖直</option>-->
                             <!--</select>-->
                             <!--</div>-->
-                            <div class="attr-item__cell-wrap lg">
+                            <!--<div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">模式</p>
                                 <select class="attr-item__cell-input form-control"
                                         ng-model="component.button.buttonModeId"
@@ -1152,7 +1152,7 @@
                                         {{mode.name}}
                                     </option>
                                 </select>
-                            </div>
+                            </div>-->
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">文本</p>
                                 <input type="text"
@@ -1721,8 +1721,7 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
                                    type="number">
-                        </div>
-                        <div class="attr-item__cell-wrap">
+                        </div><div class="attr-item__cell-wrap">
                             <p class="attr-item__cell-title">旋转中心Y</p>
                             <input class="attr-item__cell-input form-control"
                                    ng-model="component.object.level.info.posRotatePointY"
@@ -1730,7 +1729,7 @@
                                    ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
                                    type="number">
                         </div>
-                        <div class="attr-item__cell-wrap">
+                        <div class="attr-item__cell-wrap lg">
                             <p class="attr-item__cell-title">旋转内径</p>
                             <input class="attr-item__cell-input form-control"
                                    ng-model="component.object.level.info.innerRadius"
@@ -3595,7 +3594,7 @@
                             </div>
 
                             <div class="modal-body">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered attr-item__table">
                                     <thead>
                                     <tr align="center">
                                         <td class="col-xs-1">#</td>
@@ -3664,7 +3663,7 @@
                                     批量插入
                                 </button>
                             </span>
-                            <span  class="my-but-right">
+                            <span class="fr">
                                 <button class="modal-btn btn-confirm" type="button" ng-click="save()">保存</button>
                                 <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                             </span>
@@ -3681,7 +3680,7 @@
                             <span>说明：批量选择完成后将会按照文件名“例如：<span style="color: red">图片名(1)</span>”中的“()”里面的数字从小到大按顺序排列，请按示例样式命名文件。</span>
                         </div>
                         <div class="modal-body batch-select-wrap">
-                            <table class="table table-bordered batch-select-table">
+                            <table class="table table-bordered attr-item__table">
                                 <thead>
                                 <tr>
                                     <th class="col-xs-2">操作</th>
@@ -4316,9 +4315,9 @@
                                             <span>{{file.size/1024 | number:2}}K</span>
                                         </p>
                                     </td>
-                                    <td align="center"><!--<a style="width: 50px;display: block" ng-click="openPanel($index)">删除</a>-->
+                                    <td align="center">
+                                        <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px;vertical-align: -2px;">&#xe666;</span>
                                         <span class="iconfont img-option c-p" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
-                                        <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px">&#xe666;</span>
                                         <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                             <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
                                         </label>
@@ -4352,9 +4351,11 @@
                     <div ng-controller="TagCtrl">
                         <script type="text/ng-template" id="generateExcel.html">
                             <div class="modal-header">
-                                <h3 class="modal-title">确定生成Excel？</h3>
+                                <h3 class="modal-title">确定生成excel？</h3>
                             </div>
-                            <!--<div class="modal-body">-->
+                            <div class="modal-body">
+                                <p class="modal-prompt">将会生成一个excel表格，显示tag的寄存器号以及所绑定的元素的最小值、最大值和当前值。</p>
+                            </div>
                             <div class="modal-footer">
                                 <button class="modal-btn btn-confirm" type="button" ng-click="ok()">确定</button>
                                 <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
@@ -4464,7 +4465,7 @@
                                     <h3 class="modal-title" style="margin-bottom: 5px">预设tag列表<small></small></h3>
                                 </div>
                                 <div class="modal-body">
-                                    <table class="table table-striped">
+                                    <table class="table table-striped attr-item__table">
                                         <thead>
                                         <tr>
                                             <th>选择</th>
@@ -4488,7 +4489,7 @@
                                     </table>
                                 </div>
                                 <div class="modal-footer">
-                                <span class="my-but-left">
+                                <span class="fl">
                                     <button class="btn btn-success" ng-click="selectAll()">全选</button>
                                     <button class="btn btn-success" ng-click="invertSelect()">反选</button>
                                 </span>
@@ -4541,13 +4542,13 @@
                                         </fieldset>
                                         <fieldset class="attr-item__cell-wrap lg">
                                             <p for="indexOfRegister" class="attr-item__cell-title">寄存器序号</p>
-                                            <input ng-disabled="!tag.register||tag.theme" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
+                                            <input ng-disabled="!tag.register||tag.theme||tag.lockTag" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
                                                    ng-model="tag.indexOfRegister" class="attr-item__cell-input"/>
                                         </fieldset>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
-                                    <button class="modal-btn btn-confirm" type="button" ng-show="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
+                                    <button class="modal-btn btn-confirm" type="button" ng-if="showForceEditBtn" ng-click="forceSave(this)">强制替换</button>
                                     <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">保存</button>
                                     <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                                 </div>
@@ -4626,22 +4627,34 @@
                                 </div>
                             </script>
 
+                            <!--tag鼠标悬浮提示框-->
+                            <script type="text/ng-template" id="tagBindStatus.html">
+                                <div class="tag-tooltip-wrap">
+                                    <p class="tag-tooltip-title">变量绑定情况</p>
+                                    <p ng-repeat="elem in tagBindStatusArr track by $index">
+                                        {{elem.name}}
+                                    </p>
+                                </div>
+                            </script>
+
                             <div class="attr-item__table-wrap" uib-collapse="status.collapsed">
-                                <table class="attr-item__table table table-bordered"ng-show="component.timerTagShow==false">
+                                <table class="attr-item__table table table-bordered" ng-show="component.timerTagShow==false">
                                     <thead align="center">
-                                    <tr>
-                                        <td>名称<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
-                                        <td>寄存器<span class="iconfont c-p" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span></td>
-                                        <td>启用</td>
-                                        <td>标签</td>
-                                        <td>删除</td>
-                                    </tr>
+                                        <tr>
+                                            <td>名称<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
+                                            <td>寄存器<span class="iconfont c-p" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span></td>
+                                            <td>启用</td>
+                                            <td>标签</td>
+                                            <td>删除</td>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="tag in component.curTagClass.tagArray track by $index"
                                         ng-class="{'selected':selected==$id}">
-                                        <td ng-click="component.openPanel($index,'custom')">
-                                            <div class="tagName" style="padding: 0;margin: 0;width: 100%">{{tag.name}}</div>
+                                        <td ng-click="component.openPanel($index,'custom')" align="left" valign="middle">
+                                            <div ng-mouseover="component.showTagBindStatus($index)" class="tagName c-p"
+                                                 tooltip-placement="left"
+                                                 uib-tooltip-template="'tagBindStatus.html'">{{tag.name}}</div>
                                         </td>
                                         <td align="center">
                                             <div class="tagReg">{{tag.indexOfRegister}}</div>

@@ -491,9 +491,9 @@ $(function(){
     $.contextMenu({
         selector: '.project-tool',
         callback: function(key) {
-            var project = $(this).parents('.project-panel').attr('data-project');
+            var project = $(this).attr('data-project');
             project = JSON.parse(project);
-            curPanel = $(this).parents('.project-panel');
+            curPanel = $(this);
             curSelectedPanel = curPanel;
             curProject = project;
             switch (key){
@@ -503,7 +503,7 @@ $(function(){
                     gui.Shell.openItem(localprojectpath);
                     break;
                 case "showInfo":
-                    showProInfo($(this).parents('.project-panel'));
+                    showProInfo($(this));
                     break;
                 case "deletePro":
                     closeModal.modal('show');
@@ -548,7 +548,7 @@ $(function(){
             }
         },
         build:function($trigger, e){
-            var project=JSON.parse(e.currentTarget.parentNode.dataset.project);
+            var project=JSON.parse(e.currentTarget.dataset.project);
             if(local){
                 var items={
                     "openFolder": {name: "查看工程所在文件夹"},

@@ -39,7 +39,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         regCheckboxClick: regCheckboxClick,
 
         importTags: importTags,
-        generateExcel: generateExcel
+        generateExcel: generateExcel,
+        showTagBindStatus:showTagBindStatus
     };
 
     $scope.$on('GlobalProjectReceived', function () {
@@ -897,6 +898,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     function generateExcel(){
             var modalInstance = $uibModal.open({
                 templateUrl: 'generateExcel.html',
+                size: 'md',
                 controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
                     $scope.ok = function(){
                         generateTagExcel();
@@ -960,6 +962,15 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     function downloadTagExcel(project){
         window.location.href = '/project/' + project.projectId + '/downloadTagExcel';
+    }
+
+    function showTagBindStatus(index){
+        var targetTag = $scope.component.curTagClass.tagArray[index].name;
+        TagService.getBindElement(targetTag,$scope.project,function(tagData){
+            if(tagData){
+                $scope.tagBindStatusArr = tagData;
+            }
+        });
     }
 
 }]);
@@ -1212,8 +1223,13 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
 
     //选择tag，并将其绑定到当前对象上
     function selectedTagFun() {
-        var selectObject = ProjectService.getCurrentSelectObject();
         $scope.component.selectedTag = $scope.selectedTagObj.tagName;
+        ProjectService.getProjectCopyTo($scope);
+        TagService.checkBindTag($scope.component.selectedTag,$scope.project,function(bindNum){
+            if(bindNum){
+                toastr.warning('此Tag已被第'+bindNum+'次绑定');
+            }
+        });
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);
         });

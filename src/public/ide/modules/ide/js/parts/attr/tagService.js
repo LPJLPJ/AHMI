@@ -3,7 +3,7 @@
  */
 ideServices.service('TagService', [function () {
 
-    function Tag(name, register, indexOfRegister, writeOrRead, value, type, bindMod, valueType) {
+    function Tag(name, register, indexOfRegister, writeOrRead, value, type, bindMod, valueType, lockTag) {
         this.name = name;
         this.register = register;
         this.indexOfRegister = indexOfRegister;
@@ -12,18 +12,19 @@ ideServices.service('TagService', [function () {
         this.type = type || 'custom'; //custom, system, timer
         this.bindMod = bindMod || 'default';
         this.valueType = valueType || 0; //0 数字 1字符串
+        this.lockTag = lockTag;//锁定不可修改
     }
 
     var defaultTag = new Tag('', false, null, 'true', null, 'custom', 'default');
-    var keyCode = new Tag('传递按键编码', false, null, 'true', 0, 'system', 'forbidden');
-    var videoTag = new Tag('视频', false, null, 'true', 0, 'system', 'forbidden');
-    var curPageTag = new Tag('当前页面序号', false, null, 'true', 0, 'system', 'forbidden');
-    var RTCTag1 = new Tag('时钟变量年月日', false, null, 'true', 0, 'system');
-    var RTCTag2 = new Tag('时钟变量时分秒', false, null, 'true', 0, 'system');
-    var buzzer = new Tag('蜂鸣器', false, null, 'true', 0, 'system');
-    var backLight = new Tag('背光', false, null, 'true', 0, 'system');
-    var fpsTag = new Tag('帧率', false, null, 'true', 0, 'system');
-    var sysTags = [keyCode, videoTag, curPageTag, RTCTag1, RTCTag2, buzzer, backLight, fpsTag];
+    var videoTag = new Tag('视频', false, 1, 'true', 0, 'system', 'forbidden', '', true);
+    var curPageTag = new Tag('当前页面序号', false, 2, 'true', 0, 'system', 'forbidden', '', true);
+    var keyCode = new Tag('传递按键编码', false, 3, 'true', 0, 'system', 'forbidden', '', true);
+    var RTCTag1 = new Tag('时钟变量年月日', false, 4, 'true', 0, 'system', '', '', true);
+    var RTCTag2 = new Tag('时钟变量时分秒', false, 5, 'true', 0, 'system', '', '', true);
+    var buzzer = new Tag('蜂鸣器', false, 6, 'true', 0, 'system', '', '', true);
+    var backLight = new Tag('背光', false, 7, 'true', 0, 'system', '', '', true);
+    var fpsTag = new Tag('帧率', false, 8, 'true', 0, 'system', '', '', true);
+    var sysTags = [videoTag, curPageTag, keyCode, RTCTag1, RTCTag2, buzzer, backLight, fpsTag];
     var tags = sysTags;
     var timerTags = [];
     var timerNum = 0;
@@ -549,6 +550,91 @@ ideServices.service('TagService', [function () {
                 }
             }
         }
+    }
+
+    /**
+     * 检测tag绑定情况
+     */
+
+    this.checkBindTag = function(selectTag,project,cb){
+        var bindNum = 0;
+        _.forEach(project.pages,function(page){
+            if(page.tag&&page.tag == selectTag){
+                bindNum += 1;
+            }
+
+            var layers = page.layers;
+            if(layers&&layers.length){
+                _.forEach(layers,function(layer){
+                    if(layer.tag&&layer.tag == selectTag){
+                        bindNum += 1;
+                    }
+
+                    var subLayers = layer.subLayers;
+                    _.forEach(subLayers,function(subLayer){
+                        var widgets = subLayer.widgets;
+                        if(widgets&&widgets.length){
+                            _.forEach(widgets,function(widget){
+                                if(widget.tag&&widget.tag == selectTag){
+                                    bindNum += 1;
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+        });
+
+        if(bindNum>0){
+            cb(bindNum+1);
+        }
+    };
+
+    this.getBindElement = function(selectTag,project,cb){
+        var tagData = [];
+        _.forEach(project.pages,function(page,index){
+            if(page.tag&&page.tag == selectTag){
+                var pageData = {
+                    name:page.name,
+                    type:page.type,
+                    index:index
+                };
+                tagData.push(pageData);
+            }
+
+            var layers = page.layers;
+            if(layers&&layers.length){
+                _.forEach(layers,function(layer,index){
+                    if(layer.tag&&layer.tag == selectTag){
+                        var layerData = {
+                            name:layer.name,
+                            type:layer.type,
+                            index:index
+                        };
+                        tagData.push(layerData);
+                    }
+
+                    var subLayers = layer.subLayers;
+                    _.forEach(subLayers,function(subLayer,index){
+                        var widgets = subLayer.widgets;
+                        if(widgets&&widgets.length){
+                            _.forEach(widgets,function(widget){
+                                if(widget.tag&&widget.tag == selectTag){
+                                    var widgetData = {
+                                        name:widget.name,
+                                        type:widget.type,
+                                        index:index
+                                    };
+                                    tagData.push(widgetData);
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+        });
+
+        cb(tagData);
     }
 }
 

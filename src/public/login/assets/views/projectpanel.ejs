@@ -1,4 +1,4 @@
-<li class="project-list__item project-panel" data-project='<%= JSON.stringify(project) %>'>
+<li class="project-list__item project-panel project-tool" data-project='<%= JSON.stringify(project) %>'>
     <div class="project-item__thumb">
         <div class="project-thumb-box thumb-img">
             <img class="project-thumb" src=<%= thumbnail||'../../public/login/assets/images/project.png' %> />
@@ -18,7 +18,7 @@
             </p>
         </div>
     </div>
-    <div class="project-item__title project-tool"
+    <div class="project-item__title"
          title="创建工具:<%=project.originalSite%>&#10创建时间:<%=project.createTime%>&#10修改时间:<%=project.lastModifiedTime%>">
         <p><%= project.name %></p>
     </div>
