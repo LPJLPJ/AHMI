@@ -1041,10 +1041,28 @@ module.exports = React.createClass({
         for(var key in attr){
             if (attr.hasOwnProperty(key)){
                 //own key
-                values[key] = this.getParamValue(attr[key])
+                values[key] = this.getAnimationParamValue(attr[key])
             }
         }
         return values
+    },
+    getAnimationParamValue:function(param){
+        var value
+        if ((typeof param) === 'number'||(typeof param)==='string') {
+            value = Number(param)||0;
+        } else {
+            if (param) {
+                if (param.tag) {
+                    value = this.getValueByTagName(param.tag)/100;//animation from tag will be 100x
+                } else {
+                    value = Number(param.value)||0;
+                }
+            } else {
+                value = 0;
+            }
+        }
+        // console.log(value,param,(typeof param));
+        return value;
     },
     matrixMultiply: function (matrixArray) {
         var length = matrixArray.length
