@@ -4,6 +4,14 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     var tagList;
 
+    var supportedEncodings = {
+        ascii:'ascii',
+        'utf-8':'utf-8',
+        'gb2312':'gb2312'
+    };
+
+    var curProjectEncoding = supportedEncodings.ascii;
+
     function transCmds(cmds,changelt){
         // actionCompiler
         var reg = new RegExp("^-?[0-9]*$");
@@ -24,7 +32,8 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 if(op.hasOwnProperty('value')){
                     if(!reg.test(op.value)&&!!op.value){
                         //值为字符串
-                        op.value = convertStrToUint8Array(op.value,supportedEncodings.ascii)
+                        var u8Value = convertStrToUint8Array(op.value,curProjectEncoding)
+                        op.valueArray = convertUint8ArrayToArray(u8Value)
                     }
                 }
             })
@@ -52,6 +61,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.author = rawProject.author || 'author';
         targetProject.encoding = rawProject.encoding
         targetProject.size = rawProject.currentSize;
+        curProjectEncoding = rawProject.encoding;
         //add last save info
         targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
         targetProject.lastSaveUUID = rawProject.lastSaveUUID;
@@ -241,11 +251,13 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
      * use for trans string type tag
      */
 
-    var supportedEncodings = {
-        ascii:'ascii',
-        'utf-8':'utf-8',
-        'gb2312':'gb2312'
-    };
+    function convertUint8ArrayToArray(u8Array){
+        var arr = []
+        for(var i=0;i<u8Array.length;i++){
+            arr.push(u8Array[i])
+        }
+        return arr
+    }
 
     var convertStrToUint8Array=function (str,encoding) {
         encoding = encoding || supportedEncodings.ascii;

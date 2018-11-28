@@ -34,7 +34,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     {name: 'SCALE', show: '缩放'}
                 ],
                 transitionName: null,
-
+                timingFun: '',
+                timingFuns: ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'],
                 page: {
                     enterImage: enterBackgroundImage,
                     selectImage: 'demo20.png',
@@ -120,6 +121,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterMaxCoverAngle: enterMaxCoverAngle
                 },
                 textArea: {
+                    enterText: enterText,
+                    selectCharacterSetByIndex: selectCharacterSetByIndex,
+                    selectCharacterSetByName: selectCharacterSetByName,
+                    addCharacterSet: addCharacterSet,
+                    deleteCharacterSetByIndex: deleteCharacterSetByIndex,
+                    enterArrange: enterArrange
+                },
+                textInput: {
                     enterText: enterText,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,
@@ -376,6 +385,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterMaxAlert: enterMaxAlert,
                 restore: restore,
                 changeTransitionName: changeTransitionName,
+                changeTimingFun: changeTimingFun,
                 changeTransitionDur: changeTransitionDur,
                 enterHighlightMode: enterHighlightMode,
                 enterEnableAnimationMode: enterEnableAnimationMode,
@@ -450,21 +460,22 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     case Type.MyLayer:
                         //调整Layer的ShowSubLayer
                         $scope.component.layer.selectModel = $scope.component.object.level.showSubLayer.id;
-                        // if ((typeof $scope.component.object.level.transition) !== 'object') {
-                        //     ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                        //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
-                        // }
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
+                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyPage:
                         //调整Page的背景图
                         $scope.component.page.selectImage = $scope.component.object.level.backgroundImage;
-                        // if ((typeof $scope.component.object.level.transition) !== 'object') {
-                        //     ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                        //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
-                        // }
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
+                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
-
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         //matte add tang
                         if ($scope.component.object.level.matte) {
                             $scope.component.matte.matteOn = $scope.component.object.level.matte.matteOn;
@@ -550,6 +561,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.backgroundModeId = '0';
                         //     $scope.component.object.level.backgroundModeId = '0';
                         // }
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyTextArea:
                         $scope.component.textArea.arrangeModel = $scope.component.object.level.info.arrange;
@@ -612,6 +624,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.transition.duration = 0;
                         //     $scope.component.object.level.transition.duration = 0;
                         // }
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyTexNum:
                         $scope.component.texNum.numModeId = $scope.component.object.level.info.numModeId;
@@ -648,6 +661,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.transition.duration = 0;
                         //     $scope.component.object.level.transition.duration = 0;
                         // }
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyDateTime:
                         $scope.component.dateTime.arrangeModel = $scope.component.object.level.info.arrange;
@@ -751,6 +765,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     break;
                 }
             }
+            ProjectService.ChangeAttributeTransition(option);
+
+        }
+
+        function changeTimingFun() {
+            var option = {
+                timingFun: $scope.component.timingFun
+            };
             ProjectService.ChangeAttributeTransition(option);
 
         }

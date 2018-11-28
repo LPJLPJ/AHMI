@@ -50,7 +50,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     //导入tags事件
     $scope.$on('syncTagSuccess', function (event, data) {
         data = data || [];
-        data.map(function (item) {
+        data.forEach(function (item) {
             addTagToTagClass(item, $scope.component.curTagClassName);
         });
 
@@ -1211,6 +1211,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyTexNum:
             case Type.MyTouchTrack:
             case Type.MyAlphaImg:
+            case Type.MyTextInput:
                 $scope.component.showTagPanel = true;
                 break;
             default:

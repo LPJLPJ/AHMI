@@ -546,6 +546,47 @@ ideServices
             }
         };
 
+        this.getDefaultTextInput = function(){
+            
+            var text='文本输入';
+            var fontSize=15;
+            var info={
+                width:fontSize*(text.length+1),height:fontSize*2,
+
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+
+                arrange:"horizontal",   //horizontal:水平   vertical:竖直
+
+                text:text,
+                fontName:'正文',
+                fontFamily:'宋体',
+                fontSize:fontSize,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:"",
+                fontUnderline:null
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTextInput',
+                type: Type.MyTextInput,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    name:'文本框',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'文本框背景'
+                    }]
+                }]
+            }
+        };
+
         this.getDefaultButtonGroup= function () {
             var subLayerNode=CanvasService.getSubLayerNode();
 
