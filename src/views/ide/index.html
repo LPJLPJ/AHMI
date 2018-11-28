@@ -4259,10 +4259,10 @@
                         <div class="attr-item__cell-wrap lg">
                             <div class="addTag-container clearfix"  ng-show="component.timerTagShow==false">
                                 <p class="attr-item__cell-title">tags</p>
-                                <div>
+                                <div class="clearfix">
                                     <button ng-click="component.addNewTag()" class="btn btn-default attr-default-btn fl">添加新Tag</button>
-                                    <button class="btn btn-default attr-default-btn fr" ng-click="component.generateExcel()">导出tag</button>
-                                    <button ng-click="component.importTags()" class="btn btn-default attr-default-btn fr" style="margin-right: 1%">导入tag</button>
+                                    <button class="btn btn-default attr-default-btn fr" ng-click="component.generateExcel()">导出Tag</button>
+                                    <button ng-click="component.importTags()" class="btn btn-default attr-default-btn fr" style="margin-right: 1%">导入Tag</button>
                                 </div>
                             </div>
                             <!--导入tags模板-->
@@ -4493,8 +4493,9 @@
                                 <div class="tag-tooltip-wrap">
                                     <p class="tag-tooltip-title">变量绑定情况</p>
                                     <p ng-repeat="elem in tagBindStatusArr track by $index">
-                                        {{elem.name}}
+                                        {{elem.name}} <span style="color: orangered;" ng-show="elem.type">&emsp;-{{elem.type}}</span>
                                     </p>
+                                    <p ng-if="!tagBindStatusArr.length" style="text-align: center">暂未使用</p>
                                 </div>
                             </script>
 

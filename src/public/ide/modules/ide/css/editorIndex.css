@@ -2106,8 +2106,20 @@ div.wrapper-custom {
     padding: 0;
 }
 
+.tooltip-inner{
+    max-width: none!important;
+}
+
 .tag-tooltip-wrap{
+    text-align: left;
     padding: 10px;
+    overflow: hidden;
+}
+
+.tag-tooltip-wrap p{
+    display: block;
+    white-space: nowrap;
+    word-break: keep-all;
 }
 
 .tag-tooltip-title{

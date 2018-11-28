@@ -967,9 +967,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     function showTagBindStatus(index){
         var targetTag = $scope.component.curTagClass.tagArray[index].name;
         TagService.getBindElement(targetTag,$scope.project,function(tagData){
-            if(tagData){
-                $scope.tagBindStatusArr = tagData;
-            }
+            $scope.tagBindStatusArr = tagData;
         });
     }
 
