@@ -920,8 +920,8 @@ module.exports = React.createClass({
         //         }
         //     }
         // };
-        var srcScale = (animationAttrs.scale&&animationAttrs.scale.srcScale&&this.getAnimationAtrr(animationAttrs.scale.srcScale))||{x:1,y:1};
-        var dstScale = (animationAttrs.scale&&animationAttrs.scale.dstScale&&this.getAnimationAtrr(animationAttrs.scale.dstScale))||{x:1,y:1};
+        var srcScale = (animationAttrs.scale&&animationAttrs.scale.srcScale&&this.getAnimationAtrr(animationAttrs.scale.srcScale,true))||{x:1,y:1};
+        var dstScale = (animationAttrs.scale&&animationAttrs.scale.dstScale&&this.getAnimationAtrr(animationAttrs.scale.dstScale,true))||{x:1,y:1};
         var srcTranslate = (animationAttrs.translate&&animationAttrs.translate.srcPos&&this.getAnimationAtrr(animationAttrs.translate.srcPos))||{x:0,y:0};
         var dstTranslate = (animationAttrs.translate&&animationAttrs.translate.dstPos&&this.getAnimationAtrr(animationAttrs.translate.dstPos))||{x:0,y:0};
         var type = target.type;
@@ -1036,24 +1036,30 @@ module.exports = React.createClass({
         })
 
     },
-    getAnimationAtrr:function (attr) {
+    getAnimationAtrr:function (attr,scaleTagValue) {
         var values = {}
         for(var key in attr){
             if (attr.hasOwnProperty(key)){
                 //own key
-                values[key] = this.getAnimationParamValue(attr[key])
+                values[key] = this.getAnimationParamValue(attr[key],scaleTagValue)
             }
         }
         return values
     },
-    getAnimationParamValue:function(param){
+    getAnimationParamValue:function(param,scaleTagValue){
+        scaleTagValue = scaleTagValue || false
         var value
         if ((typeof param) === 'number'||(typeof param)==='string') {
             value = Number(param)||0;
         } else {
             if (param) {
                 if (param.tag) {
-                    value = this.getValueByTagName(param.tag)/100;//animation from tag will be 100x
+                    if(scaleTagValue){
+                        value = this.getValueByTagName(param.tag)/100;//animation from tag will be 100x
+                    }else{
+                        value = this.getValueByTagName(param.tag);
+                    }
+                    
                 } else {
                     value = Number(param.value)||0;
                 }

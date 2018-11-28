@@ -4037,7 +4037,7 @@
                                     </div>
                                     <!--column 3 scale x-->
                                     <div class="row">
-                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">W</div>
+                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">W<span ng-if="advanceMode==='advance'&&(switchButtons.srcScale.x=='on'||switchButtons.dstScale.x=='on')">%（使用tag）</span></div>
                                         <div class="col-md-3 col-sm-3 col-xs-3">
                                             <input type="number"
                                                    class="form-control"
@@ -4073,7 +4073,7 @@
                                     </div>
                                     <!--column 4 scale y-->
                                     <div class="row">
-                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">H</div>
+                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">H<span ng-if="advanceMode==='advance'&&(switchButtons.srcScale.y=='on'||switchButtons.dstScale.y=='on')">%（使用tag）</span></div>
                                         <div class="col-md-3 col-sm-3 col-xs-3">
                                             <input type="number"
                                                    class="form-control"
