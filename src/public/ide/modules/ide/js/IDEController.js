@@ -310,105 +310,74 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //change html title to name
             var name = data && data.name || '';
             document.title = '工程编辑-' + name;
+            var globalProject
             if (data.content) {
                 //var globalProject = GlobalService.getBlankProject()
-                var globalProject = JSON.parse(data.content);
-                var timeStamp = Date.now();
-                MiddleWareService.useMiddleWare(globalProject);
-                console.log('time costs in inject Data:', Date.now() - timeStamp);
+                globalProject = JSON.parse(data.content);
+            }else{
+                globalProject = GlobalService.getBlankProject();
+            }
+             
+            var timeStamp = Date.now();
+            MiddleWareService.useMiddleWare(globalProject);
+            console.log('time costs in inject Data:', Date.now() - timeStamp);
 
 
-                var resolution = data.resolution.split('*').map(function (r) {
-                    return Number(r)
-                });
-                globalProject.name = data.name;
-                globalProject.author = data.author;
-                globalProject.initSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.currentSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.maxSize = data.maxSize;
-                globalProject.projectId = id;
-                globalProject.encoding = data.encoding;
-                //console.log('globalProject',globalProject);
-                var resourceList = globalProject.resourceList;
-                // console.log('resourceList',resourceList);
-                var count = resourceList.length;
-                var rLen = resourceList.length
-                var globalResources = ResourceService.getGlobalResources();
-                window.globalResources = globalResources;
+            var resolution = data.resolution.split('*').map(function (r) {
+                return Number(r)
+            });
+            globalProject.name = data.name;
+            globalProject.author = data.author;
+            globalProject.initSize = {
+                width: resolution[0],
+                height: resolution[1]
+            }
+            globalProject.currentSize = {
+                width: resolution[0],
+                height: resolution[1]
+            }
+            globalProject.maxSize = data.maxSize;
+            globalProject.projectId = id;
+            globalProject.encoding = data.encoding;
+            //console.log('globalProject',globalProject);
+            var resourceList = globalProject.resourceList;
+            // console.log('resourceList',resourceList);
+            var count = resourceList.length;
+            var rLen = resourceList.length
+            var globalResources = ResourceService.getGlobalResources();
+            window.globalResources = globalResources;
 
-                var coutDown = function (e, resourceObj) {
-                    if (e.type === 'error') {
-                        // console.log(e)
-                        toastr.warning('资源加载失败: ' + resourceObj.name);
-                        resourceObj.complete = false;
-                    } else {
-                        resourceObj.complete = true;
-                    }
-                    count = count - 1;
-
-                    updateSpinner((rLen - count) / rLen)
-                    if (count <= 0) {
-                        // toastr.info('loaded');
-                        TemplateProvider.saveProjectFromGlobal(globalProject);
-                        syncServices(globalProject);
-                        ProjectService.saveProjectFromGlobal(globalProject, function () {
-
-                            $scope.$broadcast('GlobalProjectReceived');
-
-                        });
-                    }
-                }.bind(this);
-                if (count > 0) {
-                    for (var i = 0; i < resourceList.length; i++) {
-                        var curRes = resourceList[i];
-                        // console.log('caching ',i)
-                        ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-                    }
+            var coutDown = function (e, resourceObj) {
+                if (e.type === 'error') {
+                    // console.log(e)
+                    toastr.warning('资源加载失败: ' + resourceObj.name);
+                    resourceObj.complete = false;
                 } else {
-                    // console.log(globalProject);
-                    updateSpinner(100)
+                    resourceObj.complete = true;
+                }
+                count = count - 1;
+
+                updateSpinner((rLen - count) / rLen)
+                if (count <= 0) {
+                    // toastr.info('loaded');
                     TemplateProvider.saveProjectFromGlobal(globalProject);
-                    syncServices(globalProject)
+                    syncServices(globalProject);
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
 
                         $scope.$broadcast('GlobalProjectReceived');
 
                     });
                 }
-
-
-                //readCache();
+            }.bind(this);
+            if (count > 0) {
+                for (var i = 0; i < resourceList.length; i++) {
+                    var curRes = resourceList[i];
+                    // console.log('caching ',i)
+                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+                }
             } else {
-                //console.log('获取信息失败');
-                //
-                //readCache();
-
-                globalProject = GlobalService.getBlankProject();
-                globalProject.projectId = id;
-                globalProject.name = data.name;
-                //change resolution
-                //console.log(data);
-                var resolution = data.resolution.split('*').map(function (r) {
-                    return Number(r)
-                })
-                globalProject.initSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.currentSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.maxSize = data.maxSize;
-                console.log('globalProject new', _.cloneDeep(globalProject));
-
-
+                // console.log(globalProject);
+                updateSpinner(100)
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -416,7 +385,9 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     $scope.$broadcast('GlobalProjectReceived');
 
                 });
-            }
+            } 
+
+
         }
 
         function loadFromBlank(options, id) {

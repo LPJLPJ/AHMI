@@ -765,14 +765,14 @@ $(function(){
             project.classId='space';
         }
 
-        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''&&encoding.val().trim()!=''){
+        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''&&encoding.val()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
-            project.ideVersion = ideVersion.val().trim();
+            project.ideVersion = ideVersion.val()&&ideVersion.val().trim()||'';
             project.supportTouch = supportTouch.val().trim();
-            project.encoding = encoding.val().trim();
+            project.encoding = encoding.val()&&encoding.val().trim()||'';
             if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
                 return;
@@ -938,7 +938,7 @@ $(function(){
         var encoding = $('#basicinfo-encoding');
         var thumbnailDOM = curPanel.find('.project-thumb');
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
-        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim() || project.ideVersion != ideVersion.val().trim()||project.encoding!=encoding.val().trim()){
+        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val() || project.ideVersion != ideVersion.val()||project.encoding!=encoding.val()){
             //changed
             project.name = title.val().trim();
             project.author = author.val().trim();
@@ -964,7 +964,7 @@ $(function(){
                 project.ideVersion = '';
             }
             project.supportTouch = supportTouch.val().trim();
-            project.encoding = encoding.val().trim();
+            project.encoding = encoding.val()&&encoding.val().trim()||'';
             var updateSuccess = false;
             if (local){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');
