@@ -126,6 +126,10 @@ module.exports = React.createClass({
         //     indexOfRegister:3,
         //     type:'custom'
         // })
+        //init tag init value
+        data.tagList.forEach(function(t){
+            t.value = 0
+        })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
         console.log('tagList loaded', data.tagList, this.state.tagList);
