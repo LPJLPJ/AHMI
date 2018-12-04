@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService, Type, $uibModal,$http,$q) {
+ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService,Type, $uibModal,$http,$q) {
     $scope.selectedIdx = -1;
     $scope.animationsEnabled = true;
     $scope.component = {
@@ -971,18 +971,23 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         });
     }
 
+
 }]);
 
 /**
  * tag模态框控制器
  */
-ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 'ProjectService', 'tag', 'type', 'index', function ($scope, $uibModalInstance, TagService, ProjectService, tag, type, index) {
+ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 'ProjectService','WaveFilterService', 'tag', 'type', 'index', function ($scope, $uibModalInstance, TagService, ProjectService, WaveFilterService,tag, type, index) {
 
     $scope.option1 = 1;
     $scope.tag = tag;
     $scope.type = type;
     $scope.showForceEditBtn = false;
     showBindBit();
+
+    $scope.getWaveFilters = function(){
+        return WaveFilterService.getWaveFilters()
+    }
 
     //保存
     $scope.save = function (th) {
@@ -1128,6 +1133,8 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
         $scope.bindBits.sort(function(a,b){return a-b});
     }
 
+
+    
 }]);
 
 /**

@@ -70,6 +70,7 @@ module.exports = React.createClass({
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
+        WaveFilterManager.reset()
         cancelAnimationFrame(this.paintKey)
     },
     initCanvas: function (data, callBack) {
@@ -159,10 +160,11 @@ module.exports = React.createClass({
                 }
             }
             //add to wavefilter
-            if(curTag.waveFilter!==undefined){
+            if(curTag.waveFilter!==undefined&&curTag.waveFilter!==''){
                 WaveFilterManager.registerWaveFilter(curTag.waveFilter,curTag.name)
             }
         }
+        console.log(WaveFilterManager.getWaveFilters())
         // console.log(this.registers);
         this.state.registers = this.registers;
         this.setState({registers: this.registers});
@@ -339,6 +341,8 @@ module.exports = React.createClass({
             this.paintKey = requestAnimationFrame(this.paint);
 
         }
+        //reset wave filters
+        WaveFilterManager.reset()
 
         // this.initProject();
         // console.log('receive new project data', this.state.project)

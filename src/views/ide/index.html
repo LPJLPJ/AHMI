@@ -4547,6 +4547,12 @@
                                             <input ng-disabled="!tag.register||tag.theme||tag.lockTag" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
                                                    ng-model="tag.indexOfRegister" class="attr-item__cell-input"/>
                                         </fieldset>
+                                        <fieldset class="attr-item__cell-wrap lg">
+                                            <p for="tag-wavefilter" class="attr-item__cell-title">滤波器</p>
+                                            <select id='ag-wavefilter' ng-model="tag.waveFilter" class="attr-item__cell-input" ng-options="wavefilter.title as wavefilter.title for wavefilter in getWaveFilters()">
+                                                <option value="">---</option>
+                                            </select>
+                                        </fieldset>
                                     </form>
                                 </div>
                                 <div class="modal-footer">

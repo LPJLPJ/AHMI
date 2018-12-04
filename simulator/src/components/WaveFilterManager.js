@@ -22,10 +22,10 @@ var waveFilterTypes = {
     Damping_Linear:'Damping_Linear'
 }
 
-function WaveFilter(args){
+function WaveFilter(tilte,type,args){
     
-    this.title = '滤波器'
-    this.type = waveFilterTypes.Damping_Linear
+    this.title = tilte
+    this.type = type
     this.args = args||[0,0,0,0,0,0,0]
     //set target attr
     switch(this.type){
@@ -195,16 +195,17 @@ function WaveFilterTagStatus(){
     this.delayCount = 0
 }
 
+WaveFilterManager.getWaveFilters = function(){
+    return waveFilters
+}
 
 //add new wavefilter indexed by title, if exists return false
 WaveFilterManager.addWaveFilter = function(title,type,args){
     if (title in waveFilters){
         return false
     }else{
-        var curWaveFilter = new WaveFilter()
-        curWaveFilter.title = title
-        curWaveFilter.type = type
-        curWaveFilter.args = args
+        var curWaveFilter = new WaveFilter(title,type,args)
+        
         waveFilters[title] = curWaveFilter
         return true
     }

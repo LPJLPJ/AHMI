@@ -45,8 +45,8 @@ AnimationManager.moving = function (srcX,srcY,dstX,dstY,duration,frames,easing,i
         curValue = easingFunc((frames-count)/frames);
         deltaX = rangeX*(curValue-lastValue);
         deltaY = rangY*(curValue-lastValue);
-        curX = srcX+rangeX * curValue;
-        curY = srcY+rangY * curValue;
+        var curX = srcX+rangeX * curValue;
+        var curY = srcY+rangY * curValue;
         lastValue = curValue;
         intervalCb && intervalCb({curX:curX,curY:curY,deltaX:deltaX,deltaY:deltaY});
 
@@ -69,7 +69,7 @@ AnimationManager.step = function (srcX,srcY,dstX,dstY,duration,frames,easing,int
     var framesPS = frames;
     frames = frames * duration/1000;
     frames = frames>1?frames:1;
-    console.log('p',frames,duration)
+    // console.log('p',frames,duration)
     var count = frames;
     var deltaX=0;
     var deltaY=0;
@@ -200,8 +200,8 @@ AnimationManager.scaling = function (srcX,srcY,dstX,dstY,duration,frames,easing,
         curValue = easingFunc((frames-count)/frames);
         deltaX = rangeX*(curValue-lastValue);
         deltaY = rangY*(curValue-lastValue);
-        curX = srcX+rangeX * curValue;
-        curY = srcY+rangY * curValue;
+        var curX = srcX+rangeX * curValue;
+        var curY = srcY+rangY * curValue;
         lastValue = curValue;
         intervalCb && intervalCb({curX:curX,curY:curY,deltaX:deltaX,deltaY:deltaY});
 
