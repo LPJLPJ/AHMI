@@ -32,13 +32,14 @@ console.log = (function (console) {
 })(console);
 
 
-var logs = [];
-ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
+
+ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'WaveFilterService','TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
     'socketIOService', 'MiddleWareService', function ($scope, $timeout, $http, $interval,
                                                       ProjectService,
                                                       GlobalService,
                                                       Preference,
                                                       ResourceService,
+                                                      WaveFilterService,
                                                       TagService,
                                                       TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
 
@@ -127,7 +128,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         }
 
         function readUserType() {
-            var userType = 'basic';
+            var userType
             if (window.local) {
                 var userInfoUrl = path.join(__dirname, 'public', 'nw', 'userInfo.json');
                 var userInfo = {
@@ -233,7 +234,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             var templateId = data.template;
             //add templateId to template
             TemplateProvider.setTemplateId(templateId);
-            if (templateId && templateId !== '') {
+            if (templateId) {
                 $http({
                     method: 'GET',
                     url: '/public/templates/defaultTemplate/defaultTemplate.json'
@@ -463,18 +464,18 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             }, 200)
         }
 
-        function getUrlParams() {
-            var result = {};
-            var params = (window.location.search.split('?')[1] || '').split('&');
-            for (var param in params) {
-                if (params.hasOwnProperty(param)) {
-                    var paramParts = params[param].split('=');
-                    result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
-                }
-            }
-            console.log(result);
-            return result;
-        }
+        // function getUrlParams() {
+        //     var result = {};
+        //     var params = (window.location.search.split('?')[1] || '').split('&');
+        //     for (var param in params) {
+        //         if (params.hasOwnProperty(param)) {
+        //             var paramParts = params[param].split('=');
+        //             result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
+        //         }
+        //     }
+        //     console.log(result);
+        //     return result;
+        // }
 
         function reLogin(_callback, _errCallback) {
             $http({
@@ -498,11 +499,11 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 // var pid=result.user.projects[0].pid;
                 // PID=pid;
 
-                _callback && _callback(result);
+                _callback && _callback();
             }).error(function (err) {
                 _errCallback && _errCallback(err);
             });
-        };
+        }
 
         function refreshLoginStatus() {
             if (!window.local) {
@@ -836,6 +837,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         function syncServices(globalProject) {
             ResourceService.setMaxTotalSize(globalProject.maxSize || 100 * 1024 * 1024);
             ResourceService.syncFiles(globalProject.resourceList);
+            WaveFilterService.syncWaveFilters(globalProject.waveFilterList)
             //tags tbc
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);
@@ -904,7 +906,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
             //}
             if (totalNum > 0) {
-                templateList.map(function (curRes, index) {
+                templateList.forEach(function (curRes, index) {
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 });
             } else {
@@ -962,7 +964,6 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             i = 0;
             var pageLength = tempContentObj.pages.length;
             var page;
-            var index;
             var ergodicPages = function () {
                 page = null;
                 page = tempContentObj.pages[i];
@@ -1414,8 +1415,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
 
         function closeWebPage() {
-            if (navigator.userAgent.indexOf("MSIE") > 0) {
-                if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+            if (navigator.userAgent.includes("MSIE")) {
+                if (navigator.userAgent.includes("MSIE 6.0")) {
                     window.opener = null;
                     window.close();
                 } else {
@@ -1423,7 +1424,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     window.top.close();
                 }
             }
-            else if (navigator.userAgent.indexOf("Firefox") > 0) {
+            else if (navigator.userAgent.includes("Firefox")) {
                 window.location.href = 'about:blank ';
             } else {
                 window.opener = null;

@@ -554,7 +554,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     }.bind(this));
                 };
 
-                var errHandler = function () {
+                var errHandler = function (err) {
                     translatedFile.progress = '上传失败';
                     deleteUploadingItem(translatedFile);
 
