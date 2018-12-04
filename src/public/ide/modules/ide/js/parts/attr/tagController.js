@@ -1220,14 +1220,21 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
     }
 
     //选择tag，并将其绑定到当前对象上
+    $scope.tagBindStatusArr=[];
     function selectedTagFun() {
         $scope.component.selectedTag = $scope.selectedTagObj.tagName;
         ProjectService.getProjectCopyTo($scope);
-        TagService.checkBindTag($scope.component.selectedTag,$scope.project,function(bindNum){
+        /*TagService.checkBindTag($scope.component.selectedTag,$scope.project,function(bindNum){
             if(bindNum){
                 toastr.warning('此Tag已被第'+bindNum+'次绑定');
             }
+        });*/
+
+        TagService.getBindElement($scope.component.selectedTag,$scope.project,function(tagData){
+            $scope.tagBindStatusArr = tagData;
+            console.log($scope.tagBindStatusArr);
         });
+
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);
         });

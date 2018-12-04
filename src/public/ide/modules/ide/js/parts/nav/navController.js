@@ -1059,7 +1059,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
             temp.project.ideVersion = window.ideVersion;
-            temp.project.physicalPixelRatio = physicalPixelRatio
+            temp.project.physicalPixelRatio = physicalPixelRatio;
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
@@ -1837,7 +1837,7 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
     };
 
     $scope.ok = function () {
-        var data = "";
+        var data = {};
         if (!checkName($scope.saveAsName, $scope.saveAsAuthor)) {
             //invalid name
             toastr.error('名称只能是汉字、英文和数字');
@@ -1878,6 +1878,7 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
                     saveAsAuthor: $scope.saveAsAuthor
                 };
             }
+            data.currentOriginalSite = window.location.host;
             $uibModalInstance.close(data);
         }
     };
