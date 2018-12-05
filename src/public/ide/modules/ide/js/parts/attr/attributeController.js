@@ -1201,6 +1201,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             var selectObj = ProjectService.getCurrentSelectObject();
             switch (selectObj.type) {
                 case Type.MyTextArea:
+                case Type.MyTextInput:
                     ProjectService.ChangeAttributeTextContent(option, function () {
                         $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
@@ -2924,7 +2925,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             var selectDateTimeModeId = null;
             if (selectObj.type == Type.MyDateTime) {
                 selectDateTimeModeId = $scope.component.dateTime.dateTimeModeId;
-                selectRTCModeId = $scope.component.dateTime.RTCModeId;
+                var selectRTCModeId = $scope.component.dateTime.RTCModeId;
             } else if (selectObj.type == Type.MyTexTime) {
                 selectDateTimeModeId = $scope.component.texTime.dateTimeModeId;
                 selectRTCModeId = $scope.component.texTime.RTCModeId;
