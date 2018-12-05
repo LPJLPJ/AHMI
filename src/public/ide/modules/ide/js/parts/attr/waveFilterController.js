@@ -76,6 +76,9 @@ ide.controller('WaveFilterCtrl',['$scope','$uibModal','WaveFilterService',functi
                 resolve: {
                     wavefilter: function () {
                         return curWaveFilter;
+                    },
+                    index:function(){
+                        return index;
                     }
                     
                 }
@@ -106,7 +109,7 @@ ide.controller('WaveFilterCtrl',['$scope','$uibModal','WaveFilterService',functi
 /**
  * action 模态窗口控制器
  */
-    .controller('WaveFilterInstanceCtrl',['$scope', '$uibModalInstance', 'WaveFilterService','wavefilter', function ($scope, $uibModalInstance,WaveFilterService,wavefilter) {
+    .controller('WaveFilterInstanceCtrl',['$scope', '$uibModalInstance', 'WaveFilterService','wavefilter','index', function ($scope, $uibModalInstance,WaveFilterService,wavefilter,index) {
 
        $scope.wavefilter = wavefilter
 
@@ -116,9 +119,13 @@ ide.controller('WaveFilterCtrl',['$scope','$uibModal','WaveFilterService',functi
 
         //保存
         $scope.save = function (th) {
-
-           
-            $uibModalInstance.close($scope.wavefilter);
+            //check title unique
+            if(checkWaveFilterTitleUnique()){
+                $uibModalInstance.close($scope.wavefilter);
+            }else{
+                toastr.warning("名称已被占用，请重新输入名称")
+            }
+            
         };
 
         $scope.getWaveFilterAttrs = function(){
@@ -130,7 +137,18 @@ ide.controller('WaveFilterCtrl',['$scope','$uibModal','WaveFilterService',functi
             $uibModalInstance.dismiss('cancel');
         };
 
-      
+        function checkWaveFilterTitleUnique(){
+            var wfs = WaveFilterService.getWaveFilters()
+            for(var i=0;i<wfs.length;i++){
+                if(i!==index){
+                    if(wfs[i].title == $scope.wavefilter.title){
+                        return false
+                    }
+                }
+                
+            }
+            return true
+        }
 
        
 

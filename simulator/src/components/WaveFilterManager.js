@@ -85,7 +85,7 @@ WaveFilter.prototype.filter = function(tagStatus){
 		}
             break
         case waveFilterTypes.Damping_PT1:
-            if(tagStatus.target>tagStatus.last&&(tagStatus.target<=tagStatus.last+tagStatus.current))
+            if(tagStatus.target>tagStatus.last&&(tagStatus.target<=tagStatus.last+this.threshold))
             {
                 tagStatus.delayCount++
                 if (tagStatus.delayCount > this.delay){
@@ -96,7 +96,7 @@ WaveFilter.prototype.filter = function(tagStatus){
                     }
                 }
             }
-            else if(tagStatus.target<tagStatus.last&&(tagStatus.last<=tagStatus.target+tagStatus.current))
+            else if(tagStatus.target<tagStatus.last&&(tagStatus.last<=tagStatus.target+this.threshold))
             {
                 tagStatus.delayCount++
                 if (tagStatus.delayCount > this.delay){
@@ -111,13 +111,13 @@ WaveFilter.prototype.filter = function(tagStatus){
             else
             {   
                 if(this.k >= 1){
-                    tagStatus.current = tagStatus.target + (this.k - 1) * (tagStatus.last) / this.k
+                    tagStatus.current = parseInt((tagStatus.target + (this.k - 1) * (tagStatus.last)) / this.k)
                 }
 
             }
             break
         case waveFilterTypes.Damping_PT2:
-            if(tagStatus.target>tagStatus.last&&(tagStatus.target<=tagStatus.last+tagStatus.current))
+            if(tagStatus.target>tagStatus.last&&(tagStatus.target<=tagStatus.last+this.threshold))
             {
                 tagStatus.delayCount++
                 if (tagStatus.delayCount > this.delay){
@@ -128,7 +128,7 @@ WaveFilter.prototype.filter = function(tagStatus){
                     }
                 }
             }
-            else if(tagStatus.target<tagStatus.last&&(tagStatus.last<=tagStatus.target+tagStatus.current))
+            else if(tagStatus.target<tagStatus.last&&(tagStatus.last<=tagStatus.target+this.threshold))
             {
                 tagStatus.delayCount++
                 if (tagStatus.delayCount > this.delay){
@@ -151,8 +151,8 @@ WaveFilter.prototype.filter = function(tagStatus){
                     tagStatus.last0 = 0
                 }
                 if(this.k1 != 0 && this.k2 != 0){
-                    tagStatus.last0 = tagStatus.target + (this.k1 - 1) * (tagStatus.last0) / this.k1
-                    tagStatus.current = tagStatus.last0 + (this.k2 - 1) * (tagStatus.last) / this.k2
+                    tagStatus.last0 = parseInt((tagStatus.target + (this.k1 - 1) * (tagStatus.last0)) / this.k1)
+                    tagStatus.current = parseInt((tagStatus.last0 + (this.k2 - 1) * (tagStatus.last)) / this.k2)
                 }
                 
 
@@ -164,7 +164,7 @@ WaveFilter.prototype.filter = function(tagStatus){
 }
 
 WaveFilter.prototype.startFilterTagToNewValue = function(tag,value, cb){
-    var curTagStatus = curWaveFilter.tags[tag]
+    var curTagStatus = this.tags[tag]
     if(curTagStatus.timerId!=0){
         clearInterval(curTagStatus.timerId)
         curTagStatus.timerId = 0
@@ -173,7 +173,7 @@ WaveFilter.prototype.startFilterTagToNewValue = function(tag,value, cb){
     var innerTime = 0
     var d = parseInt(1000/this.frequence)
     curTagStatus.timerId = setInterval(function(){
-        curWaveFilter.filter(curTagStatus)
+        this.filter(curTagStatus)
         //process stop
         innerTime += d
         if(innerTime >= this.duration){
@@ -182,7 +182,7 @@ WaveFilter.prototype.startFilterTagToNewValue = function(tag,value, cb){
             curTagStatus.timerId = 0
         }
         cb && cb(curTagStatus.current)
-    },d)
+    }.bind(this),d)
 }
 
 
@@ -222,7 +222,8 @@ WaveFilterManager.registerWaveFilter = function(waveFilterTitle,tag){
     }
 }
 
-
+//set tag with new value with wavefilter
+//calCB: call every cal tick
 WaveFilterManager.calTagWithWaveFilter = function(tag,value,waveFilterTitle,calCB){
     var curWaveFilter = waveFilters[waveFilterTitle]
     curWaveFilter.startFilterTagToNewValue(tag,value,calCB)

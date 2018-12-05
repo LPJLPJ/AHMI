@@ -379,8 +379,8 @@ module.exports = React.createClass({
         }
         this.drawingArray.push(
             {
-                project: _.cloneDeep(_project),
-                options: _.cloneDeep(options)
+                project: _project,
+                options: options
             }
         )
         this.manageDraw();
@@ -5141,7 +5141,7 @@ module.exports = React.createClass({
         var tag = this.findTagByName(name)
         if (tag) {
             this.setTagByType(tag,value)
-            this.setState({tag: tag})
+            // this.setState({tag: tag})
         }
     },
     setTagByType:function (tag,_value) {
@@ -5149,11 +5149,26 @@ module.exports = React.createClass({
             switch (tag.valueType){
                 case 1:
                     //str
-                     tag.value = StringConverter.convertStrToUint8Array(_value,this.encoding).slice(0,32)
+                    tag.value = StringConverter.convertStrToUint8Array(_value,this.encoding).slice(0,32)
+                    this.setState({tag:tag})
                     break;
                 default:
                     //num
-                    tag.value = Number(_value)||0
+                    //consider wavefilters
+                    if(tag.waveFilter!==undefined && tag.waveFilter!==''){
+                        WaveFilterManager.calTagWithWaveFilter(tag.name,Number(_value)||0,tag.waveFilter,function(currentVal){
+                            tag.value = currentVal
+                            this.setState({tag:tag},function(){
+                                this.draw(null, {
+                                    updatedTagName: tag.name
+                                })
+                            }.bind(this))
+                        }.bind(this))
+                    }else{
+                        tag.value = Number(_value)||0
+                        this.setState({tag:tag})
+                    }
+                    
 
             }
         }
@@ -5175,7 +5190,7 @@ module.exports = React.createClass({
     setTagByTag: function (tag, value) {
         if (tag) {
             this.setTagByType(tag,value)
-            this.setState({tag: tag})
+            // this.setState({tag: tag})
         }
     },
     setTagByTagRawValue:function (tag, rawValue) {
