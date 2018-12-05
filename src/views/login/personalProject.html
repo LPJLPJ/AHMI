@@ -383,6 +383,24 @@
         </div>
     </div>
 </div>
+<!--创建工具提示-->
+<div class="modal fade" id="originSiteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">工程创建工具检测</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-text-h">此工程的创建工具为&nbsp;<span class="origin-site" style="color: #005599"></span>&nbsp;!</h4>
+                <p class="modal-text-h">与当前使用工具不匹配，打开可能会出现问题，是否继续打开？</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn btn-confirm modal-confirm" data-dismiss="modal" id="originSiteConfirm">确定</button>
+                <button type="button" class="modal-btn modal-cancel" data-dismiss="modal" id="originSiteCancel">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     //        for local

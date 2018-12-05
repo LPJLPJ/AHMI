@@ -144,10 +144,6 @@ $(function(){
         }
     }
 
-    /*if(!local){
-     showOriginalSite()
-     }*/
-
     //versionOptions
     if(!local){
         var versionWrapper = $('.version-wrapper')
@@ -266,20 +262,6 @@ $(function(){
         })
 
     }
-
-    //show original site
-    /*function showOriginalSite(){
-     $('.projectpanel').each(function(p){
-     var $p = $(this)
-     var ogSite = $p.data('project').originalSite
-     if(ogSite){
-     if(ogSite!==window.location.host){
-     $p.addClass('panel-other-site')
-     }
-     //$p.addClass('panel-other-site')
-     }
-     })
-     }*/
 
     function readLocalProjects(projectType) {
         var dir;
@@ -613,7 +595,21 @@ $(function(){
     };
 
     //运行工程
-    $('#project-list').on('click','.play-project', function (e) {
+    var customModal = {
+        confirm:function(modal,content,cb){
+            modal.find('.origin-site').html(content.msg||'');
+            modal.modal('show');
+            modal.find(".modal-cancel").off("click").on("click",function(){
+                cb(false);
+            });
+            modal.find(".modal-confirm").off("click").on("click",function(){
+                cb(true);
+            })
+        }
+    };
+
+    $('#project-list').on('click','.play-project',function(){
+        var modal = $('#originSiteModal');
         curPanel = $(this).parents('.project-panel');
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
@@ -622,11 +618,27 @@ $(function(){
         project = JSON.parse(project);
         curProject = project;
         var targetUrl = '';
-        if (local){
+
+        if(local){
             targetUrl = '../ide/index.html?project_id='+project._id;
+            window.open(targetUrl);
         }else{
-            updateNewVersion.html(curIDEVersion)
-            updateAlert.html('')
+
+            var originalSite = window.location.host;
+            if (project.originalSite && originalSite != project.originalSite) {
+                customModal.confirm(modal, {msg: project.originalSite}, function (result) {
+                    if (result) {
+                        openProject();
+                    }
+                })
+            } else {
+                openProject();
+            }
+        }
+
+        function openProject(){
+            updateNewVersion.html(curIDEVersion);
+            updateAlert.html('');
 
             if(project.ideVersion){
                 if(project.ideVersion == curIDEVersion){
@@ -694,7 +706,7 @@ $(function(){
         template.attr('disabled',true);
         supportTouch.val(project.supportTouch);
         supportTouch.attr('disabled',true);
-        encoding.val(project.encoding)
+        encoding.val(project.encoding);
         $('#project-info-modal').modal('show');
     }
 
@@ -958,11 +970,7 @@ $(function(){
                 project.resolution = resolution.val().trim();
             }
 
-            if(ideVersion.val()){
-                project.ideVersion = ideVersion.val().trim();
-            }else{
-                project.ideVersion = '';
-            }
+            project.ideVersion = ideVersion.val().trim()||'';
             project.supportTouch = supportTouch.val().trim();
             project.encoding = encoding.val()&&encoding.val().trim()||'';
             var updateSuccess = false;
@@ -1427,7 +1435,8 @@ $(function(){
         var project = $(this).parents('.project-panel').attr('data-project');
         projectData = JSON.parse(project);
         var projectId = projectData._id;
-        var openUrl = window.location.origin+'/project/'+projectId+'/editor';
+        var ideVersion = projectData.ideVersion?'?ideVersion='+projectData.ideVersion:'';
+        var openUrl = window.location.origin+'/project/'+projectId+'/editor'+ideVersion;
         shareUrl.html("路径："+openUrl);
         $.ajax({
             type:'GET',
