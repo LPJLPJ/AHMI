@@ -475,7 +475,7 @@ body {
 }
 
 .thumb-content-list__item.active {
-    background-color: #e5e5e5;
+    background-color: #dbdbdb;
     border: 1px solid #dcdcdc;
     box-sizing: border-box;
 }

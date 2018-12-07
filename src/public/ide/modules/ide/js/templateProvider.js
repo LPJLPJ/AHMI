@@ -281,9 +281,9 @@ ideServices
          * @returns {{url, id, proJsonStr, layers}}
          */
         this.getRandomPage = function () {
-            var r = 54;
-            var g = 71;
-            var b = 92;
+            var r = 191;
+            var g = 191;
+            var b = 191;
             // var jsonStr = {"objects":[],"background":"rgb(" + r + "," + g + "," + b + ")"};
             return {
                 url: '',

@@ -5265,7 +5265,7 @@ ideServices
                 var _height = parseInt(height*_scale);
                 var currentPage = _self.getCurrentPage();
 
-                var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
+                var pageColor = currentPage.backgroundColor||'rgba(191,191,191,0.3)';
                 var pageBackgroundImgSrc = currentPage.backgroundImage||"";
                 var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
                 var pageHeight = (project.currentSize&&project.currentSize.height)||480;

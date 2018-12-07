@@ -288,4 +288,13 @@
     // 执行初始化函数
     initialize();
 
+    var scrollTop = document.querySelector('.scrollTop');
+    window.onscroll = function(){
+        var top = document.documentElement.scrollTop;
+        if(top>200){
+            scrollTop.style.display = 'block';
+        }else{
+            scrollTop.style.display = 'none';
+        }
+    }
 })();

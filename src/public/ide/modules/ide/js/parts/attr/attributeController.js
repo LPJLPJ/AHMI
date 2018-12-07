@@ -1294,7 +1294,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             if ($scope.component.object.type == Type.MyPage) {
                 selectImage = $scope.component.page.selectImage;
                 if (!selectImage) {
-                    $scope.component.object.level.backgroundColor = 'rgb(54,71,92)';
+                    $scope.component.object.level.backgroundColor = 'rgb(191,191,191)';
                 }
                 else {
                     $scope.component.object.level.backgroundColor = 'rgb(0,0,0)'
