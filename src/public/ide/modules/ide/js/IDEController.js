@@ -1,7 +1,7 @@
 /**
  * Created by shenaolin on 16/2/26.
  */
-var ide = angular.module('ide', ['ui.bootstrap.contextMenu', 'colorpicker.module', 'btford.modal', 'ui.bootstrap', 'ngAnimate', 'GlobalModule', 'ui.tree', 'IDEServices','ui.select', 'ngSanitize']);
+var ide = angular.module('ide', ['ui.bootstrap.contextMenu', 'colorpicker.module', 'btford.modal', 'ui.bootstrap', 'ngAnimate', 'GlobalModule', 'ui.tree', 'IDEServices','ui.select', 'ngSanitize','ui.sortable']);
 
 
 ide.config(['$compileProvider',

@@ -1,10 +1,10 @@
 /**
  * Created by shenaolin on 16/3/10.
  */
-ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal', function(ResourceService,$scope,$timeout,
+ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal', 'Upload',function(ResourceService,$scope,$timeout,
                                           ProjectService,
                                           Type,
-                                          CanvasService,$uibModal) {
+                                          CanvasService,$uibModal,Upload) {
     $scope.$on('GlobalProjectReceived', function () {
 
         initUserInterface();
@@ -87,7 +87,21 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                     cb&&cb();
                 }
             })
-        }
+        };
+
+        $scope.prevent = function(e){
+            e.preventDefault();
+        };
+
+        $scope.resourcesTree = {
+            update:function(e){
+
+            },
+            stop:function(e){
+                ResourceService.syncFiles($scope.component.top.files);
+                $scope.$emit('ResourceUpdate');
+            }
+        };
     }
 
     /**

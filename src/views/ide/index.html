@@ -41,7 +41,7 @@
     <script src="../../public/ide/lib/sxintro/SXIntro.bundle.js"></script>
     <script src="../../public/ide/lib/angular-ui-select/select.min.js"></script>
     <script src="../../public/ide/lib/angular-sanitize-1.5.10/angular-sanitize.min.js"></script>
-    <!--<script src="../../public/ide/lib/sortable.js"></script>-->
+    <script src="../../public/ide/lib/sortable.js"></script>
 
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
@@ -4224,126 +4224,153 @@
 
                 </div>
                 <!--资源面板-->
-                <div class="attr-panel-item" style="overflow: auto;" ng-show="component.top.currentNav==1">
+                <div class="attr-panel-item" ng-show="component.top.currentNav==1">
+                    <div ng-controller="ResourceCtrl" class="attr-item__cell-wrap lg resource-drop-wrap" ngf-drop="uploadFiles($files)" ngf-multiple='true'
+                         ngf-drag-over-class="'resource-drop-over'">
+                            <div ng-show="component.top.showDel">
+                                <form ref='uploadForm' encType='multipart/form-data'>
+                                    <a href="javascript:;" class="btn btn-default attr-default-btn upload-button">
+                                        <filereadform>
 
-                    <div ng-controller="ResourceCtrl" class="attr-item__cell-wrap lg">
-                        <div ng-show="component.top.showDel">
-                            <form ref='uploadForm' encType='multipart/form-data'>
-                                <a href="javascript:;" class="btn btn-default attr-default-btn upload-button">
-                                    <filereadform>
+                                        </filereadform>
+                                        上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
+                                    </a>
+                                    <button class="btn btn-default pull-right attr-default-btn" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
+                                </form>
 
-                                    </filereadform>
-                                    上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
-                                </a>
-                                <button class="btn btn-default pull-right attr-default-btn" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
-                                <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
-                                <!--<button class="my-upload pull-right" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
-                            </form>
-
-                            <uib-progressbar type="info" class="progress-striped active upload-progressbar" value="component.top.totalSize"
-                                             max="component.top.maxSize" >
-                                <span class="upload-progressbar-text">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
-                            </uib-progressbar>
-                            <!--上传进度面板-->
-                            <div class="attr-item__table-wrap" ng-show="component.top.uploadingArray.length">
-                                <table class="attr-item__table table table-bordered">
-                                    <thead>
-                                    <tr align="center">
-                                        <td class="col-xs-2">文件名</td>
-                                        <td class="col-xs-1">类型</td>
-                                        <td class="col-xs-1">大小</td>
-                                        <td class="col-xs-1">进度</td>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="file in component.top.uploadingArray">
-                                        <td>{{file.name}}</td>
-                                        <td>{{file.type}}</td>
-                                        <td>{{file.size}}</td>
-                                        <td>{{file.progress}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                <uib-progressbar type="info" class="progress-striped active upload-progressbar" value="component.top.totalSize"
+                                                 max="component.top.maxSize" >
+                                    <span class="upload-progressbar-text">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
+                                </uib-progressbar>
+                                <!--上传进度面板-->
+                                <div class="attr-item__table-wrap" ng-show="component.top.uploadingArray.length">
+                                    <table class="attr-item__table table table-bordered">
+                                        <thead>
+                                        <tr align="center">
+                                            <td class="col-xs-2">文件名</td>
+                                            <td class="col-xs-1">类型</td>
+                                            <td class="col-xs-1">大小</td>
+                                            <td class="col-xs-1">进度</td>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="file in component.top.uploadingArray">
+                                            <td>{{file.name}}</td>
+                                            <td>{{file.type}}</td>
+                                            <td>{{file.size}}</td>
+                                            <td>{{file.progress}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- list of resources -->
+                                <!--total size-->
+                                <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
                             </div>
-                            <!-- list of resources -->
-                            <!--total size-->
-                            <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
-                        </div>
-                        <div ng-hide="component.top.showDel">
-                            <div class="attr-item__cell-wrap lg">
-                                <label class="resource-operate__all-select">
-                                    <input type="checkbox" ng-model="component.top.allSelected"
-                                           style="vertical-align: -2px"
-                                           ng-click="component.top.selectAll(component.top.allSelected)">
-                                    <span>全选</span>
-                                </label>
+                            <div ng-hide="component.top.showDel">
+                                <div class="attr-item__cell-wrap lg">
+                                    <label class="resource-operate__all-select">
+                                        <input type="checkbox" ng-model="component.top.allSelected"
+                                               style="vertical-align: -2px"
+                                               ng-click="component.top.selectAll(component.top.allSelected)">
+                                        <span>全选</span>
+                                    </label>
                             <span>
                                 <button class="btn btn-default attr-default-btn" ng-click="component.top.oppSelect()">反选</button></span>
                             <span class="fr">
                                 <button class="btn btn-default attr-default-btn" ng-click="component.top.toggleOperation('delete')">删除</button>
                                 <button class="btn btn-default attr-default-btn" ng-click="component.top.toggleOperation('cancel')">取消</button>
                             </span>
+                                </div>
                             </div>
+                            <!-- table -->
+                            <!--<div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">-->
+                            <div class="attr-item__table-wrap" ng-show="component.top.files.length">
+
+                                <ul class="resource-list" ui-sortable="resourcesTree" ng-model="component.top.files">
+                                    <li class="rl__item row" ng-repeat="file in component.top.files track by $index">
+                                        <div class="col-lg-4 rl_item-icon">
+                                            <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
+                                            <span style="display: inline-block" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
+                                        </div>
+                                        <div class="col-lg-5 rl_item-info">
+                                            <input class="rl_item-name"
+                                                   type='text'
+                                                   ng-model="file.name"
+                                                   ng-focus="store(this)"
+                                                   ng-blur="enterName(this)"
+                                                   ng-keypress="enterPress($event,this)" title="点击修改名称">
+                                            <p>{{file.type||''}}</p>
+                                            <p>{{file.size/1024 | number:2}}K</p>
+                                        </div>
+                                        <div class="col-lg-3 rl_item-operate">
+                                            <div ng-show="component.top.showDel" class="rl_item-operate1">
+                                                <p ng-click="component.top.downloadFile($index)">下载</p>
+                                                <p ng-click="openPanel($index)">删除</p>
+                                            </div>
+                                            <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
+                                                <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+
+
+                                <!--<table class="attr-item__table table table-bordered" id="resourceList">
+                                    <thead>
+                                    <tr align="center">
+                                        <td class="col-xs-1">预览</td>
+                                        <td class="col-xs-1">详情</td>
+                                        <td class="col-xs-1">操作</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr class="img-info" ng-repeat="file in component.top.files track by $index">
+                                        <td align="middle">
+                                            <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
+                                            <span width="40px" height="50px" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
+                                        </td>
+                                        <td>
+                                            <input class="img-name"
+                                                   type='text'
+                                                   style="width: 80px;border: 0;"
+                                                   ng-model="file.name"
+                                                   ng-focus="store(this)"
+                                                   ng-blur="enterName(this)"
+                                                   ng-keypress="enterPress($event,this)">
+                                            <p>
+                                                <span>{{file.type||''}}</span>
+                                                <span>{{file.size/1024 | number:2}}K</span>
+                                            </p>
+                                        </td>
+                                        <td align="center">
+                                            <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px;vertical-align: -2px;">&#xe666;</span>
+                                            <span class="iconfont img-option c-p" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
+                                            <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
+                                                <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>-->
+                            </div>
+
+                            <!--<div class="text-right">-->
+                            <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
+                            <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
+                            <!--</div>-->
+
+                            <script type="text/ng-template" id="deletePanelModal.html">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">确定删除该资源？</h3>
+                                </div>
+                                <!--<div class="modal-body">-->
+                                <div class="modal-footer">
+                                    <button class="modal-btn btn-confirm" type="button" ng-click="confirm()">确定</button>
+                                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
+                                </div>
+                            </script>
                         </div>
-                        <!-- table -->
-                        <!--<div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">-->
-                        <div class="attr-item__table-wrap" ng-show="component.top.files.length">
-                            <table class="attr-item__table table table-bordered" id="resourceList">
-                                <thead>
-                                <tr align="center">
-                                    <td class="col-xs-1">预览</td>
-                                    <td class="col-xs-1">详情</td>
-                                    <td class="col-xs-1">操作</td>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr class="img-info" ng-repeat="file in component.top.files track by $index">
-                                    <td align="middle">
-                                        <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}"/>
-                                        <span width="40px" height="50px" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
-                                    </td>
-                                    <td>
-                                        <input class="img-name"
-                                               type='text'
-                                               style="width: 80px;border: 0;"
-                                               ng-model="file.name"
-                                               ng-focus="store(this)"
-                                               ng-blur="enterName(this)"
-                                               ng-keypress="enterPress($event,this)">
-                                        <p>
-                                            <span>{{file.type||''}}</span>
-                                            <span>{{file.size/1024 | number:2}}K</span>
-                                        </p>
-                                    </td>
-                                    <td align="center">
-                                        <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px;vertical-align: -2px;">&#xe666;</span>
-                                        <span class="iconfont img-option c-p" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
-                                        <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
-                                            <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
-                                        </label>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!--<div class="text-right">-->
-                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
-                        <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
-                        <!--</div>-->
-
-                        <script type="text/ng-template" id="deletePanelModal.html">
-                            <div class="modal-header">
-                                <h3 class="modal-title">确定删除该资源？</h3>
-                            </div>
-                            <!--<div class="modal-body">-->
-                            <div class="modal-footer">
-                                <button class="modal-btn btn-confirm" type="button" ng-click="confirm()">确定</button>
-                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
-                            </div>
-                        </script>
-                    </div>
-
 
                 </div>
                 <!--变量面板-->

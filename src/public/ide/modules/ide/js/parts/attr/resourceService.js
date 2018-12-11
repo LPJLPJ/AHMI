@@ -473,7 +473,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
             var baseUrl = ResourceService.getResourceUrl()
 
             scope.uploadFiles = function (files) {
-
                 if (files && files.length){
                     files = files.filter(isValidFile);
 
@@ -501,6 +500,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     case 'woff':
                         return true;
                     default:
+                        toastr.warning('不支持'+fileExt+'格式');
                         return false;
 
                 }
