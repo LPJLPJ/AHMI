@@ -44,10 +44,10 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
             }
             break;
         case Type.MySlide:
-            initConfigure(true,true,2,widgetInfo.tex,false,false,false,false);
+            initConfigure(true,true,2,widgetInfo.tex,false,false,false,true);
             break;
         case Type.MyAlphaSlide:
-            initConfigure(true,false,2,widgetInfo.tex,false,false,false,false);
+            initConfigure(true,false,2,widgetInfo.tex,false,false,false,true);
             if(widgetInfo.tex.name==='底色'){
                 initConfigure(false,false,1,widgetInfo.tex,true,true,false,false);
             }

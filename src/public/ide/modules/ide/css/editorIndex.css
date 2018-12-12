@@ -1218,8 +1218,8 @@ body {
     border-radius: 5px;
 }
 
-.attr-item__table tr>td, .attr-item__table tr>th{
-    border: 1px solid #aaaaaa!important;
+.attr-item__table tr > td, .attr-item__table tr > th {
+    border: 1px solid #aaaaaa !important;
 }
 
 .attr-item__table > tbody > tr:hover, .attr-item__table > thead > tr {
@@ -2101,28 +2101,28 @@ div.wrapper-custom {
 }
 
 /*tag悬浮提示框*/
-.tagName{
+.tagName {
     margin: 0;
     padding: 0;
 }
 
-.tooltip-inner{
-    max-width: none!important;
+.tooltip-inner {
+    max-width: none !important;
 }
 
-.tag-tooltip-wrap{
+.tag-tooltip-wrap {
     text-align: left;
     padding: 10px;
     overflow: hidden;
 }
 
-.tag-tooltip-wrap p{
+.tag-tooltip-wrap p {
     display: block;
     white-space: nowrap;
     word-break: keep-all;
 }
 
-.tag-tooltip-title{
+.tag-tooltip-title {
     text-align: center;
     font-size: 14px;
     color: #005599;
@@ -2130,48 +2130,48 @@ div.wrapper-custom {
 }
 
 /*资源上传*/
-.resource-drop-wrap{
+.resource-drop-wrap {
     margin: 0;
     min-height: 100%;
 }
 
-.resource-drop-over{
+.resource-drop-over {
     border: 2px dashed #CCCCCC;
 }
 
-.resource-list{
+.resource-list {
     margin: 0;
     padding: 2px;
 }
 
-.rl__item{
+.rl__item {
     margin: 0 0 2px 0;
     padding: 5px 0;
     height: 90px;
     border-radius: 3px;
-    background-color: rgba(200,200,200,.3);
-    box-shadow: 1px 1px 1px rgba(200,200,200,.8), -1px -1px 1px rgba(200,200,200,.8);
+    background-color: rgba(200, 200, 200, .3);
+    box-shadow: 1px 1px 1px rgba(200, 200, 200, .8), -1px -1px 1px rgba(200, 200, 200, .8);
 }
 
-.rl__item>div{
+.rl__item > div {
     height: 100%;
 }
 
-.rl_item-icon{
+.rl_item-icon {
     text-align: center;
     line-height: 80px;
     padding: 0;
 }
 
-.rl_item-operate{
+.rl_item-operate {
     padding: 0;
 }
 
-.rl_item-operate1{
+.rl_item-operate1 {
     height: 100%;
 }
 
-.rl_item-operate1>p{
+.rl_item-operate1 > p {
     margin: 0;
     padding: 0;
     cursor: pointer;
@@ -2182,11 +2182,11 @@ div.wrapper-custom {
     font-weight: 500;
 }
 
-.rl_item-operate1>p:hover{
+.rl_item-operate1 > p:hover {
     color: #005599;
 }
 
-.rl_item-info>p{
+.rl_item-info > p {
     margin: 0;
     padding: 0;
     font-size: 12px;
@@ -2194,7 +2194,7 @@ div.wrapper-custom {
     line-height: 22px;
 }
 
-.rl_item-name{
+.rl_item-name {
     width: 100%;
     line-height: 30px;
     border: 0;
@@ -2205,7 +2205,7 @@ div.wrapper-custom {
     background-color: transparent;
 }
 
-.rl_item-name:focus{
+.rl_item-name:focus {
     background-color: white;
     border-radius: 5px;
 }
