@@ -119,7 +119,6 @@ $(function(){
         //console.log('projects',projects);
         //console.log('CANprojects',CANProjects);
 
-        var addProjectButton =  $('#add-project');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
             console.log('newProject.createTime',newProject.createTime);
@@ -129,8 +128,7 @@ $(function(){
             delete newProject.content;
             delete newProject.backups;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
-
-            addProjectButton.after(html);
+            $('#project-list').prepend(html);
         }
 
         var addCANprojectButton = $('#addCANproject');
@@ -140,7 +138,7 @@ $(function(){
             newCANProject.thumbnail = getResourceRelativePath(newCANProject.thumbnail);
             delete newCANProject.content;
             var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:newCANProject,thumbnail:newCANProject.thumbnail});
-            addCANprojectButton.after(html);
+            $('#project-list').prepend(html);
         }
     }
 
