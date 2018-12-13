@@ -1548,7 +1548,12 @@ module.exports = React.createClass({
             //         break;
             // }
             var drawFunc = 'draw'+subType.slice(2)
-            this[drawFunc]&&this[drawFunc](curX, curY, widget, options, cb);
+            if(this[drawFunc]){
+                this[drawFunc](curX, curY, widget, options, cb);
+            }else{
+                cb();
+            }
+            
 
         }
 
@@ -1662,7 +1667,11 @@ module.exports = React.createClass({
         //         break;
         // }
         var paintFunc = 'paint'+subType.slice(2)
-        this[paintFunc]&&this[paintFunc](curX,curY,widget,options,cb)
+        if(this[paintFunc]){
+            this[paintFunc](curX,curY,widget,options,cb)
+        }else{
+            cb && cb()
+        }
 
 
     },
@@ -2507,7 +2516,7 @@ module.exports = React.createClass({
 
         return curDate;
     },
-    drawTime: function (curX, curY, widget, options, cb) {
+    drawDateTime: function (curX, curY, widget, options, cb) {
         var curDate;
         if (widget.info.RTCModeId == '0') {
             curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
@@ -2525,7 +2534,7 @@ module.exports = React.createClass({
             this.setState({innerTimerList: innerTimerList});
         }
     },
-    paintTime: function (curX, curY, widget, options, cb) {
+    paintDateTime: function (curX, curY, widget, options, cb) {
         var width = widget.info.width;
         var height = widget.info.height;
         var dateTimeModeId = widget.info.dateTimeModeId;
