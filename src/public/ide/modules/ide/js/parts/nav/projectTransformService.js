@@ -32,7 +32,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
                 if(op.hasOwnProperty('value')){
                     if(!reg.test(op.value)&&!!op.value){
                         //值为字符串
-                        var u8Value = convertStrToUint8Array(op.value,curProjectEncoding)
+                        var u8Value = convertStrToUint8Array(op.value,curProjectEncoding).slice(0,32)
                         op.valueArray = convertUint8ArrayToArray(u8Value)
                     }
                 }
