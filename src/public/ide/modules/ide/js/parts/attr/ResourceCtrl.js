@@ -52,6 +52,9 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
 
 
+        $scope.stopProp = function(e){
+            e.stopPropagation();
+        };
         
         
         /**

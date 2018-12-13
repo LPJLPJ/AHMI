@@ -4305,8 +4305,8 @@
                                         </div>
                                         <div class="col-lg-3 rl_item-operate">
                                             <div ng-show="component.top.showDel" class="rl_item-operate1">
-                                                <p ng-click="component.top.downloadFile($index)">下载</p>
-                                                <p ng-click="openPanel($index)">删除</p>
+                                                <p ng-click="component.top.downloadFile($index)" ng-mousedown="stopProp($event)">下载</p>
+                                                <p ng-click="openPanel($index)" ng-mousedown="stopProp($event)">删除</p>
                                             </div>
                                             <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                                 <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
