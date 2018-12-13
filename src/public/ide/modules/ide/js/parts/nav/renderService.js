@@ -1408,6 +1408,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         return needRemoveFiles;
     };
 
+
     // add by lixiang in 2017/12/7
     renderer.prototype.renderFontPng = function(font,srcRootDir,dstDir,imgUrlPrefix,cb){
         var fontFamily = font['font-family'];
@@ -1420,28 +1421,46 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             fontFamily = str;
         }
 
-        var imgName = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'-'+(font['fullFont']?'full':'short')+'.png';
+        var imgNamePrefix = ''+fontFamily+'-'+font['font-size']+'-'+font['font-bold']+'-'+(font['font-italic']||'null')+'-'+(font['fullFont']?'full':'short')
+        var imagePostfix = '.png'
         var options = {
             full:font.fullFont||false,
             encoding:font.encoding,
             showGrid:false
         };
-        var stream = '';
-        var outpath = path.join(dstDir,imgName);
+        //var stream = '';
+        //var outpath = path.join(dstDir,imgName);
         options.paddingRatio = 1.2;
         // options.showGrid = true;
-        stream = FontGeneratorService.generateSingleFont(font,options);
-        stream = FontGeneratorService.pngStream(stream,local);
-        if(local){
-            try {
-                fs.writeFileSync(outpath,stream);
-                cb && cb();
-            }catch (e) {
-                cb && cb(e);
+        //upload multi font lib file
+        var pngDataUrls = FontGeneratorService.generateSingleFont(font,options);
+        var count = pngDataUrls.length
+        var lastErr = null
+        var coutDownCB = function(err){
+            if(err){
+                lastErr = err
             }
-        }else{
-            uploadDataURI(stream,imgName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
+            count--
+            if(count == 0){
+                cb && cb(lastErr)
+            }
+            
         }
+        pngDataUrls.forEach(function(stream,idx){
+            stream = FontGeneratorService.pngStream(stream,local);
+            var curStreamName = imgNamePrefix+(idx>0?'-'+idx:'')+imagePostfix
+            if(local){
+                try {
+                    fs.writeFileSync(path.join(dstDir,curStreamName),stream);
+                    coutDownCB()
+                }catch (e) {
+                    coutDownCB(e)
+                }
+            }else{
+                uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
+            }
+        })
+        
     };
 
     this.renderProject = function (dataStructure,sCb, fCb) {
