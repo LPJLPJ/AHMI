@@ -195,6 +195,10 @@ ideServices.service('TagService', [function () {
         tagClasses[1].tagArray=timerTags;
     };
 
+    this.generateDefaultTimer = function (n) {
+        return new Tag("SysTmr_" + n + "_t", false, null, 'true', 0, 'timer', 'forbidden');
+    };
+
     //设置timer的数量
     this.setTimerNum = function (num) {
         timerNum = num;
