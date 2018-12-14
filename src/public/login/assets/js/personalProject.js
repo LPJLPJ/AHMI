@@ -672,6 +672,7 @@ $(function(){
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
+        $('.basicinfo-template-options').hide();
         var project = cur.attr('data-project');
         project = JSON.parse(project);
         curProject = project;
@@ -722,9 +723,10 @@ $(function(){
     $('#add-project').on('click', function (e) {
         $('#basicinfo-title').val('');
         $('#basicinfo-author').val('');
-        $('#basicinfo-template').attr('disabled',false);
+        $('#basicinfo-template').attr('disabled',false).val('');
+        $('.basicinfo-template-options').hide();
         $('#basicinfo-supportTouch').attr('disabled',false);
-        $('#basicinfo-encoding').val('ascii')
+        $('#basicinfo-encoding').val('ascii');
         $('#basicinfo-resolution').val('800*480');
         $('#basicinfo-ideversion').val(curIDEVersion);
         //trigger change
@@ -780,6 +782,7 @@ $(function(){
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
+            if(project.template == 'collectedTemplate'){project.template=''}
             project.ideVersion = ideVersion.val()&&ideVersion.val().trim()||'';
             project.supportTouch = supportTouch.val().trim();
             project.encoding = encoding.val()&&encoding.val().trim()||'';

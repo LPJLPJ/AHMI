@@ -18,41 +18,52 @@
 }
 
 .basicinfo-template-options{
-    display:inline-block;
-    max-height:500px;
-    overflow:scroll;
+    width: 100%;
+    max-height:360px;
+    overflow-y:auto;
+    box-sizing: border-box;
+    border: 1px solid #a9a9a9;
+    margin: 0!important;
+    border-radius: 3px;
+}
+
+.template-option-wrap{
+    padding: 10px;
 }
 
 .template-option-panel{
-    display:inline-block;
     text-align:center;
     border:1px solid lightgray;
-    padding:0.5em;
-    width:30%;
-    margin:0.5em;
     border-radius:5px;
+    box-sizing: border-box;
+    display: block;
+    overflow: hidden;
 }
 
 .template-option-panel:hover{
-    border:2px solid rgba(0,0,255,0.3);
+    border:1px solid #005599;
 }
 
 .template-option-thumbnail-container{
     width:100%;
 }
 
-
 .template-option-info{
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-top: 1px solid lightgray;
+    box-sizing: border-box;
 }
 
 .template-option-info-title{
     overflow: hidden;
+    color: #005599;
+    font-size: 14px;
+    font-weight: 600;
+    text-overflow:ellipsis;
+    white-space: nowrap;
 }
 
 .template-option-thumbnail{
     width:100%;
-    border-radius:5px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
