@@ -128,7 +128,10 @@ module.exports = React.createClass({
         // })
         //init tag init value
         data.tagList.forEach(function(t){
-            t.value = 0
+            if(t.valueType != 1){
+                t.value = t.initValue || 0
+            }
+            
         })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});

@@ -13,6 +13,8 @@ ideServices.service('TagService', [function () {
         this.bindMod = bindMod || 'default';
         this.valueType = valueType || 0; //0 数字 1字符串
         this.lockTag = lockTag;//锁定不可修改
+
+        this.initValue = null; //初始值
     }
 
     var defaultTag = new Tag('', false, null, 'true', null, 'custom', 'default');

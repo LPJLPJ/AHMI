@@ -4578,6 +4578,11 @@
                                             <input ng-disabled="!tag.register||tag.theme||tag.lockTag" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
                                                    ng-model="tag.indexOfRegister" class="attr-item__cell-input" />
                                         </fieldset>
+                                        <fieldset class="attr-item__cell-wrap lg">
+                                            <p for="tag-initValue" class="attr-item__cell-title">初始值</p>
+                                            <input ng-disabled="tag.valueType==1" id='tag-initValue' type="number" ng-blur="checkTagIndex()"
+                                                   ng-model="tag.initValue" class="attr-item__cell-input" />
+                                        </fieldset>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
