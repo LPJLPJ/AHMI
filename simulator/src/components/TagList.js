@@ -124,7 +124,7 @@ module.exports = React.createClass({
                                         curValue = this.getTagTrueValue(tag)
                                     }
                                     return (
-                                        <tr key={index} className='simulator-tag-table__row'>
+                                        <tr key={index} className={'simulator-tag-table__row '+(tag.valueType==1?'tagName-str':'') }>
                                             <td className='simulator-tag-table__col tag-table-col-4' style={tdDefaultStyle}> {tag.name}</td>
                                             <td className='simulator-tag-table__col tag-table-col-2' style={tdDefaultStyle}> {tag.indexOfRegister}</td>
                                             <td className='simulator-tag-table__col tag-table-col-4' style={tdDefaultStyle}>
