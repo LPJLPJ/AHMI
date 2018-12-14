@@ -16,6 +16,17 @@
 
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
+    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
+    <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
+    <link rel="stylesheet" href="../../public/ide/modules/ide/css/editorIndex.css">
+    <link rel="stylesheet" href="../../public/ide/modules/ide/css/iconfont.css"/>
+    <!--add-->
+    <link rel="stylesheet" href="../../public/ide/tools/css/ruler.css"/>
+
+
+
+
+
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
     <!--add-->
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
@@ -43,12 +54,7 @@
     <script src="../../public/ide/lib/angular-sanitize-1.5.10/angular-sanitize.min.js"></script>
     <script src="../../public/ide/lib/sortable.js"></script>
 
-    <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
-    <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
-    <link rel="stylesheet" href="../../public/ide/modules/ide/css/editorIndex.css">
-    <link rel="stylesheet" href="../../public/ide/modules/ide/css/iconfont.css"/>
-    <!--add-->
-    <link rel="stylesheet" href="../../public/ide/tools/css/ruler.css"/>
+
 
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
@@ -4570,7 +4576,12 @@
                                         <fieldset class="attr-item__cell-wrap lg">
                                             <p for="indexOfRegister" class="attr-item__cell-title">寄存器序号</p>
                                             <input ng-disabled="!tag.register||tag.theme||tag.lockTag" id='indexOfRegister' type="number" ng-blur="checkTagIndex()"
-                                                   ng-model="tag.indexOfRegister" class="attr-item__cell-input"/>
+                                                   ng-model="tag.indexOfRegister" class="attr-item__cell-input" />
+                                        </fieldset>
+                                        <fieldset class="attr-item__cell-wrap lg">
+                                            <p for="tag-initValue" class="attr-item__cell-title">初始值</p>
+                                            <input ng-disabled="tag.valueType==1" id='tag-initValue' type="number" ng-blur="checkTagIndex()"
+                                                   ng-model="tag.initValue" class="attr-item__cell-input" />
                                         </fieldset>
                                     </form>
                                 </div>
@@ -4680,9 +4691,11 @@
                                     <tr ng-repeat="tag in component.curTagClass.tagArray track by $index"
                                         ng-class="{'selected':selected==$id}">
                                         <td ng-click="component.openPanel($index,'custom')" align="left" valign="middle">
-                                            <div ng-mouseover="component.showTagBindStatus($index)" class="tagName c-p"
-                                                 tooltip-placement="left"
-                                                 uib-tooltip-template="'tagBindStatus.html'">{{tag.name}}</div>
+                                            <div ng-mouseover="component.showTagBindStatus($index)" 
+                                                class="tagName c-p"
+                                                ng-class="{'tagName-str':tag.valueType==1}"
+                                                tooltip-placement="left"
+                                                uib-tooltip-template="'tagBindStatus.html'">{{tag.name}}</div>
                                         </td>
                                         <td align="center">
                                             <div class="tagReg">{{tag.indexOfRegister}}</div>

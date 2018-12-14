@@ -128,7 +128,10 @@ module.exports = React.createClass({
         // })
         //init tag init value
         data.tagList.forEach(function(t){
-            t.value = 0
+            if(t.valueType != 1){
+                t.value = t.initValue || 0
+            }
+            
         })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
@@ -1548,7 +1551,12 @@ module.exports = React.createClass({
             //         break;
             // }
             var drawFunc = 'draw'+subType.slice(2)
-            this[drawFunc]&&this[drawFunc](curX, curY, widget, options, cb);
+            if(this[drawFunc]){
+                this[drawFunc](curX, curY, widget, options, cb);
+            }else{
+                cb();
+            }
+            
 
         }
 
@@ -1662,7 +1670,11 @@ module.exports = React.createClass({
         //         break;
         // }
         var paintFunc = 'paint'+subType.slice(2)
-        this[paintFunc]&&this[paintFunc](curX,curY,widget,options,cb)
+        if(this[paintFunc]){
+            this[paintFunc](curX,curY,widget,options,cb)
+        }else{
+            cb && cb()
+        }
 
 
     },
@@ -2006,7 +2018,7 @@ module.exports = React.createClass({
             // var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
             // displayStep+=spacing;
             var yCoordinate = 0.5 * height;
-            for (i = 0; i < text.length; i++) {
+            for (var i = 0; i < text.length; i++) {
                 tempctx.fillText(text[i], xCoordinate, yCoordinate);
                 xCoordinate += spacing;
                 xCoordinate += maxFontWidth;
@@ -2507,7 +2519,7 @@ module.exports = React.createClass({
 
         return curDate;
     },
-    drawTime: function (curX, curY, widget, options, cb) {
+    drawDateTime: function (curX, curY, widget, options, cb) {
         var curDate;
         if (widget.info.RTCModeId == '0') {
             curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
@@ -2525,7 +2537,7 @@ module.exports = React.createClass({
             this.setState({innerTimerList: innerTimerList});
         }
     },
-    paintTime: function (curX, curY, widget, options, cb) {
+    paintDateTime: function (curX, curY, widget, options, cb) {
         var width = widget.info.width;
         var height = widget.info.height;
         var dateTimeModeId = widget.info.dateTimeModeId;
@@ -3122,7 +3134,7 @@ module.exports = React.createClass({
                 var totalFrameNum = widget.curTotalFrameNum || 1
                 // //draw
                 var oldHeight = 0;
-                var oleWidth = 0;
+                var oldWidth = 0;
                 var curFrameNum = changeDirection < 0 ? (totalFrameNum - widget.curFrameNum) : widget.curFrameNum
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
@@ -3156,16 +3168,16 @@ module.exports = React.createClass({
                         newTempNumValue = this.generateStyleString(curValue, decimalCount, numOfDigits, frontZeroMode, symbolMode, hexMode)
                     }
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
-                    var oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
-                    if (oleWidth > 0) {
+                    oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
+                    if (oldWidth > 0) {
                         offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight)
                     }
 
                     this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
 
                     oldWidth = curFrameNum / totalFrameNum * curWidth;
-                    if (oleWidth > 0) {
-                        offctx.drawImage(tempcanvas, curWidth - oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                    if (oldWidth > 0) {
+                        offctx.drawImage(tempcanvas, curWidth - oldWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
                     }
 
                 }
@@ -3340,7 +3352,7 @@ module.exports = React.createClass({
                 var totalFrameNum = widget.curTotalFrameNum || 1
                 // //draw
                 var oldHeight = 0;
-                var oleWidth = 0;
+                var oldWidth = 0;
                 var curFrameNum = changeDirection < 0 ? (totalFrameNum - widget.curFrameNum) : widget.curFrameNum
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
@@ -3373,11 +3385,11 @@ module.exports = React.createClass({
                     }
 
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
-                    if (oleWidth > 0) {
+                    if (oldWidth > 0) {
                         this.paintStyledTexNum(widget, tempNumValue, curX - curWidth + oldWidth, curY, curX, curY, curWidth, oldHeight)
                     }
                     oldWidth = curFrameNum / totalFrameNum * curWidth;
-                    if (oleWidth > 0) {
+                    if (oldWidth > 0) {
                         this.paintStyledTexNum(widget, newTempNumValue, curX + curWidth - oldWidth, curY, curX + curWidth - oldWidth, curY, curWidth, oldHeight)
                     }
 
