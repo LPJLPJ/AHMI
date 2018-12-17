@@ -163,12 +163,13 @@ WaveFilter.prototype.filter = function(tagStatus){
     
 }
 
-WaveFilter.prototype.startFilterTagToNewValue = function(tag,value, cb){
+WaveFilter.prototype.startFilterTagToNewValue = function(tag,lastValue,value, cb){
     var curTagStatus = this.tags[tag]
     if(curTagStatus.timerId!=0){
         clearInterval(curTagStatus.timerId)
         curTagStatus.timerId = 0
     }
+    curTagStatus.last = lastValue
     curTagStatus.target = value
     var innerTime = 0
     var d = parseInt(1000/this.frequence)
@@ -224,9 +225,9 @@ WaveFilterManager.registerWaveFilter = function(waveFilterTitle,tag){
 
 //set tag with new value with wavefilter
 //calCB: call every cal tick
-WaveFilterManager.calTagWithWaveFilter = function(tag,value,waveFilterTitle,calCB){
+WaveFilterManager.calTagWithWaveFilter = function(tag,lastValue,value,waveFilterTitle,calCB){
     var curWaveFilter = waveFilters[waveFilterTitle]
-    curWaveFilter.startFilterTagToNewValue(tag,value,calCB)
+    curWaveFilter.startFilterTagToNewValue(tag,lastValue,value,calCB)
 }
 
 
