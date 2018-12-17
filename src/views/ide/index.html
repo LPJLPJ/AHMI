@@ -98,6 +98,7 @@
     <script src="../../public/ide/modules/ide/min-js/closeBrowser.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/font/fontMesureService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/font/fontGeneratorService.js"></script>
+    <script src="../../public//ide//modules//ide/min-js/parts/attr/waveFilterService.js"></script>
 
     <script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
@@ -131,6 +132,7 @@
     <!--<script src="../../public/ide/modules/ide/js/parts/attr/SortableController.js"></script>-->
     <script type="text/javascript" src="../../public/ide/modules/ide/min-js/myDirective.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/waveFilterController.js"></script>
     <!--directive-->
     <script src="../../public/ide/modules/ide/min-js/parts/lexer/actionCompiler2.js"></script>
 
@@ -4583,6 +4585,12 @@
                                             <input ng-disabled="tag.valueType==1" id='tag-initValue' type="number" ng-blur="checkTagIndex()"
                                                    ng-model="tag.initValue" class="attr-item__cell-input" />
                                         </fieldset>
+                                        <fieldset class="attr-item__cell-wrap lg">
+                                            <p for="tag-wavefilter" class="attr-item__cell-title">滤波器</p>
+                                            <select id='ag-wavefilter' ng-model="tag.waveFilter" class="attr-item__cell-input" ng-options="wavefilter.title as wavefilter.title for wavefilter in getWaveFilters()">
+                                                <option value="">---</option>
+                                            </select>
+                                        </fieldset>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
@@ -4738,6 +4746,76 @@
                                 </table>
                             </div>
                         </div>
+
+                    </div>
+
+                    <div ng-controller="WaveFilterCtrl"  class="attr-item__cell-wrap lg wavefilter-wrap">
+                        <div>
+                            <span class="attr-item__wavefilter-title">滤波器</span>
+                            <button type="button" class="btn btn-default attr-default-btn wavefilter-item__add-wavefilter" ng-click="openPanel(-1)">
+                                添加新滤波器
+                            </button>
+                        </div>
+
+                        
+                        <div class="glyphicon" style="display: block" ng-click="collapse($event)"
+                             ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"></div>
+                        <ul uib-collapse="status.collapsed " class="wavefilter-item__wavefilter-list">
+                            <li ng-repeat="wavefilter in wavefilters" ng-click="openPanel($index)">
+                                <span>{{wavefilter.title}}</span>
+                                <i class="iconfont" ng-click="deleteWaveFilter($index)">&#xe627;</i>
+                            </li>
+                        </ul>
+
+                        <script type="text/ng-template" id="waveFilterPanelModal.html" class="wavefilter-setting-wrap">
+                            <div class="modal-header">
+                                <h4 class="modal-title">滤波器</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <span for="waveFilterName" class="tag-item__cell-title-inline">滤波器名称</span>
+                                    <input class="form-control tag-item__cell-input-inline"
+                                           id="waveFilterName"
+                                           type="text"
+                                           ng-model="wavefilter.title"
+                                           ng-focus="store(this)"
+                                           ng-blur="enterName(this)"
+                                           ng-keypress="enterPress($event,this)">
+                                </div>
+
+                                <div class="form-group">
+                                    <span class="tag-item__cell-title-inline">滤波器类型</span>
+                                    <select class="form-control tag-item__cell-input-inline" ng-model="wavefilter.type"
+                                            ng-options="waveFilterType for waveFilterType in waveFilterTypes">
+                                        <option value="">----</option>
+                                    </select>
+                                </div>
+                                <!-- wave filter attrs -->
+                                <div class="form-group" ng-repeat="attr in getWaveFilterAttrs()">
+                                    <span  class="tag-item__cell-title-inline wavefilter-param__title">{{attr}}</span>
+                                    <input class="form-control tag-item__cell-input-inline wavefilter-param__value"
+                                            
+                                            type="number"
+                                            ng-model="wavefilter.args[$index]"
+                                            ng-focus="store(this)"
+                                            ng-blur="restore(this)"
+                                            ng-keypress="enterPress($event,this)">
+                                
+                                </div>
+
+                                
+                                    
+                              
+                                
+
+                            </div>
+                            <div class="modal-footer">
+                                <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">保存</button>
+                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
+
+                        
 
                     </div>
                 </div>

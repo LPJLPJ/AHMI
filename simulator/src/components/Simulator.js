@@ -11,6 +11,7 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
 var math = require('mathjs');
 var StringConverter = require('./StringConverter')
+var WaveFilterManager = require('./WaveFilterManager')
 var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev') {
@@ -69,6 +70,7 @@ module.exports = React.createClass({
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
+        WaveFilterManager.reset()
         cancelAnimationFrame(this.paintKey)
     },
     initCanvas: function (data, callBack) {
@@ -110,9 +112,16 @@ module.exports = React.createClass({
         ctx.fillStyle = "white";
         ctx.fillText("加载中...", 0.5 * projectWidth, 0.5 * projectHeight);
 
+
+        //init wavefilters
+        if(data.waveFilterList&&data.waveFilterList.length){
+            data.waveFilterList.forEach(function(wf){
+                WaveFilterManager.addWaveFilter(wf.title,wf.type,wf.args)
+            })
+        }
+
         //initialize tagList
         //check curPage tag
-
 
         data.tag = '当前页面序号';
         // this.state.tagList = data.tagList
@@ -140,7 +149,7 @@ module.exports = React.createClass({
         this.registers = {};
         var curTag;
         var curRegIdx;
-        for (var i = 0; i < data.tagList.length; i++) {
+        for (i = 0; i < data.tagList.length; i++) {
             curTag = data.tagList[i];
             curRegIdx = curTag.indexOfRegister;
             if (curTag.register && curRegIdx !== undefined && curRegIdx !== '' && curRegIdx !== null) {
@@ -153,7 +162,12 @@ module.exports = React.createClass({
                     }
                 }
             }
+            //add to wavefilter
+            if(curTag.waveFilter!==undefined&&curTag.waveFilter!==''){
+                WaveFilterManager.registerWaveFilter(curTag.waveFilter,curTag.name)
+            }
         }
+        console.log(WaveFilterManager.getWaveFilters())
         // console.log(this.registers);
         this.state.registers = this.registers;
         this.setState({registers: this.registers});
@@ -161,7 +175,7 @@ module.exports = React.createClass({
         //initialize timer
         var timerList = [];
         // var postfix = ['Start','Stop','Step','Interval','CurVal','Mode'];
-        for (var i = 0; i < parseInt(data.timers); i++) {
+        for (i = 0; i < parseInt(data.timers); i++) {
             var newTimer = {};
             newTimer['timerID'] = 0;
             newTimer['SysTmr_' + i + '_Start'] = 0;
@@ -330,6 +344,8 @@ module.exports = React.createClass({
             this.paintKey = requestAnimationFrame(this.paint);
 
         }
+        //reset wave filters
+        WaveFilterManager.reset()
 
         // this.initProject();
         // console.log('receive new project data', this.state.project)
@@ -366,8 +382,8 @@ module.exports = React.createClass({
         }
         this.drawingArray.push(
             {
-                project: _.cloneDeep(_project),
-                options: _.cloneDeep(options)
+                project: _project,
+                options: options
             }
         )
         this.manageDraw();
@@ -1477,79 +1493,6 @@ module.exports = React.createClass({
 
             }
 
-
-            // switch (subType) {
-            //     case 'MySlide':
-            //         this.drawSlide(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyAlphaSlide':
-            //         this.drawAlphaSlide(curX,curY,widget,options,cb);
-            //         break;
-            //     case 'MyButton':
-            //         this.drawButton(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MySwitch':
-            //         this.drawSwitch(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyButtonGroup':
-            //         this.drawButtonGroup(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyNumber':
-            //         this.drawNumber(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyProgress':
-            //         //draw progressbar
-            //         this.drawProgress(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyDashboard':
-            //         this.drawDashboard(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyOscilloscope':
-            //         this.drawOscilloscope(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyRotateImg':
-            //         this.drawRotateImg(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyNum':
-            //         this.drawNum(curX, curY, widget, options, cb)
-            //         break;
-            //     case 'MyTexNum':
-            //         this.drawTexNum(curX, curY, widget, options, cb)
-            //         break;
-            //     case 'MyDateTime':
-            //         this.drawTime(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyTexTime':
-            //         this.drawTexTime(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyTextArea':
-            //         this.drawTextArea(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyTextInput':
-            //         this.drawTextInput(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MySlideBlock':
-            //         this.drawSlideBlock(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyScriptTrigger':
-            //         this.drawScriptTrigger(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyVideo':
-            //         this.drawVideo(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyInputKeyboard':
-            //         this.drawInputKeyboard(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyAnimation':
-            //         this.drawAnimation(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyTouchTrack':
-            //         this.drawTouchTrack(curX, curY, widget, options, cb);
-            //         break;
-            //     case 'MyAlphaImg':
-            //         this.drawAlphaImg(curX, curY, widget, options, cb);
-            //         break;
-            // }
             var drawFunc = 'draw'+subType.slice(2)
             if(this[drawFunc]){
                 this[drawFunc](curX, curY, widget, options, cb);
@@ -1596,79 +1539,6 @@ module.exports = React.createClass({
             offctx.restore();
         }
 
-
-        // switch (subType) {
-        //     case 'MySlide':
-        //         this.paintSlide(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyAlphaSlide':
-        //         this.paintAlphaSlide(curX, curY, widget, options, cb);
-        //         break;    
-        //     case 'MyButton':
-        //         this.paintButton(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MySwitch':
-        //         this.paintSwitch(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyButtonGroup':
-        //         this.paintButtonGroup(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyNumber':
-        //         this.paintNumber(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyProgress':
-        //         //paint progressbar
-        //         this.paintProgress(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyDashboard':
-        //         this.paintDashboard(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyOscilloscope':
-        //         this.paintOscilloscope(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyRotateImg':
-        //         this.paintRotateImg(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyNum':
-        //         this.paintNum(curX, curY, widget, options, cb)
-        //         break;
-        //     case 'MyTexNum':
-        //         this.paintTexNum(curX, curY, widget, options, cb)
-        //         break;
-        //     case 'MyDateTime':
-        //         this.paintTime(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyTexTime':
-        //         this.paintTexTime(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyTextArea':
-        //         this.paintTextArea(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyTextInput':
-        //         this.paintTextInput(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MySlideBlock':
-        //         this.paintSlideBlock(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyScriptTrigger':
-        //         this.paintScriptTrigger(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyVideo':
-        //         this.paintVideo(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyInputKeyboard':
-        //         this.paintInputKeyboard(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyAnimation':
-        //         this.paintAnimation(curX, curY, widget, options, cb);
-        //         break;
-        //     case 'MyTouchTrack':
-        //         this.paintTouchTrack(curX,curY,widget,options,cb);
-        //         break;
-        //     case 'MyAlphaImg':
-        //         this.paintAlphaImg(curX,curY,widget,options,cb);
-        //         break;
-        // }
         var paintFunc = 'paint'+subType.slice(2)
         if(this[paintFunc]){
             this[paintFunc](curX,curY,widget,options,cb)
@@ -5283,7 +5153,7 @@ module.exports = React.createClass({
         var tag = this.findTagByName(name)
         if (tag) {
             this.setTagByType(tag,value)
-            this.setState({tag: tag})
+            // this.setState({tag: tag})
         }
     },
     setTagByType:function (tag,_value) {
@@ -5291,11 +5161,26 @@ module.exports = React.createClass({
             switch (tag.valueType){
                 case 1:
                     //str
-                     tag.value = StringConverter.convertStrToUint8Array(_value,this.encoding).slice(0,32)
+                    tag.value = StringConverter.convertStrToUint8Array(_value,this.encoding).slice(0,32)
+                    this.setState({tag:tag})
                     break;
                 default:
                     //num
-                    tag.value = Number(_value)||0
+                    //consider wavefilters
+                    if(tag.waveFilter!==undefined && tag.waveFilter!==''){
+                        WaveFilterManager.calTagWithWaveFilter(tag.name,Number(_value)||0,tag.waveFilter,function(currentVal){
+                            tag.value = currentVal
+                            this.setState({tag:tag},function(){
+                                this.draw(null, {
+                                    updatedTagName: tag.name
+                                })
+                            }.bind(this))
+                        }.bind(this))
+                    }else{
+                        tag.value = Number(_value)||0
+                        this.setState({tag:tag})
+                    }
+                    
 
             }
         }
@@ -5317,7 +5202,7 @@ module.exports = React.createClass({
     setTagByTag: function (tag, value) {
         if (tag) {
             this.setTagByType(tag,value)
-            this.setState({tag: tag})
+            // this.setState({tag: tag})
         }
     },
     setTagByTagRawValue:function (tag, rawValue) {

@@ -1008,12 +1008,97 @@ body {
     color: #666666;
 }
 
-.action-operate__cell {
-    border: 1px solid #a9a9a9;
-    padding: 10px;
-    border-radius: 5px;
-    min-height: 144px;
+/*滤波器*/
+
+.attr-item__wavefilter-title {
+    color: #7d7d7d;
+    margin-left: 20px;
+    font-size: 14px;
+    position: relative;
+    top: 6px;
 }
+
+.wavefilter-item__add-wavefilter {
+    font-size: 14px;
+    float: right;
+}
+
+.wavefilter-wrap .glyphicon {
+    display: block;
+    width: 15px;
+    top: -12px;
+}
+
+.wavefilter-wrap .wavefilter-item__wavefilter-list {
+    border: 0;
+    background-color: white;
+    max-height: 180px;
+    overflow: auto;
+    list-style: none;
+}
+
+.wavefilter-wrap .wavefilter-item__wavefilter-list li {
+    border: 1px solid #a9a9a9;
+    border-radius: 4px;
+    min-height: 25px;
+    padding: 3px 0 0 10px;
+}
+
+.wavefilter-wrap .wavefilter-item__wavefilter-list li:hover {
+    background-color: #e5e5e5;
+}
+
+.wavefilter-wrap .wavefilter-item__wavefilter-list li i {
+    background-color: transparent;
+    padding: 0 5px;
+    float: right;
+    margin-right: 10px;
+    width: 28px;
+    opacity: .5;
+    cursor: pointer;
+}
+
+.wavefilter-wrap .wavefilter-item__wavefilter-list li span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 125px;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.wavefilter-wrap .wavefilter-item__wavefilter-list li:hover {
+    opacity: 1;
+}
+
+.attr-item__cell-title-inline, .attr-item__cell-input-inline {
+    display: inline-block;
+    font-size: 14px;
+    color: #7d7d7d;
+}
+
+.attr-item__cell-title-inline {
+    padding: 5px 14px;
+}
+
+.attr-item__cell-input-inline {
+    width: 30%;
+    border: 1px solid #a9a9a9;
+}
+
+.attr-item__cell-input-inline:focus {
+    border: 1px solid #005599 !important;
+    outline: none;
+    box-shadow: none;
+}
+
+
+
+.wavefilter-item__list {
+    margin-top: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
 
 /*动作*/
 .attr-item__action-title {

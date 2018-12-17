@@ -11,6 +11,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
     'OperateQueService',
     'TagService',
     'ResourceService',
+    'WaveFilterService',
     '$http',
     'ProjectTransformService',
     'RenderSerive',
@@ -26,7 +27,15 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
               Type,
               CanvasService,
               $uibModal,
-              OperateQueService, TagService, ResourceService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService, NavModalCANConfigService) {
+              OperateQueService, 
+              TagService, 
+              ResourceService,
+              WaveFilterService,
+              $http, 
+              ProjectTransformService, 
+              RenderSerive, 
+              LinkPageWidgetsService, 
+              NavModalCANConfigService) {
 
         var path, fs, __dirname, fse;
         initLocalPref();
@@ -313,6 +322,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                     function postFun() {
                         curScope.project.resourceList = ResourceService.getAllResource();
+                        curScope.project.waveFilterList = _.cloneDeep(WaveFilterService.getWaveFilters())
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
                         curScope.project.timers = TagService.getTimerNum();//-
@@ -1065,6 +1075,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             temp.project.ideVersion = window.ideVersion;
             temp.project.physicalPixelRatio = physicalPixelRatio;
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
+            temp.project.waveFilterList = _.cloneDeep(WaveFilterService.getWaveFilters())
+
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
             temp.project.tagList = TagService.getAllTags();
