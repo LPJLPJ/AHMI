@@ -53,8 +53,8 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyAnimation:"&#xe633;",
             MyTexNum:"&#xe675;",
             MyTexTime:"&#xe655;",
-            MyAlphaImg:"&#xe6e0;",
-            MyAlphaSlide:"&#xe669;"
+            MyAlphaImg:"&#xe6e0;"
+            /*MyAlphaSlide:"&#xe669;"*/
         };
     }
 
