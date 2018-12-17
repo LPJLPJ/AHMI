@@ -120,79 +120,6 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         //return fontCanvas.toDataURL()
     }
 
-    /**
-     * 绘制字符
-     * @param fontSize 字符大小
-     * @param fontStr  字符
-     * @param options  选项。showGrid，显示格子
-     */
-    function drawChars(fontSize,fontStr,options) {
-        ctx.font = fontStr;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        var x=0,y=0;
-        var column = 0;
-        var row = 0;
-        options = options||{}
-
-        var restStart,restCharNum
-        if(options.full){
-            switch (options.encoding){
-                case 'utf-8':
-                    restStart = 0x9fff
-                    restCharNum = 0x9fff - 0x4e00+1
-                break;
-                case 'gb2312':
-                    restStart = 129
-                    restCharNum = 7445-128
-                break;
-                default:
-                    //ascii
-                    restStart = 0
-                    restCharNum = 0
-    
-            }
-        }else{
-            restStart = 0
-            restCharNum = 0
-        }
-
-        //normal 128 chars
-        for(var i = 0;i<128;i++){
-            row = Math.ceil(i/gridSize.w);
-            column = i - (row-1)*gridSize.w;
-            if (options.showGrid) {
-                ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
-            }
-
-            if(i>=45){
-                // 从破折号(减号)开始
-                if(i===46){
-                    //小数点往左边偏移百分之20%
-                    drawChar(i,(column-0.7)*fontSize,(row-0.5)*fontSize)
-                }else {
-                    drawChar(i,(column-0.5)*fontSize,(row-0.5)*fontSize)
-                }
-            }
-
-        }
-
-        var curCharIdx,curCharCode
-        for(i = 0;i<restCharNum;i++){
-            curCharIdx = i + 128
-            curCharCode = i + 0x4e00
-            row = Math.ceil(curCharIdx/gridSize.w);
-            column = curCharIdx - (row-1)*gridSize.w;
-            if (options.showGrid) {
-                ctx.strokeRect((column-1)*fontSize,(row-1)*fontSize,fontSize,fontSize)
-            }
-
-            drawChar(curCharCode,(column-0.5)*fontSize,(row-0.5)*fontSize)
-
-        }
-        return fontCanvas.toDataURL()
-    }
-
     function calCanvasSize(fontSize,charNum) {
         var wNum = Math.ceil(Math.sqrt(charNum));
         if (wNum){
@@ -261,7 +188,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         var charRanges = []
         var limitOfEachPNG = 1024;
         var pngDataUrls = [];
-        var ASCII_RANGE = [0,127,'ascii']
+        var ASCII_RANGE = [1,127,'ascii']
         if(options.full){
             switch (options.encoding){
                 case 'utf-8':
