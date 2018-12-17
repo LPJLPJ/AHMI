@@ -112,6 +112,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 }
             };
 
+
+            //init DoSave
+            NavService.DoSave = saveProject.bind(null, null, true)
+
         }
 
 

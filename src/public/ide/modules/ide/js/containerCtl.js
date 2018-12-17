@@ -53,7 +53,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
         };
 
         $scope.handleKeyDown = function (e) {
-
+            e.preventDefault();
             var currentKey = KeydownService.currentKeydown(e);
             $scope.currentKey = currentKey;
             //console.log('this is current keyStr',currentKey);
@@ -110,6 +110,10 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
                         })
                         break;
+                    case 'Ctrl-S':
+                    case 'Cmd-S':
+                        NavService.DoSave();
+                    break;
 
                     case 'Ctrl-Z':
                         console.log('撤销');

@@ -628,13 +628,13 @@ ideServices
                             }else{
                                 //从page a 进入 page b
                                 _self.OnPageSelected(_pageIndex,function(){
-                                    _successCallback&&_successCallback(true);
+                                    _successCallback&&_successCallback();
                                 });
                             }
                         }else{
                             //进入同一个页面，从sublayer状态进入
                             _self.OnPageSelected(_pageIndex,function(){
-                                _successCallback&&_successCallback(true);
+                                _successCallback&&_successCallback();
                             },isInit);
                         }
                     }else {
@@ -700,7 +700,7 @@ ideServices
                                     console.log('不更新layer');
                                     console.log('cb in intoNewPage',currentPage.name);
                                     var layers = currentPage.layers||[];
-                                    layers.map(function(layer,index){
+                                    layers.forEach(function(layer,index){
                                         var layerFab = _self.getFabLayerByLayer(layer);
                                         if(layerFab){
                                             layerFab.fire('OnRefresh',function(){
@@ -3960,7 +3960,7 @@ ideServices
                 var initValue=_option.initValue;
                 var selectObj= _self.getCurrentSelectObject();
                 selectObj.level.info.initValue=_option.initValue;
-                arg={
+                var arg={
                     initValue:initValue,
                     callback:_successCallback
                 };
@@ -4128,7 +4128,7 @@ ideServices
 
                 //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
                 var level = _.cloneDeep(selectObj.level);
-                arg={
+                var arg={
                     level:level,
                     backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
                     dashboardModeId:_option.dashboardModeId,
@@ -4187,7 +4187,7 @@ ideServices
             //改变仪表盘的覆盖角度
             this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                arg={
+                var arg={
                     callback:_successCallback
                 };
                 if(_option.hasOwnProperty('minCoverAngle')){
@@ -5287,7 +5287,7 @@ ideServices
                 }
 
                 if(pageBackgroundImgSrc!=""&&pageBackgroundImgSrc!="/public/images/blank.png"){
-                    pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
+                    var pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
                     var sourceX = parseInt(pageBackgroundImg.width/pageWidth*x);
                     var sourceY = parseInt(pageBackgroundImg.height/pageHeight*y);
                     var sourceWidth =parseInt(pageBackgroundImg.width/pageWidth*width);
