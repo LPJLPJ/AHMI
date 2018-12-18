@@ -198,9 +198,12 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                     
                 break;
                 case 'gb2312':
-                    charRanges = [
-                        [0xa1a1,0xfefe,options.encoding]
-                    ]
+                    for(var i= 1;i<=94;i++){
+                        charRanges.push([((0xa0+i)<<8) + (0xa0+1),((0xa0+i)<<8) + (0xa0+94),options.encoding])
+                    }
+                    // charRanges = [
+                    //     [0xa1a1,0xfefe,options.encoding]
+                    // ]
                 break;
                 default:
                     //ascii
