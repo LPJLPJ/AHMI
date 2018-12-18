@@ -79,5 +79,5 @@
         "webpack-cli": "^3.0.8",
         "webpack-dev-server": "^3.1.4"
     },
-    "build": "12.17.17.17"
+    "build": "12.18.9.19"
 }
