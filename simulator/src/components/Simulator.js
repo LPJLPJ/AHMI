@@ -5167,7 +5167,7 @@ module.exports = React.createClass({
                 default:
                     //num
                     //consider wavefilters
-                    if(tag.waveFilter!==undefined && tag.waveFilter!==''){
+                    if(tag.waveFilter!==undefined && tag.waveFilter!==null&& tag.waveFilter!==''){
                         WaveFilterManager.calTagWithWaveFilter(tag.name,tag.value,Number(_value)||0,tag.waveFilter,function(currentVal){
                             tag.value = currentVal
                             this.setState({tag:tag},function(){
