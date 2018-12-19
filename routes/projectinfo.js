@@ -191,14 +191,14 @@ projectRoute.getProjectById = function (req, res) {
                 if (!!project.shared) {
                     hasValidKey(req.session.user, projectId, project.sharedKey, function (result) {
                         if (result) {
-                            res.render('ide/index.html')
+                            renderIDEEditorPageWithResources(res, ideVersion)
                         } else {
                             hasValidKey(req.session.user, projectId, project.readOnlySharedKey, function (result) {
                                 if (req.session.user) {
                                     req.session.user.readOnlyState = result;//+ save readOnly state in session
                                 }
                                 if (result) {
-                                    res.render('ide/index.html')
+                                    renderIDEEditorPageWithResources(res, ideVersion)
                                 } else {
                                     res.render('ide/share.html', {
                                         title: project.name,
@@ -1183,6 +1183,7 @@ projectRoute.generateLocalProject = function (req, res) {
                 tempPro.template = project.template;
                 tempPro.supportTouch = project.supportTouch;
                 tempPro.resolution = project.resolution;
+                tempPro.ideVersion = project.ideVersion;
                 tempPro._id = project._id;
                 tempPro.createTime = new Date().toLocaleString();
                 tempPro.lastModifiedTime = new Date().toLocaleString();

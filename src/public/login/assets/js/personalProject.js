@@ -1016,6 +1016,7 @@ $(function(){
         var curPanel = curSelectedPanel;
         var project = curPanel.attr('data-project');
         project = JSON.parse(project);
+        var oldIdeVersion = project.ideVersion?project.ideVersion:'';
         //console.log(project);
         var title = $('#basicinfo-title');
         var author = $('#basicinfo-author');
@@ -1047,7 +1048,11 @@ $(function(){
             }else{
                 project.resolution = resolution.val().trim();
             }
-            project.ideVersion = ideVersion.val().trim();
+            if(ideVersion.val()){
+                project.ideVersion = ideVersion.val().trim();
+            }else{
+                project.ideVersion = oldIdeVersion||'';
+            }
             project.supportTouch = supportTouch.val().trim();
             var updateSuccess = false;
             if (local){

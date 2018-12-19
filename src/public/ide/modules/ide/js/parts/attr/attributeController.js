@@ -109,11 +109,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     ],
                     enableAnimationModeId: '0',
                     enterDashboardMode: enterDashboardMode,
-                    enterDashboardClockwise: enterDashboardClockwise,
+                    enterDashboardClockwise: enterRotateClockwise,
                     enterDashboardValue: enterDashboardValue,
                     enterDashboardOffsetValue: enterDashboardOffsetValue,
                     enterBackgroundMode: enterBackgroundMode,
                     enterPointerLength: enterPointerLength,
+                    enterDashboardPointerPos:enterPointerOffset.bind(null,'dashboard'),
+                    enterDashboardInnerRadius:enterDashboardInnerRadius,
                     enterMinCoverAngle: enterMinCoverAngle,
                     enterMaxCoverAngle: enterMaxCoverAngle
                 },
@@ -260,7 +262,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 //旋转
                 rotateImg: {
-                    enterInitValue: enterInitValue
+                    enterInitValue: enterInitValue,
+                    clockwise:1,
+                    enterRotateImgClockwise:enterRotateClockwise,
+                    rotateImgClockwise: [
+                        {wise:1,name:'顺时针'},
+                        {wise:0,name:'逆时针'}
+                    ],
+                    enterRotateImgPointerPos:enterPointerOffset.bind(null,'rotateImg')
                 },
                 //alpha
                 alphaImg: {
@@ -694,6 +703,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.info.fontBold = "100";
                         //     selectObject.level.info.fontItalic = '';
                         // }
+                        break;
+                    case Type.MyRotateImg:
+                        $scope.component.rotateImg.clockwise = $scope.component.object.level.info.clockwise;
                         break;
                 }
 
@@ -1768,6 +1780,70 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             }
         }
 
+        function enterPointerOffset(type,e) {
+            if (e.keyCode == 13) {
+                console.log(e,type)
+                var posRotatePointX = $scope.component.object.level.info.posRotatePointX||0;
+                var posRotatePointY = $scope.component.object.level.info.posRotatePointY||0;
+                var width = $scope.component.object.level.info.width;
+                var height = $scope.component.object.level.info.height;
+                
+                //判断输入是否合法
+                if (!_.isInteger(Number(posRotatePointX))||!_.isInteger(Number(posRotatePointY))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if (posRotatePointX < 0 || posRotatePointX > width || posRotatePointY < 0 || posRotatePointY > height) {
+                    toastr.warning('指针原点超出范围');
+                    restore();
+                    return;
+                }
+
+                
+
+                var option = {
+                    posRotatePointX: posRotatePointX,
+                    posRotatePointY:posRotatePointY
+                };
+                //console.log(option);
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                ProjectService.ChangeAttributePointerOffset(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+                
+
+            }
+        }
+
+        function enterDashboardInnerRadius(e){
+            if (e.keyCode == 13) {
+                
+                var innerRadius = $scope.component.object.level.info.innerRadius||0;
+                //判断输入是否合法
+                if (!_.isInteger(Number(innerRadius))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    innerRadius:innerRadius
+                };
+                //console.log(option);
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                ProjectService.ChangeAttributeDashboardInnerRadius(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+                
+
+            }
+        }
+
         function enterDashboardMode(e) {
             var selectObj = ProjectService.getCurrentSelectObject();
             var selectDashboardMode = null;
@@ -1788,23 +1864,34 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             })
         }
 
-        function enterDashboardClockwise(e) {
+        function enterRotateClockwise(e) {
             var selectObj = ProjectService.getCurrentSelectObject();
-            var selectDashboardClockwise = null;
+            var selectClockwise = null;
             if (selectObj.type == Type.MyDashboard) {
-                selectDashboardClockwise = $scope.component.dashboard.clockwise;
-            } else {
+                selectClockwise = $scope.component.dashboard.clockwise;
+            } else if(selectObj.type == Type.MyRotateImg){
+                selectClockwise = $scope.component.rotateImg.clockwise;
+            }else {
                 return;
             }
 
             var oldOperate = ProjectService.SaveCurrentOperate();
 
             var option = {
-                clockwise: selectDashboardClockwise
+                clockwise: selectClockwise
             };
-            ProjectService.ChangeAttributeDashboardClockwise(option, function () {
-                $scope.$emit('ChangeCurrentPage', oldOperate);
-            })
+
+            switch (selectObj.type){
+                case Type.MyDashboard:
+                    ProjectService.ChangeAttributeDashboardClockwise(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyRotateImg:
+                    ProjectService.ChangeAttributeRotateImgClockwise(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+            }
         }
 
         function enterMinCoverAngle(e) {

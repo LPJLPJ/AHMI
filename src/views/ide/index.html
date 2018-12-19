@@ -1672,6 +1672,30 @@
                                    ng-keypress="component.dashboard.enterMinCoverAngle($event)"
                                    type="number">
                         </div>
+                        <!--<div class="my-attr-item">
+                            <span class="my-attr-title">旋转中心X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointX"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">旋转中心Y</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointY"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">旋转内径</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.innerRadius"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardInnerRadius($event)"
+                                   type="number">
+                        </div>-->
                         <div class="my-attr-item ">
                             <span class="my-attr-title">起始角度</span>
                             <input class="my-attr-number-input form-control short-input"
@@ -2583,6 +2607,31 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.rotateImg.enterInitValue($event)"/>
                         </div>
+                        <!--<div class="my-attr-item">
+                            <span class="my-attr-title">旋转中心X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointX"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.rotateImg.enterRotateImgPointerPos($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">旋转中心Y</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.posRotatePointY"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.rotateImg.enterRotateImgPointerPos($event)"
+                                   type="number">
+                        </div>-->
+
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">旋转方向</span>
+                            <select class="my-attr-number-input form-control"
+                                    ng-options="clockwise.wise as clockwise.name for clockwise in component.rotateImg.rotateImgClockwise"
+                                    ng-model="component.rotateImg.clockwise"
+                                    ng-change="component.rotateImg.enterRotateImgClockwise($event)">
+                            </select>
+                        </div>
+
                     </div>
 
                     <div ng-show="component.object.type=='MyAlphaImg'&&!myMask">
@@ -3183,6 +3232,73 @@
                         </div>
                     </div>
 
+                    <div ng-show="component.object.type=='MyAlphaSlide'&&!myMask">
+                        <div class="my-attr-item lg">
+                            <span class="my-attr-title">名称</span>
+                            <input class="my-attr-number-input form-control form-control"
+                                   type="text"
+                                   ng-model="component.object.level.name"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterName($event)">
+                        </div>
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">坐标X</span>
+                            <input class="my-attr-number-input form-control form-control short-input"
+                                   ng-model="component.object.level.info.left"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title">坐标Y</span>
+                            <input class="my-attr-number-input form-control short-input  "
+                                   ng-model="component.object.level.info.top"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterY($event)"
+                                   type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">绝对坐标X</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="position.absoluteX"
+                                   ng-blur="position.absoluteX=position.initAbsoluteX"
+                                   ng-keypress="component.enterAbsoluteX($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                        <span class="my-attr-title">绝对坐标Y</span>
+                        <input class="my-attr-number-input form-control short-input  "
+                               ng-model="position.absoluteY"
+                               ng-blur="position.absoluteY=position.initAbsoluteY"
+                               ng-keypress="component.enterAbsoluteY($event)"
+                               type="number">
+                        </div>
+
+                        <div class="my-attr-item">
+                            <span class="my-attr-title">宽度</span>
+                            <input class="my-attr-number-input form-control short-input"
+                                   ng-model="component.object.level.info.width"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterWidth($event)"
+                                   type="number">
+                        </div><div class="my-attr-item">
+                            <span class="my-attr-title ">高度</span>
+                            <input class="my-attr-number-input form-control short-input  "
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                        </div>
+                        <!--<div class="my-attr-item lg">-->
+                            <!--<span class="my-attr-title">纹理</span>-->
+                            <!--<p ng-repeat="subSlide in component.object.level.subSlides">{{subSlide.name}}</p>-->
+                            <!--<p>-->
+                                <!--<button class="btn btn-default" style="padding: 2px 8px;"-->
+                                        <!--ng-click="component.slide.addSubSlide()">新建纹理-->
+                                <!--</button>-->
+                            <!--</p>-->
+                        <!--</div>-->
+                    </div>
+
                 </div>
                 <!--example of select image-->
                 <div ng-controller="TexCtl" class="tex-container" ng-show="showTexPanel&&!myMask">
@@ -3392,7 +3508,9 @@
                             <div class="modal-title form-group modelPart">
                                 <span class="my-action-span">触发条件</span>
                                 <select class="form-control dengModel-trigger" ng-model="action.trigger"
-                                        ng-options="trigger.value as trigger.name for trigger in triggers"></select>
+                                        ng-options="trigger.value as trigger.name for trigger in triggers">
+                                    <option value="">----</option>
+                                </select>
                             </div>
 
                             <table class="table dengModal-table">
@@ -4227,8 +4345,8 @@
                         <div class="listTable-container"uib-collapse="status.collapsed">
                             <table class="listTable table table-hover"ng-show="component.timerTagShow==false">
                                 <tr class="">
-                                    <td>名称</td>
-                                    <td>寄存器</td>
+                                    <td>名称<span class="iconfont" ng-click="component.sortByName()">&#xe6a5;</span></td>
+                                    <td>寄存器<span class="iconfont" ng-click="component.sortByRegister()">&#xe6a5;</span></td>
                                     <td>启用</td>
                                     <td>标签</td>
                                     <td>删除</td>
@@ -4257,14 +4375,8 @@
                             </table>
                             <table class="listTable table table-hover" ng-show="component.timerTagShow==true">
                                 <tr class="">
-                                    <td>名称
-                                        <span class="iconfont" ng-click="component.sortByName()">
-                                    &#xe6a5;</span>
-                                    </td>
-                                    <td>寄存器号
-                                        <span class="iconfont" ng-click="component.sortByRegister()">
-                                        &#xe6a5;</span>
-                                    </td>
+                                    <td>名称</td>
+                                    <td>寄存器号</td>
                                     <td>启用</td>
                                 </tr>
                                 <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr"

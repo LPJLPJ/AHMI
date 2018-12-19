@@ -49,7 +49,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     }
                 }
                 transTex = _.cloneDeep($scope.texList[index]);
-                objInfo = _.cloneDeep($scope.objInfo)
+                var objInfo = _.cloneDeep($scope.objInfo)
             }
             var modalInstance = $uibModal.open({
                 animation: $scope.animationsEnabled,

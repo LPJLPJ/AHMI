@@ -841,6 +841,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             } else if (_index === 15) {
                 newWidget = TemplateProvider.getDefaultTexTime();
             } else if(_index === 16) {
+                newWidget = TemplateProvider.getDefaultAlphaSlide();
+            }else if(_index === 30) {
                 newWidget = TemplateProvider.getDefaultAlphaImg();
             }
             else {

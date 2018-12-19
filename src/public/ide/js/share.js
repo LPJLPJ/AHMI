@@ -2,7 +2,6 @@ $(function () {
     var pathname = window.location.pathname
     var urlElems = pathname.split('/')
     $('#submit').click(function () {
-        console.log('click')
         var key = $('#sharedKey').val().trim()
         $.ajax({
             type:'post',
@@ -11,7 +10,7 @@ $(function () {
               sharedKey:key
             },
             success:function (data) {
-                window.location.href = ''
+                window.location.reload();
             },
             error:function (err) {
                var errMsg = JSON.parse(err.responseText).errMsg
