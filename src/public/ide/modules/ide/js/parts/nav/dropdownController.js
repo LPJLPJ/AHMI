@@ -20,7 +20,8 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"图层时间",icon:"tex-time"},
         {name:"触摸追踪",icon:"touch-track"},
         {name:"透明度图层",icon:"alpha-slide"},
-        {name:"文本输入",icon:"text-input"}
+        {name:"文本输入",icon:"text-input"},
+        {name:"照片栏",icon:"slide"}
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;

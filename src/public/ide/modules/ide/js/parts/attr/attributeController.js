@@ -70,6 +70,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterArrange: enterArrange,
                     highlightModeId: '0'
                 },
+                gallery:{
+                    enterInterval:enterInterval,
+                    enterCount:enterCount,
+                    enterArrange:enterArrange
+                },
                 progress: {
                     progressModeId: '0',
                     enableAnimationModeId: '0',
@@ -1420,7 +1425,48 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 };
 
                 var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeButtonCount(option, function () {
+                ProjectService.ChangeAttributeCount(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+        //general enter count
+        function enterCount(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.count)) ) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                var interval = $scope.component.object.level.info.interval || 0;
+                var count = $scope.component.object.level.info.count || 0;
+                var width = $scope.component.object.level.info.width || 0;
+                if (interval * (count - 1) > width) {
+                    toastr.warning('配置不合理');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.count == initObject.level.info.count) {
+                    return;
+                }
+                if ($scope.component.object.level.info.count < 1) {
+                    toastr.warning('至少为1');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    count: parseInt($scope.component.object.level.info.count),
+                    ignoreHighlight:$scope.component.object.level.type === Type.MyGallery
+                };
+
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.ChangeAttributeCount(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
 
                 })
@@ -1584,10 +1630,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectArrange = $scope.component.textArea.arrangeModel;
             } else if (selectObj.type == Type.MyButton) {
                 selectArrange = $scope.component.button.arrangeModel;
-            } else if (selectObj.type = Type.MyDateTime) {
+            } else if (selectObj.type == Type.MyDateTime) {
                 selectArrange = $scope.component.dateTime.arrangeModel;
-            } else if (selectObj.type = Type.MyTexTime) {
+            } else if (selectObj.type == Type.MyTexTime) {
                 selectArrange = $scope.component.texTime.arrangeModel;
+            } else if (selectObj.type == Type.MyGallery){
+                selectArrange = $scope.component.gallery.arrangeModel;
             } else {
                 return;
             }

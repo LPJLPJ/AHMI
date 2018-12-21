@@ -4225,9 +4225,13 @@ ideServices
                 selectObj.target.fire('changeInterval',arg);
 
             };
-            this.ChangeAttributeButtonCount= function (_option, _successCallback) {
+
+
+            this.ChangeAttributeCount= function (_option, _successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.info.count=_option.count;
+                var ignoreHighlight = _option.ignoreHighlight||false
+                var reserved = ignoreHighlight ? 0 : 1
                 checkTexList(selectObj.level,selectObj.level.info.count, function () {
                     var arg={
                         level:selectObj.level,
@@ -4244,11 +4248,11 @@ ideServices
                  * @param _callback 回调函数
                  */
                 function checkTexList(_level,_count,_callback){
-                    if (_level.texList.length<_count+1){
+                    if (_level.texList.length<_count+reserved){
                         _level.texList.splice(_level.texList.length-1,0,TemplateProvider.getDefaultButtonTex());
                         checkTexList(_level,_count,_callback);
-                    }else if (_level.texList.length>_count+1){
-                        _level.texList.splice(_level.texList.length-2,1);
+                    }else if (_level.texList.length>_count+reserved){
+                        _level.texList.splice(_level.texList.length-(1+reserved),1);
                         checkTexList(_level,_count,_callback);
 
                     }else {

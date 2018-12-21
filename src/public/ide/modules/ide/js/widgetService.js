@@ -4856,4 +4856,143 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyAnimation.async = true;
 
 
+    function reRender(){
+        var subLayerNode=CanvasService.getSubLayerNode();
+        subLayerNode.renderAll();
+    }
+
+    //General Widget Generation
+    function generateFabricWidget(widget){
+        var widgetType = widget.widgetType;
+        fabric[widgetType]  = fabric.util.createClass(fabric.Object,{
+            type: widgetType,
+            initialize: function (level, options) {
+                this.callSuper('initialize',options);
+                
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                var ctrlOptions=options.ctrlOptions;
+                if(ctrlOptions){
+                    this.setControlsVisibility(ctrlOptions);
+                }
+
+
+                //info attrs
+
+                var attr
+                for(attr in widget.info){
+                    this[attr] = level.info[attr]
+                }
+
+                //func attrs, pass as function
+                for(attr in widget.funcAttrs){
+                    this[attr] = widget.funcAttrs[attr](level)
+                }
+
+
+                //triggers
+                for(var triggerName in widget.triggers){
+                    this.on(triggerName,widget.triggers[triggerName].bind(this))
+                }
+    
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function(ctx){
+                widget.render.call(this,ctx)
+            }
+        });
+        fabric[widgetType].fromLevel = function(level,callback,option){
+            callback && callback(new fabric[widgetType](level, option));
+        };
+        fabric[widgetType].prototype.toObject = (function (toObject){
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                });
+            }
+        })(fabric[widgetType].prototype.toObject);
+        fabric[widgetType].fromObject = function(object,callback){
+            var level=ProjectService.getLevelById(object.id);
+            callback&&callback(new fabric[widgetType](level,object));
+        };
+        fabric[widgetType].async = true;
+    }
+
+
+    //MyGallery Prototype
+    var widgetPrototypes = []
+    var MyGallery = {
+        widgetType:Type.MyGallery,
+        info:{
+            interval:0,
+            arrange:'horizontal'
+        },
+        funcAttrs:{
+            texList:function(level){
+                return level.texList.map(function(t){
+                    return {
+                        image:ResourceService.getResourceFromCache(t.slices[0].imgSrc),
+                        color:t.slices[0].color
+                    }
+                })
+            }
+        },
+        triggers:{
+            changeArrange:function(arg){
+                this.arrange = arg.arrange
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeInterval:function(arg){
+                this.interval = arg.interval
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeTex:function(arg){
+                this.texList = arg.level.texList.map(function(t){
+                    return {
+                        image:ResourceService.getResourceFromCache(t.slices[0].imgSrc),
+                        color:t.slices[0].color
+                    }
+                })
+                reRender()
+                arg.callback && arg.callback()
+            }
+        },
+        render:function(ctx){
+            try{
+                var count = this.texList.length||1;
+                var width=(this.width-this.interval*(count-1))/count;
+                var height=this.height;
+                var interval=this.interval;
+                if (width<0){
+                    return;
+                }
+                ctx.save();
+                for(var i=0;i<this.texList.length;i++){
+                    if(this.texList[i].image){
+                        ctx.drawImage(this.texList[i].image, -this.width / 2+(width+interval)*i, -this.height / 2,width,height);
+                    }else{
+                        ctx.fillStyle=this.texList[i].color
+                        ctx.fillRect(
+                            -(this.width / 2)+(width+interval)*i,
+                            -(this.height / 2) ,
+                            width ,
+                            height );
+                    }
+                }
+                ctx.restore();
+            }catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染'+this.type+'出错');
+            }
+        }
+    }
+    widgetPrototypes.push(MyGallery)
+    for(var i=0;i<widgetPrototypes.length;i++){
+        generateFabricWidget(widgetPrototypes[i])
+    }
+    
+
 }]);
