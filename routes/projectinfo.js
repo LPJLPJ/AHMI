@@ -836,6 +836,7 @@ projectRoute.saveProjectAs = function (req, res) {
                     copyProject.curSize = project.curSize;
                     copyProject.thumbnail = project.thumbnail;
                     copyProject.content = project.content;
+                    copyProject.originalSite = project.originalSite||data.currentOriginalSite;
 
                     copyProject.name = data.saveAsName ? (data.saveAsName) : (copyProject.name + "副本");
                     copyProject.author = data.saveAsAuthor ? (data.saveAsAuthor) : (copyProject.author);
@@ -1187,6 +1188,8 @@ projectRoute.generateLocalProject = function (req, res) {
                 tempPro._id = project._id;
                 tempPro.createTime = new Date().toLocaleString();
                 tempPro.lastModifiedTime = new Date().toLocaleString();
+                tempPro.originalSite = project.originalSite||'';
+
                 //check and change resource url
                 var transformSrc = function (key, value) {
                     //console.log('key');

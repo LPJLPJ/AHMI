@@ -310,7 +310,7 @@ ideServices
 
         this.appendFileUnique = function (file, noDuplication, cb) {
             if (noDuplication(file,files)) {
-                files.push(file);
+                files.unshift(file);
                 cb && cb();
             }
 
