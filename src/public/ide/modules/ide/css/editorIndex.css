@@ -167,6 +167,7 @@ body {
 
 .top-nav-menu__title {
     height: 100%;
+    position: relative;
 }
 
 .top-nav-tabs > li > a {
@@ -308,6 +309,7 @@ body {
     cursor: pointer;
     height: 50px;
     margin-top: 14px;
+    position: relative;
 }
 
 .widget-list__item:hover > p {
@@ -380,6 +382,7 @@ body {
     box-sizing: border-box;
     overflow: auto;
     vertical-align: middle;
+    position: relative;
 }
 
 .thumb-operate__left-hide, .thumb-operate__add-page {
@@ -718,6 +721,7 @@ body {
     text-align: center;
     margin: 0 !important;
     box-sizing: border-box;
+    position: relative;
 }
 
 .attribute-top-nav__item:not(:first-of-type) {
@@ -1098,14 +1102,11 @@ body {
     box-shadow: none;
 }
 
-
-
 .wavefilter-item__list {
     margin-top: 10px;
     max-height: 300px;
     overflow-y: auto;
 }
-
 
 /*动作*/
 .attr-item__action-title {
@@ -2202,7 +2203,7 @@ div.wrapper-custom {
     padding: 0;
 }
 
-.tagName-str{
+.tagName-str {
     color: #005599;
 }
 
@@ -2308,4 +2309,64 @@ div.wrapper-custom {
 .rl_item-name:focus {
     background-color: white;
     border-radius: 5px;
+}
+
+/*帮助提示*/
+.function-prompts {
+    position: absolute;
+    font-size: 14px;
+    color: #707070;
+    cursor: pointer;
+}
+
+.function-prompts:hover {
+    color: #005599;
+}
+
+.function-prompts__menu {
+    top: 0;
+    right: 0;
+    line-height: normal;
+    display: none;
+    font-size: 12px;
+}
+
+.top-nav-menu__title:hover .function-prompts__menu {
+    display: block;
+}
+
+.function-prompts__widget {
+    top: 0;
+    right: 0;
+    display: none;
+}
+
+.widget-list__item:hover .function-prompts__widget {
+    display: block;
+}
+
+.function-prompts__thumb {
+    right: 0;
+    top: 0;
+    display: none;
+}
+
+.thumb-wrap:hover .function-prompts__thumb {
+    display: block;
+}
+
+.function-prompts__attr {
+    right: 0;
+    top: 0;
+    z-index: 999;
+    line-height: normal;
+    display: none;
+}
+
+.attribute-top-nav__item:hover .function-prompts__attr {
+    display: block;
+}
+
+.function-prompts__animate {
+    margin-left: 10px;
 }

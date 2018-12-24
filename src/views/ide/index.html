@@ -203,6 +203,7 @@
                     ng-class="{true:'active',false:'inactive'}[component.nav.currentNav==$index]"
                     ng-click="component.nav.changeNav($index)">
                     <a href="#">{{nav.name}}</a>
+                    <i class="iconfont function-prompts function-prompts__menu" title="功能介绍" ng-click="openHelp($event,'menu',nav.name)">&#xe63e;</i>
                 </li>
             </ul>
             <div class="pull-right top-nav-personal"><a class="top-personal-content" ng-href="{{local?'/views/login/personalProject.html':'/private/space'}}" target="_blank">个人空间</a></div>
@@ -466,6 +467,7 @@
                                 ng-mouseover="widgetIcon = widget.icon+'-active'"
                                 ng-mouseleave="widgetIcon = widget.icon">
                                 <img ng-src="../../public/ide/modules/ide/images/widget/{{widgetIcon}}.png"/>
+                                <i class="iconfont function-prompts function-prompts__widget" title="功能介绍" ng-click="openHelp($event,'widget',widget.name)">&#xe63e;</i>
                                 <p>{{widget.name}}</p>
                             </li>
                         </ul>
@@ -652,6 +654,7 @@
     <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow}" data-step="2">
         <div class="thumb-operate">
             <div class="thumb-operate__add-page" ng-click="component.addPage()"></div>
+            <i class="iconfont function-prompts function-prompts__thumb" title="功能介绍" ng-click="openHelp($event,'thumb','thumb')">&#xe63e;</i>
         </div>
         <div ui-tree="component.uitree" class="thumb-content" data-drag-delay="200">
             <div class="thumb-view view-wrap" ng-click="component.showLeft()">
@@ -730,6 +733,7 @@
                         ng-click="component.top.changeNav($index)"
                         ng-class="{true:'active'}[component.top.currentNav==$index]">
                         <a href="#">{{nav.name}}</a>
+                        <i class="iconfont function-prompts function-prompts__attr" title="功能介绍" ng-click="openHelp($event,'attr',nav.name)">&#xe63e;</i>
                     </li>
                 </ul>
                 <!--属性面板-->
@@ -3910,7 +3914,9 @@
                     <!--Animations-->
                     <div ng-controller="animationCtl" ng-show="showAnimationPanel&&!myMask" class="attr-item__cell-wrap lg action-wrap">
                         <div>
-                            <span class="attr-item__action-title">动画</span>
+                            <span class="attr-item__action-title">动画
+                                <i class="iconfont function-prompts__animate c-p" title="功能介绍" ng-click="openHelp($event,'animate','animate')">&#xe63e;</i>
+                            </span>
                             <button type="button" class="btn btn-default attr-default-btn action-item__add-action" ng-click="openPanel(-1)" id="addAnimationBtn">
                                 添加新动画
                             </button>
