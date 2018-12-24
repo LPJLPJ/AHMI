@@ -4431,15 +4431,37 @@ ideServices
              */
             this.ChangeAttributeWidgetSize=function(_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                var arg={
-                    callback:_successCallback,
-                };
-                var image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
-                arg.widgetWidth=image.width;
-                arg.WidgetHeight=image.height;
+                switch (selectObj.type){
+                    case 'MySlide':
+                    case 'MyProgress':
+                    case 'MyDashboard':
+                    case 'MyRotateImg':
+                    case 'MyTextArea':
+                    case 'MyButton':
+                    case 'MySlideBlock':
+                    case 'MyAnimation':
+                    case 'MySwitch':
+                    case 'MyTouchTrack':
+                    case 'MyAlphaSlide':
+                    case 'MyTextInput':
+                        var image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+                        break;
+                    default :
+                        break;
+                }
+
+                if(!image){
+                    return;
+                }
+
                 if(image.width==selectObj.level.info.width&&image.height==selectObj.level.info.height&&selectObj.target.scaleX==1&&selectObj.target.scaleY==1){
                     return;
                 }
+                var arg={
+                    callback:_successCallback,
+                    widgetWidth:image.width,
+                    WidgetHeight:image.height
+                };
                 selectObj.level.info.width=image.width;
                 selectObj.level.info.height=image.height;
                 selectObj.target.fire('changeWidgetSize',arg);

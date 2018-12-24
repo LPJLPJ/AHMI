@@ -1008,6 +1008,13 @@ body {
     color: #666666;
 }
 
+.action-operate__cell {
+    border: 1px solid #a9a9a9;
+    padding: 10px;
+    border-radius: 5px;
+    min-height: 144px;
+}
+
 /*滤波器*/
 
 .attr-item__wavefilter-title {
