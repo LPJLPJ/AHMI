@@ -5480,18 +5480,18 @@ module.exports = React.createClass({
                 break;
             //compare
             case 'EQ':
-                var firstValue = this.getParamValue(param1)
-                var secondValue = this.getParamValue(param2)
-                if ((typeof firstValue === typeof secondValue )&& firstValue == secondValue){
+                var firstValue = Number(this.getParamValue(param1))
+                var secondValue = Number(this.getParamValue(param2))
+                if (firstValue == secondValue){
                     nextStep.step = 2;
                 } else {
                     nextStep.step = 1;
                 }
                 break;
             case 'NEQ':
-                var firstValue = this.getParamValue(param1)
-                var secondValue = this.getParamValue(param2);
-                if ((typeof firstValue !== typeof secondValue )|| firstValue != secondValue){
+                var firstValue = Number(this.getParamValue(param1))
+                var secondValue = Number(this.getParamValue(param2))
+                if (firstValue != secondValue){
                     nextStep.step = 2;
                 } else {
                     nextStep.step = 1;
