@@ -70,7 +70,11 @@ ideServices.service('TagService', [function () {
         }
 
         if (noDuplication(tag, tags)) {
-            tags.push(tag);
+            if(sortRegisterOrder){
+                tags.push(tag);
+            }else{
+                tags.unshift(tag);
+            }
             tagClasses[0].tagArray=tags;
             cb && cb();
 
@@ -238,7 +242,6 @@ ideServices.service('TagService', [function () {
 
     //将tag按寄存器号排序
     this.sortByRegister = function (cb) {
-        console.log(tags);
         var sort = function (a, b) {
             var A = a.indexOfRegister || -1,
                 B = b.indexOfRegister || -1;
