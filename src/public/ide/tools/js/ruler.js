@@ -9,7 +9,7 @@ $(function(){
             var tpl='<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="rulerModal"><div class="modal-dialog modal-sm" role="document"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title">生成指定坐标线</h5> </div> <div class="modal-body"> <label><input type="radio" checked="checked" class="form-group-sm" name="coord" id="createX"/>X</label><label><input type="radio" class="form-group-sm" name="coord" id="createY"/>Y</label><input type="number" class="form-control" id="coordCreat"/></div><div class="modal-footer"><button class="btn btn-primary" id="rulerOk" data-dismiss="modal">确定</button><button class="btn btn-warning" data-dismiss="modal">取消</button></div></div></div></div>';
             $('body').append(tpl);
 
-            var box=$(".stage-wrap"),
+            var box=$("#ruler-wrap"),
                 rulerWidth=2000,
                 rulerHeight=1000,
                 doDrag=null,

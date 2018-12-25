@@ -209,11 +209,11 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
         // 验证持续时间参数
         function checkDuration(e) {
             if ($scope.animation.duration < 0) {
-                alert('持续时间必须大于0s');
+                toastr.warning('持续时间必须大于0s');
                 $scope.animation.duration = 0;
                 return false;
             } else if ($scope.animation.duration > 5000) {
-                alert('持续时间不能大于5s');
+                toastr.warning('持续时间不能大于5s');
                 $scope.animation.duration = 5000;
                 return false
             }else{
@@ -303,7 +303,7 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             }
 
             if (scaleX < 0 || scaleY < 0 || stopScaleX<0 || stopScaleY<0) {
-                alert("缩放倍率禁止使用负数");
+                toastr.warning("缩放倍率禁止使用负数");
                 return false;
             }
             return true;
