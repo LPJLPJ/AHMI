@@ -810,3 +810,22 @@ a,a:hover{
     font-size: 16px;
     font-weight: 900;
 }
+
+/*定时器备注*/
+.timer-remark-textarea{
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    color: #7d7d7d;
+    font-size: 15px;
+    border: 1px solid #a9a9a9;
+}
+
+.timer-remark-textarea:focus{
+    border: 1px solid #005599;
+}
+
+.timer-remark-tooltip{
+    max-width: 150px;
+    font-size: 14px;
+}

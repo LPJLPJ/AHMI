@@ -4342,8 +4342,25 @@
                             </div>
                         </script>
 
-                        <div class="listTable-container"uib-collapse="status.collapsed">
-                            <table class="listTable table table-hover"ng-show="component.timerTagShow==false">
+                        <!--定时器备注-->
+                        <script type="text/ng-template" id="editRemark.html">
+                            <div class="modal-header">
+                                <h3 class="modal-title" style="text-align: center">备注</h3>
+                            </div>
+                            <div class="modal-body">
+                                <p class="modal-prompt" style="text-align: center">[鼠标悬停定时器名称即可查看该信息]</p>
+                                    <textarea rows="5"  ng-model="remarkInfo" class="timer-remark-textarea" maxlength="100">
+
+                                    </textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-info" type="button" ng-click="save(this)">保存</button>
+                                <button class="btn btn-default" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
+
+                        <div class="listTable-container" uib-collapse="status.collapsed">
+                            <table class="listTable table table-hover" ng-show="component.timerTagShow==false">
                                 <tr class="">
                                     <td>名称<span class="iconfont" ng-click="component.sortByName()">&#xe6a5;</span></td>
                                     <td>寄存器<span class="iconfont" ng-click="component.sortByRegister()">&#xe6a5;</span></td>
@@ -4377,17 +4394,23 @@
                                 <tr class="">
                                     <td>名称</td>
                                     <td>寄存器号</td>
+                                    <td>备注</td>
                                     <td>启用</td>
                                 </tr>
                                 <tr ng-repeat="timerTags in component.allTimerTags track by $index" class="timerTagTr"
                                 ng-class="{'selected':selected==$id}">
-                                <td ng-click="component.openPanel($index,'timer')">{{timerTags.name}}</td>
+                                <td ng-click="component.openPanel($index,'timer')">
+                                    <div tooltip-placement="left" style="cursor: pointer"
+                                         uib-tooltip="{{timerTags.remark}}"
+                                         tooltip-class="timer-remark-tooltip">{{timerTags.name}}</div>
+                                </td>
                                 <td><div class="tagReg">{{timerTags.indexOfRegister}}</div></td>
+                                <td align="center"><i class="iconfont" ng-click="component.editRemark($index)">&#xe6b4;</i></td>
                                 <td><input type="checkbox"
                                            class="multi-choice ng-pristine ng-valid ng-empty ng-touched"
                                            ng-click="component.regCheckboxClick(timerTags)"
                                            ng-model="timerTags.register">
-                                    </td>
+                                </td>
                             </tr>
                         </table>
                         </div>

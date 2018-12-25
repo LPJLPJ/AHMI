@@ -39,7 +39,9 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         regCheckboxClick: regCheckboxClick,
 
         importTags: importTags,
-        generateExcel: generateExcel
+        generateExcel: generateExcel,
+
+        editRemark: editRemark
     };
 
     $scope.$on('GlobalProjectReceived', function () {
@@ -960,6 +962,32 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     function downloadTagExcel(project){
         window.location.href = '/project/' + project.projectId + '/downloadTagExcel';
+    }
+
+    //定时器备注
+    function editRemark(index){
+        var selectTimer = $scope.component.allTimerTags[index];
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'editRemark.html',
+            size:'md',
+            controller: ['$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
+                $scope.remarkInfo = selectTimer.remark;
+                $scope.save = function () {
+                    $uibModalInstance.close($scope.remarkInfo);
+                };
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            }]
+        });
+
+        modalInstance.result.then(function (remarkInfo) {
+            selectTimer.remark = remarkInfo;
+            TagService.editTimerTagByIndex(index, selectTimer, function () {
+                readTagsInfo();
+            });
+        });
     }
 
 }]);
