@@ -607,7 +607,7 @@
                 <a id="ruler" class="top-menu-content__item-title">
                     <img class="default-title" src="../../public/ide/modules/ide/images/widget/ruler.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/widget/ruler-active.png"/>
-                    <p>辅助线</p>
+                    <p>标尺</p>
                 </a>
                 <a id="maskIcon" ng-click="component.tool.maskSwitch()" class="top-menu-content__item-title">
                     <img class="default-title" src="../../public/ide/modules/ide/images/widget/mask.png"/>
@@ -691,7 +691,7 @@
             </div>
             <p>{{project.name}}</p>
         </div>
-        <div class="stage-content-wrap">
+        <div class="stage-content-wrap" id="ruler-wrap">
             <div class="stage-content" ng-show="status.editPage" id="myStageTable">
                 <table width="100%" height="100%">
                     <tr>
@@ -4179,7 +4179,7 @@
                                     </div>
                                     <!--column 3 scale x-->
                                     <div class="row">
-                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">W(倍数)</div>
+                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">W(比例)</div>
                                         <div class="col-md-3 col-sm-3 col-xs-3">
                                             <input type="number"
                                                    class="form-control"
@@ -4193,7 +4193,7 @@
                                     </div>
                                     <!--column 4 scale y-->
                                     <div class="row">
-                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">H(倍数)</div>
+                                        <div class="col-md-1 col-sm-1 col-xs-1 text-right lx-margin-top-5">H(比例)</div>
                                         <div class="col-md-3 col-sm-3 col-xs-3">
                                             <input type="number"
                                                    class="form-control"
@@ -4207,11 +4207,12 @@
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">持续时间(ms)</div>
+                                        <div class="col-md-1 col-sm-1 col-xs-1 lx-margin-top-5">持续时间</div>
                                         <div class="col-md-3 col-sm-3 col-xs-3">
                                             <input type="number"
                                                    class="form-control"
                                                    ng-model="animation.duration">
+                                            <span style="margin-left: 2px;font-weight:100">ms</span>
                                         </div>
                                     </div>
 
