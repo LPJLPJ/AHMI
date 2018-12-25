@@ -207,19 +207,23 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
 
 
         // 验证持续时间参数
-        $scope.checkDuration = function (e) {
+        function checkDuration(e) {
             if ($scope.animation.duration < 0) {
-                toastr.error('持续时间必须大于0s');
+                alert('持续时间必须大于0s');
                 $scope.animation.duration = 0;
+                return false;
             } else if ($scope.animation.duration > 5000) {
-                toastr.error('持续时间不能大于5s');
+                alert('持续时间不能大于5s');
                 $scope.animation.duration = 5000;
+                return false
+            }else{
+                return true
             }
         };
 
         // 确定按钮
         $scope.confirm = function (th) {
-            if (!checkScale()) {
+            if (!checkScale()||!checkDuration()) {
                 return;
             }
             fixData($scope.animation, $scope.switchButtons);
@@ -283,16 +287,22 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
 
         function checkScale() {
             var advanceMode = $scope.animation.advanceMode;
-            var scaleX, scaleY;
+            var scaleX, scaleY,stopScaleX,stopScaleY;
             if (advanceMode === true) {
                 scaleX = $scope.animation.animationAttrs.scale.srcScale.x.value;
                 scaleY = $scope.animation.animationAttrs.scale.srcScale.y.value;
+
+                stopScaleX = $scope.animation.animationAttrs.scale.dstScale.x.value;
+                stopScaleY = $scope.animation.animationAttrs.scale.dstScale.y.value;
             } else if (advanceMode === false) {
                 scaleX = $scope.animation.animationAttrs.scale.srcScale.x;
                 scaleY = $scope.animation.animationAttrs.scale.srcScale.y;
+
+                stopScaleX = $scope.animation.animationAttrs.scale.dstScale.x;
+                stopScaleY = $scope.animation.animationAttrs.scale.dstScale.y;
             }
 
-            if (scaleX < 0 || scaleY < 0) {
+            if (scaleX < 0 || scaleY < 0 || stopScaleX<0 || stopScaleY<0) {
                 alert("缩放倍率禁止使用负数");
                 return false;
             }

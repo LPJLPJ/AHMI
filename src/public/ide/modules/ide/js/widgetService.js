@@ -470,6 +470,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
             })
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1178,6 +1188,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             })
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1738,6 +1757,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1867,6 +1896,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2154,11 +2192,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var _callback=arg.callback;
 
                 var tex=level.texList[0];
-                
-                
-                
-
-
                 if(level.texList&&level.texList[0]){
                     self.backgroundColor=level.texList[0].slices[0].color;
 
@@ -2189,6 +2222,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             //     subLayerNode.renderAll();
             //     _callback&&_callback();
             // })
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2290,6 +2333,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             })
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2923,6 +2976,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3092,6 +3155,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3157,8 +3230,6 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyTextArea(level,object));
     };
     fabric.MyTextArea.async = true;
-
-
 
     fabric.MyTextInput = fabric.util.createClass(fabric.Object,{
         type: Type.MyTextInput,
@@ -3258,6 +3329,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         originY:'top'
                     });
                 }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
@@ -4573,6 +4653,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -4706,6 +4796,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -4813,6 +4913,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 _callback&&_callback();
+            });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({width:widgetWidth,height:widgetHeight},function(){
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
             });
 
         },

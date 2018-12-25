@@ -6,20 +6,60 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
     $scope.$on('GlobalProjectReceived', function () {
 
 
-        initInterface();
+        initHelpPrompt();
         initListeningKeyDown();
         initListeningMouseWheel();
         $scope.$emit('LoadUp');
     });
 
-    function initInterface() {
-        // var container = angular.element('.container-fluid')[0];
-        // console.log(container);
-        // $document.bind('scroll',function (e) {
-        //     console.log(e);
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        // })
+    function initHelpPrompt() {
+        $scope.helpDocs = {
+            menu:{
+                "文件":'cai_dan_lan.html#文件',
+                "编辑":'cai_dan_lan.html#编辑',
+                "视图":'cai_dan_lan.html#视图',
+                "帮助":'cai_dan_lan.html#帮助'
+            },
+            widget:{
+                "图层":'tu_ceng.html',
+                "开关":'kai_guan.html',
+                "进度条":'jin_du_tiao.html',
+                "仪表盘":'yi_biao_pan.html',
+                "旋转图":'xuan_zhuan_tu.html',
+                "时间":'shi_jian.html',
+                "数字":'shu_zi.html',
+                "文本":'wen_ben_kuang.html',
+                "按钮":'an_niu.html',
+                "滑块":'hua_kuai.html',
+                "按钮组":'an_niu_zu.html',
+                "触发器":'hong_fa_qi.html',
+                "影像":'shi_pin.html',
+                "开机动画":'kai-ji-dong-hua.html',
+                "图层数字":'tu-ceng-shu-zi-kong-jian.html',
+                "图层时间":'tu-ceng-shi-jian-kong-jian.html',
+                "触摸追踪":'hong-mo-zhui-zong.html',
+                "透明度图层":'tou-ming-du-tu-ceng.html',
+                "文本输入":'wen-ben-shu-ru.html'
+            },
+            attr:{
+                "属性":'shu_xing_lan.html#属性',
+                "资源":'shu_xing_lan.html#资源',
+                "变量":'shu_xing_lan.html#变量',
+                "字体":'shu_xing_lan.html#字体'
+            },
+            thumb:{
+                "thumb":'ye_mian_lie_biao.html'
+            },
+            animate:{
+                "animate":'gao-jie-she-ji-liu-cheng/dong-hua.html'
+            }
+        };
+
+        $scope.openHelp = function(e,classify,key){
+            e.stopPropagation();
+            var docUrl = 'https://docs.graphichina.com/'+$scope.helpDocs[classify][key];
+            window.open(docUrl);
+        }
     }
 
     function initListeningMouseWheel() {
@@ -147,5 +187,4 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
             }
         }
     }
-
 }]);
