@@ -15,7 +15,97 @@
 }(function () {
     var AdvancedDrawEngine = {}
 
-    
+    //shared canvas to render
+    var sharedCanvasDOM = null
+    var sharedEngine = null
+    AdvancedDrawEngine.getSharedCanvas = function(){
+        if (sharedCanvasDOM){
+            return sharedCanvasDOM
+        }else{
+            sharedCanvasDOM = document.createElement('canvas')
+            document.body.appendChild(sharedCanvasDOM)
+            return sharedCanvasDOM
+        }
+    }
+
+    AdvancedDrawEngine.getSharedEngine = function(){
+        if(!sharedEngine){
+            sharedEngine = new BABYLON.Engine(AdvancedDrawEngine.getSharedCanvas(), true, { preserveDrawingBuffer: true, stencil: true });
+        }
+        return sharedEngine
+    }
+
+    //drawHandler: draw canvas method in 2D
+    //options: canvas info in 3D
+    AdvancedDrawEngine.drawCanvasPerspective = function(drawHandler,options){
+        var size = options.size || 100
+        var cWidth = size
+        var cHeidht = size
+        
+
+        var sharedCanvas = AdvancedDrawEngine.getSharedCanvas()
+        sharedCanvas.width = cWidth
+        sharedCanvas.height = cHeidht
+
+        // var engine = new BABYLON.Engine(sharedCanvas, true, { preserveDrawingBuffer: true, stencil: true });
+        var scene = new BABYLON.Scene(AdvancedDrawEngine.getSharedEngine());
+        scene.clearColor = new BABYLON.Color4(0,0,0,0);
+        var camera = new BABYLON.UniversalCamera("UniversalCamera", new BABYLON.Vector3(0, 0, -2), scene);
+        camera.setTarget(new BABYLON.Vector3(0, 0, 0));
+        camera.fov = 0.927295218;
+        //camera.attachControl(canvas, true);
+
+        var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+        light.intensity = 2;
+        light.specular = new BABYLON.Color3(0,0,0);
+        
+
+        //plane to draw
+        var plane = BABYLON.MeshBuilder.CreatePlane("plane",{width:1,height:1}, scene, true, BABYLON.Mesh.DOUBLESIDE)
+        // plane.position.x = 0;
+        // plane.position.z = 0;
+        // plane.rotation.y = 0;
+        //position
+        if('position' in options){
+            plane.position.x = (options.position.x/size) || 0
+            plane.position.y = (options.position.y/size) || 0
+            plane.position.z = (options.position.z/size) || 0
+        }
+
+        if('rotation' in options){
+            plane.rotation.x = options.rotation.x || 0
+            plane.rotation.y = options.rotation.y || 0
+            plane.rotation.z = options.rotation.z || 0
+        }
+
+       
+
+
+       
+        //Create dynamic texture
+        
+        var textureGround = new BABYLON.DynamicTexture("dynamic texture", {width:cWidth, height:cHeidht}, scene);   
+        var textureContext = textureGround.getContext();
+        
+        var materialGround = new BABYLON.StandardMaterial("Mat", scene);    				
+        materialGround.diffuseTexture = textureGround;
+        materialGround.diffuseTexture.hasAlpha = true;
+        materialGround.backFaceCulling = false;
+        // materialGround.disableLighting = true
+        // plane1.material = materialGround;
+        plane.material = materialGround;
+        // plane3.material = materialGround;
+        
+        
+        textureContext.save()
+        drawHandler(textureContext)
+        textureContext.restore()
+        textureGround.update();
+        scene.render();
+
+        //BABYLON.Tools.CreateScreenshot(engine, camera, 200)
+
+    }
 
     return AdvancedDrawEngine
 

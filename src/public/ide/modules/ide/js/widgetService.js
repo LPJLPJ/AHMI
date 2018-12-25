@@ -4965,22 +4965,46 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var count = this.texList.length||1;
                 var width=(this.width-this.interval*(count-1))/count;
                 var height=this.height;
+                var maxSize = Math.max(width,height)
                 var interval=this.interval;
                 if (width<0){
                     return;
                 }
                 ctx.save();
-                for(var i=0;i<this.texList.length;i++){
+                var drawHandler = function(_ctx){
+                    _ctx.translate(maxSize/2,maxSize/2)
                     if(this.texList[i].image){
-                        ctx.drawImage(this.texList[i].image, -this.width / 2+(width+interval)*i, -this.height / 2,width,height);
+                        _ctx.drawImage(this.texList[i].image, -width / 2, -height / 2,width,height);
                     }else{
-                        ctx.fillStyle=this.texList[i].color
-                        ctx.fillRect(
-                            -(this.width / 2)+(width+interval)*i,
-                            -(this.height / 2) ,
+                        _ctx.fillStyle=this.texList[i].color
+                        _ctx.fillRect(
+                            -(width / 2),
+                            -(height / 2) ,
                             width ,
                             height );
                     }
+                }.bind(this)
+                
+                var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
+                for(var i=0;i<this.texList.length;i++){
+                    // if(this.texList[i].image){
+                    //     ctx.drawImage(this.texList[i].image, -this.width / 2+(width+interval)*i, -this.height / 2,width,height);
+                    // }else{
+                    //     ctx.fillStyle=this.texList[i].color
+                    //     ctx.fillRect(
+                    //         -(this.width / 2)+(width+interval)*i,
+                    //         -(this.height / 2) ,
+                    //         width ,
+                    //         height );
+                    // }
+                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                        size:maxSize,
+                        rotation:{
+                            y:-Math.PI/4
+                        }
+                    })
+                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+
                 }
                 ctx.restore();
             }catch(err){
