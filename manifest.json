@@ -14,5 +14,5 @@
             "url": "https://test.graphichina/releases/updapp/linux32/updFiles.tar.gz"
         }
     },
-    "build": "12.18.15.13"
+    "build": "12.25.17.0"
 }
