@@ -1964,15 +1964,17 @@ module.exports = React.createClass({
         var singleWidth=(width-interval*(count-1))/count;
         widget.curValue = curValue;
 
+        var distanceBetweenPhotos = singleWidth*2/3;
+
         //galleryOffset
         var galleryOffset = 0
-        galleryOffset = curValue * singleWidth/2
+        galleryOffset = curValue * distanceBetweenPhotos
         
         if(widget.galleryOffset!==undefined){
             if(enableAnimation){
 
                 if(widget.animateTimerId===undefined || widget.animateTimerId === 0){
-                    widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, 1000, 30, null, function (obj) {
+                    widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, 1000, 30, 'easeInOutCubic', function (obj) {
                         widget.galleryOffset = obj.curX
                         this.draw()
                     }.bind(this), function () {
@@ -2012,8 +2014,10 @@ module.exports = React.createClass({
         var totalFrame = widget.totalFrame||30
         var curFrame = widget.curFrame ||totalFrame
 
+        var distanceBetweenPhotos = singleWidth*2/3;
+
         for(i=0;i<count;i++){
-            curPosXList.push((i-0)*singleWidth/2 - widget.galleryOffset+ width/2)
+            curPosXList.push((i-0)*distanceBetweenPhotos - widget.galleryOffset+ width/2)
         }
         widget.curPosXList = curPosXList
         
@@ -2069,7 +2073,7 @@ module.exports = React.createClass({
                     }
                 })
             
-                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,centerX+(i-centerIdx)*width3d - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
             }else{
                 break;
             }
@@ -2093,7 +2097,7 @@ module.exports = React.createClass({
                     }
                 })
             
-                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,centerX+(i-centerIdx)*width3d - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
             }else{
                 break;
             }
@@ -2115,7 +2119,7 @@ module.exports = React.createClass({
             }
         })
     
-        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, centerX- maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
 
         cb && cb()
     },
