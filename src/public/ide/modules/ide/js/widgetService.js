@@ -4967,16 +4967,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var height=this.height;
                 var maxSize = Math.max(width,height)
                 var interval=this.interval;
+                var curTex
                 if (width<0){
                     return;
                 }
                 ctx.save();
                 var drawHandler = function(_ctx){
                     _ctx.translate(maxSize/2,maxSize/2)
-                    if(this.texList[i].image){
-                        _ctx.drawImage(this.texList[i].image, -width / 2, -height / 2,width,height);
+                    if(curTex.image){
+                        _ctx.drawImage(curTex.image, -width / 2, -height / 2,width,height);
                     }else{
-                        _ctx.fillStyle=this.texList[i].color
+                        _ctx.fillStyle=curTex.color
                         _ctx.fillRect(
                             -(width / 2),
                             -(height / 2) ,
@@ -4986,26 +4987,74 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }.bind(this)
                 
                 var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
-                for(var i=0;i<this.texList.length;i++){
-                    // if(this.texList[i].image){
-                    //     ctx.drawImage(this.texList[i].image, -this.width / 2+(width+interval)*i, -this.height / 2,width,height);
-                    // }else{
-                    //     ctx.fillStyle=this.texList[i].color
-                    //     ctx.fillRect(
-                    //         -(this.width / 2)+(width+interval)*i,
-                    //         -(this.height / 2) ,
-                    //         width ,
-                    //         height );
-                    // }
-                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
-                        size:maxSize,
-                        rotation:{
-                            y:-Math.PI/4
-                        }
-                    })
-                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
-
+                var totalLen = this.texList.length
+                var centerIdx = Math.floor(totalLen/2)
+                var width3d = width/2
+                var rotateRad,z
+                var d = 0;
+                var i = 0;
+                for(i=0;i<this.texList.length;i++){
+                
+                    if(i!=centerIdx){
+                        rotateRad = (i>centerIdx?1:-1) * Math.PI/4
+                        z = maxSize/5
+                        curTex = this.texList[i]
+                        AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                            size:maxSize,
+                            position:{
+                                z:z
+                            },
+                            rotation:{
+                                y:rotateRad
+                            }
+                        })
+                    
+                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,(i-centerIdx)*width3d - maxSize, -maxSize,2*maxSize,2*maxSize)
+                    }else{
+                        break;
+                    }
+                    
+                    //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
                 }
+
+                for(i=this.texList.length-1;i>0;i--){
+                
+                    if(i!=centerIdx){
+                        rotateRad = (i>centerIdx?1:-1) * Math.PI/4
+                        z = maxSize/5
+                        curTex = this.texList[i]
+                        AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                            size:maxSize,
+                            position:{
+                                z:z
+                            },
+                            rotation:{
+                                y:rotateRad
+                            }
+                        })
+                    
+                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,(i-centerIdx)*width3d - maxSize, -maxSize,2*maxSize,2*maxSize)
+                    }else{
+                        break;
+                    }
+                    
+                    //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+                }
+                //draw center
+                rotateRad = d/width3d * Math.PI/4
+                z = d/width3d *maxSize/5
+                curTex = this.texList[centerIdx]
+                AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                    size:maxSize,
+                    position:{
+                        z:z
+                    },
+                    rotation:{
+                        y:rotateRad
+                    }
+                })
+            
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, - maxSize, -maxSize,2*maxSize,2*maxSize)
                 ctx.restore();
             }catch(err){
                 console.log('错误描述',err);

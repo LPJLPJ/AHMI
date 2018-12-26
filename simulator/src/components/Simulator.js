@@ -1954,7 +1954,113 @@ module.exports = React.createClass({
 
         cb && cb();
     },
+    drawGallery: function (curX, curY, widget, options, cb) {
+        var tag = this.findTagByName(widget.tag);
+        var curValue = (tag && tag.value) || 0;
+        widget.curValue = curValue;
+    },
+    paintGallery:function(curX, curY, widget, options, cb){
+        var ctx = this.offctx
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var interval = widget.info.interval;
+        var count = widget.info.count;
 
+        var centerX = curX + width/2
+        var centerY = curY + height/2
+
+        var curValue = widget.curValue;
+        var texList = widget.texList
+        var curTex
+        var singleWidth=(width-interval*(count-1))/count;
+        var maxSize = Math.max(singleWidth,height)
+        var drawHandler = function(_ctx){
+            _ctx.translate(maxSize/2,maxSize/2)
+            // if(curTex.image){
+            //     _ctx.drawImage(curTex.image, -singleWidth / 2, -height / 2,singleWidth,height);
+            // }else{
+            //     _ctx.fillStyle=curTex.color
+            //     _ctx.fillRect(
+            //         -(singleWidth / 2),
+            //         -(height / 2) ,
+            //         singleWidth ,
+            //         height );
+            // }
+            this.drawBg(-singleWidth / 2, -height / 2,singleWidth,height,curTex.slices[0].imgSrc,curTex.slices[0].color,_ctx)
+        }.bind(this)
+        
+        var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
+        //var totalLen = this.texList.length
+        var centerIdx = Math.floor(count/2)
+        var width3d = singleWidth/2
+        var rotateRad,z
+        var d = 0;
+        var i
+        var staticRotateRad = Math.PI/4;
+        var staticPositionZ = maxSize/5;
+        for(i=0;i<count;i++){
+        
+            if(i!=centerIdx){
+                rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                z = staticPositionZ
+                curTex = texList[i]
+                AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                    size:maxSize,
+                    position:{
+                        z:z
+                    },
+                    rotation:{
+                        y:rotateRad
+                    }
+                })
+            
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,centerX+(i-centerIdx)*width3d - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+            }else{
+                break;
+            }
+            
+            //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+        }
+
+        for(i=count-1;i>0;i--){
+        
+            if(i!=centerIdx){
+                rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                z = staticPositionZ
+                curTex = texList[i]
+                AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                    size:maxSize,
+                    position:{
+                        z:z
+                    },
+                    rotation:{
+                        y:rotateRad
+                    }
+                })
+            
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,centerX+(i-centerIdx)*width3d - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+            }else{
+                break;
+            }
+            
+            //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+        }
+        //draw center
+        rotateRad = d/width3d * staticRotateRad
+        z = d/width3d * staticPositionZ
+        curTex = texList[centerIdx]
+        AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+            size:maxSize,
+            position:{
+                z:z
+            },
+            rotation:{
+                y:rotateRad
+            }
+        })
+    
+        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, centerX- maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+    },
     drawProgress: function (curX, curY, widget, options, cb) {
 
         // widget.currentValue = curProgress
