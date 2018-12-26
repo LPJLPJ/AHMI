@@ -64,7 +64,7 @@
             // materialGround.disableLighting = true
             // plane1.material = materialGround;
             plane.material = materialGround;
-            return {
+            sharedScene = {
                 scene:scene,
                 camera:camera,
                 light:light,
@@ -72,6 +72,7 @@
                 materialGround:materialGround,
                 textureGround:textureGround
             }
+            return sharedScene
         }
         
     }

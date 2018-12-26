@@ -1956,10 +1956,45 @@ module.exports = React.createClass({
     },
     drawGallery: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag);
+        var count = widget.info.count;
         var curValue = (tag && tag.value) || 0;
+        var enableAnimation = widget.info.enableAnimation||true;
+        var width = widget.info.width;
+        var interval = widget.info.interval;
+        var singleWidth=(width-interval*(count-1))/count;
         widget.curValue = curValue;
+
+        //galleryOffset
+        var galleryOffset = 0
+        galleryOffset = curValue * singleWidth/2
+        
+        if(widget.galleryOffset!==undefined){
+            if(enableAnimation){
+
+                if(widget.animateTimerId===undefined || widget.animateTimerId === 0){
+                    widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, 1000, 30, null, function (obj) {
+                        widget.galleryOffset = obj.curX
+                        this.draw()
+                    }.bind(this), function () {
+                        widget.galleryOffset = galleryOffset
+                        widget.animateTimerId = 0
+    
+                    }.bind(this))
+                }
+
+                
+                
+            }else{
+                widget.galleryOffset = galleryOffset
+            }
+        }else{
+            widget.galleryOffset = galleryOffset
+        }
+        
     },
     paintGallery:function(curX, curY, widget, options, cb){
+        var curPosXList = []
+        
         var ctx = this.offctx
         var width = widget.info.width;
         var height = widget.info.height;
@@ -1968,12 +2003,20 @@ module.exports = React.createClass({
 
         var centerX = curX + width/2
         var centerY = curY + height/2
-
+        var i
         var curValue = widget.curValue;
         var texList = widget.texList
         var curTex
         var singleWidth=(width-interval*(count-1))/count;
         var maxSize = Math.max(singleWidth,height)
+        var totalFrame = widget.totalFrame||30
+        var curFrame = widget.curFrame ||totalFrame
+
+        for(i=0;i<count;i++){
+            curPosXList.push((i-0)*singleWidth/2 - widget.galleryOffset+ width/2)
+        }
+        widget.curPosXList = curPosXList
+        
         var drawHandler = function(_ctx){
             _ctx.translate(maxSize/2,maxSize/2)
             // if(curTex.image){
@@ -1991,11 +2034,23 @@ module.exports = React.createClass({
         
         var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
         //var totalLen = this.texList.length
-        var centerIdx = Math.floor(count/2)
+        var centerIdx = -1
+        //calculate the one closest to center
+        var curDistanceMin = width
+        var curDistance
+        for(i=0;i<count;i++){
+            curDistance = Math.abs(widget.curPosXList[i] - width/2)
+            if(curDistance < curDistanceMin){
+                curDistanceMin = curDistance
+                centerIdx = i
+            }
+        }
+
+
         var width3d = singleWidth/2
         var rotateRad,z
-        var d = 0;
-        var i
+        
+        
         var staticRotateRad = Math.PI/4;
         var staticPositionZ = maxSize/5;
         for(i=0;i<count;i++){
@@ -2046,8 +2101,9 @@ module.exports = React.createClass({
             //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
         }
         //draw center
+        var d = widget.curPosXList[centerIdx] - width/2
         rotateRad = d/width3d * staticRotateRad
-        z = d/width3d * staticPositionZ
+        z = Math.abs(d)/width3d * staticPositionZ
         curTex = texList[centerIdx]
         AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
             size:maxSize,
@@ -2060,6 +2116,8 @@ module.exports = React.createClass({
         })
     
         ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, centerX- maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+
+        cb && cb()
     },
     drawProgress: function (curX, curY, widget, options, cb) {
 

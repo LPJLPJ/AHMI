@@ -1203,6 +1203,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyButtonGroup:
+            case Type.MyGallery:
             case Type.MyLayer:
             case Type.MyPage:
             case Type.MyNum:
