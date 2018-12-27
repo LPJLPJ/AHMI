@@ -673,6 +673,7 @@ ideServices
                 url:'',
                 buttonModeId:'0',
                 zIndex:0,
+                transition:_.cloneDeep(defaultTransition),
                 texList:[{
                     name:'图片1',
                     currentSliceIdx:0,
@@ -713,6 +714,18 @@ ideServices
                     color:_getRandomColor(),
                     imgSrc:'',
                     name:'按下后'
+                }]
+            }
+        };
+
+        this.getDefaultTex= function () {
+            return{
+                name:'纹理',
+                currentSliceIdx:0,
+                slices:[{
+                    color:_getRandomColor(),
+                    imgSrc:'',
+                    name:'纹理'
                 }]
             }
         };

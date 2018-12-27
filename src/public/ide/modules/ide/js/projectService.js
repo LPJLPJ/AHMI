@@ -4260,7 +4260,20 @@ ideServices
             this.ChangeAttributeCount= function (_option, _successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.info.count=_option.count;
-                var ignoreHighlight = _option.ignoreHighlight||false
+                var ignoreHighlight = false
+                var defaultTexFun
+
+                switch(selectObj.type){
+                    case Type.MyButtonGroup:
+                        ignoreHighlight = fase
+
+                        defaultTexFun = TemplateProvider.getDefaultButtonTex
+                        break
+                    case Type.MyGallery:
+                        ignoreHighlight = true
+                        defaultTexFun = TemplateProvider.getDefaultTex
+                        break
+                }
                 var reserved = ignoreHighlight ? 0 : 1
                 checkTexList(selectObj.level,selectObj.level.info.count, function () {
                     var arg={
@@ -4279,7 +4292,7 @@ ideServices
                  */
                 function checkTexList(_level,_count,_callback){
                     if (_level.texList.length<_count+reserved){
-                        _level.texList.splice(_level.texList.length-1,0,TemplateProvider.getDefaultButtonTex());
+                        _level.texList.splice(_level.texList.length-1,0,defaultTexFun());
                         checkTexList(_level,_count,_callback);
                     }else if (_level.texList.length>_count+reserved){
                         _level.texList.splice(_level.texList.length-(1+reserved),1);

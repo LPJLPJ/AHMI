@@ -1973,8 +1973,16 @@ module.exports = React.createClass({
         if(widget.galleryOffset!==undefined){
             if(enableAnimation){
 
+                // if(widget.animateTimerId!==undefined && widget.animateTimerId !== 0){
+                //     clearInterval(widget.animateTimerId)
+                //     widget.animateTimerId = 0
+                // }
                 if(widget.animateTimerId===undefined || widget.animateTimerId === 0){
-                    widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, 1000, 30, 'easeInOutCubic', function (obj) {
+
+                    var fps = 30
+                    var duration = (widget.transition && widget.transition.duration) || 1000
+                    var easing = this.getEasingFunc(widget)
+                    widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, duration, fps, easing, function (obj) {
                         widget.galleryOffset = obj.curX
                         this.draw()
                     }.bind(this), function () {

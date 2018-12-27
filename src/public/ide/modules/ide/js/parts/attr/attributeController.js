@@ -71,6 +71,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     highlightModeId: '0'
                 },
                 gallery:{
+                    enableAnimationModeId: '0',
                     // enterInterval:enterInterval,
                     enterCurValue:enterCurValue,
                     enterPhotoWidth:enterPhotoWidth,
@@ -598,6 +599,19 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.buttonGroup.highlightModeId = '1';
                         }
                         break;
+                    case Type.MyGallery:
+                        if (!$scope.component.object.level.info.enableAnimation||$scope.component.object.level.info.enableAnimation === false) {
+                            $scope.component.gallery.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.gallery.enableAnimationModeId = '0'
+                        }
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
+                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        }
+                        //$scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
+                    break;
                     case Type.MyNum:
                         $scope.component.num.numModeId = $scope.component.object.level.info.numModeId;
                         $scope.component.num.symbolMode = $scope.component.object.level.info.symbolMode;
@@ -1271,6 +1285,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectEnableAnimationMode = $scope.component.num.enableAnimationModeId;
             } else if (selectObj.type === Type.MyTexNum) {
                 selectEnableAnimationMode = $scope.component.texNum.enableAnimationModeId;
+            } else if(selectObj.type === Type.MyGallery){
+                selectEnableAnimationMode = $scope.component.gallery.enableAnimationModeId;
             }
             var option = {
                 enableAnimationModeId: selectEnableAnimationMode
@@ -1530,8 +1546,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 }
 
                 var option = {
-                    count: parseInt($scope.component.object.level.info.count),
-                    ignoreHighlight:$scope.component.object.level.type === Type.MyGallery
+                    count: parseInt($scope.component.object.level.info.count)
+                    //ignoreHighlight:$scope.component.object.level.type === Type.MyGallery
                 };
 
                 var oldOperate = ProjectService.SaveCurrentOperate();
