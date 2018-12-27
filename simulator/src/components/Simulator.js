@@ -2016,6 +2016,8 @@ module.exports = React.createClass({
 
         var distanceBetweenPhotos = singleWidth*2/3;
 
+        var singleSideLimit = 3
+
         for(i=0;i<count;i++){
             curPosXList.push((i-0)*distanceBetweenPhotos - widget.galleryOffset+ width/2)
         }
@@ -2060,20 +2062,23 @@ module.exports = React.createClass({
         for(i=0;i<count;i++){
         
             if(i!=centerIdx){
-                rotateRad = (i>centerIdx?1:-1) * staticRotateRad
-                z = staticPositionZ
-                curTex = texList[i]
-                AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
-                    size:maxSize,
-                    position:{
-                        z:z
-                    },
-                    rotation:{
-                        y:rotateRad
-                    }
-                })
-            
-                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+                if(Math.abs(i-centerIdx)<=singleSideLimit){
+                    rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                    z = staticPositionZ
+                    curTex = texList[i]
+                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                        size:maxSize,
+                        position:{
+                            z:z
+                        },
+                        rotation:{
+                            y:rotateRad
+                        }
+                    })
+                
+                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+                }
+                
             }else{
                 break;
             }
@@ -2084,20 +2089,24 @@ module.exports = React.createClass({
         for(i=count-1;i>0;i--){
         
             if(i!=centerIdx){
-                rotateRad = (i>centerIdx?1:-1) * staticRotateRad
-                z = staticPositionZ
-                curTex = texList[i]
-                AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
-                    size:maxSize,
-                    position:{
-                        z:z
-                    },
-                    rotation:{
-                        y:rotateRad
-                    }
-                })
-            
-                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+                if(Math.abs(i-centerIdx)<=singleSideLimit){
+                    rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                    z = staticPositionZ
+                    curTex = texList[i]
+                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                        size:maxSize,
+                        position:{
+                            z:z
+                        },
+                        rotation:{
+                            y:rotateRad
+                        }
+                    })
+                
+                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+
+                }
+                
             }else{
                 break;
             }
@@ -2106,8 +2115,8 @@ module.exports = React.createClass({
         }
         //draw center
         var d = widget.curPosXList[centerIdx] - width/2
-        rotateRad = d/width3d * staticRotateRad
-        z = Math.abs(d)/width3d * staticPositionZ
+        rotateRad = d/distanceBetweenPhotos * staticRotateRad
+        z = Math.abs(d)/distanceBetweenPhotos * staticPositionZ
         curTex = texList[centerIdx]
         AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
             size:maxSize,

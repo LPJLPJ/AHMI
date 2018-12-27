@@ -4967,6 +4967,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var height=this.height;
                 var maxSize = Math.max(width,height)
                 var interval=this.interval;
+                var distanceBetweenPhotos = width*2/3;
+
+                var singleSideLimit = 3
+                
                 var curTex
                 if (width<0){
                     return;
@@ -4989,6 +4993,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
                 var totalLen = this.texList.length
                 var centerIdx = Math.floor(totalLen/2)
+                var staticRotateRad = Math.PI/4;
+                var staticPositionZ = maxSize/5;
+                var curPosXList = []
+
+                for(i=0;i<count;i++){
+                    curPosXList.push((i-centerIdx)*distanceBetweenPhotos)
+                }
                 var width3d = width/2
                 var rotateRad,z
                 var d = 0;
@@ -4996,8 +5007,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(i=0;i<this.texList.length;i++){
                 
                     if(i!=centerIdx){
-                        rotateRad = (i>centerIdx?1:-1) * Math.PI/4
-                        z = maxSize/5
+                        rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                        z = staticPositionZ
                         curTex = this.texList[i]
                         AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
                             size:maxSize,
@@ -5009,7 +5020,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             }
                         })
                     
-                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,(i-centerIdx)*width3d - maxSize, -maxSize,2*maxSize,2*maxSize)
+                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i]-maxSize, -maxSize,2*maxSize,2*maxSize)
                     }else{
                         break;
                     }
@@ -5020,8 +5031,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(i=this.texList.length-1;i>0;i--){
                 
                     if(i!=centerIdx){
-                        rotateRad = (i>centerIdx?1:-1) * Math.PI/4
-                        z = maxSize/5
+                        rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                        z = staticPositionZ
                         curTex = this.texList[i]
                         AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
                             size:maxSize,
@@ -5033,7 +5044,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             }
                         })
                     
-                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,(i-centerIdx)*width3d - maxSize, -maxSize,2*maxSize,2*maxSize)
+                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i] - maxSize, -maxSize,2*maxSize,2*maxSize)
                     }else{
                         break;
                     }
@@ -5041,8 +5052,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
                 }
                 //draw center
-                rotateRad = d/width3d * Math.PI/4
-                z = d/width3d *maxSize/5
+                d = curPosXList[centerIdx]
+                rotateRad = d/distanceBetweenPhotos * staticRotateRad
+                z = Math.abs(d)/distanceBetweenPhotos * staticPositionZ
                 curTex = this.texList[centerIdx]
                 AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
                     size:maxSize,
@@ -5054,7 +5066,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     }
                 })
             
-                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, - maxSize, -maxSize,2*maxSize,2*maxSize)
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curPosXList[centerIdx] - maxSize, -maxSize,2*maxSize,2*maxSize)
                 ctx.restore();
             }catch(err){
                 console.log('错误描述',err);
