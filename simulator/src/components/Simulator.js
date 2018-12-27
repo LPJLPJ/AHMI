@@ -1958,10 +1958,10 @@ module.exports = React.createClass({
         var tag = this.findTagByName(widget.tag);
         var count = widget.info.count;
         var curValue = (tag && tag.value) || 0;
-        var enableAnimation = widget.info.enableAnimation||true;
+        var enableAnimation = widget.info.enableAnimation;
         var width = widget.info.width;
         var interval = widget.info.interval;
-        var singleWidth=(width-interval*(count-1))/count;
+        var singleWidth=widget.info.photoWidth
         widget.curValue = curValue;
 
         var distanceBetweenPhotos = singleWidth*2/3;
@@ -2009,7 +2009,7 @@ module.exports = React.createClass({
         var curValue = widget.curValue;
         var texList = widget.texList
         var curTex
-        var singleWidth=(width-interval*(count-1))/count;
+        var singleWidth=widget.info.photoWidth
         var maxSize = Math.max(singleWidth,height)
         var totalFrame = widget.totalFrame||30
         var curFrame = widget.curFrame ||totalFrame

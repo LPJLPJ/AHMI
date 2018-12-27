@@ -649,12 +649,14 @@ ideServices
 
         this.getDefaultGallery= function () {
             var subLayerNode=CanvasService.getSubLayerNode();
-
+            var defaultWidth = (subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
             var info={
-                width:(subLayerNode.getWidth()/subLayerNode.getZoom()) / 4, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                width:defaultWidth, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
                 left: 0, top: 0,
                 originX: 'center', originY: 'center',
                 interval:0,//间距
+                photoWidth:parseInt(defaultWidth/3),
+                curValue:1,
                 intervalScale:0,//间距长度占总长度的比例,缩放时用到
                 count:3,
                 arrange:"horizontal"  //horizontal:水平   vertical:竖直
@@ -691,7 +693,7 @@ ideServices
                     name:'图片3',
                     currentSliceIdx:0,
                     slices:[{
-                        color:'rgba(244,244,244,0.3)',
+                        color:_getRandomColor(),
                         imgSrc:'',
                         name:'图片3'
                     }]

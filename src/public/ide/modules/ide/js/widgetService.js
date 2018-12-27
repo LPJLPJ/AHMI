@@ -4926,7 +4926,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         widgetType:Type.MyGallery,
         info:{
             interval:0,
-            arrange:'horizontal'
+            arrange:'horizontal',
+            curValue:0,
+            photoWidth:100
         },
         funcAttrs:{
             texList:function(level){
@@ -4958,12 +4960,22 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 })
                 reRender()
                 arg.callback && arg.callback()
+            },
+            changeCurValue:function(arg){
+                this.curValue = arg.curValue
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changePhotoWidth:function(arg){
+                this.photoWidth = arg.photoWidth
+                reRender()
+                arg.callback && arg.callback()
             }
         },
         render:function(ctx){
             try{
                 var count = this.texList.length||1;
-                var width=(this.width-this.interval*(count-1))/count;
+                var width= this.photoWidth
                 var height=this.height;
                 var maxSize = Math.max(width,height)
                 var interval=this.interval;
@@ -4992,7 +5004,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 
                 var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
                 var totalLen = this.texList.length
-                var centerIdx = Math.floor(totalLen/2)
+                var centerIdx = this.curValue||0
                 var staticRotateRad = Math.PI/4;
                 var staticPositionZ = maxSize/5;
                 var curPosXList = []
@@ -5007,20 +5019,22 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(i=0;i<this.texList.length;i++){
                 
                     if(i!=centerIdx){
-                        rotateRad = (i>centerIdx?1:-1) * staticRotateRad
-                        z = staticPositionZ
-                        curTex = this.texList[i]
-                        AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
-                            size:maxSize,
-                            position:{
-                                z:z
-                            },
-                            rotation:{
-                                y:rotateRad
-                            }
-                        })
-                    
-                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i]-maxSize, -maxSize,2*maxSize,2*maxSize)
+                        if(Math.abs(i-centerIdx)<=singleSideLimit){
+                            rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                            z = staticPositionZ
+                            curTex = this.texList[i]
+                            AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                                size:maxSize,
+                                position:{
+                                    z:z
+                                },
+                                rotation:{
+                                    y:rotateRad
+                                }
+                            })
+                        
+                            ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i]-maxSize, -maxSize,2*maxSize,2*maxSize)
+                        }
                     }else{
                         break;
                     }
@@ -5031,20 +5045,22 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(i=this.texList.length-1;i>0;i--){
                 
                     if(i!=centerIdx){
-                        rotateRad = (i>centerIdx?1:-1) * staticRotateRad
-                        z = staticPositionZ
-                        curTex = this.texList[i]
-                        AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
-                            size:maxSize,
-                            position:{
-                                z:z
-                            },
-                            rotation:{
-                                y:rotateRad
-                            }
-                        })
-                    
-                        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i] - maxSize, -maxSize,2*maxSize,2*maxSize)
+                        if(Math.abs(i-centerIdx)<=singleSideLimit){
+                            rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                            z = staticPositionZ
+                            curTex = this.texList[i]
+                            AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                                size:maxSize,
+                                position:{
+                                    z:z
+                                },
+                                rotation:{
+                                    y:rotateRad
+                                }
+                            })
+                        
+                            ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i] - maxSize, -maxSize,2*maxSize,2*maxSize)
+                        }
                     }else{
                         break;
                     }

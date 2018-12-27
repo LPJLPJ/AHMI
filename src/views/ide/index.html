@@ -1336,12 +1336,21 @@
                                    type="number">
                         </div>
 
-                            <div class="attr-item__cell-wrap">
-                                <p class="attr-item__cell-title">间距</p>
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">当前值</p>
                                 <input class="attr-item__cell-input form-control"
-                                       ng-model="component.object.level.info.interval"
+                                    type="number"
+                                    ng-model="component.object.level.info.curValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.gallery.enterCurValue($event)">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">图片宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.photoWidth"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.gallery.enterInterval($event)"
+                                       ng-keypress="component.gallery.enterPhotoWidth($event)"
                                        type="number">
                             </div><div class="attr-item__cell-wrap">
                             <p class="attr-item__cell-title">个数</p>
@@ -1352,15 +1361,7 @@
                                    type="number">
                         </div>
 
-                            <div class="attr-item__cell-wrap lg">
-                                <p class="attr-item__cell-title">方向</p>
-                                <select class="attr-item__cell-input form-control"
-                                        ng-model="component.gallery.arrangeModel"
-                                        ng-change="component.gallery.enterArrange($event)">
-                                    <option value="horizontal">水平</option>
-                                    <option value="vertical">竖直</option>
-                                </select>
-                            </div>
+                            
                         </div>
 
                         <div ng-show="component.object.type=='MyProgress'&&!myMask">

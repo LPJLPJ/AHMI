@@ -71,7 +71,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     highlightModeId: '0'
                 },
                 gallery:{
-                    enterInterval:enterInterval,
+                    // enterInterval:enterInterval,
+                    enterCurValue:enterCurValue,
+                    enterPhotoWidth:enterPhotoWidth,
                     enterCount:enterCount,
                     enterArrange:enterArrange
                 },
@@ -1426,6 +1428,73 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                 var oldOperate = ProjectService.SaveCurrentOperate();
                 ProjectService.ChangeAttributeCount(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+        function enterPhotoWidth(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.photoWidth))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.photoWidth == initObject.level.info.photoWidth) {
+                    return;
+                }
+
+                //判断是否在范围内
+                if ($scope.component.object.level.info.photoWidth <= 0
+                    || $scope.component.object.level.info.photoWidth > $scope.component.object.level.info.width) {
+                    toastr.warning('超出范围');
+
+                    restore();
+                    return;
+                }
+                var option = {
+                    photoWidth: $scope.component.object.level.info.photoWidth
+                };
+
+                ProjectService.ChangeAttributePhotoWidth(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+
+        function enterCurValue(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.curValue))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.curValue == initObject.level.info.curValue) {
+                    return;
+                }
+
+                //判断是否在范围内
+                // if ($scope.component.object.level.info.progressValue < $scope.component.object.level.info.minValue
+                //     || $scope.component.object.level.info.progressValue > $scope.component.object.level.info.maxValue) {
+                //     toastr.warning('超出范围');
+
+                //     restore();
+                //     return;
+                // }
+                var option = {
+                    curValue: $scope.component.object.level.info.curValue
+                };
+
+                ProjectService.ChangeAttributeCurValue(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
 
                 })

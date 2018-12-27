@@ -3342,6 +3342,36 @@ ideServices
                 selectObj.level.pressImg=_option.image;
             };
 
+            this.ChangeAttributePhotoWidth = function (_option, _successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+
+
+                selectObj.level.info.photoWidth=_option.photoWidth;
+
+                var arg={
+                    photoWidth:_option.photoWidth,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changePhotoWidth',arg);
+
+
+            };
+
+            this.ChangeAttributeCurValue = function (_option, _successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+
+
+                selectObj.level.info.curValue=_option.curValue;
+
+                var arg={
+                    curValue:_option.curValue,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeCurValue',arg);
+
+
+            };
+
             this.ChangeAttributeProgressValue= function (_option, _successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
 
