@@ -10,7 +10,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         gridSize,
         fontCanvas = document.createElement('canvas'),
         ctx = fontCanvas.getContext('2d'),
-        paddingRatio = 1;
+        paddingRatio = 1.1;
 
     function initCanvas(width,height) {
         fontCanvas.width = width;
