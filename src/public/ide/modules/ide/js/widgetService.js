@@ -4967,4 +4967,244 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyAnimation.async = true;
 
 
+    function reRender(){
+        var subLayerNode=CanvasService.getSubLayerNode();
+        subLayerNode.renderAll();
+    }
+
+    //General Widget Generation
+    function generateFabricWidget(widget){
+        var widgetType = widget.widgetType;
+        fabric[widgetType]  = fabric.util.createClass(fabric.Object,{
+            type: widgetType,
+            initialize: function (level, options) {
+                this.callSuper('initialize',options);
+                
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                var ctrlOptions=options.ctrlOptions;
+                if(ctrlOptions){
+                    this.setControlsVisibility(ctrlOptions);
+                }
+
+
+                //info attrs
+
+                var attr
+                for(attr in widget.info){
+                    this[attr] = level.info[attr]
+                }
+
+                //func attrs, pass as function
+                for(attr in widget.funcAttrs){
+                    this[attr] = widget.funcAttrs[attr](level)
+                }
+
+
+                //triggers
+                for(var triggerName in widget.triggers){
+                    this.on(triggerName,widget.triggers[triggerName].bind(this))
+                }
+    
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function(ctx){
+                widget.render.call(this,ctx)
+            }
+        });
+        fabric[widgetType].fromLevel = function(level,callback,option){
+            callback && callback(new fabric[widgetType](level, option));
+        };
+        fabric[widgetType].prototype.toObject = (function (toObject){
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                });
+            }
+        })(fabric[widgetType].prototype.toObject);
+        fabric[widgetType].fromObject = function(object,callback){
+            var level=ProjectService.getLevelById(object.id);
+            callback&&callback(new fabric[widgetType](level,object));
+        };
+        fabric[widgetType].async = true;
+    }
+
+
+    //MyGallery Prototype
+    var widgetPrototypes = []
+    var MyGallery = {
+        widgetType:Type.MyGallery,
+        info:{
+            interval:0,
+            arrange:'horizontal',
+            curValue:0,
+            photoWidth:100
+        },
+        funcAttrs:{
+            texList:function(level){
+                return level.texList.map(function(t){
+                    return {
+                        image:ResourceService.getResourceFromCache(t.slices[0].imgSrc),
+                        color:t.slices[0].color
+                    }
+                })
+            }
+        },
+        triggers:{
+            changeArrange:function(arg){
+                this.arrange = arg.arrange
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeInterval:function(arg){
+                this.interval = arg.interval
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeTex:function(arg){
+                this.texList = arg.level.texList.map(function(t){
+                    return {
+                        image:ResourceService.getResourceFromCache(t.slices[0].imgSrc),
+                        color:t.slices[0].color
+                    }
+                })
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeCurValue:function(arg){
+                this.curValue = arg.curValue
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changePhotoWidth:function(arg){
+                this.photoWidth = arg.photoWidth
+                reRender()
+                arg.callback && arg.callback()
+            }
+        },
+        render:function(ctx){
+            try{
+                var count = this.texList.length||1;
+                var width= this.photoWidth
+                var height=this.height;
+                var maxSize = Math.max(width,height)
+                var interval=this.interval;
+                var distanceBetweenPhotos = width*2/3;
+
+                var singleSideLimit = 3
+                
+                var curTex
+                if (width<0){
+                    return;
+                }
+                ctx.save();
+                var drawHandler = function(_ctx){
+                    _ctx.translate(maxSize/2,maxSize/2)
+                    if(curTex.image){
+                        _ctx.drawImage(curTex.image, -width / 2, -height / 2,width,height);
+                    }else{
+                        _ctx.fillStyle=curTex.color
+                        _ctx.fillRect(
+                            -(width / 2),
+                            -(height / 2) ,
+                            width ,
+                            height );
+                    }
+                }.bind(this)
+                
+                var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
+                var totalLen = this.texList.length
+                var centerIdx = this.curValue||0
+                var staticRotateRad = Math.PI/4;
+                var staticPositionZ = maxSize/5;
+                var curPosXList = []
+
+                for(i=0;i<count;i++){
+                    curPosXList.push((i-centerIdx)*distanceBetweenPhotos)
+                }
+                var width3d = width/2
+                var rotateRad,z
+                var d = 0;
+                var i = 0;
+                for(i=0;i<this.texList.length;i++){
+                
+                    if(i!=centerIdx){
+                        if(Math.abs(i-centerIdx)<=singleSideLimit){
+                            rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                            z = staticPositionZ
+                            curTex = this.texList[i]
+                            AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                                size:maxSize,
+                                position:{
+                                    z:z
+                                },
+                                rotation:{
+                                    y:rotateRad
+                                }
+                            })
+                        
+                            ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i]-maxSize, -maxSize,2*maxSize,2*maxSize)
+                        }
+                    }else{
+                        break;
+                    }
+                    
+                    //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+                }
+
+                for(i=this.texList.length-1;i>0;i--){
+                
+                    if(i!=centerIdx){
+                        if(Math.abs(i-centerIdx)<=singleSideLimit){
+                            rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                            z = staticPositionZ
+                            curTex = this.texList[i]
+                            AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                                size:maxSize,
+                                position:{
+                                    z:z
+                                },
+                                rotation:{
+                                    y:rotateRad
+                                }
+                            })
+                        
+                            ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i] - maxSize, -maxSize,2*maxSize,2*maxSize)
+                        }
+                    }else{
+                        break;
+                    }
+                    
+                    //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+                }
+                //draw center
+                d = curPosXList[centerIdx]
+                rotateRad = d/distanceBetweenPhotos * staticRotateRad
+                z = Math.abs(d)/distanceBetweenPhotos * staticPositionZ
+                curTex = this.texList[centerIdx]
+                AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                    size:maxSize,
+                    position:{
+                        z:z
+                    },
+                    rotation:{
+                        y:rotateRad
+                    }
+                })
+            
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curPosXList[centerIdx] - maxSize, -maxSize,2*maxSize,2*maxSize)
+                ctx.restore();
+            }catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染'+this.type+'出错');
+            }
+        }
+    }
+    widgetPrototypes.push(MyGallery)
+    for(var i=0;i<widgetPrototypes.length;i++){
+        generateFabricWidget(widgetPrototypes[i])
+    }
+    
+
 }]);

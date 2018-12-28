@@ -1954,7 +1954,192 @@ module.exports = React.createClass({
 
         cb && cb();
     },
+    drawGallery: function (curX, curY, widget, options, cb) {
+        var tag = this.findTagByName(widget.tag);
+        var count = widget.info.count;
+        var curValue = (tag && tag.value) || 0;
+        var enableAnimation = widget.info.enableAnimation;
+        var width = widget.info.width;
+        var interval = widget.info.interval;
+        var singleWidth=widget.info.photoWidth
+        widget.curValue = curValue;
 
+        var distanceBetweenPhotos = singleWidth*2/3;
+
+        //galleryOffset
+        var galleryOffset = 0
+        galleryOffset = curValue * distanceBetweenPhotos
+        
+        if(widget.galleryOffset!==undefined){
+            if(enableAnimation){
+
+                // if(widget.animateTimerId!==undefined && widget.animateTimerId !== 0){
+                //     clearInterval(widget.animateTimerId)
+                //     widget.animateTimerId = 0
+                // }
+                if(widget.animateTimerId===undefined || widget.animateTimerId === 0){
+
+                    var fps = 30
+                    var duration = (widget.transition && widget.transition.duration) || 1000
+                    var easing = this.getEasingFunc(widget)
+                    widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, duration, fps, easing, function (obj) {
+                        widget.galleryOffset = obj.curX
+                        this.draw()
+                    }.bind(this), function () {
+                        widget.galleryOffset = galleryOffset
+                        widget.animateTimerId = 0
+    
+                    }.bind(this))
+                }
+
+                
+                
+            }else{
+                widget.galleryOffset = galleryOffset
+            }
+        }else{
+            widget.galleryOffset = galleryOffset
+        }
+        
+    },
+    paintGallery:function(curX, curY, widget, options, cb){
+        var curPosXList = []
+        
+        var ctx = this.offctx
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var interval = widget.info.interval;
+        var count = widget.info.count;
+
+        var centerX = curX + width/2
+        var centerY = curY + height/2
+        var i
+        var curValue = widget.curValue;
+        var texList = widget.texList
+        var curTex
+        var singleWidth=widget.info.photoWidth
+        var maxSize = Math.max(singleWidth,height)
+        var totalFrame = widget.totalFrame||30
+        var curFrame = widget.curFrame ||totalFrame
+
+        var distanceBetweenPhotos = singleWidth*2/3;
+
+        var singleSideLimit = 3
+
+        for(i=0;i<count;i++){
+            curPosXList.push((i-0)*distanceBetweenPhotos - widget.galleryOffset+ width/2)
+        }
+        widget.curPosXList = curPosXList
+        
+        var drawHandler = function(_ctx){
+            _ctx.translate(maxSize/2,maxSize/2)
+            // if(curTex.image){
+            //     _ctx.drawImage(curTex.image, -singleWidth / 2, -height / 2,singleWidth,height);
+            // }else{
+            //     _ctx.fillStyle=curTex.color
+            //     _ctx.fillRect(
+            //         -(singleWidth / 2),
+            //         -(height / 2) ,
+            //         singleWidth ,
+            //         height );
+            // }
+            this.drawBg(-singleWidth / 2, -height / 2,singleWidth,height,curTex.slices[0].imgSrc,curTex.slices[0].color,_ctx)
+        }.bind(this)
+        
+        var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
+        //var totalLen = this.texList.length
+        var centerIdx = -1
+        //calculate the one closest to center
+        var curDistanceMin = width
+        var curDistance
+        for(i=0;i<count;i++){
+            curDistance = Math.abs(widget.curPosXList[i] - width/2)
+            if(curDistance < curDistanceMin){
+                curDistanceMin = curDistance
+                centerIdx = i
+            }
+        }
+
+
+        var width3d = singleWidth/2
+        var rotateRad,z
+        
+        
+        var staticRotateRad = Math.PI/4;
+        var staticPositionZ = maxSize/5;
+        for(i=0;i<count;i++){
+        
+            if(i!=centerIdx){
+                if(Math.abs(i-centerIdx)<=singleSideLimit){
+                    rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                    z = staticPositionZ
+                    curTex = texList[i]
+                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                        size:maxSize,
+                        position:{
+                            z:z
+                        },
+                        rotation:{
+                            y:rotateRad
+                        }
+                    })
+                
+                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+                }
+                
+            }else{
+                break;
+            }
+            
+            //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+        }
+
+        for(i=count-1;i>0;i--){
+        
+            if(i!=centerIdx){
+                if(Math.abs(i-centerIdx)<=singleSideLimit){
+                    rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                    z = staticPositionZ
+                    curTex = texList[i]
+                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                        size:maxSize,
+                        position:{
+                            z:z
+                        },
+                        rotation:{
+                            y:rotateRad
+                        }
+                    })
+                
+                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+
+                }
+                
+            }else{
+                break;
+            }
+            
+            //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+        }
+        //draw center
+        var d = widget.curPosXList[centerIdx] - width/2
+        rotateRad = d/distanceBetweenPhotos * staticRotateRad
+        z = Math.abs(d)/distanceBetweenPhotos * staticPositionZ
+        curTex = texList[centerIdx]
+        AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+            size:maxSize,
+            position:{
+                z:z
+            },
+            rotation:{
+                y:rotateRad
+            }
+        })
+    
+        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+
+        cb && cb()
+    },
     drawProgress: function (curX, curY, widget, options, cb) {
 
         // widget.currentValue = curProgress

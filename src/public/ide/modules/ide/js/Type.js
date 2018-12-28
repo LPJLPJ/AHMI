@@ -35,7 +35,8 @@ ideServices.
         var MyAlphaImg = this.MyAlphaImg = 'MyAlphaImg';
         var MyTouchTrack = this.MyTouchTrack = 'MyTouchTrack'
         this.MyAlphaSlide = 'MyAlphaSlide';
-        this.MyTextInput = 'MyTextInput'
+        this.MyTextInput = 'MyTextInput';
+        this.MyGallery = 'MyGallery';
 
 
 
@@ -72,7 +73,8 @@ ideServices.
             this.MyAlphaImg,
             this.MyTouchTrack,
             this.MyAlphaSlide,
-            this.MyTextInput
+            this.MyTextInput,
+            this.MyGallery
         ]
         for(var i=0;i<widgets.length;i++){
             if(widgets[i]==_typeStr){

@@ -843,6 +843,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultAlphaSlide();
             }else if(_index === 18) {
                 newWidget = TemplateProvider.getDefaultTextInput();
+            }else if(_index === 19){
+                newWidget = TemplateProvider.getDefaultGallery();
             }else if(_index === 30) {
                 newWidget = TemplateProvider.getDefaultAlphaImg();
             }

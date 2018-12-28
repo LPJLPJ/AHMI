@@ -70,6 +70,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterArrange: enterArrange,
                     highlightModeId: '0'
                 },
+                gallery:{
+                    enableAnimationModeId: '0',
+                    // enterInterval:enterInterval,
+                    enterCurValue:enterCurValue,
+                    enterPhotoWidth:enterPhotoWidth,
+                    enterCount:enterCount,
+                    enterArrange:enterArrange
+                },
                 progress: {
                     progressModeId: '0',
                     enableAnimationModeId: '0',
@@ -591,6 +599,19 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.buttonGroup.highlightModeId = '1';
                         }
                         break;
+                    case Type.MyGallery:
+                        if (!$scope.component.object.level.info.enableAnimation||$scope.component.object.level.info.enableAnimation === false) {
+                            $scope.component.gallery.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.gallery.enableAnimationModeId = '0'
+                        }
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
+                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        }
+                        //$scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
+                    break;
                     case Type.MyNum:
                         $scope.component.num.numModeId = $scope.component.object.level.info.numModeId;
                         $scope.component.num.symbolMode = $scope.component.object.level.info.symbolMode;
@@ -1264,6 +1285,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectEnableAnimationMode = $scope.component.num.enableAnimationModeId;
             } else if (selectObj.type === Type.MyTexNum) {
                 selectEnableAnimationMode = $scope.component.texNum.enableAnimationModeId;
+            } else if(selectObj.type === Type.MyGallery){
+                selectEnableAnimationMode = $scope.component.gallery.enableAnimationModeId;
             }
             var option = {
                 enableAnimationModeId: selectEnableAnimationMode
@@ -1420,7 +1443,115 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 };
 
                 var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeButtonCount(option, function () {
+                ProjectService.ChangeAttributeCount(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+        function enterPhotoWidth(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.photoWidth))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.photoWidth == initObject.level.info.photoWidth) {
+                    return;
+                }
+
+                //判断是否在范围内
+                if ($scope.component.object.level.info.photoWidth <= 0
+                    || $scope.component.object.level.info.photoWidth > $scope.component.object.level.info.width) {
+                    toastr.warning('超出范围');
+
+                    restore();
+                    return;
+                }
+                var option = {
+                    photoWidth: $scope.component.object.level.info.photoWidth
+                };
+
+                ProjectService.ChangeAttributePhotoWidth(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+
+        function enterCurValue(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.curValue))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.curValue == initObject.level.info.curValue) {
+                    return;
+                }
+
+                //判断是否在范围内
+                // if ($scope.component.object.level.info.progressValue < $scope.component.object.level.info.minValue
+                //     || $scope.component.object.level.info.progressValue > $scope.component.object.level.info.maxValue) {
+                //     toastr.warning('超出范围');
+
+                //     restore();
+                //     return;
+                // }
+                var option = {
+                    curValue: $scope.component.object.level.info.curValue
+                };
+
+                ProjectService.ChangeAttributeCurValue(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+        //general enter count
+        function enterCount(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.count)) ) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                var interval = $scope.component.object.level.info.interval || 0;
+                var count = $scope.component.object.level.info.count || 0;
+                var width = $scope.component.object.level.info.width || 0;
+                if (interval * (count - 1) > width) {
+                    toastr.warning('配置不合理');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.count == initObject.level.info.count) {
+                    return;
+                }
+                if ($scope.component.object.level.info.count < 1) {
+                    toastr.warning('至少为1');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    count: parseInt($scope.component.object.level.info.count)
+                    //ignoreHighlight:$scope.component.object.level.type === Type.MyGallery
+                };
+
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.ChangeAttributeCount(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
 
                 })
@@ -1584,10 +1715,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectArrange = $scope.component.textArea.arrangeModel;
             } else if (selectObj.type == Type.MyButton) {
                 selectArrange = $scope.component.button.arrangeModel;
-            } else if (selectObj.type = Type.MyDateTime) {
+            } else if (selectObj.type == Type.MyDateTime) {
                 selectArrange = $scope.component.dateTime.arrangeModel;
-            } else if (selectObj.type = Type.MyTexTime) {
+            } else if (selectObj.type == Type.MyTexTime) {
                 selectArrange = $scope.component.texTime.arrangeModel;
+            } else if (selectObj.type == Type.MyGallery){
+                selectArrange = $scope.component.gallery.arrangeModel;
             } else {
                 return;
             }

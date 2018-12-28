@@ -647,6 +647,61 @@ ideServices
             }
         };
 
+        this.getDefaultGallery= function () {
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var defaultWidth = (subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
+            var info={
+                width:defaultWidth, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                interval:0,//间距
+                photoWidth:parseInt(defaultWidth/3),
+                curValue:1,
+                intervalScale:0,//间距长度占总长度的比例,缩放时用到
+                count:3,
+                arrange:"horizontal"  //horizontal:水平   vertical:竖直
+                
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                normalImg:'',
+                pressImg:'',
+                name: 'NewGallery',
+                type: Type.MyGallery,
+                expand:true,
+                url:'',
+                buttonModeId:'0',
+                zIndex:0,
+                transition:_.cloneDeep(defaultTransition),
+                texList:[{
+                    name:'图片1',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'图片1'
+                    }]
+                },{
+                    name:'图片2',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'图片2'
+                    }]
+                },{
+                    name:'图片3',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'图片3'
+                    }]
+                }]
+            }
+        };
+
         this.getDefaultButtonTex= function () {
             return{
                 name:'按钮纹理',
@@ -659,6 +714,18 @@ ideServices
                     color:_getRandomColor(),
                     imgSrc:'',
                     name:'按下后'
+                }]
+            }
+        };
+
+        this.getDefaultTex= function () {
+            return{
+                name:'纹理',
+                currentSliceIdx:0,
+                slices:[{
+                    color:_getRandomColor(),
+                    imgSrc:'',
+                    name:'纹理'
                 }]
             }
         };
