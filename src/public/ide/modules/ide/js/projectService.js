@@ -660,8 +660,8 @@ ideServices
 
                     var pageCount=currentPage.layers.length;
                     var options = !!currentPage.backgroundImage?{
-                        width:project.currentSize.width,
-                        height:project.currentSize.height
+                        width:project.initSize.width,
+                        height:project.initSize.height
                     }:null;
                     pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
                         pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
@@ -2334,8 +2334,8 @@ ideServices
                     //+
                     //切换到另一页，不需要更新这一页的缩率图
                     var options = !!currentPage.backgroundImage?{
-                        width:project.currentSize.width,
-                        height:project.currentSize.height
+                        width:project.initSize.width,
+                        height:project.initSize.height
                     }:null;
                     //+
                     pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
@@ -5093,6 +5093,7 @@ ideServices
 
                     pageNode.setWidth(project.currentSize.width*_scale);
                     pageNode.setHeight(project.currentSize.height*_scale);
+                    pageNode.absolutePan({x:-100,y:-100})
 
                 }else if (_scaleMode=='subCanvas'){
                     var currentLayer=_level?_level:_self.getCurrentLayer();
@@ -5336,8 +5337,8 @@ ideServices
 
                 var pageColor = currentPage.backgroundColor||'rgba(191,191,191,0.3)';
                 var pageBackgroundImgSrc = currentPage.backgroundImage||"";
-                var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
-                var pageHeight = (project.currentSize&&project.currentSize.height)||480;
+                var pageWidth = (project.initSize&&project.initSize.width)||1280;
+                var pageHeight = (project.initSize&&project.initSize.height)||480;
 
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
                 backgroundCanvas.width=_width;
