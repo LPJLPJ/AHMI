@@ -307,6 +307,43 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
 
 
+    //MyOutBorder
+    fabric.MyOutBorder = fabric.util.createClass(fabric.Object,{
+        type:'MyOutBorder',
+        initialize:function (options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.selectable=false;
+            this.currentSize = options.currentSize
+            this.initSize = options.initSize
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                var color = 'rgba(255,255,255,0.5)'
+                var cWidth = this.currentSize.width
+                var cHeight = this.currentSize.height
+                var iWidth = this.initSize.width
+                var iHeight = this.initSize.height
+                ctx.fillStyle = color
+                ctx.fillRect(-cWidth/2,-cHeight/2,cWidth,cHeight)
+            }catch (err) {
+                console.log('渲染错误',err)
+            }
+        }
+    });
+    
+    fabric.MyOutBorder.fromLevel=function(callback,option){
+        var outBorder=new fabric.MyOutBorder(option);
+        callback&&callback(outBorder);
+    };
+
+
     //progress
     fabric.MyProgress = fabric.util.createClass(fabric.Object, {
         type: Type.MyProgress,

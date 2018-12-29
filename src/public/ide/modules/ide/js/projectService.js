@@ -663,6 +663,9 @@ ideServices
                         width:project.initSize.width,
                         height:project.initSize.height
                     }:null;
+                    // if(!currentPage.initSize){
+                    //     currentPage.initSize = project.initSize
+                    // }
                     pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
                         pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
                             //-
@@ -3296,8 +3299,8 @@ ideServices
                     case Type.MyPage:
                         var pageNode=CanvasService.getPageNode();
                         var opts = (!!_option.image)?{
-                            width:pageNode.getWidth()/pageNode.getZoom(),
-                            height:pageNode.getHeight()/pageNode.getZoom()
+                            width:project.initSize.width,
+                            height:project.initSize.height
                         }:null;
                         var img = _option.image?_option.image:null;
                         pageNode.setBackgroundImage(img, function () {
@@ -5469,6 +5472,10 @@ ideServices
                                 _addMatteInCanvasNode(data.matte)
                             }
                         }
+
+                        //draw outborder
+                        addOutBorder()
+
                         break;
                     case Type.MySubLayer:
                         widgets = data.widgets;
@@ -5659,6 +5666,32 @@ ideServices
 
             };
 
+            //add OutBorder
+
+            function addOutBorder(borderData){
+                
+                var pageNode = CanvasService.getPageNode();
+                
+                var currentPage=_self.getCurrentPage();
+
+                
+                var outBorder=new fabric.MyOutBorder({
+                    width:project.currentSize.width,
+                    height:project.currentSize.height,
+                    top:0,
+                    left:0,
+                    currentSize:project.currentSize,
+                    initSize:project.initSize
+                });
+                pageNode.add(outBorder);
+                outBorder.moveTo(pageNode,0);
+                pageNode.renderAll.bind(pageNode)();
+
+                
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                
+            }
+
             /**
              * 模具框
              * @return maskStyle
@@ -5710,8 +5743,8 @@ ideServices
                     matteData.matteOn=true;
                     matteInfo=matteData;
                     initiator={
-                        width:pageNode.getWidth()/pageNode.getZoom(),
-                        height:pageNode.getHeight()/pageNode.getZoom(),
+                        width:project.initSize.width,
+                        height:project.initSize.height,
                         top:matteData.info.top,
                         left:matteData.info.left,
                         backgroundImg:matteData.info.backgroundImg,
