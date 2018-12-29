@@ -319,6 +319,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.currentSize = options.currentSize
             this.initSize = options.initSize
 
+            // this.patternSrc = '/public/ide/modules/ide/images/paper.png'
+            // this.pattern = null
+            // if(!window.outBorderPattern){
+            //     window.outBorderPattern = new Image()
+            //     window.outBorderPattern.src = this.patternSrc
+            // }
+
             this.on('changeCurrentSize',function(currentSize){
                 this.width = currentSize.width
                 this.height = currentSize.height
@@ -336,7 +343,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render:function(ctx){
             try{
-                var color = 'rgba(255,255,255,1)'
+                var color = '#f5f4f6'
                 var cWidth = this.currentSize.width
                 var cHeight = this.currentSize.height
                 //console.log('render',cWidth,cHeight)
@@ -346,6 +353,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var halfCHeight = parseInt(cHeight/2)
                 var halfIWidth = parseInt(iWidth/2)
                 var halfIHeight = parseInt(iHeight/2)
+
+                //pattern
+                var pattern = ctx.createPattern(window.outBorderPattern, 'repeat');
+
+
                 ctx.save()
                 //ctx.translate(parseInt((iWidth-cWidth)/2),parseInt((iHeight-cHeight)/2))
                 ctx.beginPath()
@@ -368,6 +380,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.clip()
                 ctx.fillStyle = color
                 ctx.fillRect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                // ctx.fillStyle = pattern
+                // ctx.fillRect(-halfCWidth,-halfCHeight,cWidth,cHeight)
                 ctx.restore()
             }catch (err) {
                 console.log('渲染错误',err)

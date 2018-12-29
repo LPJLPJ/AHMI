@@ -2043,7 +2043,7 @@ ideServices
                     height:parseInt(2*Math.max(Math.abs(topMost- project.initSize.height/2),Math.abs(bottomMost- project.initSize.height/2)))
                 }
 
-                console.log(_page.currentSize)
+                // console.log(_page.currentSize)
             }
 
             this.updateOutBorder = function(){
@@ -5136,7 +5136,7 @@ ideServices
                     x:parseInt((initSize.width - currentSize.width)/2),
                     y:parseInt((initSize.height - currentSize.height)/2)
                 }
-                console.log(pan)
+                // console.log(pan)
                 return pan
             }
 
