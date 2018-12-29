@@ -355,7 +355,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var halfIHeight = parseInt(iHeight/2)
 
                 //pattern
-                var pattern = ctx.createPattern(window.outBorderPattern, 'repeat');
+                //var pattern = ctx.createPattern(window.outBorderPattern, 'repeat');
 
 
                 ctx.save()

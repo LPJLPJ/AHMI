@@ -4385,6 +4385,12 @@ ideServices
                         currentLayer.info.top = _option.top;
 
                     }
+                    //calculate new page border
+                    this.calculateCurrentSizeToSurroundLayers()
+                    //update border
+                    this.updateOutBorder();
+                    _self.ScaleCanvas('page');
+
                     pageNode.renderAll();
                     // currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
                     _self.OnLayerSelected(currentLayer, function () {
@@ -4934,6 +4940,12 @@ ideServices
                     //for fix scale bug!!!
                     object.target.fire('OnRelease',object.target.id);
 
+                    //calculate new page border
+                    this.calculateCurrentSizeToSurroundLayers()
+                    //update border
+                    this.updateOutBorder();
+                    _self.ScaleCanvas('page');
+
                     pageNode.renderAll();
                     // currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
                     //console.log(currentPage.proJsonStr);
@@ -5158,7 +5170,7 @@ ideServices
                             height:project.initSize.height
                         }
                     }
-                    console.log('scale',currentPage.currentSize.width,currentPage.currentSize.height)
+                    // console.log('scale',currentPage.currentSize.width,currentPage.currentSize.height)
                     pageNode.setWidth(currentPage.currentSize.width*_scale);
                     pageNode.setHeight(currentPage.currentSize.height*_scale);
                     //move viewPoint make current center at init center
