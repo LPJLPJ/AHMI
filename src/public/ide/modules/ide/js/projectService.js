@@ -2012,6 +2012,50 @@ ideServices
                 _successCallback && _successCallback();
             }
 
+
+            this.calculateCurrentSizeToSurroundLayers = function(){
+                var _page = this.getCurrentPage()
+                var layers = _page.layers;
+                var leftMost = 0
+                var rightMost = project.initSize.width
+                var topMost = 0
+                var bottomMost = project.initSize.height
+                var curLayer, curRight, curBottom
+                for(var i=0;i<layers.length;i++){
+                    curLayer = layers[i]
+                    if(curLayer.info.left < leftMost){
+                        leftMost = curLayer.info.left
+                    }
+                    if(curLayer.info.top < topMost){
+                        topMost = curLayer.info.top
+                    }
+                    curRight = curLayer.info.left + curLayer.info.width
+                    if(curRight > rightMost){
+                        rightMost = curRight
+                    }
+                    curBottom = curLayer.info.top + curLayer.info.height
+                    if(curBottom > bottomMost){
+                        bottomMost = curBottom
+                    }
+                }
+                _page.currentSize = {
+                    width:parseInt(2*Math.max(Math.abs(rightMost- project.initSize.width/2),Math.abs(leftMost- project.initSize.width/2))),
+                    height:parseInt(2*Math.max(Math.abs(topMost- project.initSize.height/2),Math.abs(bottomMost- project.initSize.height/2)))
+                }
+
+                console.log(_page.currentSize)
+            }
+
+            this.updateOutBorder = function(){
+                var pageNode=CanvasService.getPageNode();
+                var page = _self.getCurrentPage()
+                _.forEach(pageNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.type == 'MyOutBorder') {
+                        _fabObj.fire('changeCurrentSize',page.currentSize)
+                    }
+                });
+            }
+
             /**
              * 主要操作
              * 放下一个可操作对象
@@ -2034,7 +2078,13 @@ ideServices
 
                 }
                 if (selectObj.type==Type.MyLayer){
+                    
                     selectObj.target.fire('OnRelease',selectObj.target.id);
+                    //calculate new page border
+                    this.calculateCurrentSizeToSurroundLayers()
+                    //update border
+                    this.updateOutBorder();
+                    _self.ScaleCanvas('page');
 
                 }else if (selectObj.type==Type.MyGroup&&selectObj.mode==0) {
                     var fabGroup = selectObj.target;
@@ -5081,6 +5131,15 @@ ideServices
                 })
             };
 
+            this.calculatePanWithCurrentSize = function(currentSize,initSize){
+                var pan =  {
+                    x:parseInt((initSize.width - currentSize.width)/2),
+                    y:parseInt((initSize.height - currentSize.height)/2)
+                }
+                console.log(pan)
+                return pan
+            }
+
             /**
              * 缩放画布
              * @param _scaleMode 模式 'page' or 'subCanvas'
@@ -5093,10 +5152,17 @@ ideServices
                     var pageNode=CanvasService.getPageNode();
                     _scale=ViewService.getScaleFloat('page');
                     pageNode.setZoom(_scale);
-
-                    pageNode.setWidth(project.currentSize.width*_scale);
-                    pageNode.setHeight(project.currentSize.height*_scale);
-                    pageNode.absolutePan({x:-100,y:-100})
+                    if(!currentPage.currentSize){
+                        currentPage.currentSize = {
+                            width:project.initSize.width,
+                            height:project.initSize.height
+                        }
+                    }
+                    console.log('scale',currentPage.currentSize.width,currentPage.currentSize.height)
+                    pageNode.setWidth(currentPage.currentSize.width*_scale);
+                    pageNode.setHeight(currentPage.currentSize.height*_scale);
+                    //move viewPoint make current center at init center
+                    pageNode.absolutePan(_self.calculatePanWithCurrentSize(currentPage.currentSize,project.initSize))
 
                 }else if (_scaleMode=='subCanvas'){
                     var currentLayer=_level?_level:_self.getCurrentLayer();
@@ -5674,13 +5740,19 @@ ideServices
                 
                 var currentPage=_self.getCurrentPage();
 
-                
+                if(!currentPage.currentSize){
+                    currentPage.currentSize = {
+                        width:project.initSize.width,
+                        height:project.initSize.height
+                    }
+                }
+                var pan = _self.calculatePanWithCurrentSize(currentPage.currentSize,project.initSize)
                 var outBorder=new fabric.MyOutBorder({
-                    width:project.currentSize.width,
-                    height:project.currentSize.height,
-                    top:0,
-                    left:0,
-                    currentSize:project.currentSize,
+                    width:currentPage.currentSize.width,
+                    height:currentPage.currentSize.height,
+                    left:pan.x,
+                    top:pan.y,
+                    currentSize:currentPage.currentSize,
                     initSize:project.initSize
                 });
                 pageNode.add(outBorder);

@@ -319,19 +319,56 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.currentSize = options.currentSize
             this.initSize = options.initSize
 
+            this.on('changeCurrentSize',function(currentSize){
+                this.width = currentSize.width
+                this.height = currentSize.height
+                this.left = parseInt((this.initSize.width - this.width)/2)
+                this.top = parseInt((this.initSize.height - this.height)/2)
+                this.currentSize = currentSize
+
+                //console.log('change current size',this.currentSize.width,this.currentSize.height)
+                // pageNode.renderAll();
+            })
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render:function(ctx){
             try{
-                var color = 'rgba(255,255,255,0.5)'
+                var color = 'rgba(255,255,255,1)'
                 var cWidth = this.currentSize.width
                 var cHeight = this.currentSize.height
+                //console.log('render',cWidth,cHeight)
                 var iWidth = this.initSize.width
                 var iHeight = this.initSize.height
+                var halfCWidth = parseInt(cWidth/2)
+                var halfCHeight = parseInt(cHeight/2)
+                var halfIWidth = parseInt(iWidth/2)
+                var halfIHeight = parseInt(iHeight/2)
+                ctx.save()
+                //ctx.translate(parseInt((iWidth-cWidth)/2),parseInt((iHeight-cHeight)/2))
+                ctx.beginPath()
+                ctx.rect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                ctx.moveTo(-halfIWidth,-halfIHeight)
+                ctx.lineTo(-halfIWidth,halfIHeight)
+                ctx.lineTo(halfIWidth,halfIHeight)
+                ctx.lineTo(halfIWidth,-halfIHeight)
+                
+                
+                ctx.lineTo(-halfIWidth,-halfIHeight)
+                //ctx.rect(-iWidth/2,-iHeight/2,iWidth,iHeight)
+                // ctx.globalCompositeOperation = 'destination-out';
+                // ctx.closePath()
+                // ctx.moveTo(80, 100);
+                // ctx.lineTo(50, 150)
+                // ctx.lineTo(110, 150);
+                // ctx.lineTo(80, 100);
+                //ctx.closePath()
+                ctx.clip()
                 ctx.fillStyle = color
-                ctx.fillRect(-cWidth/2,-cHeight/2,cWidth,cHeight)
+                ctx.fillRect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                ctx.restore()
             }catch (err) {
                 console.log('渲染错误',err)
             }
