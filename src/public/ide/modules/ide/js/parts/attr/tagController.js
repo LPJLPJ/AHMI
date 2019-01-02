@@ -1248,6 +1248,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyTouchTrack:
             case Type.MyAlphaImg:
             case Type.MyTextInput:
+            case Type.MyButton:
                 $scope.component.showTagPanel = true;
                 break;
             default:

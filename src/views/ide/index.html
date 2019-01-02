@@ -1157,7 +1157,7 @@
                             <!--<option value="vertical">竖直</option>-->
                             <!--</select>-->
                             <!--</div>-->
-                            <!--<div class="attr-item__cell-wrap lg">
+                            <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">模式</p>
                                 <select class="attr-item__cell-input form-control"
                                         ng-model="component.button.buttonModeId"
@@ -1166,7 +1166,7 @@
                                         {{mode.name}}
                                     </option>
                                 </select>
-                            </div>-->
+                            </div>
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">文本</p>
                                 <input type="text"
@@ -4447,45 +4447,6 @@
                                         </div>
                                     </li>
                                 </ul>
-
-
-                                <!--<table class="attr-item__table table table-bordered" id="resourceList">
-                                    <thead>
-                                    <tr align="center">
-                                        <td class="col-xs-1">预览</td>
-                                        <td class="col-xs-1">详情</td>
-                                        <td class="col-xs-1">操作</td>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr class="img-info" ng-repeat="file in component.top.files track by $index">
-                                        <td align="middle">
-                                            <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
-                                            <span width="40px" height="50px" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
-                                        </td>
-                                        <td>
-                                            <input class="img-name"
-                                                   type='text'
-                                                   style="width: 80px;border: 0;"
-                                                   ng-model="file.name"
-                                                   ng-focus="store(this)"
-                                                   ng-blur="enterName(this)"
-                                                   ng-keypress="enterPress($event,this)">
-                                            <p>
-                                                <span>{{file.type||''}}</span>
-                                                <span>{{file.size/1024 | number:2}}K</span>
-                                            </p>
-                                        </td>
-                                        <td align="center">
-                                            <span class="iconfont img-option c-p" ng-click="component.top.downloadFile($index)" ng-show="component.top.showDel" style="font-size: 22px;vertical-align: -2px;">&#xe666;</span>
-                                            <span class="iconfont img-option c-p" ng-click="openPanel($index)" ng-show="component.top.showDel" style="font-size: 30px">&#xe646;</span>
-                                            <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
-                                                <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>-->
                             </div>
 
                             <!--<div class="text-right">-->
