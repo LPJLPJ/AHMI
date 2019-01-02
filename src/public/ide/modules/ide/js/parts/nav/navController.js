@@ -1145,8 +1145,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                 }
                             });
                         }, {
-                            width: pageNode.getWidth(),
-                            height: pageNode.getHeight()
+                            width: newProject.initSize.width,
+                            height: newProject.initSize.height
                         });
                     } else {
                         pageNode.setBackgroundImage(null, function () {

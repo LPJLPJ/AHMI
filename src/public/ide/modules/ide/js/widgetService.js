@@ -307,6 +307,94 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
 
 
+    //MyOutBorder
+    fabric.MyOutBorder = fabric.util.createClass(fabric.Object,{
+        type:'MyOutBorder',
+        initialize:function (options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.selectable=false;
+            this.currentSize = options.currentSize
+            this.initSize = options.initSize
+
+            // this.patternSrc = '/public/ide/modules/ide/images/paper.png'
+            // this.pattern = null
+            // if(!window.outBorderPattern){
+            //     window.outBorderPattern = new Image()
+            //     window.outBorderPattern.src = this.patternSrc
+            // }
+
+            this.on('changeCurrentSize',function(currentSize){
+                this.width = currentSize.width
+                this.height = currentSize.height
+                this.left = parseInt((this.initSize.width - this.width)/2)
+                this.top = parseInt((this.initSize.height - this.height)/2)
+                this.currentSize = currentSize
+
+                //console.log('change current size',this.currentSize.width,this.currentSize.height)
+                // pageNode.renderAll();
+            })
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                var color = '#f5f4f6'
+                var cWidth = this.currentSize.width
+                var cHeight = this.currentSize.height
+                //console.log('render',cWidth,cHeight)
+                var iWidth = this.initSize.width
+                var iHeight = this.initSize.height
+                var halfCWidth = parseInt(cWidth/2)
+                var halfCHeight = parseInt(cHeight/2)
+                var halfIWidth = parseInt(iWidth/2)
+                var halfIHeight = parseInt(iHeight/2)
+
+                //pattern
+                //var pattern = ctx.createPattern(window.outBorderPattern, 'repeat');
+
+
+                ctx.save()
+                //ctx.translate(parseInt((iWidth-cWidth)/2),parseInt((iHeight-cHeight)/2))
+                ctx.beginPath()
+                ctx.rect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                ctx.moveTo(-halfIWidth,-halfIHeight)
+                ctx.lineTo(-halfIWidth,halfIHeight)
+                ctx.lineTo(halfIWidth,halfIHeight)
+                ctx.lineTo(halfIWidth,-halfIHeight)
+                
+                
+                ctx.lineTo(-halfIWidth,-halfIHeight)
+                //ctx.rect(-iWidth/2,-iHeight/2,iWidth,iHeight)
+                // ctx.globalCompositeOperation = 'destination-out';
+                // ctx.closePath()
+                // ctx.moveTo(80, 100);
+                // ctx.lineTo(50, 150)
+                // ctx.lineTo(110, 150);
+                // ctx.lineTo(80, 100);
+                //ctx.closePath()
+                ctx.clip()
+                ctx.fillStyle = color
+                ctx.fillRect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                // ctx.fillStyle = pattern
+                // ctx.fillRect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                ctx.restore()
+            }catch (err) {
+                console.log('渲染错误',err)
+            }
+        }
+    });
+    
+    fabric.MyOutBorder.fromLevel=function(callback,option){
+        var outBorder=new fabric.MyOutBorder(option);
+        callback&&callback(outBorder);
+    };
+
+
     //progress
     fabric.MyProgress = fabric.util.createClass(fabric.Object, {
         type: Type.MyProgress,
