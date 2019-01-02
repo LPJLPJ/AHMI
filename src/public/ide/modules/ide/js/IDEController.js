@@ -334,8 +334,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 height: resolution[1]
             }
             globalProject.currentSize = {
-                width: resolution[0],
-                height: resolution[1]
+                width: resolution[0]+200,
+                height: resolution[1]+100
             }
             globalProject.maxSize = data.maxSize;
             globalProject.projectId = id;
@@ -1100,8 +1100,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                 }
                             });
                         }, {
-                            width: pageNode.getWidth(),
-                            height: pageNode.getHeight()
+                            width: tempContentObj.initSize.width,
+                            height: tempContentObj.initSize.height
                         });
                     } else {
                         pageNode.setBackgroundImage(null, function () {

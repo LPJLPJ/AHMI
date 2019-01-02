@@ -305,9 +305,9 @@ ideServices
         };
 
         this.getDefaultLayer = function () {
-            var pageNode=CanvasService.getPageNode();
+            //var pageNode=CanvasService.getPageNode();
             var info = {
-                width:(pageNode.getWidth()/pageNode.getZoom()) / 2, height: (pageNode.getHeight()/pageNode.getZoom()) / 2,
+                width:(project.initSize.width) / 2, height: (project.initSize.height) / 2,
 
 
                 //width: project.currentSize.width / 2, height: project.currentSize.height / 2,
@@ -1229,8 +1229,8 @@ ideServices
         this.getDefaultMatte=function(){
             var pageNode=CanvasService.getPageNode();
             var info={
-                width:pageNode.getWidth()/pageNode.getZoom(),
-                height:pageNode.getHeight()/pageNode.getZoom(),
+                width:project.initSize.width,
+                height:project.initSize.height,
                 left: 0,
                 top: 0,
                 backgroundColor:'rgba(0,0,0,0)',

@@ -60,7 +60,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
         targetProject.encoding = rawProject.encoding
-        targetProject.size = rawProject.currentSize;
+        targetProject.size = rawProject.initSize;
         curProjectEncoding = rawProject.encoding;
         //add last save info
         targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
@@ -182,7 +182,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
         targetProject.lastSaveUUID = rawProject.lastSaveUUID;
 
-        targetProject.size = rawProject.currentSize;
+        targetProject.size = rawProject.initSize;
         var pages = rawProject.pages;
         targetProject.pages = [];
         for (var i=0;i<pages.length;i++){
