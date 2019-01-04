@@ -563,11 +563,6 @@
                             <img class="active-title" src="../../public/ide/modules/ide/images/simulator/close-active.png"/>
                             <p>关闭</p>
                         </a>
-                        <!--<button id="play" type="button" class=" btn btn-default navbar-btn"
-                                ng-click="component.tool.runSimulator()">运行</button>
-                        <button id="close" type="button" class=" btn btn-default navbar-btn offProject"
-                                ng-click="component.tool.closeSimulator()">关闭
-                        </button>-->
                     </div>
                 </div>
                 <div id="simulator-container" class="simulator-content">
@@ -3570,6 +3565,17 @@
                                        ng-model="component.object.level.info.initValue"
                                        ng-blur="component.restore()"
                                        ng-keypress="component.slideBlock.enterInitValue($event)"/>
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">模式</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-model="component.slideBlock.slideBlockModeId"
+                                        ng-change="component.slideBlock.enterSlideBlockMode()">
+                                    <option ng-repeat="mode in component.slideBlock.slideBlockModes" value="{{mode.id}}">
+                                        {{mode.name}}
+                                    </option>
+                                </select>
                             </div>
 
                             <div class="attr-item__cell-wrap lg">

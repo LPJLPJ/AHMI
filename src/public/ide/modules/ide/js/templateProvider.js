@@ -222,7 +222,8 @@ ideServices
                     minValue:0,maxValue:100,
                     lowAlarmValue:0,highAlarmValue:100,
                     initValue:0,
-                    arrange:"horizontal"
+                    arrange:"horizontal",
+                    slideBlockModeId:'0'
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -1283,6 +1284,35 @@ ideServices
                     tex.push(background,pointer);
                     break;
 
+            }
+            return tex
+        };
+
+        //切换滑块模式纹理
+        this.getSlideBlockTex = function(mode){
+            var background = _.cloneDeep(defaultSlideBlock.texList[0]);
+            var slideblock = _.cloneDeep(defaultSlideBlock.texList[1]);
+            var progress = {
+                currentSliceIdx:0,
+                name:'进度条背景',
+                slices:[{
+                    color:'rgba(0,0,0,0)',
+                    imgSrc:'',
+                    name:'进度条背景'
+                }]
+            };
+
+            var tex = [];
+            switch (mode){
+                case '0':
+                    tex.push(background,slideblock);
+                    break;
+                case '1':
+                    tex.push(background,slideblock,progress);
+                    break;
+                default:
+                    tex.push(background,slideblock);
+                    break;
             }
             return tex
         }

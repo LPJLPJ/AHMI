@@ -215,6 +215,13 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type','TagService
                 info.fontBold = "100";
                 info.fontItalic = '';
             }
+        },
+        slideBlock:function(){
+            var level = arguments[0];
+            var info = level.info;
+            if(info.slideBlockModeId === undefined){
+                info.slideBlockModeId = '0';
+            }
         }
     });
 
@@ -312,6 +319,9 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type','TagService
                     break;
                 case Type.MyRotateImg:
                     this.rotateImg(widget);
+                    break;
+                case Type.MySlideBlock:
+                    this.slideBlock(widget);
                     break;
                 default:
                     // console.log('not match widget type in inject data');

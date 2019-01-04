@@ -328,7 +328,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 //滑块
                 slideBlock: {
                     enterInitValue: enterInitValue,
-                    enterArrange: enterArrange
+                    enterArrange: enterArrange,
+                    enterSlideBlockMode:enterSlideBlockMode,
+                    slideBlockModeId:'0',
+                    slideBlockModes: [
+                        {id: '0', name: '普通模式'},
+                        {id: '1', name: '复杂模式'}
+                    ]
                 },
                 //视频
                 video: {
@@ -714,6 +720,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MySlideBlock:
                         $scope.component.slideBlock.arrangeModel = $scope.component.object.level.info.arrange;
+                        $scope.component.slideBlock.slideBlockModeId = $scope.component.object.level.info.slideBlockModeId;
                         break;
                     case Type.MyVideo:
                         $scope.component.video.sourceId = $scope.component.object.level.info.source;
@@ -1733,6 +1740,28 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             ProjectService.ChangeAttributeArrange(option, function () {
                 $scope.$emit('ChangeCurrentPage', oldOperate);
 
+            })
+        }
+
+        /**
+         * 切换滑块模式
+         */
+
+        function enterSlideBlockMode(){
+            var selectObj = ProjectService.getCurrentSelectObject();
+            var slideBlockModeId = null;
+            if (selectObj.type == Type.MySlideBlock) {
+                slideBlockModeId = $scope.component.slideBlock.slideBlockModeId;
+            } else {
+                return;
+            }
+            var option = {
+                slideBlockModeId:slideBlockModeId
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeSlideBlockModeId(option, function(){
+                $scope.$emit('ChangeCurrentPage', oldOperate);
             })
         }
 

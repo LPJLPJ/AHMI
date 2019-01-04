@@ -1925,6 +1925,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxValue=level.info.maxValue;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
+            this.slideBlockModeId=level.info.slideBlockModeId;
 
             this.backgroundColor=level.texList[0].slices[0].color;
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
@@ -1940,6 +1941,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.setCoords();
                 this.fire('image:loaded');
             }
+
+            if(level.texList[2]){
+                this.progressColor = level.texList[2].slices[0].color;
+                this.progressImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+            }
+
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -1953,6 +1960,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(level.texList&&level.texList[1]){
                     self.slideColor=level.texList[1].slices[0].color;
                     self.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[2]){
+                    self.progressColor=level.texList[2].slices[0].color;
+                    self.progressImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
                 }
 
                 var subLayerNode=CanvasService.getSubLayerNode();
@@ -1993,6 +2005,35 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeSlideBlockMode',function(arg){
+                var _callback = arg.callback;
+                if(arg.hasOwnProperty('slideBlockMode')){
+                    self.slideBlockModeId = arg.slideBlockModeId;
+                }
+
+                if(level.texList&&level.texList[0]){
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[1]){
+                    self.slideColor=level.texList[1].slices[0].color;
+                    self.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[2]){
+                    self.progressColor=level.texList[2].slices[0].color;
+                    self.progressImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                }else{
+                    self.progressColor='rgb(0,0,0)';
+                    self.progressImageElement = null;
+                }
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2009,6 +2050,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 if (this.backgroundImageElement){
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                if(this.progressImageElement){
+                    if(this.arrange == 'horizontal'){
+                        ctx.drawImage(this.progressImageElement, 0, 0,this.progressImageElement.width*progress,this.progressImageElement.height,-this.width / 2, -this.height / 2,this.width*progress,this.height);
+                    }else{
+                        ctx.drawImage(this.progressImageElement,0,this.progressImageElement.height*(1-progress),this.progressImageElement.width,this.progressImageElement.height*progress, -this.width / 2, this.height / 2-this.height*progress,this.width,this.height*progress);
+                    }
                 }
                 if(this.slideImageElement){
                     if(this.arrange=='horizontal'){

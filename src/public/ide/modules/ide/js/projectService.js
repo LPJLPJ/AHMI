@@ -3461,6 +3461,24 @@ ideServices
             };
 
             /**
+             * 切换滑块模式
+             */
+            this.ChangeAttributeSlideBlockModeId = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                selectObj.level.info.slideBlockModeId = _option.slideBlockModeId;
+                var level = selectObj.level;
+                selectObj.level.slideBlockModeId = _option.slideBlockModeId;
+                level.texList = TemplateProvider.getSlideBlockTex(level.slideBlockModeId);
+                var arg={
+                    level:level,
+                    backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
+                    slideBlockModeId:_option.slideBlockModeId,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeSlideBlockMode',arg);
+            };
+
+            /**
              * 是否禁止控件的高亮属性
              * @param _option
              * @param _successCallback

@@ -2362,6 +2362,11 @@ module.exports = React.createClass({
 
             var curScale = widget.curScale;
 
+            if(widget.texList[2]&&widget.texList[2].slices[0]){
+                var progressSlice = widget.texList[2].slices[0];
+                var progressImg = this.getImage(progressSlice.imgSrc);
+                progressImg = (progressImg && progressImg.content) || null;
+            }
 
             var slideSlice = widget.texList[1].slices[0];
             var slideImg = this.getImage(slideSlice.imgSrc);
@@ -2370,14 +2375,16 @@ module.exports = React.createClass({
                 var slideRatio;
                 switch (widget.info.arrange) {
                     case 'vertical':
-
+                        if(progressImg){
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
+                        }
                         this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
                         break;
                     case 'horizontal':
                     default:
-                        // console.log(slideRatio,curScale);
-
-
+                        if(progressImg){
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
+                        }
                         this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
                         break
                 }
@@ -6042,7 +6049,7 @@ module.exports = React.createClass({
                         </div>
                     </div>
 
-                    <canvas ref='canvas' className='simulator-canvas'/>
+                    <canvas ref='canvas' className='simulator-canvas' id="simulator-canvas"/>
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas'/>
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
