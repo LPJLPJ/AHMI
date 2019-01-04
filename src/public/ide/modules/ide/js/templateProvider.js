@@ -124,8 +124,8 @@ ideServices
                     enableAnimation:false,
                     pointerImgWidth:0,
                     pointerImgHeight:0,
-                    posRotatePointX:50,
-                    posRotatePointY:50
+                    posRotatePointX:125,
+                    posRotatePointY:125
                 },
                 texList:[{
                     currentSliceIdx:0,

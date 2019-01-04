@@ -3269,6 +3269,7 @@ module.exports = React.createClass({
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
         var enableAnimation = widget.info.enableAnimation;
+        var easing = this.getEasingFunc(widget)
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;

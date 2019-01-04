@@ -1508,7 +1508,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         };
         //var stream = '';
         //var outpath = path.join(dstDir,imgName);
-        options.paddingRatio = 1.1;
+        options.paddingRatio = 1.2;
         // options.showGrid = true;
         //upload multi font lib file
         var pngDataUrls = FontGeneratorService.generateSingleFont(font,options);
