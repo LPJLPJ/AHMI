@@ -1845,7 +1845,8 @@ module.exports = React.createClass({
             font['font-size'] = info.fontSize;
             font['font-family'] = info.fontFamily;
             font['font-color'] = info.fontColor;
-            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange);
+            font['text-align'] = 'left';
+            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize);
         }
         cb && cb();
     },
@@ -1870,8 +1871,8 @@ module.exports = React.createClass({
             // tempctx.translate(0,-tempcanvas.width)
         }
         tempctx.clearRect(0, 0, width, height);
-        tempctx.textAlign = font.textAlign || 'center';
-        tempctx.textBaseline = font.textBaseline || 'middle';
+        
+        tempctx.textBaseline = font['text-baseline'] || 'middle';
         //font style
         var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + ('"' + font['font-family'] + '"' || 'arial');
         tempctx.font = fontStr;
@@ -1881,7 +1882,21 @@ module.exports = React.createClass({
             // var widthOfDateTimeStr=maxFontWidth*text.length;
             // var initXPos = (width-widthOfDateTimeStr)/2;
             // var xCoordinate = initXPos+maxFontWidth/2;
-            var xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth / 2 : ((width - maxFontWidth * text.length) + maxFontWidth) / 2;//如果装不下字符串，从maxFontWidth处开始显示
+            var xCoordinate
+            tempctx.textAlign = 'center'
+            var targetAlign = font['text-align'] || 'center';
+            switch(targetAlign){
+                case 'center':
+                    xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth / 2 : ((width - maxFontWidth * text.length) + maxFontWidth) / 2;//如果装不下字符串，从maxFontWidth处开始显示
+                break;
+                case 'left':
+                    xCoordinate = maxFontWidth/2
+                break;
+                case 'right':
+                    xCoordinate = width - maxFontWidth/2 - (text.length - 1) * maxFontWidth
+                break;
+            }
+            
             if (paddingRatio !== 0) xCoordinate = paddingRatio * maxFontWidth + 0.5 * maxFontWidth;
             var notItalic = (-1 == fontStr.indexOf('italic'));
             var italicAjust = notItalic ? 0 : maxFontWidth / 2; //如果是斜体的话，需要斜体往右伸出的宽度
@@ -1896,7 +1911,19 @@ module.exports = React.createClass({
             }
 
         } else {
-            tempctx.fillText(text, 0.5 * width, 0.5 * height);
+            tempctx.textAlign = font['text-align'] || 'center';
+            switch(tempctx.textAlign){
+                case 'center':
+                    tempctx.fillText(text, 0.5 * width, 0.5 * height);
+                break;
+                case 'left':
+                    tempctx.fillText(text, 0, 0.5 * height);
+                break;
+                case 'right':
+                    tempctx.fillText(text, width, 0.5 * height);
+                break;
+            }
+            
         }
         tempctx.restore();
         offctx.drawImage(tempcanvas, curX, curY, width, height);
@@ -2378,14 +2405,16 @@ module.exports = React.createClass({
                         if(progressImg){
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
                         }
-                        this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
+                        //this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
+                        this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height),width,height,false, slideSlice.imgSrc, slideSlice.color)
                         break;
                     case 'horizontal':
                     default:
                         if(progressImg){
                             this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
                         }
-                        this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
+                        //this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
+                        this.drawCursorWithoutLimit(curScale * (width - slideImg.width) + curX, curY ,width,height,true, slideSlice.imgSrc, slideSlice.color)
                         break
                 }
             }
@@ -2470,6 +2499,26 @@ module.exports = React.createClass({
             } else {
                 //vertical
                 this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
+            }
+        }
+
+
+    },
+    drawCursorWithoutLimit: function (beginX, beginY, width,height,align, img, color) {
+
+        var cursorImg = this.getImage(img);
+        cursorImg = (cursorImg && cursorImg.content) || null;
+        if (cursorImg) {
+            var imgW = cursorImg.width;
+            var imgH = cursorImg.height;
+            if (align) {
+                //horizontal
+                //this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
+                this.drawBg(beginX,beginY - (imgH - height) * 0.5,imgW,imgH,img,color);
+            } else {
+                //vertical
+                //this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
+                this.drawBg(beginX - (imgW - width) * 0.5,beginY,imgW,imgH,img,color);
             }
         }
 
