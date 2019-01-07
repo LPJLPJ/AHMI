@@ -2378,14 +2378,16 @@ module.exports = React.createClass({
                         if(progressImg){
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
                         }
-                        this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
+                        //this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
+                        this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height),width,height,false, slideSlice.imgSrc, slideSlice.color)
                         break;
                     case 'horizontal':
                     default:
                         if(progressImg){
                             this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
                         }
-                        this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
+                        //this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
+                        this.drawCursorWithoutLimit(curScale * (width - slideImg.width) + curX, curY ,width,height,true, slideSlice.imgSrc, slideSlice.color)
                         break
                 }
             }
@@ -2470,6 +2472,26 @@ module.exports = React.createClass({
             } else {
                 //vertical
                 this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
+            }
+        }
+
+
+    },
+    drawCursorWithoutLimit: function (beginX, beginY, width,height,align, img, color) {
+
+        var cursorImg = this.getImage(img);
+        cursorImg = (cursorImg && cursorImg.content) || null;
+        if (cursorImg) {
+            var imgW = cursorImg.width;
+            var imgH = cursorImg.height;
+            if (align) {
+                //horizontal
+                //this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
+                this.drawBg(beginX,beginY - (imgH - height) * 0.5,imgW,imgH,img,color);
+            } else {
+                //vertical
+                //this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
+                this.drawBg(beginX - (imgW - width) * 0.5,beginY,imgW,imgH,img,color);
             }
         }
 
