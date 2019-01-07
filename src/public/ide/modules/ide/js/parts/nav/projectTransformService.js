@@ -27,16 +27,30 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         };
 
+        // cmds.forEach(function(cmd){
+        //     cmd.forEach(function(op){
+        //         if(op.hasOwnProperty('value')){
+        //             if(!reg.test(op.value)&&!!op.value){
+        //                 //值为字符串
+        //                 var u8Value = convertStrToUint8Array(op.value,curProjectEncoding).slice(0,32)
+        //                 op.valueArray = convertUint8ArrayToArray(u8Value)
+        //             }
+        //         }
+        //     })
+        // });
+
+        //string related value to string buffer
         cmds.forEach(function(cmd){
-            cmd.forEach(function(op){
-                if(op.hasOwnProperty('value')){
-                    if(!reg.test(op.value)&&!!op.value){
+            if(cmd[0]&&cmd[0].name=='SET_STR'){
+                cmd.forEach(function(op){
+                    if(op.hasOwnProperty('value')){
                         //值为字符串
                         var u8Value = convertStrToUint8Array(op.value,curProjectEncoding).slice(0,32)
                         op.valueArray = convertUint8ArrayToArray(u8Value)
                     }
-                }
-            })
+                })
+            }
+            
         });
 
         return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
