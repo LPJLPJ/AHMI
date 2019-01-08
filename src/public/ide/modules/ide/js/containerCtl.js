@@ -57,7 +57,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
 
         $scope.openHelp = function(e,classify,key){
             e.stopPropagation();
-            var docUrl = 'https://docs.graphichina.com/'+$scope.helpDocs[classify][key];
+            var docUrl = 'https://docs.graphichina.com/'+($scope.helpDocs[classify][key]||'');
             window.open(docUrl);
         }
     }
