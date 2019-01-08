@@ -1576,6 +1576,7 @@ body {
 
 .simulator-nav {
     text-align: center;
+    position: relative;
 }
 
 .simulator-nav-content {
@@ -1629,6 +1630,7 @@ body {
     width: 100%;
     height: calc(100% - 56px);
     background-color: #f7f7f7;
+    position: relative;
 }
 
 .simulator {
@@ -2389,4 +2391,60 @@ div.wrapper-custom {
 .timer-remark-tooltip{
     max-width: 150px;
     font-size: 14px;
+}
+
+/*simulator record*/
+.simulator-record-wrap{
+    position: absolute;
+    left: 20px;
+    top: 0;
+    line-height: 56px;
+    padding: 0 20px;
+    overflow: hidden;
+}
+
+.simulator-record-wrap>div{
+    float: left;
+}
+
+.record-tool-icon{
+    font-size: 25px;
+    color: #7d7d7d;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.record-tool-icon.open{
+    color: #005599;
+}
+
+.record-menu__item{
+    font-size: 20px;
+    color: #005599;
+    cursor: pointer;
+    float: left;
+    margin-left: 20px;
+}
+
+.record-prompt{
+    float: left;
+    line-height: 56px;
+    margin-left: 20px;
+}
+
+.record-tool-menu{
+    width: 0;
+    overflow: hidden;
+    transition: width .2s linear;
+}
+
+.record-tool-menu.open{
+    width: 300px;
+}
+
+.record-download{
+    font-size:24px;
+    color:green;
+    display: inline-block;
+    vertical-align: -4px;
 }

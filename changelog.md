@@ -346,4 +346,6 @@ fix:
 add:
 update:
     1. 资源拖拽上传，拖拽排序
+    2. 增加滑块进度条纹理
+    3. simulator录制
 fix:

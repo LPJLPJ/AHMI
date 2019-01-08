@@ -30,6 +30,7 @@
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
     <!--add-->
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+    <script src="../../public/ide/lib/whammy.js"></script>
     <script src="../../public/ide/tools/js/ruler.js"></script>
 
     <script src="../../public/libs/md5.js"></script>
@@ -113,6 +114,7 @@
     <script src="../../public/ide/modules/ide/min-js/IDEController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/containerCtl.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/navController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/nav/recordController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/saveModalController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/thumb/thumbController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/stage/stageController.js"></script>
@@ -563,6 +565,22 @@
                             <img class="active-title" src="../../public/ide/modules/ide/images/simulator/close-active.png"/>
                             <p>关闭</p>
                         </a>
+                    </div>
+                    <div class="simulator-record-wrap" ng-controller="recordCtrl">
+                        <div class="simulator-record-tool"><i class="iconfont record-tool-icon" ng-class="{true:'open'}[record.showRecord]" ng-click="record.openRecord()" title="视频录制">&#xe66f;</i></div>
+                        <div class="record-tool-menu" ng-class="{true:'open'}[record.showRecord]">
+                            <div class="record-menu-content">
+                                <i class="iconfont record-menu__item" id="start-record"
+                                   ng-show="!record.recordStatus"
+                                   ng-click="record.startRecord()" title="开始录制">&#xe6dd;</i>
+                                <i class="iconfont record-menu__item"  id="end-start"
+                                   ng-show="record.recordStatus"
+                                   ng-click="record.endRecord()" title="结束录制">&#xe66d;</i>
+                                <span class="record-prompt" id="record-prompt">{{record.prompt}}</span>
+                                <span ng-show="record.timerStatus">{{record.duration | date:'mm:ss'}}</span>
+                                <a href="{{recordUrl}}" class="iconfont record-download" id="record-download" download="simulator.webm" style="display: none">&#xe666;</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div id="simulator-container" class="simulator-content">
