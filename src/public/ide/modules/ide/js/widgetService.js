@@ -2067,16 +2067,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 //将图片超出canvas的部分裁剪
-                this.clipTo=function(ctx){
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.rect(-this.width / 2,
-                        -this.height / 2,
-                        this.width,
-                        this.height);
-                    ctx.closePath();
-                    ctx.restore();
-                };
+                // this.clipTo=function(ctx){
+                //     ctx.save();
+                //     ctx.beginPath();
+                //     ctx.rect(-this.width / 2,
+                //         -this.height / 2,
+                //         this.width,
+                //         this.height);
+                //     ctx.closePath();
+                //     ctx.restore();
+                // };
             }
             catch(err){
                 console.log('错误描述',err);
@@ -3441,7 +3441,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 //重新设置canvas的宽高
                 if(self.fontSize&&self.text){
-                    self.setWidth(self.fontSize*(self.text.length+1));
+                    // self.setWidth(self.fontSize*(self.text.length+1));
                     self.setHeight(self.fontSize*2);
                 }
 
@@ -3505,9 +3505,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     //console.log(fontString);
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
-                    ctx.textAlign='center';
+                    ctx.textAlign='left';
                     ctx.textBaseline='middle';//使文本垂直居中
-                    ctx.fillText(this.text,0,0);
+                    //ctx.fillText(this.text,-(this.width/2),0);
+                    //draw with byte mode
+                    var maxWidth = this.fontSize;
+                    var centerX = 0
+                    for(var i=0;i<this.text.length;i++){
+                        centerX = (i+0.5)*maxWidth - (this.width/2)
+                        ctx.fillText(this.text[i],centerX, 0)
+                    }
                 }
                 //将图片超出canvas的部分裁剪
                 this.clipTo=function(ctx){
