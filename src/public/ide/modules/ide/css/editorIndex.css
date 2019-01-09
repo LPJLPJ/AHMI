@@ -2375,7 +2375,7 @@ div.wrapper-custom {
 }
 
 /*定时器备注*/
-.timer-remark-textarea{
+.timer-remark-textarea {
     width: 100%;
     outline: none;
     border-radius: 5px;
@@ -2384,17 +2384,17 @@ div.wrapper-custom {
     border: 1px solid #a9a9a9;
 }
 
-.timer-remark-textarea:focus{
+.timer-remark-textarea:focus {
     border: 1px solid #005599;
 }
 
-.timer-remark-tooltip{
+.timer-remark-tooltip {
     max-width: 150px;
     font-size: 14px;
 }
 
 /*simulator record*/
-.simulator-record-wrap{
+.simulator-record-wrap {
     position: absolute;
     left: 20px;
     top: 0;
@@ -2403,48 +2403,63 @@ div.wrapper-custom {
     overflow: hidden;
 }
 
-.simulator-record-wrap>div{
+.simulator-record-wrap > div {
     float: left;
 }
 
-.record-tool-icon{
+.record-menu-content {
+    border: 1px double #005599;
+    border-radius: 5px;
+    box-sizing: border-box;
+    height: 56px;
+}
+
+.record-tool-icon {
     font-size: 25px;
     color: #7d7d7d;
     font-weight: 600;
     cursor: pointer;
 }
 
-.record-tool-icon.open{
+.record-tool-icon.open {
     color: #005599;
 }
 
-.record-menu__item{
+.record-menu__item {
     font-size: 20px;
     color: #005599;
     cursor: pointer;
     float: left;
-    margin-left: 20px;
+    margin-left: 30px;
 }
 
-.record-prompt{
+.record-prompt {
     float: left;
     line-height: 56px;
     margin-left: 20px;
+    font-size: 14px;
+    color: #005599;
+    font-weight: 600;
 }
 
-.record-tool-menu{
+.record-tool-menu {
     width: 0;
     overflow: hidden;
     transition: width .2s linear;
+    margin-left: 10px;
 }
 
-.record-tool-menu.open{
+.record-tool-menu.open {
     width: 300px;
 }
 
-.record-download{
-    font-size:24px;
-    color:green;
+.record-download {
+    font-size: 24px;
+    color: #005599;
     display: inline-block;
     vertical-align: -4px;
+}
+
+.record-timer {
+    color: crimson;
 }

@@ -1256,9 +1256,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function play() {
             generateData()
             window.cachedResourceList = ResourceService.getGlobalResources();
-
             $scope.component.simulator.show = true;
-
+            $scope.$broadcast("InitRecord");
         }
 
         function showActionVisualization(){
@@ -1275,6 +1274,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function closeSimulator() {
             $scope.component.simulator.show = false;
             $scope.component.simulator.run = false;
+            $scope.$broadcast("CloseRecord");
         }
 
         function runSimulator() {

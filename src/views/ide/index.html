@@ -577,8 +577,8 @@
                                    ng-show="record.recordStatus"
                                    ng-click="record.endRecord()" title="结束录制">&#xe66d;</i>
                                 <span class="record-prompt" id="record-prompt">{{record.prompt}}</span>
-                                <span ng-show="record.timerStatus">{{record.duration | date:'mm:ss'}}</span>
-                                <a href="{{recordUrl}}" class="iconfont record-download" id="record-download" download="simulator.webm" style="display: none">&#xe666;</a>
+                                <span ng-show="record.recordStatus" class="record-timer">{{record.timerValue | date:'mm:ss'}}</span>
+                                <a class="iconfont record-download" id="record-download" style="display: none" title="下载视频">&#xe666;</a>
                             </div>
                         </div>
                     </div>
