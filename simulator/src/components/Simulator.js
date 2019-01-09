@@ -1846,7 +1846,7 @@ module.exports = React.createClass({
             font['font-family'] = info.fontFamily;
             font['font-color'] = info.fontColor;
             font['text-align'] = 'left';
-            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize);
+            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,info.spacing||0);
         }
         cb && cb();
     },
