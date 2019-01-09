@@ -2406,7 +2406,7 @@ module.exports = React.createClass({
                             this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
                         }
                         //this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
-                        this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height),width,height,false, slideSlice.imgSrc, slideSlice.color)
+                        this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height)-slideImg.height,width,height,false, slideSlice.imgSrc, slideSlice.color)
                         break;
                     case 'horizontal':
                     default:
