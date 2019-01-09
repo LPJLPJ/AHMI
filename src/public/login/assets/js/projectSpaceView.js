@@ -7,14 +7,6 @@ $(function(){
     var projectViewOperate = $('.project-operate__view'),
         projectContent = $('.project-content');
 
-    projectViewOperate.on('click','.project-operate__folder',function(){
-        projectContent.attr('class','project-content folder');
-    });
-
-    projectViewOperate.on('click','.project-operate__project',function(){
-        projectContent.attr('class','project-content project');
-    });
-
     //工程列表 鼠标悬停效果
     var projectList = $("#project-list"),
         folderListWrap = $("#folder-list");

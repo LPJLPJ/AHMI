@@ -1252,7 +1252,7 @@ $(function(){
     $('#folder-ok').on('click',changeFolder);
 
     //打开项目
-    folderListWrap.on('click','.open-folder',function(e){
+    projectList.on('click','.open-folder',function(e){
         curFolder=$(this).parents('.folder-panel');
         var fol = curFolder.attr('data-folder');
         fol = JSON.parse(fol);
@@ -1262,7 +1262,7 @@ $(function(){
     });
 
     //删除确认按钮
-    folderListWrap.on('click','.delete-folder',function(){
+    projectList.on('click','.delete-folder',function(){
         curFolder=$(this).parents('.folder-panel');
         var fol = curFolder.attr('data-folder');
         fol = JSON.parse(fol);
@@ -1275,7 +1275,7 @@ $(function(){
     });
 
     //编辑项目
-    folderListWrap.on('click','.edit-folder',function(){
+    projectList.on('click','.edit-folder',function(){
         curFolder=$(this).parents('.folder-panel');
         var fol = curFolder.attr('data-folder');
         fol = JSON.parse(fol);
@@ -1318,10 +1318,8 @@ $(function(){
             success: function (data, status, xhr) {
                 var newFolder = JSON.parse(data);
                 var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:newFolder});
-                folderListWrap.prepend(html);
-                if($('#folder-list').find('.project-list__item').length){
-                    $('#folder-empty').hide();
-                }
+                projectList.prepend(html);
+                if($('#project-empty').css('display')=='block'){$('#project-empty').hide()}
             },
             error: function (err, status, xhr) {
                 console.log(err)
@@ -1365,9 +1363,6 @@ $(function(){
             data:{folderId:folder._id},
             success:function (data, status, xhr){
                 curFolder.remove();
-                if($('#folder-list').find('.project-list__item').length<1){
-                    $('#folder-empty').show();
-                }
             },
             error: function (err, status, xhr) {
                 console.log(err);
