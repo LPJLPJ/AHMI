@@ -3396,6 +3396,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontItalic=level.info.fontItalic;
             this.fontUnderline=level.info.fontUnderline;
 
+            this.spacing = level.info.spacing||0
+
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -3451,6 +3453,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
 
             });
+
+            this.on('changeTextInputAttr',function(arg){
+                if(arg.spacing!==undefined){
+                    self.spacing =  arg.spacing
+                }
+
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                arg.callback && arg.callback();
+            })
+
             this.on('changeArrange',function(arg){
                 var _callback=arg.callback;
                 self.arrange=arg.arrange;
@@ -3512,7 +3525,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     var maxWidth = this.fontSize;
                     var centerX = 0
                     for(var i=0;i<this.text.length;i++){
-                        centerX = (i+0.5)*maxWidth - (this.width/2)
+                        centerX = 0.5*maxWidth + i *(maxWidth + this.spacing) - (this.width/2)
                         ctx.fillText(this.text[i],centerX, 0)
                     }
                 }

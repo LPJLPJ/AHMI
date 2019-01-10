@@ -14,7 +14,7 @@ ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
         initUserInterface();
         initProject();
     });
-
+    
     function initUserInterface(){
         $scope.componentOfChar={
             character:{
@@ -46,7 +46,7 @@ ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
             }
             return customFont;
         });
-        $scope.componentOfChar.fontFamilies = [{name:'宋体'},{name:'Arial'},{name:'times'}].concat(customFonts)
+        $scope.componentOfChar.fontFamilies = [{name:'宋体'},{name:'Courier'},{name:'Arial'},{name:'times'}].concat(customFonts)
     }
 
     function initProject(){

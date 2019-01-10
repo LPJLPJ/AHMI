@@ -2427,9 +2427,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 };
                 var oldOperate = ProjectService.SaveCurrentOperate();
                 // console.log("$scope.component.object",$scope.component.object)
-                if ($scope.component.object.type === "MyNum") {
+                // if ($scope.component.object.type === "MyNum") {
 
-                }
+                // }
                 switch ($scope.component.object.type) {
                     case "MyNum":
                         ProjectService.ChangeAttributeNumContent(option, function () {
@@ -2438,8 +2438,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         })
                         break;
                     case "MyDateTime":
-                        console.log("MyDateTimeEnterSpacing");
+                        //console.log("MyDateTimeEnterSpacing");
                         ProjectService.ChangeAttributeOfDateTime(option, function () {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                        })
+                        break;
+                    case "MyTextInput":
+                        ProjectService.ChangeAttributeOfTextInput(option, function () {
                             $scope.$emit('ChangeCurrentPage', oldOperate);
 
                         })
