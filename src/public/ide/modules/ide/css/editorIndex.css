@@ -42,6 +42,10 @@ ul > li {
     margin: 0;
 }
 
+.hide {
+    display: none;
+}
+
 .font-b {
     font-weight: bold;
 }
@@ -2462,4 +2466,30 @@ div.wrapper-custom {
 
 .record-timer {
     color: crimson;
+}
+
+/*工程分享*/
+.share-project-content{
+    padding: 10px 0;
+}
+
+.share-project__info{
+    width: 100%;
+    white-space:pre-wrap;
+    word-break: break-all;
+    border: none;
+    outline: none;
+    resize:none;
+    margin-top: 20px;
+}
+
+button.share-project{
+    display: block;
+    margin: 0 auto;
+}
+
+.share-project__copy{
+    cursor: pointer;
+    color: #005599;
+    font-weight: 600;
 }

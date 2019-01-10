@@ -1679,9 +1679,20 @@ ide.controller('shareModalCtl', ['$rootScope', '$scope', '$uibModalInstance', '$
         shared: false,
         sharedKey: '',
         readOnlySharedKey: '',
-        own: false
+        own: false,
+        copy:copy
     }
     loadInfo()
+
+    function copy() {
+        var info = document.querySelector('#share-info');
+        info.select();
+        if (document.execCommand('copy')) {
+            document.execCommand('copy');
+            toastr.info('已复制到剪贴板');
+            window.getSelection().empty();
+        }
+    }
 
     function loadInfo() {
         $http({
