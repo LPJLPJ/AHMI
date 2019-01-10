@@ -1624,7 +1624,7 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
     $scope.formats = [
         {
             type: 'normal',
-            name: '默认'
+            name: '常规'
         },
         {
             type: 'dxt3',
@@ -1636,25 +1636,24 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         type: 'local',
         name: '本地'
     };
-    var localFormatCompatible = {
+    /*var localFormatCompatible = {
         type: 'localCompatible',
         name: '本地(兼容)'
-    }
+    }*/
     var templateFormat = {
         type:'template',
         name:'模板'
-    }
+    };
     var estimateFormat = {
         type:'estimate',
         name:'预估生成文件大小'
-    }
+    };
     if (!window.local) {
         $scope.formats[2] = localFormat;
-        $scope.formats[3] = localFormatCompatible
-        $scope.formats[4] = templateFormat
-        $scope.formats[5] = estimateFormat
+        /*$scope.formats[3] = localFormatCompatible*/
+        $scope.formats[3] = templateFormat
+        $scope.formats[4] = estimateFormat
     }
-    ;
     $scope.generateFormat = 'normal';
     $scope.ok = function () {
         $uibModalInstance.close({

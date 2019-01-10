@@ -249,7 +249,7 @@
                             <input type="text" class="modal-input col-lg-9" id="author" ng-model="saveAsAuthor">
                         </div>
                         <div class="modal-row">
-                            <span class="modal-label col-lg-12 font-b">选择其它分辨率保存：<input type="checkbox" class="modal-checkbox" ng-model="isScale"/></span>
+                            <span class="modal-label col-lg-12">选择其它分辨率保存：<input type="checkbox" class="modal-checkbox" ng-model="isScale"/></span>
                         </div>
                         <div ng-show="isScale">
                             <div class="modal-row">
@@ -277,15 +277,15 @@
                             </div>
                         </div>
                         <div class="modal-row">
-                            <span class="modal-label col-lg-12 font-b">图层、控件尺寸拉伸：<input type="checkbox" class="modal-checkbox" ng-model="isPulling"/></span>
+                            <span class="modal-label col-lg-12">图层、控件尺寸拉伸：<input type="checkbox" class="modal-checkbox" ng-model="isPulling"/></span>
                         </div>
                         <div ng-show="isPulling" class="row">
                             <div class="col-lg-6">
-                                <span class="modal-label col-lg-6">宽度比1:</span>
+                                <span class="modal-label col-lg-6">横向比1:</span>
                                 <input type="number" class="modal-input col-lg-6" id="pullingWidth" ng-model="pullingRatio.widthRatio" min="0" max="10"/>
                             </div>
                             <div class="col-lg-6">
-                                <span class="modal-label col-lg-6">高度比1:</span>
+                                <span class="modal-label col-lg-6">纵向比1:</span>
                                 <input type="number" class="modal-input col-lg-6" id="pullingHeight" ng-model="pullingRatio.heightRatio" min="0" max="10"/>
                             </div>
                         </div>
@@ -334,7 +334,7 @@
                             <select class="modal-input col-lg-8" ng-model="generateFormat" ng-options="format.type as format.name for format in formats">{{format}}</select>
                         </div>
                         <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
-                            <span class="modal-label col-lg-4">像素宽高比&nbsp;1&nbsp;:</span>
+                            <span class="modal-label col-lg-4">纵横比&nbsp;1&nbsp;:</span>
                             <input type="number" class="modal-input col-lg-8" ng-model="verticalPixelRatio">
                         </div>
                     </div>
