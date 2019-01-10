@@ -38,7 +38,6 @@ ide.controller('recordCtrl', ['$scope', '$filter', '$interval', function ($scope
     function startRecord() {
         document.getElementById('record-download').style.display = 'none';
         $scope.recordElement = document.getElementById('simulator-canvas');
-        console.log($scope.recordElement);
         if (!$scope.recordElement) {
             $scope.record.prompt = '请先运行simulator';
             $scope.record.recordStatus = false;

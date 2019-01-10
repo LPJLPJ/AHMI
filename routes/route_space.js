@@ -2,14 +2,12 @@ var UserModel = require('../db/models/UserModel');
 var ProjectModel = require('../db/models/ProjectModel');
 var CANProjectModel = require('../db/models/CANProjectModel');
 var ClassModel = require('../db/models/ClassModel');
-var path = require('path');
 var moment = require('moment');
 var _ = require('lodash');
 module.exports = function (req, res) {
 	var _user = req.session.user;
     var path = req.query.path;
     var classId='space';
-
 
 	if (_user && _user.id) {
         UserModel.findById(_user.id,function(err,user){
@@ -89,7 +87,6 @@ module.exports = function (req, res) {
                                             username:_user.username,
                                             folders:processedFolders,
                                             projects:processedProjects,
-                                            path:path?path:'project',
                                             CANProjects:processedCANProjects,
                                             userInfo:userInfo
                                         })

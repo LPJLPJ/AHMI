@@ -3,10 +3,6 @@
  */
 
 $(function(){
-    //工程视图切换
-    var projectViewOperate = $('.project-operate__view'),
-        projectContent = $('.project-content');
-
     //工程列表 鼠标悬停效果
     var projectList = $("#project-list"),
         folderListWrap = $("#folder-list");
