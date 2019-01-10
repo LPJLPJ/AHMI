@@ -97,7 +97,7 @@ a img {
     margin-right: 25px;
 }
 
-.top-menu__item:last-of-type{
+.top-menu__item:last-of-type {
     margin-right: 0;
 }
 
@@ -137,7 +137,7 @@ a img {
     vertical-align: -5px;
 }
 
-.personal-info{
+.personal-info {
     width: 80px;
     height: 100%;
     margin: 0 50px 0 20px;
@@ -150,17 +150,17 @@ a img {
     text-align: center;
 }
 
-.personal-info__name{
+.personal-info__name {
 
 }
 
-.personal-info__icon{
+.personal-info__icon {
     width: 40px;
     height: 40px;
-    border-radius: 50%!important;
+    border-radius: 50% !important;
 }
 
-.personal-info__drop-down{
+.personal-info__drop-down {
     width: 140px;
     height: 0;
     position: absolute;
@@ -170,10 +170,10 @@ a img {
     background-color: #fff;
     z-index: 99999;
     overflow: hidden;
-    box-shadow: 2px 2px 5px rgba(0,0,0,.1);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, .1);
 }
 
-.personal-info:hover .personal-info__drop-down{
+.personal-info:hover .personal-info__drop-down {
     border: 1px solid #CCCCCC;
     width: 142px;
     height: 120px;
@@ -181,16 +181,16 @@ a img {
     top: 67px;
 }
 
-.personal-info__content{
+.personal-info__content {
     height: 120px;
 }
 
-.personal-info__list{
+.personal-info__list {
     margin: 0;
     padding: 0;
 }
 
-.personal-info__list>li{
+.personal-info__list > li {
     height: 40px;
     box-sizing: border-box;
     line-height: 40px;
@@ -199,19 +199,19 @@ a img {
     text-align: left;
 }
 
-.personal-info__list>li:last-of-type{
+.personal-info__list > li:last-of-type {
     border-top: 1px solid #cccccc;
 }
 
-.personal-info__list>li:hover{
+.personal-info__list > li:hover {
     background-color: #dadfe6;
 }
 
-.personal-info__logout,.personal-info__logout:hover{
+.personal-info__logout, .personal-info__logout:hover {
     color: #606c80;
 }
 
-.personal-info__list .iconfont{
+.personal-info__list .iconfont {
     font-size: 18px;
     padding: 0 10px;
 }
@@ -267,29 +267,33 @@ a img {
     margin-top: 22px;
 }
 
-.p-o__item{
+.p-o__item, .p-o__item:focus {
     color: #7d7d7d;
     font-size: 15px;
 }
 
-.p-o__item>.iconfont{
+.p-o__item:hover {
+    color: #005599;
+}
+
+.p-o__item > .iconfont {
     font-weight: 600;
     font-size: 20px;
     display: inline-block;
 }
 
-.p-o__item>span{
+.p-o__item > span {
     padding: 0 5px;
     font-weight: 500;
     display: inline-block;
     vertical-align: 2px;
 }
 
-.recycle-text{
+.recycle-text {
     color: #7d7d7d;
 }
 
-.recycle-wrap:hover .recycle-text{
+.recycle-wrap:hover .recycle-text {
     color: inherit;
 }
 
@@ -738,7 +742,7 @@ a img {
     border-bottom: 1.5px solid #005599;
 }
 
-.btn-confirm{
+.btn-confirm {
     color: #005599;
 }
 
