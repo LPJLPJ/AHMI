@@ -6107,7 +6107,7 @@ module.exports = React.createClass({
                 <div className='simulator-attribute-wrapper'>
                     <div className='simulator-setting-wrapper'>
                         <div className='simulator-setting__ratio'>
-                            <span>像素宽高比&nbsp;&nbsp;1&nbsp;:&nbsp;</span><input type='number' min='0' onKeyDown={this.setPixelRatio}/>
+                            <span>纵横比&nbsp;&nbsp;1&nbsp;:&nbsp;</span><input type='number' min='0' onKeyDown={this.setPixelRatio}/>
                         </div>
                         <div className="simulator-setting__keyboard">
                             <span onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </span>

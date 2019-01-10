@@ -1698,7 +1698,7 @@ body {
 .simulator-setting-wrapper {
     width: 100%;
     height: 56px;
-    font-size: 16px;
+    font-size: 14px;
     color: #707070;
 }
 
@@ -1752,7 +1752,7 @@ body {
 .simulator-tag-table {
     width: 100%;
     overflow: auto;
-    font-size: 16px;
+    font-size: 14px;
     color: #707070;
     table-layout: fixed;
 }
@@ -2405,17 +2405,32 @@ div.wrapper-custom {
     line-height: 56px;
     padding: 0 20px;
     overflow: hidden;
+    height: 56px;
 }
 
 .simulator-record-wrap > div {
     float: left;
 }
 
+.record-tool-menu {
+    width: 0;
+    overflow: hidden;
+    transition: width .2s linear;
+    margin-left: 10px;
+    height: 40px;
+    margin-top: 8px;
+}
+
+.record-tool-menu.open {
+    width: 300px;
+}
+
 .record-menu-content {
     border: 1px double #005599;
     border-radius: 5px;
     box-sizing: border-box;
-    height: 56px;
+    height: inherit;
+    line-height: 40px;
 }
 
 .record-tool-icon {
@@ -2435,26 +2450,16 @@ div.wrapper-custom {
     cursor: pointer;
     float: left;
     margin-left: 30px;
+    line-height: 40px;
 }
 
 .record-prompt {
     float: left;
-    line-height: 56px;
+    line-height: 40px;
     margin-left: 20px;
     font-size: 14px;
     color: #005599;
     font-weight: 600;
-}
-
-.record-tool-menu {
-    width: 0;
-    overflow: hidden;
-    transition: width .2s linear;
-    margin-left: 10px;
-}
-
-.record-tool-menu.open {
-    width: 300px;
 }
 
 .record-download {
@@ -2469,26 +2474,26 @@ div.wrapper-custom {
 }
 
 /*工程分享*/
-.share-project-content{
+.share-project-content {
     padding: 10px 0;
 }
 
-.share-project__info{
+.share-project__info {
     width: 100%;
-    white-space:pre-wrap;
+    white-space: pre-wrap;
     word-break: break-all;
     border: none;
     outline: none;
-    resize:none;
+    resize: none;
     margin-top: 20px;
 }
 
-button.share-project{
+button.share-project {
     display: block;
     margin: 0 auto;
 }
 
-.share-project__copy{
+.share-project__copy {
     cursor: pointer;
     color: #005599;
     font-weight: 600;
