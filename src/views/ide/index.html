@@ -2620,6 +2620,15 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
+
+                        <div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">字符间距</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.spacing"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterSpacing($event)"
+                                   type="number">
+                        </div>
                             <!--<div class="attr-item__cell-wrap lg">-->
                             <!--<span class="attr-item__cell-title">方向</span>-->
 

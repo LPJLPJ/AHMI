@@ -1504,11 +1504,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         var options = {
             full:font.fullFont||false,
             encoding:font.encoding,
-            showGrid:false
+            showGrid:false,
+            paddingRatio:font.paddingRatio||1.2 //read from font info
         };
         //var stream = '';
         //var outpath = path.join(dstDir,imgName);
-        options.paddingRatio = 1.2;
+        //options.paddingRatio = 1.2;
         // options.showGrid = true;
         //upload multi font lib file
         var pngDataUrls = FontGeneratorService.generateSingleFont(font,options);

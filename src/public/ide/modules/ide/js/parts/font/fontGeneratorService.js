@@ -271,6 +271,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
     function getFontCollections(widgets){
         var fontWidgets,
             fonts = [];
+        var paddingRatio = 1.0;
         fontWidgets = widgets.filter(function(widget){
             return ((widget.subType===Type.MyNum)||(widget.subType===Type.MyDateTime)||(widget.subType===Type.MyTextInput))
         });
@@ -289,6 +290,8 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             }
             //font type, isFull
             info.fullFont = (widget.subType===Type.MyTextInput)
+
+            paddingRatio = info.fontItalic ? 1.3:1.2 //set paddingratio by italic
             
             widget.originFont = {};
             widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'-'+(info['fullFont']?'full':'short')+'.png';
@@ -325,6 +328,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
                 font['font-bold'] = info.fontBold;
                 font['font-italic'] = info.fontItalic;
                 font.fullFont = info.fullFont
+                font.paddingRatio = paddingRatio
                 fonts.push(font);
             }
         });

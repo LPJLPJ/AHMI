@@ -4086,6 +4086,22 @@ ideServices
                 }
                 selectObj.target.fire('changeDateTimeAttr',arg);
             };
+
+            this.ChangeAttributeOfTextInput=function(_option,_successCallback){
+                //var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    callback:_successCallback
+                };
+                if(_option.hasOwnProperty('spacing')){
+                    selectObj.level.info.spacing=_option.spacing;
+                    arg.spacing=_option.spacing;
+                }
+                selectObj.target.fire('changeTextInputAttr',arg);
+            };
+
+
+
             //改变时间控件的显示模式
             this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){
                 var dateTimeModeId = _option.dateTimeModeId;
