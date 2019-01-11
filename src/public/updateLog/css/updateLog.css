@@ -9,7 +9,8 @@ a {
 
 @font-face {
     font-family: SOURCEHANSANSCN-NORMAL;
-    src: url('../../font/custom/SOURCEHANSANSCN-NORMAL.OTF')
+    src: url('../../font/custom/SOURCEHANSANSCN-NORMAL.woff') format('woff2'),
+    url('../../font/custom/SOURCEHANSANSCN-NORMAL.woff2') format('woff2')
 }
 
 body {

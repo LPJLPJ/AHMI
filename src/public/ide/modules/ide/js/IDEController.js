@@ -344,7 +344,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             var resourceList = globalProject.resourceList;
             // console.log('resourceList',resourceList);
             var count = resourceList.length;
-            var rLen = resourceList.length
+            var rLen = resourceList.length;
             var globalResources = ResourceService.getGlobalResources();
             window.globalResources = globalResources;
 
@@ -378,7 +378,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 }
             } else {
                 // console.log(globalProject);
-                updateSpinner(100)
+                updateSpinner(1)
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {

@@ -6,15 +6,13 @@
 
 @font-face {
     font-family: SOURCEHANSANSCN-NORMAL;
-    src: url('../../../font/custom/SOURCEHANSANSCN-NORMAL.OTF')
+    src: url('../../../font/custom/SOURCEHANSANSCN-NORMAL.woff') format('woff2'),
+    url('../../../font/custom/SOURCEHANSANSCN-NORMAL.woff2') format('woff2')
 }
 
 body {
-    width: 100%;
-    border: none;
-    font-family: SOURCEHANSANSCN-NORMAL;
+    font-family: SOURCEHANSANSCN-NORMAL, Arial;
     background-color: #f5f4f6;
-    box-sizing: border-box;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;

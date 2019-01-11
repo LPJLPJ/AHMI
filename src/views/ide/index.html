@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
-    <link rel="stylesheet" href="../../public/ide/modules/ide/css/editorIndex.css">
+    <link rel="stylesheet" href="../../public/ide/modules/ide/css/editorIndex.css"/>
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/iconfont.css"/>
     <!--add-->
     <link rel="stylesheet" href="../../public/ide/tools/css/ruler.css"/>
@@ -146,21 +146,8 @@
             return false;
         }
     </script>
-    <style>
-        body{
-            overflow-y: hidden;
-        }
-        .rotating{
-            animation:rotate-icon 2s linear infinite;
-        }
-        @keyframes rotate-icon {
-            0%{transform:rotate(0deg)}to{transform:rotate(1turn)}
-        }
-    </style>
 </head>
 <body ng-app="ide" style="height: 100%" ng-controller="IDECtrl">
-<!--loading spinner-->
-<!--<script src="../../public/ide/lib/spinner.bundle.js"></script>-->
 <script src='../../public/ide/modules/ide/min-js/parts/utils/spinner.js'></script>
 <!--工程协作遮盖窗口-->
 <div class="wrapper-custom" ng-show="wrapperForCoop">
