@@ -1286,9 +1286,13 @@ module.exports = React.createClass({
             var easing = this.getEasingFunc(subCanvas)
             var hWidth = w / 2 + x
             var hHeight = h / 2 + y
-            if (!firstSubCanvas && (!options || (options && !options.pageAnimate))) {
+            if (!options || (options && !options.pageAnimate)) {
                 switch (method) {
                     case 'MOVE_LR':
+                        subCanvas.translate = {
+                            x: -w,
+                            y: 0
+                        }
                         AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
@@ -1308,6 +1312,10 @@ module.exports = React.createClass({
                         this.dropCurrentDraw()
                         break;
                     case 'MOVE_RL':
+                        subCanvas.translate = {
+                            x: w,
+                            y: 0
+                        }
                         AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
@@ -1347,6 +1355,7 @@ module.exports = React.createClass({
                             [0, 1, 0],
                             [0, 0, 1]
                         ];
+                        subCanvas.transform = math.multiply(math.multiply(afterTranslateMatrix, beforeScaleMatrix), beforeTranslateMatrix);
                         AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
                             var curScaleMatrix = [
                                 [deltas.a.curValue, deltas.c.curValue, deltas.e.curValue],
