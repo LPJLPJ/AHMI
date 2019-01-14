@@ -1026,14 +1026,17 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
                         showSpinner();
                     }
-                    generateData(format,physicalPixelRatio);
-                    RenderSerive.renderProject(window.projectData, function () {
-                        toastr.info('生成成功');
-                        window.spinner && window.spinner.hide();
-                    }, function () {
-                        toastr.info('生成失败');
-                        window.spinner && window.spinner.hide();
-                    });
+                    setTimeout(function(){
+                        generateData(format,physicalPixelRatio);
+                        RenderSerive.renderProject(window.projectData, function () {
+                            toastr.info('生成成功');
+                            window.spinner && window.spinner.hide();
+                        }, function () {
+                            toastr.info('生成失败');
+                            window.spinner && window.spinner.hide();
+                        });
+                    },100)
+                    
                 } else {
                     saveProject(function () {
                         showSpinner();
