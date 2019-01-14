@@ -4,10 +4,8 @@
 
 $(function(){
     //工程列表 鼠标悬停效果
-    var projectList = $("#project-list"),
-        folderListWrap = $("#folder-list");
+    var projectList = $("#project-list");
     projectHover(projectList);
-    projectHover(folderListWrap);
     function projectHover(main){
         main.on('mouseenter','.project-item__thumb',function(e){
             getIn($(this),e);
