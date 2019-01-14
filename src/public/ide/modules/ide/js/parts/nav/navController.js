@@ -845,7 +845,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultTextInput();
             }else if(_index === 19){
                 newWidget = TemplateProvider.getDefaultGallery();
-            }else if(_index === 30) {
+            }else if(_index === 20) {
                 newWidget = TemplateProvider.getDefaultAlphaImg();
             }
             else {
