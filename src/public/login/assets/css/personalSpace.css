@@ -164,7 +164,7 @@ a img {
     position: absolute;
     left: -30px;
     top: 68px;
-    transition: height .2s;
+    transition: height .2s ease-in-out;
     background-color: #fff;
     z-index: 99999;
     overflow: hidden;
@@ -533,7 +533,7 @@ a img {
 
 .project-item_folder-title {
     color: #005599;
-    font-weight: 800;
+    font-weight: 600;
 }
 
 /*项目中心*/
