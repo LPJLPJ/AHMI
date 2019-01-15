@@ -4352,7 +4352,7 @@ ideServices
 
                 switch(selectObj.type){
                     case Type.MyButtonGroup:
-                        ignoreHighlight = fase
+                        ignoreHighlight = false
 
                         defaultTexFun = TemplateProvider.getDefaultButtonTex
                         break
