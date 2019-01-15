@@ -22,7 +22,8 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"透明度图层",icon:"alpha-slide"},
         {name:"文本输入",icon:"text-input"},
         {name:"照片栏",icon:"slide"},
-        {name:"动态透明图",icon:"alpha-img"}
+        {name:"动态透明图",icon:"alpha-img"},
+        {name:"组合控件",icon:"dashboard"}
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;

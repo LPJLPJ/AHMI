@@ -5189,6 +5189,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
     //MyGallery Prototype
     var widgetPrototypes = []
+
     var MyGallery = {
         widgetType:Type.MyGallery,
         info:{
@@ -5357,7 +5358,364 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }
         }
     }
+
+
+
+    //MyTestCombinedWidget
+    var MyTestCombinedWidget = {
+        widgetType:Type.MyTestCombinedWidget,
+        info:{
+            value:0,
+            offsetValue:0,
+            minValue:0,
+            maxValue:360,
+            minAngle:0,
+            maxAngle:360,
+            pointerLength:100,
+            clockwise:true,
+            dashboardModeId:'1',
+            backgroundModeId :'0',
+            minCoverAngle:0,
+            maxCoverAngle:360,
+            posRotatePointX:0,
+            posRotatePointY:0,
+            innerRadius:0
+        },
+        funcAttrs:{
+            backgroundColor:function(level){
+                return level.texList[0].slices[0].color;
+            },
+            backgroundImageElement:function(level){
+                if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
+    
+                    return ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+           
+                }else if(this.dashboardModeId=='2'){
+                    
+                    return null
+                    
+                }
+            },
+            pointerColor:function(level){
+                if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
+                    
+    
+                    
+    
+                    return level.texList[1].slices[0].color;
+    
+                    
+    
+                    
+                }else if(this.dashboardModeId=='2'){
+                    
+                   return null
+                    
+                }
+            },
+            pointerElement:function(level){
+                if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
+                    return ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                }else if(this.dashboardModeId=='2'){    
+                    return null     
+                }
+            },
+            lightBandImageElement:function(){
+                if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
+                    
+                    return level.texList[2] && ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc) || null
+                    
+                }else if(this.dashboardModeId=='2'){
+                    
+                    return ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    
+                }
+            }
+        },
+        triggers:{
+            OnRelease:function (arg) {
+                // level.info.posRotatePointX = Math.round(level.info.width/2)
+                // level.info.posRotatePointY = Math.round(level.info.height/2)
+                this.posRotatePointX = level.info.posRotatePointX
+                this.posRotatePointY = level.info.posRotatePointY
+                //subLayerNode.renderAll();
+                // this.fire('changeDashboardPointerOffset',{
+                //     posRotatePointX:level.info.posRotatePointX,
+                //     posRotatePointY:level.info.posRotatePointY
+                // })
+            },
+
+            changeDashboardOffsetValue:function (arg) {
+                if(arg.offsetValue||arg.offsetValue==0){
+                    this.offsetValue=arg.offsetValue;
+                }
+                //console.log('changeDashboardValue',self.value);
+                var _callback=arg.callback;
+
+                reRender()
+                _callback&&_callback();
+            },
+
+            changeDashboardPointerOffset:function (arg) {
+                this.posRotatePointX = arg.posRotatePointX
+                this.posRotatePointY = arg.posRotatePointY
+                var _callback=arg.callback;
+
+                
+                reRender()
+                _callback&&_callback();
+            },
+
+            changeDashboardPointerInnerRadius:function(arg){
+                this.innerRadius = arg.innerRadius||0
+                reRender()
+                arg.callback && arg.callback()
+            },
+
+            changeDashboardValue:function (arg) {
+                if(arg.hasOwnProperty('value')){
+                    this.value=arg.value;
+                }
+                else if(arg.hasOwnProperty('maxValue')){
+                    this.maxValue=arg.maxValue;
+                }
+                else if(arg.hasOwnProperty('minValue')){
+                    this.minValue=arg.minValue;
+                }
+                else if(arg.hasOwnProperty('minAngle')){
+                    this.minAngle=arg.minAngle;
+                }
+                else if(arg.hasOwnProperty('maxAngle')){
+                    this.maxAngle=arg.maxAngle;
+                }
+                var _callback=arg.callback;
+
+                reRender()
+                _callback&&_callback();
+            },
+
+
+            //changeDashboardPointerLength
+            changeDashboardPointerLength:function (arg) {
+                this.pointerLength=arg.pointerLength;
+                this.scaleX = arg.scaleX;
+                this.scaleY = arg.scaleY;
+                var _callback=arg.callback;
+
+                reRender()
+                _callback&&_callback();
+            },
+
+            //change dashboard mode
+            changeDashboardMode:function(arg){
+                var level=arg.level;
+                var _callback=arg.callback;
+                this.dashboardModeId = arg. dashboardModeId;
+                //若改变模式，重置已经画好的仪表盘控件
+                if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
+                    this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    this.backgroundColor = level.texList[0].slices[0].color;
+
+                    this.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                    this.pointerColor=level.texList[1].slices[0].color;
+
+                    if(level.texList[2]){
+                        this.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                    }else{
+                        this.lightBandImageElement=null;
+                    }
+                }else if(this.dashboardModeId=='2'){
+                    this.backgroundImageElement=null;
+                    this.backgroundColor=level.texList[0].slices[0].color;
+                    this.pointerImageElement=null;
+                    this.pointerColor=null;
+                    this.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                }
+
+                reRender()
+                _callback&&_callback();
+            },
+            //chang dashboard clockwise
+            changeDashboardClockwise:function(arg){
+                this.clockwise=arg.clockwise;
+                var _callback=arg.callback;
+                reRender()
+                _callback&&_callback();
+            },
+            changeDashboardCoverAngle:function(arg){
+                var _callback=arg.callback;
+                
+                if(arg.hasOwnProperty('minCoverAngle')){
+                    this.minCoverAngle=arg.minCoverAngle;
+                }else if(arg.hasOwnProperty('maxCoverAngle')){
+                    this.maxCoverAngle=arg.maxCoverAngle;
+                }
+                reRender()
+                _callback&&_callback();
+
+            },
+
+            changeTex:function (arg) {
+                var level=arg.level;
+                var dashboardModeId=level.dashboardModeId;
+                var _callback=arg.callback;
+                if(dashboardModeId=='0'||dashboardModeId=='1'){
+                    this.backgroundColor=level.texList[0].slices[0].color;
+                    this.pointerColor=level.texList[1].slices[0].color;
+
+                    this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                    this.pointerImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                    //判断是否有第三个纹理，若有则为复杂模式，需要配置光带的纹理
+                    if(level.texList[2]){
+                        this.lightBandImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                    }
+                }else if(dashboardModeId=='2'){
+                    this.backgroundImageElement=null;
+                    this.backgroundColor=level.texList[0].slices[0].color;
+                    this.pointerImageElement=null;
+                    this.pointerColor=null;
+                    this.lightBandImageElement=ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                }
+
+
+                reRender()
+                _callback&&_callback();
+            },
+
+            changeBackgroundMode:function(arg){
+                var _callback = arg.callback;
+                this.backgroundModeId = arg.backgroundModeId;
+
+                reRender()
+                _callback&&_callback();
+            },
+
+            changeWidgetSize:function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                this.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                reRender()
+                _callback&&_callback();
+            }
+        },
+        render:function(ctx){
+            try{
+                
+                var newValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*(this.value-this.minValue);
+                var taoValue = (this.maxAngle-this.minAngle)/(this.maxValue-this.minValue)*this.value;
+                ctx.fillStyle=this.backgroundModeId==='0'?this.backgroundColor:"rgba(0,0,0,0)";
+                ctx.fillRect(
+                    -this.width / 2,
+                    -this.height / 2,
+                    this.width,
+                    this.height
+                );
+                if (this.backgroundImageElement&&this.backgroundModeId==='0'){
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+                if(this.lightBandImageElement){
+                    //由于canvas进行了一定的比例变换，所以画扇形时，角度出现了偏差。下面纠正偏差
+                    var angle=translateAngle(newValue+this.offsetValue+this.minAngle,this.scaleX,this.scaleY,newValue);
+                    var minAngle=translateAngle(this.offsetValue+this.minAngle,this.scaleX,this.scaleY,null);
+                    var nowangle=translateAngle(taoValue,this.scaleX,this.scaleY,null);
+                    var offsetangle=translateAngle(this.offsetValue,this.scaleX,this.scaleY,null);
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(0,0);
+                    var radius=calculateRadius(this.dashboardModeId,this.width,this.height);
+                    //如果是逆时针，则反方向旋转
+                    if(this.clockwise=='0'){
+                        minAngle=-minAngle+Math.PI/2;
+                        angle=-angle+Math.PI/2;
+                        ctx.arc(0,0,radius,minAngle,angle,true);
+                        if(this.dashboardModeId=='2'){
+                            ctx.arc(0,0,3*radius/4,angle,minAngle,false);
+                        }
+                    }
+                    else if(this.clockwise=='1'){
+                        minAngle=minAngle+Math.PI/2;
+                        angle=angle+Math.PI/2;
+                        ctx.arc(0,0,radius,minAngle,angle,false);
+                        if(this.dashboardModeId=='2'){
+                            ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                        }
+                        //ctx.stroke();
+                    }
+                    else if(this.clockwise=='2'){
+                        //正向，当前值大于0
+                        if(taoValue>=0){
+                            minAngle=offsetangle+Math.PI/2;
+                            angle=nowangle+offsetangle+Math.PI/2;
+                            ctx.arc(0,0,radius,minAngle,angle,false);
+                            if(this.dashboardModeId=='2'){
+                                ctx.arc(0,0,3*radius/4,angle,minAngle,true);
+                            }
+                        }
+                        //逆向，当前值小于0
+                        else if(taoValue<0){
+                            var curValue = -taoValue;
+                            var nowangle=translateAngle(curValue,this.scaleX,this.scaleY);
+                            minAngle=offsetangle+Math.PI/2;
+                            angle=-nowangle+offsetangle+Math.PI/2;
+                            ctx.arc(0,0,radius,angle,minAngle,false);
+                            if(this.dashboardModeId=='2'){
+                                ctx.arc(0,0,3*radius/4,minAngle,angle,true);
+                            }
+                        }
+                    }
+                    ctx.closePath();
+                    ctx.clip();
+                    ctx.drawImage(this.lightBandImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                    ctx.restore();
+                }
+
+                if (this.pointerImageElement){
+                    ctx.save();
+                    var sqrt2 = Math.sqrt(2);
+                    var pointerImgWidth = this.pointerLength/sqrt2/this.scaleX;
+                    var pointerImgHeight = this.pointerLength/sqrt2/this.scaleY;
+                    var angleOfPointer = newValue+this.offsetValue+this.minAngle;
+                    if(this.clockwise=='0'){
+                        angleOfPointer=-angleOfPointer;
+                    }
+                    var rotateRad = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)
+                    var rotateAngle = rotateRad*180/Math.PI;
+                    angleOfPointer=angleOfPointer+rotateAngle;
+                    var innerW = this.innerRadius * Math.sin(rotateRad)
+                    var innerH = this.innerRadius * Math.cos(rotateRad)
+                    
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    //var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
+                    //ctx.save()
+                    ctx.translate((-this.width/2+(this.posRotatePointX||0)/this.scaleX),(-this.height/2+(this.posRotatePointY||0)/this.scaleY))
+                    ctx.rotate(angleOfPointer*Math.PI/180);
+                    ctx.translate(innerW/this.scaleX,innerH/this.scaleY)
+                    ctx.scale(this.scaleX,this.scaleY);
+                    //ctx.restore()
+                    ctx.fillStyle=this.pointerColor;
+                    ctx.fillRect(
+                        0,
+                        0,
+                        this.width/2,
+                        this.height/2
+                    );
+                    ctx.drawImage(this.pointerImageElement, 0, 0,this.pointerImageElement.width/this.scaleX,this.pointerImageElement.height/this.scaleY);
+                    ctx.restore();
+                }
+                    
+    
+                
+            }catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染'+this.type+'出错');
+            }
+        }
+    }
+
     widgetPrototypes.push(MyGallery)
+    widgetPrototypes.push(MyTestCombinedWidget)
     for(var i=0;i<widgetPrototypes.length;i++){
         generateFabricWidget(widgetPrototypes[i])
     }

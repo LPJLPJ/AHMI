@@ -1973,6 +1973,242 @@
                             </div>
                         </div>
 
+
+
+                        <div ng-show="component.object.type=='MyTestCombinedWidget'&&!myMask">
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">名称</p>
+                                <input class="attr-item__cell-input form-control"
+                                       type="text"
+                                       ng-model="component.object.level.name"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterName($event)">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.left"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.top"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterY($event)"
+                                   type="number">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="position.absoluteX"
+                                       ng-blur="position.absoluteX=position.initAbsoluteX"
+                                       ng-keypress="component.enterAbsoluteX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">绝对坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="position.absoluteY"
+                                   ng-blur="position.absoluteY=position.initAbsoluteY"
+                                   ng-keypress="component.enterAbsoluteY($event)"
+                                   type="number">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">高度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">最小角度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.minAngle"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterMinAngle($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap ">
+                            <p class="attr-item__cell-title">最大角度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.maxAngle"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMaxAngle($event)"
+                                   type="number">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">最小值</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.minValue"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterMinValue($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap ">
+                            <p class="attr-item__cell-title">最大值</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.maxValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMaxValue($event)"
+                                   type="number">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">终止遮罩</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.maxCoverAngle"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.dashboard.enterMaxCoverAngle($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">起始遮罩</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.minCoverAngle"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterMinCoverAngle($event)"
+                                   type="number">
+                        </div>
+                        <div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">旋转中心X</p>
+                            <input disabled class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.posRotatePointX"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">旋转中心Y</p>
+                            <input disabled class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.posRotatePointY"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardPointerPos($event)"
+                                   type="number">
+                        </div>
+                        <div class="attr-item__cell-wrap lg">
+                            <p class="attr-item__cell-title">旋转内径</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.innerRadius"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardInnerRadius($event)"
+                                   type="number">
+                        </div>
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">起始角度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.offsetValue"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.dashboard.enterDashboardOffsetValue($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">当前值</p>
+                            <input class="attr-item__cell-input form-control"
+                                   type="number"
+                                   ng-model="component.object.level.info.value"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.dashboard.enterDashboardValue($event)">
+                        </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">低警报</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.lowAlarmValue"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterMinAlert($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">高警报</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.highAlarmValue"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterMaxAlert($event)"
+                                   type="number">
+                        </div>
+
+                            <!--<div class="attr-item__cell-wrap lg">-->
+                            <!--<span class="attr-item__cell-title">指针长度</span>-->
+                            <!--<input class="attr-item__cell-input form-control"-->
+                            <!--ng-model="component.object.level.info.pointerLength"-->
+                            <!--ng-blur="component.restore()"-->
+                            <!--ng-keypress="component.dashboard.enterPointerLength($event)"-->
+                            <!--type="number">-->
+                            <!--</div>-->
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">模式</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-model="component.dashboard.dashboardModeId"
+                                        ng-change="component.dashboard.enterDashboardMode($event)">
+                                    <option ng-repeat="mode in component.dashboard.dashboardModes" value="{{mode.id}}">
+                                        {{mode.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">无背景模式</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-model="component.dashboard.backgroundModeId"
+                                        ng-change="component.dashboard.enterBackgroundMode($event)">
+                                    <option ng-repeat="mode in component.dashboard.backgroundModes" value="{{mode.id}}">
+                                        {{mode.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">转动方向</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-model="component.dashboard.clockwise"
+                                        ng-change="component.dashboard.enterDashboardClockwise($event)">
+                                    <option ng-repeat="clockwise in component.dashboard.dashboardClockwise"
+                                            value="{{clockwise.wise}}">{{clockwise.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">开启动画</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-model="component.dashboard.enableAnimationModeId"
+                                        ng-change="component.enterEnableAnimationMode($event)">
+                                    <option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">
+                                        {{mode.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg" ng-show="component.dashboard.enableAnimationModeId=='0'">
+                                <p class="attr-item__cell-title">时间曲线</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-options="timingFun as timingFun for timingFun in component.timingFuns"
+                                        ng-model="component.timingFun"
+                                        ng-change="component.changeTimingFun()"
+                                        ng-disabled="animationsDisabled">
+                                </select>
+                            </div>
+                            
+
+                            <div class="attr-item__cell-wrap lg" ng-show="component.dashboard.enableAnimationModeId=='0'">
+                                <p class="attr-item__cell-title">持续时间(ms)</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.transition.duration"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.changeTransitionDur($event)"
+                                       type="number"
+                                       ng-disabled="animationsDisabled">
+                            </div>
+                        </div>
+
                         <div ng-show="component.object.type=='MyNum'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
