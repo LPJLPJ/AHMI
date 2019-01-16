@@ -37,7 +37,7 @@ ideServices.
         this.MyAlphaSlide = 'MyAlphaSlide';
         this.MyTextInput = 'MyTextInput';
         this.MyGallery = 'MyGallery';
-        this.MyTestComninedWidget = 'MyTestComninedWidget'
+        this.MyTestCombinedWidget = 'MyTestCombinedWidget'
 
 
 
@@ -76,7 +76,7 @@ ideServices.
             this.MyAlphaSlide,
             this.MyTextInput,
             this.MyGallery,
-            this.MyTestComninedWidget
+            this.MyTestCombinedWidget
         ]
         for(var i=0;i<widgets.length;i++){
             if(widgets[i]==_typeStr){

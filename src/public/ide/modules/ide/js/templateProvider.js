@@ -768,6 +768,24 @@ ideServices
             }
         };
 
+        this.getDefaultTestCombinedWidget= function () {
+            var info = _.cloneDeep(defaultDashboard.info);
+            var texList = _.cloneDeep(defaultDashboard.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                dashboardModeId:'0',//0-简单模式，1-复杂模式,2-精简模式
+                backgroundModeId:'0', //0-不启用无背景模式 //1-启用无背景模式
+                name: 'NewTestCombinedWidget',
+                type: Type.MyTestCombinedWidget,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList,
+                transition:_.cloneDeep(defaultTransition)
+            }
+        };
+
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-

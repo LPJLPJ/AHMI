@@ -5153,7 +5153,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 //func attrs, pass as function
                 for(attr in widget.funcAttrs){
-                    this[attr] = widget.funcAttrs[attr](level)
+                    this[attr] = widget.funcAttrs[attr].call(this,level)
                 }
 
 
@@ -5373,8 +5373,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             maxAngle:360,
             pointerLength:100,
             clockwise:true,
-            dashboardModeId:'1',
-            backgroundModeId :'0',
+            
             minCoverAngle:0,
             maxCoverAngle:360,
             posRotatePointX:0,
@@ -5382,6 +5381,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             innerRadius:0
         },
         funcAttrs:{
+            dashboardModeId:function(level){
+                return level.dashboardModeId
+            },
+            backgroundModeId :function(level){
+                return level.backgroundModeId
+            },
             backgroundColor:function(level){
                 return level.texList[0].slices[0].color;
             },
@@ -5398,19 +5403,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             },
             pointerColor:function(level){
                 if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
-                    
-    
-                    
-    
                     return level.texList[1].slices[0].color;
-    
-                    
-    
-                    
                 }else if(this.dashboardModeId=='2'){
-                    
                    return null
-                    
                 }
             },
             pointerElement:function(level){
@@ -5420,7 +5415,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     return null     
                 }
             },
-            lightBandImageElement:function(){
+            lightBandImageElement:function(level){
                 if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
                     
                     return level.texList[2] && ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc) || null
@@ -5434,15 +5429,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         triggers:{
             OnRelease:function (arg) {
-                // level.info.posRotatePointX = Math.round(level.info.width/2)
-                // level.info.posRotatePointY = Math.round(level.info.height/2)
-                this.posRotatePointX = level.info.posRotatePointX
-                this.posRotatePointY = level.info.posRotatePointY
-                //subLayerNode.renderAll();
-                // this.fire('changeDashboardPointerOffset',{
-                //     posRotatePointX:level.info.posRotatePointX,
-                //     posRotatePointY:level.info.posRotatePointY
-                // })
+               
+                // this.posRotatePointX = this.level.info.posRotatePointX
+                // this.posRotatePointY = this.level.info.posRotatePointY
+               
             },
 
             changeDashboardOffsetValue:function (arg) {
