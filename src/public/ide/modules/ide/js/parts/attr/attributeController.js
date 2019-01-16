@@ -64,6 +64,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterButtonMode: enterButtonMode,
                     enterArrange: enterArrange
                 },
+                buttonSwitch: {
+                    enableAnimationModeId: '0'
+                },
                 buttonGroup: {
                     enterInterval: enterInterval,
                     enterButtonCount: enterButtonCount,
@@ -591,6 +594,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.button.highlightModeId = '0';
                         } else if ($scope.component.object.level.info.disableHighlight === true) {
                             $scope.component.button.highlightModeId = '1';
+                        }
+                        break;
+                    case Type.MyButtonSwitch:
+                        if ($scope.component.object.level.info.enableAnimation === false) {
+                            $scope.component.buttonSwitch.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.buttonSwitch.enableAnimationModeId = '0'
                         }
                         break;
                     case Type.MyButtonGroup:
@@ -1294,10 +1304,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectEnableAnimationMode = $scope.component.texNum.enableAnimationModeId;
             } else if(selectObj.type === Type.MyGallery){
                 selectEnableAnimationMode = $scope.component.gallery.enableAnimationModeId;
+            } else if(selectObj.type === Type.MyButtonSwitch){
+                selectEnableAnimationMode = $scope.component.buttonSwitch.enableAnimationModeId;
             }
             var option = {
                 enableAnimationModeId: selectEnableAnimationMode
-            }
+            };
             ProjectService.ChangeEnableAnimationMode(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage', oldOperate);
             })

@@ -1223,7 +1223,6 @@ ideServices
                         syncSublayer(fabWidget);
                     },initiator);
                 }else if(_newWidget.type===Type.MyTexNum){
-                    console.log(_newWidget);
                     fabric.MyTexNum.fromLevel(_newWidget,function (fabWidget) {
                         _self.currentFabLayerIdList = [fabWidget.id];
                         subLayerNode.add(fabWidget);
@@ -1244,6 +1243,18 @@ ideServices
                     },initiator);
                 }else if(_newWidget.type===Type.MyAlphaImg){
                     fabric.MyAlphaImg.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
+                }else if(_newWidget.type===Type.MyButtonSwitch){
+                    fabric.MyButtonSwitch.fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
                         fabWidget.urls=_newWidget.subSlides;
                         subLayerNode.add(fabWidget);

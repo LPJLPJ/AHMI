@@ -17,7 +17,6 @@ ideServices.
         var MyGroup = this.MyGroup = 'group';
         var MyLayerArray = this.MyLayerArray = 'MyLayerArray';
         var MyWidgetArray = this.MyWidgetArray = 'MyWidgetArray';
-
         var MyKnob = this.MyKnob = 'MyKnob';
         var MyTextArea = this.MyTextArea = 'MyTextArea';
         var MyNum = this.MyNum = 'MyNum';
@@ -33,11 +32,11 @@ ideServices.
         var MyTexNum=this.MyTexNum="MyTexNum";
         var MyTexTime = this.MyTexTime = 'MyTexTime';
         var MyAlphaImg = this.MyAlphaImg = 'MyAlphaImg';
-        var MyTouchTrack = this.MyTouchTrack = 'MyTouchTrack'
+        var MyTouchTrack = this.MyTouchTrack = 'MyTouchTrack';
+        var MyButtonSwitch = this.MyButtonSwitch = 'MyButtonSwitch';
         this.MyAlphaSlide = 'MyAlphaSlide';
         this.MyTextInput = 'MyTextInput';
         this.MyGallery = 'MyGallery';
-
 
 
     this.getFabWidgetByName= function (_typeStr) {
@@ -74,8 +73,9 @@ ideServices.
             this.MyTouchTrack,
             this.MyAlphaSlide,
             this.MyTextInput,
-            this.MyGallery
-        ]
+            this.MyGallery,
+            this.MyButtonSwitch
+        ];
         for(var i=0;i<widgets.length;i++){
             if(widgets[i]==_typeStr){
                 return true
@@ -83,9 +83,4 @@ ideServices.
         }
         return false
     };
-
-
-
-
-
 }]);

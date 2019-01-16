@@ -407,7 +407,6 @@ ideServices
             }
         };
 
-
         this.getDefaultAlphaSlide = function () {
             var info = {
                 width:200, height: 150,
@@ -456,10 +455,6 @@ ideServices
 
             }
         };
-
-
-
-
 
         this.getDefaultButton= function () {
             var info = _.cloneDeep(defaultButton.info);
@@ -1208,6 +1203,46 @@ ideServices
                     }]
                 }]
 
+            }
+        };
+
+        this.getDefaultButtonSwitch = function(){
+            var info = {
+                width:100,
+                height:50,
+                left:0,
+                top:0,
+                originX: 'center',
+                originY: 'center',
+                enableAnimation:false
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                subSlides: [],
+                name: 'NewButtonSwitch',
+                type:Type.MyButtonSwitch,
+                expand:true,
+                zIndex:0,
+                url:'',
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'开关背景纹理',
+                    slices:[{
+                        color:'rgba(100,100,100,1)',
+                        imgSrc:'',
+                        name:'开关背景纹理'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'开关滑块纹理',
+                    slices:[{
+                        color:'rgba(120,120,120,1)',
+                        imgSrc:'',
+                        name:'开关滑块纹理'
+                    }]
+                }],
+                transition:_.cloneDeep(defaultTransition)
             }
         };
 

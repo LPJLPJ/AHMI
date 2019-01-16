@@ -12,29 +12,19 @@
     <link rel="stylesheet" href="../../public/ide/lib/angular-bootstrap/ui-bootstrap-csp.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-bootstrap-colorpicker/css/colorpicker.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-ui-select/select.min.css">
-
-
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css">
     <link rel="stylesheet" href="../../public/ide/lib/angular-modal/modal.css">
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/wave-loading.css">
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/editorIndex.css"/>
     <link rel="stylesheet" href="../../public/ide/modules/ide/css/iconfont.css"/>
-    <!--add-->
     <link rel="stylesheet" href="../../public/ide/tools/css/ruler.css"/>
 
-
-
-
-
     <script src="../../public/ide/lib/jquery-3.1.0.min.js"></script>
-    <!--add-->
     <script src="../../public/ide/lib/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
     <script src="../../public/ide/lib/whammy.js"></script>
     <script src="../../public/ide/tools/js/ruler.js"></script>
-
     <script src="../../public/libs/md5.js"></script>
-
     <script src="../../public/ide/lib/angular.min.js"></script>
     <script src="../../public/ide/lib/angular-animate.min.js"></script>
     <script src="../../public/ide/lib/fabric/fabric.min.js"></script>
@@ -56,9 +46,6 @@
     <script src="../../public/ide/lib/sortable.js"></script>
     <script src="../../public/ide/lib/3dDraw/babylon.custom.js"></script>
     <script src="../../public/ide/lib/3dDraw/advancedDrawEngine.js"></script>
-
-
-
     <script src="../../public/ide/lib/Slider.js"></script>
     <script src="../../public/ide/lib/Drag.js"></script>
     <script src="../../public/ide/lib/ng-file-upload/ng-file-upload.min.js"></script>
@@ -68,8 +55,6 @@
     </script>
     <script src="../../public/ide/lib/text-encoding/encoding-indexes.js"></script>
     <script src="../../public/ide/lib/text-encoding/encoding.js"></script>
-
-
 
     <!--build-->
     <!--services-->
@@ -109,7 +94,6 @@
     <script src="../../public/ide/modules/ide/min-js/socketIOService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/middleWareService.js"></script>
 
-
     <!--controllers-->
     <script src="../../public/ide/modules/ide/min-js/IDEController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/containerCtl.js"></script>
@@ -139,7 +123,6 @@
     <script src="../../public/ide/modules/ide/min-js/parts/attr/waveFilterController.js"></script>
     <!--directive-->
     <script src="../../public/ide/modules/ide/min-js/parts/lexer/actionCompiler2.js"></script>
-
 
     <script language="javascript">
         function imgdragstart() {
@@ -1183,6 +1166,86 @@
                                         {{mode.name}}
                                     </option>
                                 </select>
+                            </div>
+
+                        </div>
+
+                        <div ng-show="component.object.type=='MyButtonSwitch'&&!myMask">
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">名称</p>
+                                <input class="attr-item__cell-input form-control"
+                                       type="text"
+                                       ng-model="component.object.level.name"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterName($event)">
+                            </div>
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.left"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.top"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterY($event)"
+                                   type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="position.absoluteX"
+                                       ng-blur="position.absoluteX=position.initAbsoluteX"
+                                       ng-keypress="component.enterAbsoluteX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">绝对坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="position.absoluteY"
+                                   ng-blur="position.absoluteY=position.initAbsoluteY"
+                                   ng-keypress="component.enterAbsoluteY($event)"
+                                   type="number">
+                             </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">高度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">开启动画</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-model="component.buttonSwitch.enableAnimationModeId"
+                                        ng-change="component.enterEnableAnimationMode($event)">
+                                    <option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">
+                                        {{mode.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg" ng-show="component.buttonSwitch.enableAnimationModeId=='0'">
+                                <p class="attr-item__cell-title">持续时间(ms)</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.transition.duration"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.changeTransitionDur($event)"
+                                       type="number"
+                                       ng-disabled="animationsDisabled">
                             </div>
 
                         </div>

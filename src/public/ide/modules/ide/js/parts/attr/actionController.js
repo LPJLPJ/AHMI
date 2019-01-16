@@ -60,6 +60,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         }
         ////console.log(currentSelectedObject);
         switch (currentSelectedObject.type) {
+            case Type.MyButtonSwitch:
             case Type.MyButton:
             case Type.MyNumber:
             case Type.MyProgress:

@@ -1770,6 +1770,58 @@ module.exports = React.createClass({
 
         cb && cb();
     },
+    drawButtonSwitch: function (curX, curY, widget, options, cb) {
+        /*var slideImg = this.getImage(widget.texList[1].slices[0].imgSrc);
+        slideImg = (slideImg && slideImg.content) || null;
+        widget.imgWidth = slideImg.width;
+        widget.imgHeight = slideImg.height;
+        widget.imgPosY = curY - (slideImg.height - widget.info.height) * 0.5;
+        console.log(widget.imgPosY);*/
+        var buttonSwitchState = this.getValueByTagName(widget.tag, 0)||0;
+        var oldPosX = widget.oldPosX||0,curPosX;
+        if(buttonSwitchState == 0){
+            curPosX = 0;
+        }else{
+            //curPosX = slideImg?widget.info.width-slideImg.width:widget.info.width/2;
+            curPosX = widget.info.width/2;
+        }
+        if(curPosX != oldPosX){
+            var oldValue;
+            if(widget.info.enableAnimation){
+                var duration = (widget.transition && widget.transition.duration) || 0;
+                if (widget.animationKey != -1 && widget.animationKey != undefined) {
+                    oldValue = widget.currentPosX || 0;
+                    AnimationManager.clearAnimationKey(widget.animationKey);
+                    widget.animationKey = -1;
+                } else {
+                    oldValue = widget.oldPosX || 0;
+                }
+                widget.oldPosX = curPosX;
+                widget.animationKey = AnimationManager.stepValue(oldPosX, curPosX, duration, 30, null, function (obj) {
+                    widget.currentPosX = obj.curX;
+                    this.draw()
+                }.bind(this), function () {
+                    widget.currentPosX = curPosX;
+                }.bind(this));
+                //initial
+                widget.currentPosX = oldValue;
+            }else{
+                widget.oldPosX = curPosX;
+                widget.currentPosX = curPosX;
+            }
+        }else{
+        }
+    },
+    paintButtonSwitch: function (curX, curY, widget, options, cb) {
+        var tex = widget.texList;
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var currentPosX = widget.currentPosX||curX;
+        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color);
+        this.drawBg(currentPosX, curY, width/2, height, tex[1].slices[0].imgSrc, tex[1].slices[0].color);
+        cb && cb();
+
+    },
     drawSwitch: function (curX, curY, widget, options, cb) {
         var bindTagValue = this.getValueByTagName(widget.tag, 0);
         var switchState;
@@ -2181,7 +2233,6 @@ module.exports = React.createClass({
         // widget.currentValue = curProgress
         // this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
         // widget.oldValue = curProgress;
-
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
 
@@ -2218,7 +2269,7 @@ module.exports = React.createClass({
 
 
                 widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, duration, 30, null, function (obj) {
-                    widget.currentValue = obj.curX
+                    widget.currentValue = obj.curX;
                     this.draw()
                 }.bind(this), function () {
                     widget.currentValue = curProgress
@@ -2240,7 +2291,6 @@ module.exports = React.createClass({
                 widget.currentValue = curProgress
 
             }
-
             // this.paintProgress(curX,curY,widget,options,cb)
 
 
@@ -3926,6 +3976,7 @@ module.exports = React.createClass({
             var arcPhase = radPhase*180/Math.PI;
             var innerW = innerRadius * Math.sin(radPhase)
             var innerH = innerRadius * Math.cos(radPhase)
+
             if (clockwise != '2') {
                 clockwise = clockwise == '1' ? 1 : -1;
                 if (widget.dashboardModeId == '0') {
@@ -5236,6 +5287,16 @@ module.exports = React.createClass({
                         this.setTagByTag(targetTag, (targetTag.value > 0 ? 0 : 1))
                     }
 
+                }
+                widget.mouseState = mouseState;
+                needRedraw = true;
+                break;
+            case 'MyButtonSwitch':
+                var targetTag = this.findTagByName(widget.tag);
+                if (targetTag) {
+                    targetTag.value = parseInt(targetTag.value);
+                    // targetTag.value = targetTag.value > 0 ? 0 : 1;
+                    this.setTagByTag(targetTag, (targetTag.value > 0 ? 0 : 1))
                 }
                 widget.mouseState = mouseState;
                 needRedraw = true;
