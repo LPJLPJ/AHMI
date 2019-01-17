@@ -177,11 +177,17 @@ ideServices.service('ProjectTransformService',['Type','TemplateProvider',functio
     function copyCombinedWidgetAttr(simpleWidget, combinedWidget){
         for(var key in simpleWidget){
             if(key!=='info'&&key!=='type'){
-                simpleWidget[key] = combinedWidget[key]
+                if (key in combinedWidget){
+                    simpleWidget[key] = combinedWidget[key]
+                }
+                
             }
         }
         for(key in simpleWidget.info){
-            simpleWidget.info[key] = combinedWidget.info[key]
+            if(key in combinedWidget.info){
+                simpleWidget.info[key] = combinedWidget.info[key]
+            }
+            
         }
     }
 
@@ -195,7 +201,7 @@ ideServices.service('ProjectTransformService',['Type','TemplateProvider',functio
                 copyCombinedWidgetAttr(slide,_.cloneDeep(rawWidget))
                 console.log(slide.texList)
                 slide.texList = slide.texList.slice(0,1)
-
+                
                 var rotateImg = TemplateProvider.getDefaultRotateImg()
                 copyCombinedWidgetAttr(rotateImg,_.cloneDeep(rawWidget))
                 rotateImg.texList = rotateImg.texList.slice(1)
@@ -203,9 +209,9 @@ ideServices.service('ProjectTransformService',['Type','TemplateProvider',functio
                 rotateImg.info.height = rawWidget.info.height/2
                 rotateImg.info.left += rawWidget.info.width/2
                 rotateImg.info.top += rawWidget.info.height/2
-                rotateImg.info.posRotateX = 0
-                rotateImg.info.posRotateY = 0
-
+                rotateImg.info.posRotatePointX = 0
+                rotateImg.info.posRotatePointY = 0
+                rotateImg.tag = rawWidget.tag
                 widgets = [slide,rotateImg]
             break;
             default:

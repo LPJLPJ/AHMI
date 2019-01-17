@@ -1249,6 +1249,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyAlphaImg:
             case Type.MyTextInput:
             case Type.MyButton:
+            case Type.MyTestCombinedWidget:
                 $scope.component.showTagPanel = true;
                 break;
             default:
