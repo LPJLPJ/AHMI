@@ -1,4 +1,4 @@
-ideServices.service('ProjectTransformService',['Type','TemplateProvider',function(Type,TemplateProvider){
+ideServices.service('ProjectTransformService',['Type','TemplateProvider','ResourceService',function(Type,TemplateProvider,ResourceService){
 
     this.transDataFile = transDataFile;
 
@@ -199,14 +199,16 @@ ideServices.service('ProjectTransformService',['Type','TemplateProvider',functio
                 
                 var slide = TemplateProvider.getDefaultSlide()
                 copyCombinedWidgetAttr(slide,_.cloneDeep(rawWidget))
-                console.log(slide.texList)
+                //console.log(slide.texList)
                 slide.texList = slide.texList.slice(0,1)
                 
                 var rotateImg = TemplateProvider.getDefaultRotateImg()
                 copyCombinedWidgetAttr(rotateImg,_.cloneDeep(rawWidget))
                 rotateImg.texList = rotateImg.texList.slice(1)
-                rotateImg.info.width = rawWidget.info.width/2
-                rotateImg.info.height = rawWidget.info.height/2
+                //get image width height
+                var imgElem = ResourceService.getResourceFromCache(rotateImg.texList[0].slices[0].imgSrc);
+                rotateImg.info.width = imgElem.width
+                rotateImg.info.height = imgElem.height
                 rotateImg.info.left += rawWidget.info.width/2
                 rotateImg.info.top += rawWidget.info.height/2
                 rotateImg.info.posRotatePointX = 0

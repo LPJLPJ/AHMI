@@ -5408,7 +5408,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                    return null
                 }
             },
-            pointerElement:function(level){
+            pointerImageElement:function(level){
                 if(this.dashboardModeId=='0'||this.dashboardModeId=='1'){
                     return ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
                 }else if(this.dashboardModeId=='2'){    
