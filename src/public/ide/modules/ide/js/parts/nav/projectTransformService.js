@@ -1,4 +1,4 @@
-ideServices.service('ProjectTransformService',['Type',function(Type){
+ideServices.service('ProjectTransformService',['Type','TemplateProvider',function(Type,TemplateProvider){
 
     this.transDataFile = transDataFile;
 
@@ -143,8 +143,12 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             transActions(targetSubLayer);
         }
         targetSubLayer.widgetList = [];
-        for (var i=0;i<rawSubLayer.widgets.length;i++){
-            var curWidget = rawSubLayer.widgets[i];
+        var rawSimpleWidgets = []
+        rawSubLayer.widgets.forEach(function(w){
+            rawSimpleWidgets = rawSimpleWidgets.concat(transCombiedWidget(w))
+        })
+        for (var i=0;i<rawSimpleWidgets.length;i++){
+            var curWidget = rawSimpleWidgets[i];
             targetSubLayer.widgetList.push(transWidget(curWidget,i,targetSubLayer.id,opts));
         }
 
@@ -164,6 +168,51 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetWidget.id = subLayerIdx+'.'+widgetIdx;
 
         return targetWidget;
+    }
+
+
+
+    //trans comnbined widget
+
+    function copyCombinedWidgetAttr(simpleWidget, combinedWidget){
+        for(var key in simpleWidget){
+            if(key!=='info'&&key!=='type'){
+                simpleWidget[key] = combinedWidget[key]
+            }
+        }
+        for(key in simpleWidget.info){
+            simpleWidget.info[key] = combinedWidget.info[key]
+        }
+    }
+
+    function transCombiedWidget(rawWidget){
+        var widgets = []
+        switch(rawWidget.type){
+            case Type.MyTestCombinedWidget:
+                //to rotateImg and slide
+                
+                var slide = TemplateProvider.getDefaultSlide()
+                copyCombinedWidgetAttr(slide,_.cloneDeep(rawWidget))
+                console.log(slide.texList)
+                slide.texList = slide.texList.slice(0,1)
+
+                var rotateImg = TemplateProvider.getDefaultRotateImg()
+                copyCombinedWidgetAttr(rotateImg,_.cloneDeep(rawWidget))
+                rotateImg.texList = rotateImg.texList.slice(1)
+                rotateImg.info.width = rawWidget.info.width/2
+                rotateImg.info.height = rawWidget.info.height/2
+                rotateImg.info.left += rawWidget.info.width/2
+                rotateImg.info.top += rawWidget.info.height/2
+                rotateImg.info.posRotateX = 0
+                rotateImg.info.posRotateY = 0
+
+                widgets = [slide,rotateImg]
+            break;
+            default:
+                widgets =  [rawWidget]
+        }
+
+        return widgets
     }
 
     function deepCopyAttributes(srcObj,dstObj,attrList){
