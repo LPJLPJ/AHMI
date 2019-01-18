@@ -2,7 +2,7 @@
  * Created by zzen1ss on 16/7/13.
  */
 ;(function () {
-    var versionNum = '1.10.7_build_1.15.13.59';
+    var versionNum = '1.10.7_build_1.18.16.20';
     window.ideVersion = versionNum;
     var versionTag = document.createElement('div');
     versionTag.id = 'version-tag';
