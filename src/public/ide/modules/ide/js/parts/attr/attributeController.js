@@ -893,14 +893,31 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     toastr.warning('未改变值' + $scope.component.object.level.info.left);
                     return;
                 }
+
+                var isWidget = Type.isWidget($scope.component.object.level.type)
+                if(isWidget){
+                    //whether absoluteX absoluteY overflow
+                    var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
+                    if(futureAbsolutePos&&(futureAbsolutePos.absoluteX<-2000||futureAbsolutePos.absoluteX>2000)){
+                        toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
+                        restore();
+                        return;
+                    }
+                }
+
+                
+
                 var option = {
                     left: xCoor
                 };
 
                 ProjectService.ChangeAttributePosition(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
-                    var currentWidgetInfo = $scope.component.object.level.info;
-                    ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    if(isWidget){
+                        var currentWidgetInfo = $scope.component.object.level.info;
+                        ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    }
+                    
                 })
 
             }
@@ -916,22 +933,40 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     return;
                 }
                 if (yCoor < -2000 || yCoor > 2000) {
-                    toastr.warning('超出范围');
+                    toastr.warning('超出范围，相对坐标范围-2000 ~ 2000');
                     restore();
                     return;
                 }
                 //判断是否有变化
                 if (yCoor == initObject.level.info.top) {
+                    toastr.warning('未改变值' + $scope.component.object.level.info.top);
                     return;
                 }
+
+
+                var isWidget = Type.isWidget($scope.component.object.level.type)
+                if(isWidget){
+                    //whether absoluteX absoluteY overflow
+                    var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
+                    if(futureAbsolutePos&&(futureAbsolutePos.absoluteY<-2000||futureAbsolutePos.absoluteY>2000)){
+                        toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
+                        restore();
+                        return;
+                    }
+                }
+                
+
                 var option = {
                     top: yCoor
                 };
 
                 ProjectService.ChangeAttributePosition(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
-                    var currentWidgetInfo = $scope.component.object.level.info;
-                    ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    if(isWidget){
+                        var currentWidgetInfo = $scope.component.object.level.info;
+                        ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    }
+                    
                 })
 
             }
@@ -949,7 +984,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     return;
                 }
                 if (xCoor < -2000 || xCoor > 2000) {
-                    toastr.warning('超出画布范围');
+                    toastr.warning('超出画布范围，必须是-2000 ~ 2000');
                     $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
                     return;
                 }
@@ -2151,11 +2186,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     restore();
                     return;
                 }
+
+                //global limit
                 if ($scope.component.object.level.info.minValue < (-Math.pow(10, 9) + 1)) {
                     toastr.warning('小于最小临界值');
                     restore();
                     return;
                 }
+
+
+
                 //判断是否有变化
                 if ($scope.component.object.level.info.minValue == initObject.level.info.minValue) {
                     return;
@@ -2170,6 +2210,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if ($scope.component.object.level.type == Type.MyProgress) {
                     if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.progressValue) {
                         toastr.warning('不能比当前值大');
+
+                        restore();
+                        return;
+                    }
+                    if ($scope.component.object.level.info.minValue < -30000) {
+                        toastr.warning('不能小于-30000');
 
                         restore();
                         return;
@@ -2244,6 +2290,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if (type === Type.MyProgress) {
                     if (maxValue < $scope.component.object.level.info.progressValue) {
                         toastr.warning('不能比当前值小');
+                        restore();
+                        return;
+                    }
+
+                    if (maxValue > 30000) {
+                        toastr.warning('不能大于30000');
                         restore();
                         return;
                     }
