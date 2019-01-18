@@ -4582,9 +4582,9 @@ ideServices
              */
             this.ChangeAttributeWidgetSize=function(_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
+                var image;
                 switch (selectObj.type){
                     case 'MySlide':
-                    case 'MyProgress':
                     case 'MyDashboard':
                     case 'MyRotateImg':
                     case 'MyTextArea':
@@ -4595,7 +4595,11 @@ ideServices
                     case 'MyTouchTrack':
                     case 'MyAlphaSlide':
                     case 'MyTextInput':
-                        var image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+                    case 'MyButtonSwitch':
+                        image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+                        break;
+                    case 'MyProgress':
+                        image = ResourceService.getResourceFromCache(selectObj.level.texList[1].slices[0].imgSrc);
                         break;
                     default :
                         break;
