@@ -253,6 +253,17 @@ ideServices
                 }
             }
 
+            this.getProjectInitSize = function(){
+                if(project.initSize){
+                    return project.initSize
+                }else{
+                    return {
+                        width:0,
+                        height:0
+                    }
+                }
+            }
+
             /**
              * 获得当前Page
              * @returns {*}
@@ -388,6 +399,30 @@ ideServices
                     currentLayerInfo:currentLayerInfo,
                     initAbsoluteX:Math.round(absoluteX),
                     initAbsoluteY:Math.round(absoluteY)
+                };
+            };
+
+            //输入相对坐标，预先计算绝对坐标
+            this.getFutureAbsolutePosition = function (widgetInfo,layerInfo) {
+                var currentLayer=this.getCurrentLayer(),
+                    absoluteX=null,absoluteY=null
+                    
+                //如果传入layerInfo就不使用getCurrentLayer()获取的参数；
+                if(widgetInfo&&layerInfo){
+                    absoluteX=widgetInfo.left+layerInfo.left;
+                    absoluteY=widgetInfo.top+layerInfo.top;
+                    
+                }else{
+                    if(widgetInfo&&currentLayer){
+                        absoluteX=widgetInfo.left+currentLayer.info.left;
+                        absoluteY=widgetInfo.top+currentLayer.info.top;
+                        
+                    }
+                }
+                return {
+                    absoluteX:Math.round(absoluteX),
+                    absoluteY:Math.round(absoluteY)
+                    
                 };
             };
 
@@ -5340,6 +5375,10 @@ ideServices
                 if (!_array){
                     return index;
                 }
+                if(!_item){
+                    console.log(_item)
+                    throw Error('_item is null')
+                }
                 _.forEach(_array, function (__item,_index) {
                     if (__item.id==_item.id){
                         index=_index;
@@ -5712,7 +5751,10 @@ ideServices
                         break;
                     default :
                         //console.error('not match widget in _addFabricObjInCanvasNode!');
-                        fabric[dataStructure.type].fromLevel(dataStructure, addFabWidget, initiator);
+                        if (dataStructure.type in fabric){
+                            fabric[dataStructure.type].fromLevel(dataStructure, addFabWidget, initiator);
+                        }
+                        
                         
                 }
                 _cb&&_cb();

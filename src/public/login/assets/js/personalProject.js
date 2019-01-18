@@ -963,7 +963,7 @@ $(function(){
             //check resolution
             if(resolution.val().trim()=='custom'){
                 if(!checkCustomResolution(customWidth.val().trim(),customHeight.val().trim())){
-                    toastr.error('分辨率有误');
+                    toastr.error('分辨率有误, 宽、高必须是小于1920的正整数');
                     return;
                 }else
                     project.resolution=customWidth.val().trim()+"*"+customHeight.val().trim();

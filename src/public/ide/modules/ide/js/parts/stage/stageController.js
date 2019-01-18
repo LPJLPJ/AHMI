@@ -659,25 +659,34 @@
 
                     var clickX=null,clickY=null;
 
+                    var page = ProjectService.getCurrentPage()
+                    var pan = ProjectService.calculatePanWithCurrentSize(page.currentSize,ProjectService.getProjectInitSize())
+
                     if (activeGroup&&activeGroup.containsPoint(clickPoint)) {
-                        clickX=event.e.offsetX/$scope.component.canvas.node.getZoom()-(activeGroup.left+activeGroup.width/2);
-                        clickY=event.e.offsetY/$scope.component.canvas.node.getZoom()-(activeGroup.top+activeGroup.height/2);
+                        clickX=(event.e.offsetX + pan.x)/$scope.component.canvas.node.getZoom()-(activeGroup.left+activeGroup.width/2);
+                        clickY=(event.e.offsetY + pan.y)/$scope.component.canvas.node.getZoom()-(activeGroup.top+activeGroup.height/2);
 
 
                     }else {
-                        clickX=event.e.offsetX/$scope.component.canvas.node.getZoom();
-                        clickY=event.e.offsetY/$scope.component.canvas.node.getZoom();
+                        clickX=(event.e.offsetX+pan.x)/$scope.component.canvas.node.getZoom();
+                        clickY=(event.e.offsetY+pan.y)/$scope.component.canvas.node.getZoom();
                     }
+
+                    
+                    
                     _.forEach($scope.component.canvas.node.getObjects(), function (_fabLayer) {
 
                         //console.log(clickX+'/'+clickY);
                         //console.log(_fabLayer.width+'/'+_fabLayer.getWidth());
                         //console.log(_fabLayer.top+'/'+_fabLayer.getTop());
-                        if (clickX<=(_fabLayer.getWidth()+_fabLayer.left)&&clickY<=(_fabLayer.getHeight()+_fabLayer.top)
+                        if(_fabLayer.selectable){
+                            if (clickX<=(_fabLayer.getWidth()+_fabLayer.left)&&clickY<=(_fabLayer.getHeight()+_fabLayer.top)
                             &&clickX>=_fabLayer.left&&clickY>=_fabLayer.top){
-                            clickedFabLayer=_fabLayer;
+                                clickedFabLayer=_fabLayer;
 
+                            }
                         }
+                        
                     });
                     if (KeydownService.isCtrlPressed()){
                         //如果在Ctrl模式点击了Layer,交给ctrlClickLayer处理
