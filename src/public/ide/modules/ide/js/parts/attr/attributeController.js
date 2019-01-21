@@ -993,6 +993,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     toastr.warning('未改变值' + $rootScope.position.absoluteX);
                     return;
                 }
+
+                if (absoluteX < -2000 || absoluteX > 2000) {
+                    toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
+                    $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
+                    return;
+                }
                 var option = {
                     left: xCoor
                 };
@@ -1023,6 +1029,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 //判断是否有变化
                 if (absoluteY == $rootScope.position.initAbsoluteY) {
                     toastr.warning('未改变值' + $rootScope.position.absoluteY);
+                    return;
+                }
+                if (absoluteY < -2000 || absoluteY > 2000) {
+                    toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
+                    $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
                     return;
                 }
                 var option = {
