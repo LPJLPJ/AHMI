@@ -223,7 +223,11 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
 
         // 确定按钮
         $scope.confirm = function (th) {
-            if (!checkScale()||!checkDuration()) {
+            if (!checkScale()) {
+                toastr.warning('缩放参数必须在[1/127, 8]');
+                return;
+            }
+            if (!checkDuration()) {
                 return;
             }
             fixData($scope.animation, $scope.switchButtons);
@@ -285,27 +289,49 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             return true;
         }
 
+        //scale should in [1/127, 8]
+        var scaleMin = 1/127
+        var scaleMax = 8
+        function checkEachScale(s){
+            if(s>=scaleMin && s <= scaleMax){
+                return true
+            }
+            return false
+        }
+
         function checkScale() {
             var advanceMode = $scope.animation.advanceMode;
-            var scaleX, scaleY,stopScaleX,stopScaleY;
+            var attrs = ['srcScale','dstScale']
+            var subAttrs = ['x','y']
+            var attr,subAttr
             if (advanceMode === true) {
-                scaleX = $scope.animation.animationAttrs.scale.srcScale.x.value;
-                scaleY = $scope.animation.animationAttrs.scale.srcScale.y.value;
-
-                stopScaleX = $scope.animation.animationAttrs.scale.dstScale.x.value;
-                stopScaleY = $scope.animation.animationAttrs.scale.dstScale.y.value;
+                
+                for(attr in attrs){
+                    for(subAttr in subAttrs){
+                        if(!$scope.animation.animationAttrs.scale[attrs[attr]][subAttrs[subAttr]].tag){
+                            //check value
+                            if(!checkEachScale($scope.animation.animationAttrs.scale[attrs[attr]][subAttrs[subAttr]].value)){
+                                return false
+                            }
+                        }
+                    }
+                }
+                
             } else if (advanceMode === false) {
-                scaleX = $scope.animation.animationAttrs.scale.srcScale.x;
-                scaleY = $scope.animation.animationAttrs.scale.srcScale.y;
-
-                stopScaleX = $scope.animation.animationAttrs.scale.dstScale.x;
-                stopScaleY = $scope.animation.animationAttrs.scale.dstScale.y;
+                for(attr in attrs){
+                    for(subAttr in subAttrs){
+                        //check value
+                        if(!checkEachScale($scope.animation.animationAttrs.scale[attrs[attr]][subAttrs[subAttr]])){
+                            return false
+                        }
+                    }
+                }
             }
 
-            if (scaleX < 0 || scaleY < 0 || stopScaleX<0 || stopScaleY<0) {
-                toastr.warning("缩放倍率禁止使用负数");
-                return false;
-            }
+            // if (scaleX < 0 || scaleY < 0 || stopScaleX<0 || stopScaleY<0) {
+            //     toastr.warning("缩放倍率禁止使用负数");
+            //     return false;
+            // }
             return true;
 
         }
