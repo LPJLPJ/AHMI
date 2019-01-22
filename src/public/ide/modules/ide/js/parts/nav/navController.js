@@ -1082,7 +1082,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
-            temp.project.tagList = TagService.getAllTags();
+            temp.project.tagList = TagService.getAllTagsWithSystemTagSorted();
             temp.project.timers = TagService.getTimerNum();
             temp.project.CANId = NavModalCANConfigService.getCANId();
             //link widgets
