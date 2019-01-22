@@ -1291,6 +1291,105 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
     }
 
+
+    renderer.prototype.renderButtonSwitch = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        //progressModeId
+        var info = widget.info;
+        if (!!info){
+
+
+
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+            var totalSlices
+            var slices
+            slices = widget.texList.map(function (t) {
+                return t.slices[0]
+            })
+            totalSlices = slices.length
+            slices.map(function (slice,i) {
+                var curSlice = slice
+                var imgObj
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+
+                }
+                
+                var canvas,ctx
+                var tWidth,tHeight
+                if(i==1){
+                    tWidth = width/2
+                    tHeight = height
+
+                }else{
+                    tWidth = width
+                    tHeight = height
+                }
+                canvas = new Canvas(tWidth,tHeight);
+                ctx = canvas.getContext('2d');
+                ctx.clearRect(0,0,tWidth,tHeight);
+
+
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+
+                ctx.save();
+
+                //render color
+                renderingX.renderColor(ctx,new Size(tWidth,tHeight),new Pos(),curSlice.color);
+
+                //render image;
+                if (targetImageObj){
+                    renderingX.renderImage(ctx,new Size(tWidth,tHeight),new Pos(),targetImageObj,new Pos(),new Size(tWidth,tHeight));
+
+                }
+
+
+                //output
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,tWidth,tHeight,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices===0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    }
+
     renderer.prototype.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
         var width = info.width;
@@ -1461,6 +1560,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 break;
             case 'MyTouchTrack':
                 this.renderTouchTrack(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyButtonSwitch':
+                this.renderButtonSwitch(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
                 cb&&cb();

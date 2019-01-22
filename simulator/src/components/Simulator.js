@@ -5635,7 +5635,7 @@ module.exports = React.createClass({
 
 
                 // }
-                var param2Value = this.getParamValue(param2);
+                var param2Value = Number(this.getParamValue(param2));
                 if (curPageTag) {
                     if (param2Value > 0 && param2Value <= project.pageList.length) {
                         // curPageTag.value = param2;
