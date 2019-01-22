@@ -125,6 +125,36 @@ ideServices.service('TagService', [function () {
         return tags.concat(timerTags);
     };
 
+    //get all tags, system tags will sort with embeded sequence
+    this.getAllTagsWithSystemTagSorted = function(){
+        var systemTags = []
+        var customTags = []
+        tags.forEach(function(t){
+            if(t.type == 'system'){
+                systemTags.push(t)
+            }else{
+                customTags.push(t)
+            }
+        })
+        //sort systemTags with embeded sequence
+        var embededSystemTags = [keyCode,videoTag, curPageTag, RTCTag1, RTCTag2, backLight,buzzer , fpsTag]
+        systemTags.sort(function(a,b){
+            return _indexOfSysTag(embededSystemTags,a.name) - _indexOfSysTag(embededSystemTags,b.name)
+        })
+
+        return systemTags.concat(customTags).concat(timerTags)
+
+    }
+
+    function _indexOfSysTag(arr, sysTagName){
+        for(var i=0;i<arr.length;i++){
+            if(sysTagName == arr[i].name){
+                return i
+            }
+        }
+        return -1
+    }
+
     this.getAllTagsName = function () {
         var temptags = tags.concat(timerTags);
         var names = [];
