@@ -2457,6 +2457,8 @@ ideServices
                                 pageNode.renderAll();
                                 // currentPage.proJsonStr=pageNode.toJSON();
                                 currentPage.mode=0;
+
+                                _self.ScaleCanvas('page');
                                 _successCallback && _successCallback();
 
                                 // console.log('cost time is:',Date.now()-timeStamp);
@@ -5838,7 +5840,7 @@ ideServices
             //add OutBorder
 
             function addOutBorder(borderData){
-                
+
                 var pageNode = CanvasService.getPageNode();
                 
                 var currentPage=_self.getCurrentPage();
