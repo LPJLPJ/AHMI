@@ -11,7 +11,7 @@
 }
 
 body {
-    font-family: SOURCEHANSANSCN-NORMAL, Arial;
+    font-family: SOURCEHANSANSCN-NORMAL, Arial, sans-serif;
     background-color: #f5f4f6;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -216,7 +216,7 @@ a img {
 
 /*拖拽上传*/
 .wrapper {
-    height: auto;
+    height: auto !important;
 }
 
 .empty-prompt {
@@ -722,7 +722,7 @@ a img {
     outline: none;
     font-weight: 500;
     color: #7d7d7d;
-    border-bottom: 1.5px solid transparent;
+    border-bottom: 2px solid transparent;
     -webkit-transition: all .2s;
     -moz-transition: all .2s;
     -ms-transition: all .2s;
@@ -732,12 +732,12 @@ a img {
 
 .modal-btn:hover {
     text-shadow: 0 0 0 #7d7d7d;
-    border-bottom: 1.5px solid #7d7d7d;
+    border-bottom: 2px solid #7d7d7d;
 }
 
 .btn-confirm:hover {
     text-shadow: 0 0 0 #005599;
-    border-bottom: 1.5px solid #005599;
+    border-bottom: 2px solid #005599;
 }
 
 .btn-confirm {
@@ -747,4 +747,41 @@ a img {
 .project-delete__prompt, .folder-delete__prompt {
     color: #005599;
     font-weight: 600;
+}
+
+/*右键菜单*/
+.context-menu-list {
+    border: 1px solid #dcdcdc !important;
+    box-shadow: 0 0 2px rgba(0, 0, 0, .2) !important;
+    padding: 0;
+}
+
+.context-menu-item {
+    padding: 0 2em !important;
+    line-height: 35px !important;
+}
+
+.context-menu-item.context-menu-separator {
+    margin: 0;
+}
+
+.context-menu-item.context-menu-disabled > span {
+    color: #bfbfbf !important;
+}
+
+.context-menu-item > span {
+    color: #898989 !important;
+    font-weight: 500;
+}
+
+.context-menu-submenu:after {
+    border-color: transparent transparent transparent #898989 !important;
+}
+
+.context-menu-visible {
+    background-color: #005599 !important;
+}
+
+.context-menu-visible > span {
+    color: white !important;
 }
