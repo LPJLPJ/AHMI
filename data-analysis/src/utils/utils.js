@@ -11,6 +11,8 @@ const WidgetClassCfg_Unit = 104;
 const AnimationVectorClass_Unit = 44;
 const Instruction_Unit = 5;
 const Texture_Unit = 40;
+const Texture_Long_Unit = 40;
+const Texture_Short_Unit = 24;
 
 // texture文件常量
 
@@ -107,7 +109,7 @@ class CfgSizeCalculator {
 
     // 计算纹理数量
     const calcTextureCnt = () => {
-      let count = 0
+      let count, long_count = 0, short_count = 0;
       const widgets = allWidgets;
       // let oldCount = 0;
       widgets.forEach(widget => {
@@ -116,77 +118,113 @@ class CfgSizeCalculator {
         // oldCount = count;
         switch (type) {
           case "MyProgress":
-            texList.forEach(tex => {
-              const {slices} = tex;
-              count += slices.length;
-            });
-            count += 1;
+            const {info: {cursor}} = widget, {info: {progressModeId}} = widget, {info: {thresholdModeId}} = widget;
+            if (cursor === '0') {//不带光标
+              switch (progressModeId) {//模式
+                case '0':
+                  short_count += 4;
+                  break;
+                case '1':
+                  short_count += 2;
+                  break;
+                case '3':
+                  if (thresholdModeId === '1') {//二段
+                    short_count += 4;
+                  } else if (thresholdModeId === '2') {//三段
+                    short_count += 4;
+                  }
+                  break;
+                default:
+                  break;
+              }
+            } else if (cursor === '1') {//有光标
+              switch (progressModeId) {//模式
+                case '0':
+                  short_count += 7;
+                  break;
+                case '1':
+                  short_count += 5;
+                  break;
+                case '3':
+                  if (thresholdModeId === '1') {//二段
+                    short_count += 7;
+                  } else if (thresholdModeId === '2') {//三段
+                    short_count += 7;
+                  }
+                  break;
+                default:
+                  break;
+              }
+            }
             break;
           case "MyDashBoard":
-            texList.forEach(tex => {
-              const {slices} = tex;
-              count += slices.length;
-            });
-            const {dashboardModeId} = widget;
-            if (dashboardModeId !== '0') {
-              count += 4;
+            const {info: {dashBoardModeId}} = widget;
+            if (dashBoardModeId === '0') {//简单
+              short_count+=1;
+              long_count+=1;
+            }  else if (dashBoardModeId === '1') {//复杂
+              short_count+=3;
+              long_count+=5;
             }
             break;
           case "MyDateTime":
             const {info: {dateTimeModeId}} = widget;
-            if (dateTimeModeId === '0') {
-              count += 8;
-            } else if (dateTimeModeId === '1') {
-              count += 5;
-            } else if (dateTimeModeId === '2') {
-              count += 10;
-            } else if (dateTimeModeId === '3') {
-              count += 10;
+            if (dateTimeModeId === '0') {//时分秒
+              short_count += 10;
+            } else if (dateTimeModeId === '1') {//时分
+              short_count += 7;
+            } else if (dateTimeModeId === '2') {//斜杠
+              short_count += 12;
+            } else if (dateTimeModeId === '3') {//减号
+              short_count += 12;
             }
-            count += 2;
             break;
           case "MyNum":
+            short_count += 5;
+            break;
           case "MyTexNum":
             let {info: {numOfDigits, decimalCount, symbolMode}} = widget;
-            count += Number(numOfDigits);
-            if (Number(decimalCount) > 0) {
-              count += 1;
-            }
-            if (symbolMode === '1') {
-              count += 1;
-            }
-            if (type === "MyNum") {
-              count += 2;
-            }
+            short_count += Number(numOfDigits);
             break;
           case "MyTextArea":
-            count += 1;
+            short_count += 1;
             break;
           case "MyButton":
-            const {info: {disableHighlight}} = widget;
-            count += 1;
-            if (!disableHighlight) {
-              count += 1;
-            }
+            short_count += 1;
             break;
           case "MySlide":
-            count += 1;
+            long_count += 1;
             break;
           case "MyButtonGroup":
             const {info: {count: btnCount}} = widget;
-            count += btnCount;
+            short_count += btnCount;
             break;
           case "MySwitch":
-            count += 1;
+            long_count += 1;
+            break;
+          case "MyVideo":
+            long_count += 1;
             break;
           case "MyRotateImg":
-            count += 1;
+            long_count += 1;
             break;
           case "MySlideBlock":
-            count += 2;
+            long_count += 2;
             break;
           case "MyAnimation":
-            count += 1;
+            short_count += 1;
+            break;
+          case "MyTexTime":
+            short_count += 8;
+            break;
+          case "MyTouchTrack":
+            short_count += 2;
+            break;
+          case "MyAlphaImg":
+            short_count += 3;
+            break;
+          case "MyTextInput":
+            short_count += 5;
             break;
           default:
             // texList.forEach(tex => {
@@ -198,10 +236,14 @@ class CfgSizeCalculator {
 
       });
 
-      count += allPage.length;
+      short_count += allPage.length;
+      count = {
+        short:short_count,
+        long:long_count
+      };
+      //console.log(count);
       return count;
-
-    }
+    };
 
 
     // 遍历
@@ -278,7 +320,7 @@ class CfgSizeCalculator {
     this.WidgetClassCfg = this.widgetCnt * WidgetClassCfg_Unit;
     this.AnimationVectorClass = this.animationCnt * AnimationVectorClass_Unit;
     this.Instruction = this.instructionsCnt * Instruction_Unit;
-    this.Texture = this.textureCnt * Texture_Unit;
+    this.Texture = this.textureCnt.short*Texture_Short_Unit + this.textureCnt.long*Texture_Long_Unit;
 
     const total = this.configInfoClass + this.cfgString + this.mDynamicPageCfg + this.TagClassCfg + this.WidgetLinkData
       + this.PageLinkData + this.CanvasLinkData + this.CanvasVectorClass + this.SubCanvasVectorClass + this.WidgetClassCfg
