@@ -1907,7 +1907,10 @@ module.exports = React.createClass({
             font['font-family'] = info.fontFamily;
             font['font-color'] = info.fontColor;
             font['text-align'] = 'left';
-            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,info.spacing||0);
+            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,{
+                spacing:info.spacing||0,
+                halfSpacing:info.halfSpacing||0
+            });
         }
         cb && cb();
     },
@@ -1917,13 +1920,21 @@ module.exports = React.createClass({
         var font = font || {};
         // console.log(font);
         var offcanvas = this.refs.offcanvas;
+        var halfSpacing = 0
+        var curSpacing = 0
+        var lastLetterType, curLetterType
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
         tempcanvas.width = width;
         tempcanvas.height = height;
         var tempctx = tempcanvas.getContext('2d');
         tempctx.save();
-        if (spacing === undefined) spacing = 0;
+        if (spacing === undefined) {
+            spacing = 0
+        }else if (typeof spacing === 'object'){ //support halfSpacing
+            halfSpacing = spacing.halfSpacing
+            spacing = spacing.spacing
+        }
         if (paddingRatio === undefined) paddingRatio = 0;
         if (arrange === 'vertical') {
             tempctx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
@@ -1966,8 +1977,18 @@ module.exports = React.createClass({
             var yCoordinate = 0.5 * height;
             for (var i = 0; i < text.length; i++) {
                 tempctx.fillText(text[i], xCoordinate, yCoordinate);
-                xCoordinate += spacing;
-                xCoordinate += maxFontWidth;
+                if(i+1 < text.length){
+                    lastLetterType = this.getLetterType(text[i])
+                    curLetterType = this.getLetterType(text[i+1])
+                    if(lastLetterType === 0){
+                        curSpacing = curLetterType ? (spacing + halfSpacing)/2 : halfSpacing
+                    }else{
+                        curSpacing = curLetterType ? spacing : (spacing + halfSpacing)/2
+                    }
+                    xCoordinate += curSpacing;
+                    xCoordinate += maxFontWidth;
+                }
+                
 
             }
 
@@ -1988,6 +2009,14 @@ module.exports = React.createClass({
         }
         tempctx.restore();
         offctx.drawImage(tempcanvas, curX, curY, width, height);
+    },
+    getLetterType(letter){
+        var codePoint = letter.codePointAt(0)
+        if (codePoint < 128){
+            return 0
+        }else{
+            return 1
+        }
     },
     drawButtonGroup: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag);

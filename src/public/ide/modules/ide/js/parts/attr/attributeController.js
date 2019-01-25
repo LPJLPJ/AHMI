@@ -406,7 +406,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 changeTransitionDur: changeTransitionDur,
                 enterHighlightMode: enterHighlightMode,
                 enterEnableAnimationMode: enterEnableAnimationMode,
-                enterSpacing: enterSpacing
+                enterSpacing: enterSpacing,
+                enterHalfSpacing:enterHalfSpacing
             };
             $scope.animationsDisabled = UserTypeService.getAnimationAuthor()
         }
@@ -2519,6 +2520,51 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                         })
                         break;
+                    case "MyTextInput":
+                        ProjectService.ChangeAttributeOfTextInput(option, function () {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                        })
+                        break;
+                    default:
+                        console.log("error!");
+                }
+            }
+        }
+
+
+        //输入半角字符间距
+        function enterHalfSpacing(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                var halfSpacing = $scope.component.object.level.info.halfSpacing,
+                    fontSize = $scope.component.object.level.info.fontSize;
+                if (!_.isInteger(halfSpacing)) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+
+                if (halfSpacing === initObject.level.info.halfSpacing) {
+                    return;
+                }
+
+                if (halfSpacing < -fontSize || halfSpacing > fontSize) {
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    halfSpacing: halfSpacing
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                // console.log("$scope.component.object",$scope.component.object)
+                // if ($scope.component.object.type === "MyNum") {
+
+                // }
+                switch ($scope.component.object.type) {
+                    
                     case "MyTextInput":
                         ProjectService.ChangeAttributeOfTextInput(option, function () {
                             $scope.$emit('ChangeCurrentPage', oldOperate);
