@@ -314,7 +314,7 @@ module.exports = React.createClass({
         this.simState = {};
         this.initProject();
         this.paintKey = requestAnimationFrame(this.paint);
-        console.log(this.paintKey)
+        //console.log(this.paintKey)
 
     },
     componentWillReceiveProps: function (newProps) {
@@ -5598,6 +5598,8 @@ module.exports = React.createClass({
       }
     },
     process: function (cmds,index) {
+        //console.log(cmds,index);
+
         var cmdsLength = cmds.length;
         if (index >= cmdsLength) {
             return;
@@ -5618,7 +5620,8 @@ module.exports = React.createClass({
         timerFlag = this.timerFlag(param1);
         var nextStep = {
             process: true,
-            step: 1
+            step: 1,
+            delay: false
         }
         switch (op) {
             case 'GOTO':
@@ -5983,20 +5986,20 @@ module.exports = React.createClass({
                     }
                 })
                 break;
-
             case 'SET_STR':
-
                 var targetTag = this.findTagByName(param1.tag);
-
                 if (targetTag) {
-                    // targetTag.value = parseInt(param2);
                     this.setTagByTag(targetTag, this.getParamValue(param2))
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
                 }
                 break;
-
+            case 'DELAY':
+                if (param2.value) {
+                    nextStep.delay = true;
+                }
+                break;
             case 'CONCAT_STR':
 
                 var targetTag = this.findTagByName(param1.tag);
@@ -6068,7 +6071,13 @@ module.exports = React.createClass({
 
         //process next
         if (nextStep.process) {
-            this.process(cmds, index + nextStep.step);
+            if (nextStep.delay){
+                setTimeout(function () {
+                    this.process(cmds, index + nextStep.step);
+                }.bind(this),Number(param2.value))
+            }else {
+                this.process(cmds, index + nextStep.step);
+            }
         }
 
     },

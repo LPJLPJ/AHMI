@@ -506,6 +506,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                             pass = false
                         }
                     break;
+                    case 'DELAY':
                     case 'SET_TIMER_START':
                     case 'SET_TIMER_STOP':
                     case 'SET_TIMER_STEP':

@@ -24,14 +24,6 @@ playButton.addEventListener('click', function () {
 });
 
 closeButton.addEventListener('click', function () {
-    ReactDOM.render( < Simulator
-    projectData = {
-    {
-    }
-}/>
-    ,
-    simulatorContainer
-    )
-    ;
+    ReactDOM.render( < Simulator projectData = {{}} />, simulatorContainer);
 });
 
