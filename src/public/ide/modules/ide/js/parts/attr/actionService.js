@@ -62,11 +62,13 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyButtonGroup:
                 triggers = [tRelease];
                 break;
+            case Type.MySlideBlock:
+                triggers = [tRelease,tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm,tTagChange];
+                break;
             case Type.MyScriptTrigger:
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyNum:
-            case Type.MySlideBlock:
             case Type.MyTexNum:
                 triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm,tTagChange];
                 break;

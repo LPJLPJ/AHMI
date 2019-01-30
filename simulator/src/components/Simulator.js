@@ -5407,6 +5407,10 @@ module.exports = React.createClass({
                         elem.curPressedKey = null;
                         needRedraw = true;
                         break;
+                    case 'MySlideBlock':
+                        elem.mouseState = mouseState;
+                        needRedraw = true;
+                        break;
                 }
                 break;
         }
