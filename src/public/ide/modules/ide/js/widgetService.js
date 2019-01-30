@@ -3506,6 +3506,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.fontUnderline=level.info.fontUnderline;
 
             this.spacing = level.info.spacing||0
+            this.halfSpacing = level.info.halfSpacing||0
 
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
@@ -3568,6 +3569,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.spacing =  arg.spacing
                 }
 
+                if(arg.halfSpacing!==undefined){
+                    self.halfSpacing =  arg.halfSpacing
+                }
+
                 var subLayerNode = CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 arg.callback && arg.callback();
@@ -3606,6 +3611,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         },
         _render: function (ctx) {
             try{
+                var curSpacing = this.spacing
+                var lastLetterType,curLetterType
                 ctx.fillStyle=this.fontColor;
                 ctx.save();
                 ctx.fillStyle=this.backgroundColor;
@@ -3627,15 +3634,30 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     //console.log(fontString);
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
-                    ctx.textAlign='left';
+                    ctx.textAlign='center';
                     ctx.textBaseline='middle';//使文本垂直居中
                     //ctx.fillText(this.text,-(this.width/2),0);
                     //draw with byte mode
                     var maxWidth = this.fontSize;
                     var centerX = 0
+                    centerX = 0.5*maxWidth  - (this.width/2)
                     for(var i=0;i<this.text.length;i++){
-                        centerX = 0.5*maxWidth + i *(maxWidth + this.spacing) - (this.width/2)
+                        curLetterType = getLetterType(this.text[i])
+                        if(lastLetterType === undefined){
+                            curSpacing = 0
+                        }else if(lastLetterType === 0){
+                            curSpacing = curLetterType ? (this.spacing + this.halfSpacing)/2 : this.halfSpacing
+                            curSpacing += maxWidth
+                        }else{
+                            curSpacing = curLetterType ? this.spacing : (this.spacing + this.halfSpacing)/2
+                            curSpacing += maxWidth
+                        }
+                        centerX += curSpacing
                         ctx.fillText(this.text[i],centerX, 0)
+                        lastLetterType = curLetterType
+                        
+                        
+
                     }
                 }
                 //将图片超出canvas的部分裁剪
@@ -3672,6 +3694,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback&&callback(new fabric.MyTextInput(level,object));
     };
     fabric.MyTextInput.async = true;
+
+
+    function getLetterType(letter){
+        var codePoint = letter.codePointAt(0)
+        if (codePoint < 128){
+            return 0
+        }else{
+            return 1
+        }
+    }
 
 
     //num
