@@ -682,6 +682,7 @@ body {
 
 .stage-content-wrap {
     width: 100%;
+    /* float: left; */
     height: calc(100% - 30px);
     box-sizing: border-box;
     background-color: #f5f4f6;
@@ -708,6 +709,106 @@ body {
     position: absolute;
     left: 0;
     top: 0;
+}
+
+.stage__tools {
+    width: 100%;
+    height: 300px;
+    background-color: #e5e5e5;
+    border-bottom: 1px solid #dcdcdc;
+    box-sizing: border-box;
+    text-align: center;
+    /* line-height: 30px; */
+    font-size: 14px;
+    color: #005599;
+    position: absolute;
+    bottom:0;
+}
+
+
+/* animationEditor */
+
+.animationEditor__body{
+    /* display: table; */
+}
+
+.animationEditor__row{
+    /* display: table-row; */
+    display: block;
+    margin:0;
+    padding:0;
+    height: 50px;
+    background-color: dodgerblue;
+}
+
+.animationEditor__col{
+    /* display:table-column; */
+    display: inline-block;
+    margin:0;
+    background-color: grey;
+    border:1px solid white;
+}
+
+.animationEditor__attribute,.animationEditor__buttons,.animationEditor__timeLine,.animationEditor__timeLineMarker{
+    background-color: grey;
+    border:1px solid white;
+}
+
+.animationEditor__attribute,.animationEditor__buttons{
+    width:25%;
+}
+
+.animationEditor__button{
+    display:inline-block;
+    margin:0 1em;
+}
+
+.animationEditor__timeLine,.animationEditor__timeLineMarker{
+    width:70%;
+    position: relative;
+    height:22px;
+}
+
+/* .animationEditor__timeLineMarker{
+    height:20px;
+} */
+
+.animationEditor__marker{
+    border-radius: 50%;
+    display: inline-block;
+    background-color: black;
+    width:10px;
+    height:10px;
+    position: absolute;
+}
+
+.animationEditor__ruler{
+    text-align: left;
+}
+
+
+.animationEditor__tickUnit{
+    display: inline-block;
+    width:100px;
+    position: relative;
+    height:20px;
+    vertical-align: bottom;
+}
+
+.animationEditor__tick{
+    position: absolute;
+    width:1px;
+    height:5px;
+    background: rgba(70,70,70,0.8);
+    bottom:0;
+}
+
+.animationEditor__unit{
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    /* width:30px;
+    height:20px; */
 }
 
 #c {

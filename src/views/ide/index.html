@@ -119,6 +119,7 @@
     <script type="text/javascript" src="../../public/ide/modules/ide/min-js/myDirective.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/tagController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/waveFilterController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/animationEditor/animationEditorCtrl.js"></script>
     <!--directive-->
     <script src="../../public/ide/modules/ide/min-js/parts/lexer/actionCompiler2.js"></script>
 
@@ -694,6 +695,63 @@
                         </td>
                     </tr>
                 </table>
+            </div>
+        </div>
+        <div class="stage__tools">
+            <div class="animationEditor__wrapper" ng-controller="AnimationEditorCtrl">
+                <p>动画编辑</p>
+                <div class="animationEditor__body">
+                    <div class="row">
+                        <div class="animationEditor__buttons col-md-3">
+                            <div class="animationEditor__button">
+                                >>
+                            </div>
+                            <div class="animationEditor__button">
+                                ||
+                            </div>
+                        </div>
+                        <div class="animationEditor__timeLine col-md-7">
+                            <div class="animationEditor__handler"></div>
+                            <div class="animationEditor__ruler">
+                                <div class="animationEditor__tickUnit">
+                                    <div class="animationEditor__tick"></div>
+                                    <div class="animationEditor__unit">00:00</div>
+                                </div>
+                                <div class="animationEditor__tickUnit">
+                                    <div class="animationEditor__tick"></div>
+                                    <div class="animationEditor__unit">01:00</div>
+                                </div>
+                                <div class="animationEditor__tickUnit">
+                                    <div class="animationEditor__tick"></div>
+                                    <div class="animationEditor__unit">02:00</div>
+                                </div>
+                                <div class="animationEditor__tickUnit">
+                                    <div class="animationEditor__tick"></div>
+                                    <div class="animationEditor__unit">03:00</div>
+                                </div>
+                                <div class="animationEditor__tickUnit">
+                                    <div class="animationEditor__tick"></div>
+                                    <div class="animationEditor__unit">04:00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="animationEditor__attribute col-md-3">
+                            <div class="animationEditor__attributeLabel">
+                                TranslateX {{component.title}}
+                            </div>
+                        </div>
+                        <div class="animationEditor__timeLineMarker col-md-7">
+                            <!-- <div class="animationEditor__marker"  style="left:50px"></div>
+                            <div class="animationEditor__marker" style="left:150px"></div> -->
+                            <div class="animationEditor__marker" style="left:150px" 
+                                ng-mousedown="component.marker.onMouseDown($event)"
+                                ng-mousemove="component.marker.onMouseMove($event)"
+                                ng-mouseup="component.marker.onMouseUp($event)"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
