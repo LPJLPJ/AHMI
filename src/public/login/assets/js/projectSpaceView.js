@@ -4,7 +4,7 @@
 
 $(function(){
     //工程列表 鼠标悬停效果
-    var projectList = $("#project-list");
+    var projectList = $("#project-content");
     projectHover(projectList);
     function projectHover(main){
         main.on('mouseenter','.project-item__thumb',function(e){

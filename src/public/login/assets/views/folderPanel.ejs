@@ -2,14 +2,14 @@
     <div class="project-item__thumb">
         <img class="folder-thumb-icon" src="../../public/login/assets/images/folder.png">
         <div class="project-item__hover-menu">
-            <div class="hover-menu__item open-folder">
+            <a class="hover-menu__item open-folder"  href="#/folder/<%= folder._id %>">
                 <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
                 <span>打开项目</span>
-            </div>
-            <div class="hover-menu__item edit-folder">
+            </a>
+            <a class="hover-menu__item edit-folder">
                 <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
                 <span>编辑信息</span>
-            </div>
+            </a>
             <p class="hover-menu__item2">
                 <span class="hover-menu__delete-project delete-folder"></span>
             </p>

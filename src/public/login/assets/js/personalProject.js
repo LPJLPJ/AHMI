@@ -10,6 +10,7 @@ $(function(){
     var localCANProjectDir='';
     var curIDEVersion = window.ideVersion.split('_')[0].trim();
     var userType = localStorage.getItem('userType');
+    var listWrap = $('#list-wrap');
 
     deleteProjectButton.on('click',function (e) {
         if(curProject.resolution){
@@ -606,7 +607,7 @@ $(function(){
         }
     };
 
-    $('#project-list').on('click','.play-project',function(){
+    listWrap.on('click','.play-project',function(){
         var modal = $('#originSiteModal');
         curPanel = $(this).parents('.project-panel');
         curSelectedPanel = curPanel;
@@ -652,7 +653,7 @@ $(function(){
     });
 
     //删除工程
-    $('#project-list').on('click','.delete-project',function(){
+    listWrap.on('click','.delete-project',function(){
         curPanel = $(this).parents('.project-panel');
         var project = $(this).parents('.project-panel').attr('data-project');
         project = JSON.parse(project);
@@ -662,7 +663,7 @@ $(function(){
     });
 
     //修改信息
-    $("#project-list").on('click','.edit-project',function(){
+    listWrap.on('click','.edit-project',function(){
         curPanel = $(this).parents('.project-panel');
         showProInfo(curPanel);
     });
@@ -1017,9 +1018,13 @@ $(function(){
 
     function addNewProject(newProject){
         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
-        $('#project-list').prepend(html);
-        if($('#project-list').find('.project-list__item').length){
-            $('#project-empty').hide();
+        if (location.hash === '') {
+            $('#project-list').prepend(html);
+            if($('#project-list').find('.project-list__item').length){
+                $('#project-empty').hide();
+            }
+        }else {
+            $('#folder-project-list').prepend(html);
         }
     }
 
@@ -1236,12 +1241,13 @@ $(function(){
      * @author tang
      * 项目分类
      */
-    var folder;
-    var folderList;
-    var deleteFolderModal=$('#delete-folder-modal');
-    var deleteFolderConfirm=$('#deleteFolderConfirm');
-    var projectList = $('#project-list');
-    var folderListWrap = $('#folder-list');
+    var folder,
+        folderList,
+        deleteFolderModal=$('#delete-folder-modal'),
+        deleteFolderConfirm=$('#deleteFolderConfirm'),
+        projectList = $('#project-list'),
+        folderWrap = $('#folder-space-wrap'),
+        projectWrap = $('#project-list-wrap');
 
     //创建、修改项目
     $('#add-folder').on('click',function(){
@@ -1254,11 +1260,39 @@ $(function(){
     //打开项目
     projectList.on('click','.open-folder',function(e){
         curFolder=$(this).parents('.folder-panel');
-        var fol = curFolder.attr('data-folder');
+        var fol = curFolder.attr('data-folder')
         fol = JSON.parse(fol);
         folder=fol;
-        var url = '/folder/'+folder._id+'/space';
-        window.open(url,"_self");
+        /*var url = '/folder/'+folder._id+'/space';
+        window.open(url,"_self");*/
+        $.ajax({
+            url:'/folder/space',
+            type:'post',
+            data: {folderId:folder._id},
+            success: function (data) {
+                if (data) {
+                    folderWrap.show();
+                    projectWrap.hide();
+                    data = JSON.parse(data);
+                    var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder});
+                    folderWrap.find('.folder-space-list').replaceWith(html);
+                }
+            },
+            error:function (err) {
+                console.log(err);
+            }
+
+        })
+    });
+
+    window.addEventListener('hashchange',function () {
+        if (location.hash === '') {
+            folderWrap.hide();
+            projectWrap.show();
+        }else {
+            folderWrap.show();
+            projectWrap.hide();
+        }
     });
 
     //删除确认按钮
@@ -1427,7 +1461,7 @@ $(function(){
         projectData = null,
         sharedOwn = false;
 
-    $('#project-list').on('click','.share-project',function(){
+    listWrap.on('click','.share-project',function(){
         var project = $(this).parents('.project-panel').attr('data-project');
         projectData = JSON.parse(project);
         var projectId = projectData._id;

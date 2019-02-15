@@ -358,10 +358,16 @@ a img {
 }
 
 /*项目列表*/
-.project-list-wrap, .folder-list-wrap {
+.project-list-wrap, .folder-list-wrap ,.folder-space-wrap{
     width: 1106px;
     margin-bottom: 50px;
     box-sizing: border-box;
+    float: left;
+
+}
+
+.folder-space-wrap {
+    display: none;
 }
 
 .project-content.project > .folder-list-wrap, .project-content.folder > .project-list-wrap {
@@ -455,6 +461,7 @@ a img {
     line-height: 34px;
     margin: 0 auto;
     cursor: pointer;
+    display: block;
 }
 
 .hover-menu__item {
@@ -784,4 +791,15 @@ a img {
 
 .context-menu-visible > span {
     color: white !important;
+}
+
+.go-back {
+    font-size: 15px;
+    cursor: pointer;
+    float: left;
+}
+
+.folder-space__bar {
+    font-size: 15px;
+    padding: 0 5px;
 }

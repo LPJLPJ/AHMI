@@ -274,6 +274,8 @@ router.route('/folder/getFolderList')
     .get(projectInfo.getFolderList);
 router.route('/folder/:id/space')
     .get(folder_space);
+router.route('/folder/space')
+    .post(folder_space);
 
 //project recycle
 router.route('/project/recycle')

@@ -5,7 +5,7 @@ var path = require('path');
 var moment = require('moment');
 var _ = require('lodash');
 module.exports=function(req,res){
-    var folderId = req.params.id;
+    var folderId = req.body.folderId;
     var _user = req.session.user;
     if(_user&&_user.id){
         UserModel.findById(_user.id,function(err,user){
@@ -52,11 +52,11 @@ module.exports=function(req,res){
                                     }
                                 });
 
-                                res.render('login/folderSpace.html',{
+                                res.end(JSON.stringify({
                                     folder:folderInfo,
                                     projects:processedProjects,
                                     userInfo:userInfo
-                                });
+                                }));
                             }
                         });
                     }

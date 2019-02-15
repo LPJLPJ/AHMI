@@ -24,7 +24,7 @@
 </header>
 <!--工程列表-->
 <div class="wrapper" id="filedrag">
-    <div class="project-content">
+    <div class="project-content" id="project-content">
         <div class="project-content__operate clearfix">
             <div class="project-operate__view clearfix">
                 <a href="/project/recycle" target="_blank" class="p-o__item"><i class="iconfont">&#xe643;</i><span>回收站</span></a>
@@ -46,100 +46,72 @@
         </div>
 
         <!--工程列表-->
-        <div class="project-list-wrap" id="project-list-wrap">
-            <ul class="project-list clearfix" id="project-list">
-                <%for(var f=0;f<folders.length;f++){%>
-                <li class="project-list__item folder-panel" data-folder='<%= JSON.stringify(folders[f].folderInfo) %>'>
-                    <div class="project-item__thumb">
-                        <img class="folder-thumb-icon" src="../../public/login/assets/images/folder.png">
-                        <div class="project-item__hover-menu">
-                            <div class="hover-menu__item open-folder">
-                                <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
-                                <span>打开文件夹</span>
+        <div id="list-wrap">
+            <div class="project-list-wrap" id="project-list-wrap">
+                <ul class="project-list clearfix" id="project-list">
+                    <%for(var f=0;f<folders.length;f++){%>
+                    <li class="project-list__item folder-panel" data-folder='<%= JSON.stringify(folders[f].folderInfo) %>'>
+                        <div class="project-item__thumb">
+                            <img class="folder-thumb-icon" src="../../public/login/assets/images/folder.png">
+                            <div class="project-item__hover-menu">
+                                <a class="hover-menu__item open-folder" href="#/folder?id=<%= folders[f].folderInfo._id %>">
+                                    <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
+                                    <span>打开文件夹</span>
+                                </a>
+                                <a class="hover-menu__item edit-folder">
+                                    <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
+                                    <span>编辑信息</span>
+                                </a>
+                                <p class="hover-menu__item2">
+                                    <span class="hover-menu__delete-project delete-folder"></span>
+                                </p>
                             </div>
-                            <div class="hover-menu__item edit-folder">
-                                <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
-                                <span>编辑信息</span>
-                            </div>
-                            <p class="hover-menu__item2">
-                                <span class="hover-menu__delete-project delete-folder"></span>
-                            </p>
                         </div>
-                    </div>
-                    <div class="project-item__title folder-tool"
-                         title="创建作者:<%= folders[f].folderInfo.author %>&#10创建时间:<%= folders[f].folderInfo.createTime %>&#10修改时间:<%= folders[f].folderInfo.lastModifiedTime %>">
-                        <p class="project-item_folder-title"><%= folders[f].folderInfo.name %></p>
-                    </div>
-                </li>
-                <%}%>
-                <span id="boundary"></span>
-                <%for(var i=0;i<projects.length;i++){%>
-                <li class="project-list__item project-panel project-tool" data-project='<%= JSON.stringify(projects[i].projectInfo) %>'>
-                    <div class="project-item__thumb">
-                        <div class="project-thumb-box thumb-img">
-                            <img class="project-thumb" src=<%= projects[i].thumbnail||'../../public/login/assets/images/project.png' %> />
+                        <div class="project-item__title folder-tool"
+                             title="创建作者:<%= folders[f].folderInfo.author %>&#10创建时间:<%= folders[f].folderInfo.createTime %>&#10修改时间:<%= folders[f].folderInfo.lastModifiedTime %>">
+                            <p class="project-item_folder-title"><%= folders[f].folderInfo.name %></p>
                         </div>
-                        <div class="project-item__hover-menu">
-                            <div class="hover-menu__item play-project">
-                                <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
-                                <span>打开工程</span>
+                    </li>
+                    <%}%>
+                    <span id="boundary"></span>
+                    <%for(var i=0;i<projects.length;i++){%>
+                    <li class="project-list__item project-panel project-tool" data-project='<%= JSON.stringify(projects[i].projectInfo) %>'>
+                        <div class="project-item__thumb">
+                            <div class="project-thumb-box thumb-img">
+                                <img class="project-thumb" src=<%= projects[i].thumbnail||'../../public/login/assets/images/project.png' %> />
                             </div>
-                            <div class="hover-menu__item edit-project">
-                                <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
-                                <span>编辑信息</span>
+                            <div class="project-item__hover-menu">
+                                <div class="hover-menu__item play-project">
+                                    <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
+                                    <span>打开工程</span>
+                                </div>
+                                <div class="hover-menu__item edit-project">
+                                    <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
+                                    <span>编辑信息</span>
+                                </div>
+                                <p class="hover-menu__item2">
+                                    <span class="hover-menu__share-project share-project"></span>
+                                    <span class="hover-menu__delete-project delete-project"></span>
+                                </p>
                             </div>
-                            <p class="hover-menu__item2">
-                                <span class="hover-menu__share-project share-project"></span>
-                                <span class="hover-menu__delete-project delete-project"></span>
-                            </p>
                         </div>
-                    </div>
-                    <div class="project-item__title"
-                         title="创建工具:<%=projects[i].projectInfo.originalSite%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
-                        <p><%= projects[i].projectInfo.name %></p>
-                    </div>
-                </li>
-                <%}%>
-            </ul>
-            <div class="empty-prompt" id="project-empty" style="display:<%if(projects.length<1&&folders.length<1){%>block<%}else{%>none<%}%>">
-                <img src="../../public/login/assets/images/empty.png"/>
-                <p>空空如也，请点击<span class="prompt-add-project">&nbsp;新建工程&nbsp;</span>创建你的工程吧！</p>
+                        <div class="project-item__title"
+                             title="创建工具:<%=projects[i].projectInfo.originalSite%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
+                            <p><%= projects[i].projectInfo.name %></p>
+                        </div>
+                    </li>
+                    <%}%>
+                </ul>
+                <div class="empty-prompt" id="project-empty" style="display:<%if(projects.length<1&&folders.length<1){%>block<%}else{%>none<%}%>">
+                    <img src="../../public/login/assets/images/empty.png"/>
+                    <p>空空如也，请点击<span class="prompt-add-project">&nbsp;新建工程&nbsp;</span>创建你的工程吧！</p>
+                </div>
+            </div>
+
+            <div class="folder-space-wrap" id="folder-space-wrap">
+                <div class="folder-space-list"></div>
             </div>
         </div>
-        <!--项目列表-->
-        <!--<div class="folder-list-wrap" id="folder-list-wrap" name="folder-list-wrap">
-            <p class="list-title">我的项目</p>
-            <ul class="folder-list clearfix" id="folder-list">
-                <%for(var f=0;f<folders.length;f++){%>
-                <li class="project-list__item folder-panel" data-folder='<%= JSON.stringify(folders[f].folderInfo) %>'>
-                    <div class="project-item__thumb">
-                        <img class="folder-thumb-icon" src="../../public/login/assets/images/folder.png">
-                        <div class="project-item__hover-menu">
-                            <div class="hover-menu__item open-folder">
-                                <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
-                                <span>打开项目</span>
-                            </div>
-                            <div class="hover-menu__item edit-folder">
-                                <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
-                                <span>编辑信息</span>
-                            </div>
-                            <p class="hover-menu__item2">
-                                <span class="hover-menu__delete-project delete-folder"></span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="project-item__title folder-tool"
-                         title="创建作者:<%= folders[f].folderInfo.author %>&#10创建时间:<%= folders[f].folderInfo.createTime %>&#10修改时间:<%= folders[f].folderInfo.lastModifiedTime %>">
-                        <p class="project-item_folder-title"><%= folders[f].folderInfo.name %></p>
-                    </div>
-                </li>
-                <%}%>
-            </ul>
-            <div class="empty-prompt" id="folder-empty" style="display:<%if(folders.length<1){%>block<%}else{%>none<%}%>">
-                <img src="../../public/login/assets/images/empty.png"/>
-                <p>空空如也</p>
-            </div>
-        </div>-->
     </div>
 </div>
 <div id="updater_wrapper">
