@@ -717,12 +717,12 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     //regCheckboxClick
     function regCheckboxClick(tag) {
-        if ($scope.component.curTagClassName !== $scope.component.tagClasses[0].name) {
+        /*if ($scope.component.curTagClassName !== $scope.component.tagClasses[0].name) {
             var index = IndexInTagClass(tag.name, $scope.component.tagClasses[0]);
             TagService.editTagByIndex(index, tag, function () {
                 readTagsInfo();
             });
-        }
+        }*/
     }
 
     /**
