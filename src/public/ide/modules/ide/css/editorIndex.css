@@ -734,19 +734,34 @@ body {
 
 .animationEditor__row{
     /* display: table-row; */
-    display: block;
+    /* display: block;
     margin:0;
     padding:0;
     height: 50px;
-    background-color: dodgerblue;
+    background-color: dodgerblue; */
+    /* height: 30px; */
 }
 
 .animationEditor__col{
     /* display:table-column; */
-    display: inline-block;
+    /* display: inline-block;
     margin:0;
     background-color: grey;
-    border:1px solid white;
+    border:1px solid white; */
+    height:30px;
+}
+
+.animationEditor__attributeLabel,.animationEditor__attributeValue{
+    display: inline-block;
+    width:40%;
+    margin:0;
+}
+
+.animationEditor__attributeValue{
+    border:none;
+    background: transparent;
+    outline: none;
+    text-align: right;
 }
 
 .animationEditor__attribute,.animationEditor__buttons,.animationEditor__timeLine,.animationEditor__timeLineMarker{
@@ -766,7 +781,8 @@ body {
 .animationEditor__timeLine,.animationEditor__timeLineMarker{
     width:70%;
     position: relative;
-    height:22px;
+    /* height:22px; */
+    padding: 0;
 }
 
 /* .animationEditor__timeLineMarker{
@@ -774,16 +790,38 @@ body {
 } */
 
 .animationEditor__marker{
-    border-radius: 50%;
+    /* border-radius: 50%; */
     display: inline-block;
-    background-color: black;
-    width:10px;
-    height:10px;
+    /* background-color: black; */
+    width:8px;
+    height:8px;
     position: absolute;
+    border:1px solid rgba(255,255,255,0.6);
+    transform: rotate(45deg);
+    top:0;
+    bottom:0;
+    margin-top:auto;
+    margin-bottom: auto;
+    box-sizing: border-box;
+}
+
+.animationEditor__marker-highlight{
+    background-color: black;
 }
 
 .animationEditor__ruler{
     text-align: left;
+    position: absolute;
+    bottom:0;
+}
+
+.animationEditor__handler{
+    position:absolute;
+    display: inline-block;
+    background-color: blue;
+    width:2px;
+    height:30px;
+    bottom:0;
 }
 
 
@@ -807,6 +845,8 @@ body {
     position: absolute;
     left: 5px;
     bottom: 0;
+    line-height: 1em;
+    font-size:0.8em;
     /* width:30px;
     height:20px; */
 }
