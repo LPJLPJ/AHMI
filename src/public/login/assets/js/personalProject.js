@@ -772,11 +772,7 @@ $(function(){
         var customHeight = $('#customHeight');
         var folderId=$('#add-project').attr('folder-id');
 
-        if(folderId){
-            project.classId=folderId;
-        }else{
-            project.classId='space';
-        }
+        project.classId = folderId || 'space';
 
         if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''&&encoding.val()!=''){
             //create
@@ -1260,11 +1256,9 @@ $(function(){
     //打开项目
     projectList.on('click','.open-folder',function(e){
         curFolder=$(this).parents('.folder-panel');
-        var fol = curFolder.attr('data-folder')
+        var fol = curFolder.attr('data-folder');
         fol = JSON.parse(fol);
         folder=fol;
-        /*var url = '/folder/'+folder._id+'/space';
-        window.open(url,"_self");*/
         $.ajax({
             url:'/folder/space',
             type:'post',
@@ -1276,6 +1270,7 @@ $(function(){
                     data = JSON.parse(data);
                     var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder});
                     folderWrap.find('.folder-space-list').replaceWith(html);
+                    $('#add-project').attr('folder-id',data.folder.id);
                 }
             },
             error:function (err) {
@@ -1285,12 +1280,17 @@ $(function(){
         })
     });
 
+    var addFolder = $('#add-folder');
+
     window.addEventListener('hashchange',function () {
         if (location.hash === '') {
             folderWrap.hide();
+            addFolder.show();
             projectWrap.show();
+            $('#add-project').attr('folder-id','');
         }else {
             folderWrap.show();
+            addFolder.hide();
             projectWrap.hide();
         }
     });
