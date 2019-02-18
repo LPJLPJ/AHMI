@@ -1869,7 +1869,7 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
         var data = {};
         if (!checkName($scope.saveAsName, $scope.saveAsAuthor)) {
             //invalid name
-            toastr.error('名称只能是汉字、英文和数字');
+            toastr.error('名称只支持：汉字、英文、数字、下划线_、英文破折号-、中文破折号—、英文()、小数点.');
             return;
         } else {
             if ($scope.isScale) {
@@ -1920,7 +1920,7 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
         try {
             for (var i = 0; i < arguments.length; i++) {
                 var name = arguments[i];
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)) {
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—|.|(|)]/)) {
                     return false;
                 }
             }
