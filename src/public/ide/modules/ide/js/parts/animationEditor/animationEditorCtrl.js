@@ -74,13 +74,17 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
                 }
             },
             curKeyFrameIdx:0,
-            attributes:['translateX','translateY','scaleX','scaleY']
+            fps:60,
+            attributes:['translateX','translateY','scaleX','scaleY'],
+            start:startAnimation,
+            pause:pauseAnimation
         },
         timeLine:{
             position:0,
             onMouseDown:timeLineOnMouseDown,
             onMouseMove:timeLineONMouseMove,
-            onMouseUp:timeLineOnMouseUp
+            onMouseUp:timeLineOnMouseUp,
+            onMouseOut:timeLineOnMouseOut
         }
     }
     
@@ -94,13 +98,14 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
             var target = e.target
             var id = Number(target.getAttribute('data-id'))||0
 
-            var d = e.clientX - target.offsetLeft
+            var d = parseInt(e.clientX - target.offsetLeft)
             $scope.component.animation.curKeyFrameIdx = id
+            
             e.currentTarget.onmousemove = function(e){
                 
     //             target.style.left = (e.clientX - d) + 'px'
                 
-                $scope.component.animation.keyFrames[id].time = ((e.clientX-d)/100).toFixed(3)
+                $scope.component.animation.keyFrames[id].time = ((e.clientX-d)/100.0).toFixed(3)
                 // console.log($scope.component.animation.keyFrames[id])
             }
         }
@@ -122,12 +127,14 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
     function timeLineOnMouseDown(e){
         // console.log(e)
         var clientRect = e.currentTarget.getBoundingClientRect()
-        var d = e.clientX - clientRect.left
+        var d = ((e.clientX - clientRect.left)/100.0).toFixed(3)
         $scope.component.timeLine.position = d
-
+        //update animation
+        // console.log(getCurrentAnimation())
+        updateAnimationOnLayer()
         e.currentTarget.onmousemove = function(e){
-            // console.log(e.clientX - clientRect.left)
-            $scope.component.timeLine.position = e.clientX - clientRect.left
+            $scope.component.timeLine.position = ((e.clientX - parseInt(clientRect.left))/100.0).toFixed(3)
+            updateAnimationOnLayer()
         }
     }
 
@@ -139,6 +146,93 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
         // console.log('canceled')
         e.currentTarget.onmousemove = null
     }
+
+    function timeLineOnMouseOut(e){
+        if(angular.element(e.relatedTarget).hasClass('animationEditor__timeLine')){
+         
+            e.currentTarget.onmousemove = null
+        }
+        
+    }
+
+    function startAnimation(){
+        var fps = $scope.component.animation.fps
+        var dps = 1000.0/fps
+        $scope.component.timeLine.position = 0
+        if($scope.startAnimationKey){
+            clearInterval($scope.startAnimationKey)
+            $scope.startAnimationKey = null
+        }
+        $scope.startAnimationKey = setInterval(function(){
+            var nextPosition = ($scope.component.timeLine.position + dps/1000.0)
+            nextPosition = parseFloat(nextPosition.toFixed(3))
+            $scope.$apply(function(){
+                $scope.component.timeLine.position = nextPosition
+                updateAnimationOnLayer()
+                if($scope.component.timeLine.position > 5){
+                    clearInterval($scope.startAnimationKey)
+                }
+            })
+            
+            
+        },dps)
+    }
+
+    function pauseAnimation(){
+        if($scope.startAnimationKey){
+            clearInterval($scope.startAnimationKey)
+            $scope.startAnimationKey = null
+        }
+    }
+
+    function updateAnimationOnLayer(){
+        ProjectService.ChangeLayerAnimation(getCurrentAnimation())
+    }
+
+    function calculateInnerAnimation(leftAnimation, rightAnimation, t){
+        var result = {}
+        $scope.component.animation.attributes.forEach(function(attr){
+            result[attr] = leftAnimation[attr] + t * (rightAnimation[attr] - leftAnimation[attr])
+        });
+        return result
+    }
+
+    //get current animation
+    function getCurrentAnimation(){
+        var position = $scope.component.timeLine.position
+        var leftMin = Infinity, rightMin = Infinity, left = -1, right = -1
+        var d,t
+        for(var id in $scope.component.animation.keyFrames){
+            var keyFrame = $scope.component.animation.keyFrames[id]
+            if(keyFrame.time <= position){
+                //left
+                d = position-keyFrame.time
+                if( d < leftMin){
+                    leftMin = d
+                    left = id
+                }
+            }else{
+                d = keyFrame.time - position
+                if( d < rightMin){
+                    rightMin = d
+                    right = id
+                }
+            }
+        }
+        //calculate with left and right
+        if(left != -1 && right != -1){
+            //calculate with left and right
+            t = leftMin / (leftMin + rightMin)
+            return calculateInnerAnimation($scope.component.animation.keyFrames[left],$scope.component.animation.keyFrames[right],t)
+        }else if(left != -1){
+            return $scope.component.animation.keyFrames[left]
+        }else if(right != -1){
+            return $scope.component.animation.keyFrames[right]
+        }else{
+            return null
+        }
+    }
+
 
 }]);
 

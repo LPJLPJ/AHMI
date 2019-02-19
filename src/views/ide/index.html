@@ -703,12 +703,12 @@
                 <div class="animationEditor__body">
                     <div class="row animationEditor__row">
                         <div class="animationEditor__buttons col-md-3 animationEditor__col">
-                            <div class="animationEditor__button">
+                            <button class="animationEditor__button btn btn-sm btn-default" ng-click="component.animation.start()">
                                 >>
-                            </div>
-                            <div class="animationEditor__button">
+                            </button>
+                            <button class="animationEditor__button btn btn-sm btn-default" ng-click="component.animation.pause()">
                                 ||
-                            </div>
+                            </button>
                             <div class="animationEditor__button">
                                 {{component.animation.keyFrames[component.animation.curKeyFrameIdx].time}}
                             </div>
@@ -716,8 +716,9 @@
                         <div class="animationEditor__timeLine col-md-7 animationEditor__col" 
                             ng-mousedown="component.timeLine.onMouseDown($event)"
                             ng-mousemove="component.timeLine.onMouseMove($event)"
-                            ng-mouseup="component.timeLine.onMouseUp($event)" >
-                            <div class="animationEditor__handler" ng-style="{left:component.timeLine.position}">{{component.timeLine.position}}</div>
+                            ng-mouseup="component.timeLine.onMouseUp($event)"
+                            ng-mouseout="component.timeLine.onMouseOut($event)" >
+                            <div class="animationEditor__handler" ng-style="{left:component.timeLine.position*100.0-1}">{{component.timeLine.position}}</div>
                             <div class="animationEditor__ruler">
                                     <div class="animationEditor__tickUnit" ng-repeat="tick in ['00:00','01:00','02:00','03:00','04:00','05:00']">
                                         <div class="animationEditor__tick"></div>
@@ -740,7 +741,7 @@
                             <!-- <div class="animationEditor__marker"  style="left:50px"></div>
                             <div class="animationEditor__marker" style="left:150px"></div> -->
                             <!-- <div class="animationEditor__marker" style="left:150px" ></div> -->
-                            <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animation.curKeyFrameIdx)}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100}" ></div>
+                            <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animation.curKeyFrameIdx)}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4}" ></div>
                         </div>
                     </div>
                 </div>

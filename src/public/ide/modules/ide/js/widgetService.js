@@ -93,6 +93,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.lockRotation=true;
             this.hasRotatingPoint=false;
             // this.backgroundImg =
+            this.animation = null
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
@@ -115,12 +116,23 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.on('OnRefresh',function (cb) {
                 this.refresh(self,cb);
             })
+
+            this.on('updateAnimation',function(arg){
+                self.animation = arg.animation
+                console.log(self.animation)
+                this.refresh(self,arg.cb);
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                ctx.save()
+                if(this.animation){
+                    ctx.translate(this.animation.translateX,this.animation.translateY)
+                    ctx.scale(this.scaleX,this.scaleY)
+                }
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -151,6 +163,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         this.backgroundImg.width,
                         this.backgroundImg.height);
                 }
+                ctx.restore()
             }catch (err) {
                 console.log('错误描述',err);
                 toastr.warning('渲染Layer出错');
