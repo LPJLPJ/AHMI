@@ -732,7 +732,7 @@
                             <div class="animationEditor__attributeLabel">
                                 {{attribute}}
                             </div>
-                            <input class="animationEditor__attributeValue" ng-model="component.animation.keyFrames[component.animation.curKeyFrameIdx][attribute]" />
+                            <input class="animationEditor__attributeValue" type="number" ng-model="component.animation.keyFrames[component.animation.curKeyFrameIdx][attribute]" />
                         </div>
                         <div class="animationEditor__timeLineMarker col-md-7 animationEditor__col"
                                 ng-mousedown="component.marker.onMouseDown($event)"

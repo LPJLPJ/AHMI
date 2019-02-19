@@ -130,8 +130,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             try{
                 ctx.save()
                 if(this.animation){
-                    ctx.translate(this.animation.translateX,this.animation.translateY)
-                    ctx.scale(this.scaleX,this.scaleY)
+                    ctx.translate(this.animation.translateX - this.left,this.animation.translateY - this.top)
+                    // ctx.scale(this.scaleX,this.scaleY)
                 }
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
