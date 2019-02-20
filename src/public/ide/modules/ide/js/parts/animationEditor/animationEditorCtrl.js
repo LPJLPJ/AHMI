@@ -69,8 +69,14 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         }
     }
     
+    var easingCanvas, easingCtx
+
     function init(){
         onAttributeChanged()
+        generateEasingBg()
+
+        easingCanvas = document.getElementsByClassName('animationEditor__easingCanvas')[0]
+        easingCtx = easingCanvas.getContext('2d')
     }
 
     //timingFuns
@@ -301,7 +307,10 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         var result = {}
         if(timingFun){
             if(timingFun in EasingFunctions){
+                updateEasingCanvas(t,timingFun)
                 t = EasingFunctions[timingFun](t)
+                
+                
             }
         }
         $scope.component.animationOptions.attributes.forEach(function(attr){
@@ -344,6 +353,51 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         }else{
             return null
         }
+    }
+
+
+    function generateEasingBg(){
+        
+        var c = document.createElement('canvas')
+        var canvasWidth = 100
+        c.width = canvasWidth
+        c.height = canvasWidth
+        var ctx = c.getContext('2d')
+        var d = 0.01
+        var scale =  canvasWidth
+        for(var easing in EasingFunctions){
+            var easingFun = EasingFunctions[easing]
+            var oldT = 0
+            var curT = 0
+            var oldY = 1 - easingFun(oldT)
+            var curY = 0
+            ctx.clearRect(0,0,c.width,c.height)
+            ctx.beginPath()
+            ctx.moveTo(oldT*scale , oldY*scale)
+            for(var i=d;i<=1;i=i+d){
+                curT = i
+                curY = 1 -  easingFun(curT)
+                
+                ctx.lineTo(curT * scale,curY * scale)
+    
+            }
+            ctx.stroke()
+            var img = new Image()
+            img.src = c.toDataURL()
+            EasingFunctions[easing].cacheBg = img
+        }
+        
+    }
+
+    function updateEasingCanvas(t,easing){
+        easingCtx.clearRect(0,0, easingCanvas.width, easingCanvas.height)
+        if(easing){
+            easingCtx.beginPath()
+            easingCtx.drawImage(EasingFunctions[easing].cacheBg,0,0)
+            easingCtx.arc(t*easingCanvas.width, easingCanvas.height*(1-EasingFunctions[easing](t)),2,0,2*Math.PI)
+            easingCtx.stroke()
+        }
+        
     }
 
 
