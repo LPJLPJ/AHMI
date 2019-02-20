@@ -107,8 +107,10 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
             e.currentTarget.onmousemove = function(e){
                 
     //             target.style.left = (e.clientX - d) + 'px'
+                var nextTime = parseFloat(((e.clientX - $scope.component.ui.paddingLeft -d)/100.0).toFixed(3))
+                nextTime = nextTime < 0 ? 0 : nextTime
                 
-                $scope.component.animation.keyFrames[id].time = ((e.clientX - $scope.component.ui.paddingLeft -d)/100.0).toFixed(3)
+                $scope.component.animation.keyFrames[id].time = nextTime
                 // console.log($scope.component.animation.keyFrames[id])
             }
         }
@@ -124,6 +126,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
 
     function markerOnMouseUp(e){
         e.currentTarget.onmousemove = null;
+        updateAnimationOnLayer()
     }
 
 
@@ -131,12 +134,15 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
         // console.log(e)
         var clientRect = e.currentTarget.getBoundingClientRect()
         var d = parseFloat(((e.clientX - $scope.component.ui.paddingLeft - clientRect.left)/100.0).toFixed(3))
+        d = d<0?0:d
         $scope.component.timeLine.position = d
         //update animation
         // console.log(getCurrentAnimation())
         updateAnimationOnLayer()
         e.currentTarget.onmousemove = function(e){
-            $scope.component.timeLine.position = parseFloat(((e.clientX - $scope.component.ui.paddingLeft - parseInt(clientRect.left))/100.0).toFixed(3))
+            d = parseFloat(((e.clientX - $scope.component.ui.paddingLeft - parseInt(clientRect.left))/100.0).toFixed(3))
+            d = d < 0 ? 0 : d
+            $scope.component.timeLine.position = d
             updateAnimationOnLayer()
         }
     }
