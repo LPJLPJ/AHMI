@@ -762,6 +762,13 @@ body {
     background: transparent;
     outline: none;
     text-align: right;
+    
+}
+
+.animationEditor__attributeValue::-webkit-inner-spin-button, 
+.animationEditor__attributeValue::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
 }
 
 .animationEditor__attribute,.animationEditor__buttons,.animationEditor__timeLine,.animationEditor__timeLineMarker{

@@ -119,8 +119,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.on('updateAnimation',function(arg){
                 self.animation = arg.animation
-                console.log(self.animation)
-                this.refresh(self,arg.cb);
+                // console.log(self.animation)
+                // this.refresh(self,arg.cb);
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
+                arg.cb && arg.cb();
             })
         },
         toObject: function () {
@@ -130,8 +133,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             try{
                 ctx.save()
                 if(this.animation){
-                    ctx.translate(this.animation.translateX - this.left,this.animation.translateY - this.top)
+                    
                     // ctx.scale(this.scaleX,this.scaleY)
+                    ctx.translate(this.animation.translateX - this.left,this.animation.translateY - this.top)
+                    ctx.translate(-this.width/2 ,-this.height/2 )
+
+                    //scale
+                    ctx.scale(this.animation.scaleX, this.animation.scaleY)
+                    //
+                    ctx.translate(this.width/2 ,this.height/2 )
+
+                    
+                    
                 }
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
