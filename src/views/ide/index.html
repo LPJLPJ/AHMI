@@ -698,19 +698,19 @@
             </div>
         </div>
         <div class="stage__tools">
-            <div class="animationEditor__wrapper" ng-controller="AnimationEditorCtrl">
+            <div class="animationEditor__wrapper" ng-controller="AnimationEditorCtrl" ng-show="component.ui.show" >
                 <p>动画编辑</p>
                 <div class="animationEditor__body">
                     <div class="row animationEditor__row">
                         <div class="animationEditor__buttons col-md-3 animationEditor__col">
-                            <button class="animationEditor__button btn btn-sm btn-default" ng-click="component.animation.start()">
+                            <button class="animationEditor__button btn btn-sm btn-default" ng-click="component.animationOptions.start()">
                                 >>
                             </button>
-                            <button class="animationEditor__button btn btn-sm btn-default" ng-click="component.animation.pause()">
+                            <button class="animationEditor__button btn btn-sm btn-default" ng-click="component.animationOptions.pause()">
                                 ||
                             </button>
                             <div class="animationEditor__button">
-                                {{component.animation.keyFrames[component.animation.curKeyFrameIdx].time}}
+                                {{component.animation.keyFrames[component.animationOptions.curKeyFrameIdx].time}}
                             </div>
                         </div>
                         <div class="animationEditor__timeLine col-md-7 animationEditor__col" 
@@ -728,23 +728,33 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row animationEditor__row" ng-repeat="attribute in component.animation.attributes" >
-                        <div class="animationEditor__attribute col-md-3 animationEditor__col">
-                            <div class="animationEditor__attributeLabel">
-                                {{attribute}}
+                    <div class="animationEditor__animationWrapper">
+                        <div class="row animationEditor__row">
+                            <div class="animationEditor__attribute col-md-3 animationEditor__col">
+                                <div class="animationEditor__animationName">
+                                    {{component.animation.title}}
+                                </div>
                             </div>
-                            <input class="animationEditor__attributeValue" type="number" ng-model="component.animation.keyFrames[component.animation.curKeyFrameIdx][attribute]" />
                         </div>
-                        <div class="animationEditor__timeLineMarker col-md-7 animationEditor__col"
-                                ng-mousedown="component.marker.onMouseDown($event)"
-                                ng-mousemove="component.marker.onMouseMove($event)"
-                                ng-mouseup="component.marker.onMouseUp($event)">
-                            <!-- <div class="animationEditor__marker"  style="left:50px"></div>
-                            <div class="animationEditor__marker" style="left:150px"></div> -->
-                            <!-- <div class="animationEditor__marker" style="left:150px" ></div> -->
-                            <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animation.curKeyFrameIdx)}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4 +50}" ></div>
+                        <div class="row animationEditor__row" ng-repeat="attribute in component.animationOptions.attributes" >
+                            <div class="animationEditor__attribute col-md-3 animationEditor__col">
+                                <div class="animationEditor__attributeLabel">
+                                    {{attribute}}
+                                </div>
+                                <input class="animationEditor__attributeValue" type="number" ng-model="component.animation.keyFrames[component.animationOptions.curKeyFrameIdx][attribute]" />
+                            </div>
+                            <div class="animationEditor__timeLineMarker col-md-7 animationEditor__col"
+                                    ng-mousedown="component.marker.onMouseDown($event)"
+                                    ng-mousemove="component.marker.onMouseMove($event)"
+                                    ng-mouseup="component.marker.onMouseUp($event)">
+                                <!-- <div class="animationEditor__marker"  style="left:50px"></div>
+                                <div class="animationEditor__marker" style="left:150px"></div> -->
+                                <!-- <div class="animationEditor__marker" style="left:150px" ></div> -->
+                                <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animationOptions.curKeyFrameIdx)}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4 +50}" ></div>
+                            </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>

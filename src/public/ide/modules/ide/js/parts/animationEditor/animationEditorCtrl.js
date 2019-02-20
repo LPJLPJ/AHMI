@@ -1,6 +1,6 @@
 
 
-ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',function ($scope,$timeout, ProjectService) {
+ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Type',function ($scope,$timeout, ProjectService, Type) {
     $scope.$on('GlobalProjectReceived', function () {
 
         // initUserInterface();
@@ -9,6 +9,10 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
         // $scope.$emit('LoadUp');
         init()
 
+    });
+
+    $scope.$on('AttributeChanged', function (event) {
+        onAttributeChanged();
     });
 
     $scope.component = {
@@ -20,39 +24,10 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
             onMouseMove:markerOnMouseMove,
             onMouseUp:markerOnMouseUp
         },
+        animations:{
+
+        },
         animation:{
-            // keyFrames:[
-            //     {
-            //         id:0,
-            //         time:0,
-            //         attrs:{
-            //             translateX:0,
-            //             translateY:0,
-            //             scaleX:1,
-            //             scaleY:1
-            //         }
-            //     },
-            //     {
-            //         id:1,
-            //         time:1,
-            //         attrs:{
-            //             translateX:50,
-            //             translateY:50,
-            //             scaleX:1,
-            //             scaleY:1
-            //         }
-            //     },
-            //     {
-            //         id:2,
-            //         time:2,
-            //         attrs:{
-            //             translateX:0,
-            //             translateY:0,
-            //             scaleX:2,
-            //             scaleY:2
-            //         }
-            //     }
-            // ]
             keyFrames:{
                 0:{
                     time:0,
@@ -76,6 +51,9 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
                     scaleY:2
                 }
             },
+            
+        },
+        animationOptions:{
             curKeyFrameIdx:0,
             fps:60,
             attributes:['translateX','translateY','scaleX','scaleY'],
@@ -92,7 +70,75 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
     }
     
     function init(){
-        console.log('loaded animationEditor')
+        onAttributeChanged()
+    }
+
+    function onAttributeChanged(){
+        //check selected object type
+        var obj = ProjectService.getCurrentSelectObject();
+        if(obj.type == Type.MyLayer && obj.level.animations && obj.level.animations.length){
+            //show
+            $scope.component.ui.show = true
+            //update animation
+            $scope.component.animation = projectAnimationToEditorAnimation(obj.level.animations[0])
+
+        }else{
+            $scope.component.ui.show = false
+        }
+    }
+
+
+    function projectAnimationToEditorAnimation(rawAnimation){
+        var result = {}
+        result.title = rawAnimation.title
+        result.keyFrames = {}
+        result.keyFrames[0] = {
+            time:0,
+            translateX:rawAnimation.animationAttrs.translate.srcPos.x,
+            translateY:rawAnimation.animationAttrs.translate.srcPos.y,
+            scaleX:rawAnimation.animationAttrs.scale.srcScale.x,
+            scaleY:rawAnimation.animationAttrs.scale.srcScale.y,
+            timingFun:null,
+            fixed:true
+        }
+        result.keyFrames[1] = {
+            time:parseFloat((rawAnimation.duration/1000.0).toFixed(3)),
+            translateX:rawAnimation.animationAttrs.translate.dstPos.x,
+            translateY:rawAnimation.animationAttrs.translate.dstPos.y,
+            scaleX:rawAnimation.animationAttrs.scale.dstScale.x,
+            scaleY:rawAnimation.animationAttrs.scale.dstScale.y,
+            timingFun:rawAnimation.timingFun
+        }
+        return result
+    }
+
+    function editorAnimationToProjectAnimation(rawAnimation){
+        var result = {}
+        result.title = rawAnimation.title
+        result.animationAttrs = {
+            translate:{
+                srcPos:{
+                    x:rawAnimation.keyFrames[0].translateX,
+                    y:rawAnimation.keyFrames[0].translateY,
+                },
+                dstPos:{
+                    x:rawAnimation.keyFrames[1].translateX,
+                    y:rawAnimation.keyFrames[1].translateY
+                }
+            },
+            scale:{
+                srcScale:{
+                    x:rawAnimation.keyFrames[0].scaleX,
+                    y:rawAnimation.keyFrames[0].scaleY
+                },
+                dstScale:{
+                    x:rawAnimation.keyFrames[1].scaleX,
+                    y:rawAnimation.keyFrames[1].scaleY
+                }
+            }
+        }
+        result.duration = rawAnimation.keyFrames[1].time - rawAnimation.keyFrames[0].time
+        result.timingFun = rawAnimation.keyFrames[1].timingFun
     }
 
     function markerOnMouseDown(e){
@@ -102,8 +148,11 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
             var id = Number(target.getAttribute('data-id'))||0
 
             var d = parseInt(e.clientX - target.offsetLeft)
-            $scope.component.animation.curKeyFrameIdx = id
-            
+            $scope.component.animationOptions.curKeyFrameIdx = id
+            if($scope.component.animation.keyFrames[id].fixed){
+                //can't move
+                return
+            }
             e.currentTarget.onmousemove = function(e){
                 
     //             target.style.left = (e.clientX - d) + 'px'
@@ -165,7 +214,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
     }
 
     function startAnimation(){
-        var fps = $scope.component.animation.fps
+        var fps = $scope.component.animationOptions.fps
         var dps = 1000.0/fps
         $scope.component.timeLine.position = 0
         if($scope.startAnimationKey){
@@ -200,7 +249,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService',fun
 
     function calculateInnerAnimation(leftAnimation, rightAnimation, t){
         var result = {}
-        $scope.component.animation.attributes.forEach(function(attr){
+        $scope.component.animationOptions.attributes.forEach(function(attr){
             result[attr] = leftAnimation[attr] + t * (rightAnimation[attr] - leftAnimation[attr])
         });
         return result
