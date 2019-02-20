@@ -717,8 +717,9 @@
                             ng-mousedown="component.timeLine.onMouseDown($event)"
                             ng-mousemove="component.timeLine.onMouseMove($event)"
                             ng-mouseup="component.timeLine.onMouseUp($event)"
-                            ng-mouseout="component.timeLine.onMouseOut($event)" >
-                            <div class="animationEditor__handler" ng-style="{left:component.timeLine.position*100.0-1}">{{component.timeLine.position}}</div>
+                            
+                            >
+                            <div class="animationEditor__handler" ng-style="{left:component.timeLine.position*100.0-1+50}">{{component.timeLine.position}}</div>
                             <div class="animationEditor__ruler">
                                     <div class="animationEditor__tickUnit" ng-repeat="tick in ['00:00','01:00','02:00','03:00','04:00','05:00']">
                                         <div class="animationEditor__tick"></div>
@@ -741,7 +742,7 @@
                             <!-- <div class="animationEditor__marker"  style="left:50px"></div>
                             <div class="animationEditor__marker" style="left:150px"></div> -->
                             <!-- <div class="animationEditor__marker" style="left:150px" ></div> -->
-                            <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animation.curKeyFrameIdx)}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4}" ></div>
+                            <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animation.curKeyFrameIdx)}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4 +50}" ></div>
                         </div>
                     </div>
                 </div>

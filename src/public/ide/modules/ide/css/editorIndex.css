@@ -790,6 +790,7 @@ body {
     position: relative;
     /* height:22px; */
     padding: 0;
+    padding-left:50px;
 }
 
 /* .animationEditor__timeLineMarker{
