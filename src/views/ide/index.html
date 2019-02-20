@@ -731,9 +731,9 @@
                     <div class="animationEditor__animationWrapper">
                         <div class="row animationEditor__row">
                             <div class="animationEditor__attribute col-md-3 animationEditor__col">
-                                <div class="animationEditor__animationName">
-                                    {{component.animation.title}}
-                                </div>
+                                <select class="animationEditor__animationName" ng-model="component.ui.selectedAnimationIdx" ng-change="component.ui.changeAnimationIdx()">
+                                   <option ng-repeat="title in component.animations" value={{$index}}>{{title}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="row animationEditor__row" ng-repeat="attribute in component.animationOptions.attributes" >

@@ -18,15 +18,15 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
     $scope.component = {
         ui:{
             paddingLeft:50,
+            selectedAnimationIdx:0,
+            changeAnimationIdx:changeAnimationIdx
         },
         marker:{
             onMouseDown:markerOnMouseDown,
             onMouseMove:markerOnMouseMove,
             onMouseUp:markerOnMouseUp
         },
-        animations:{
-
-        },
+        animations:[],
         animation:{
             keyFrames:{
                 0:{
@@ -73,18 +73,31 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         onAttributeChanged()
     }
 
+    var selectedObj
+
     function onAttributeChanged(){
         //check selected object type
-        var obj = ProjectService.getCurrentSelectObject();
-        if(obj.type == Type.MyLayer && obj.level.animations && obj.level.animations.length){
+        selectedObj = ProjectService.getCurrentSelectObject();
+        if(selectedObj.type == Type.MyLayer && selectedObj.level.animations && selectedObj.level.animations.length){
             //show
             $scope.component.ui.show = true
+            
             //update animation
-            $scope.component.animation = projectAnimationToEditorAnimation(obj.level.animations[0])
+            $scope.component.animations = selectedObj.level.animations.map(function(a){
+                return a.title||'动画'
+            })
+
+            $scope.component.ui.selectedAnimationIdx = '0'
+            changeAnimationIdx()
+            
 
         }else{
             $scope.component.ui.show = false
         }
+    }
+
+    function changeAnimationIdx(){
+        $scope.component.animation = projectAnimationToEditorAnimation(selectedObj.level.animations[$scope.component.ui.selectedAnimationIdx])
     }
 
 
