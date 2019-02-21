@@ -1,6 +1,6 @@
 
 
-ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Type',function ($scope,$timeout, ProjectService, Type) {
+ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Type','AnimationService',function ($scope,$timeout, ProjectService, Type,AnimationService) {
     $scope.$on('GlobalProjectReceived', function () {
 
         // initUserInterface();
@@ -19,7 +19,9 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         ui:{
             paddingLeft:50,
             selectedAnimationIdx:0,
-            changeAnimationIdx:changeAnimationIdx
+            changeAnimationIdx:changeAnimationIdx,
+            hide:hideEditor,
+            save:saveAnimation
         },
         marker:{
             onMouseDown:markerOnMouseDown,
@@ -149,6 +151,16 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         $scope.$emit('AnimationEditorUpdate',$scope.component.ui.show)
     }
 
+
+    function hideEditor(){
+        $scope.component.ui.show = false
+        //turn off layer animation
+        if(lastSelectedObj){
+            ProjectService.turnOffLayerAnimation(lastSelectedObj)
+        }
+        $scope.$emit('AnimationEditorUpdate',$scope.component.ui.show)
+    }
+
     function changeAnimationIdx(){
         $scope.component.animation = projectAnimationToEditorAnimation(selectedObj.level.animations[$scope.component.ui.selectedAnimationIdx])
     }
@@ -203,8 +215,18 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
                 }
             }
         }
-        result.duration = rawAnimation.keyFrames[1].time - rawAnimation.keyFrames[0].time
+        result.duration = (rawAnimation.keyFrames[1].time - rawAnimation.keyFrames[0].time)*1000
         result.timingFun = rawAnimation.keyFrames[1].timingFun
+        return result
+    }
+
+
+    //save current animation to level
+    function saveAnimation(){
+        var animation = editorAnimationToProjectAnimation($scope.component.animation)
+        AnimationService.updateAnimationByIndex(animation, $scope.component.ui.selectedAnimationIdx, function () {
+            // $scope.animations = AnimationService.getAllAnimations();
+        }.bind(this));
     }
 
     function markerOnMouseDown(e){
