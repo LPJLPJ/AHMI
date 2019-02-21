@@ -119,7 +119,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.on('updateAnimation',function(arg){
                 self.animation = arg.animation
-                // console.log(self.animation)
+                console.log(self.animation)
                 // this.refresh(self,arg.cb);
                 var pageNode = CanvasService.getPageNode();
                 pageNode.renderAll();

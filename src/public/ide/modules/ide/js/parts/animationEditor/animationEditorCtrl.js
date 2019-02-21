@@ -77,6 +77,8 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
 
         easingCanvas = document.getElementsByClassName('animationEditor__easingCanvas')[0]
         easingCtx = easingCanvas.getContext('2d')
+
+        $scope.EasingFunctions = EasingFunctions
     }
 
     //timingFuns
@@ -117,9 +119,11 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
     }
 
     var selectedObj
+    var lastSelectedObj
 
     function onAttributeChanged(){
         //check selected object type
+        lastSelectedObj = selectedObj
         selectedObj = ProjectService.getCurrentSelectObject();
         if(selectedObj.type == Type.MyLayer && selectedObj.level.animations && selectedObj.level.animations.length){
             //show
@@ -136,7 +140,13 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
 
         }else{
             $scope.component.ui.show = false
+            //turn off layer animation
+            if(lastSelectedObj){
+                ProjectService.turnOffLayerAnimation(lastSelectedObj)
+            }
+            
         }
+        $scope.$emit('AnimationEditorUpdate',$scope.component.ui.show)
     }
 
     function changeAnimationIdx(){
@@ -307,7 +317,6 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         var result = {}
         if(timingFun){
             if(timingFun in EasingFunctions){
-                updateEasingCanvas(t,timingFun)
                 t = EasingFunctions[timingFun](t)
                 
                 
@@ -341,18 +350,28 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
                 }
             }
         }
+        var currentAnimation,timingFun
         //calculate with left and right
         if(left != -1 && right != -1){
             //calculate with left and right
             t = leftMin / (leftMin + rightMin)
-            return calculateInnerAnimation($scope.component.animation.keyFrames[left],$scope.component.animation.keyFrames[right],t,$scope.component.animation.keyFrames[right].timingFun)
+            timingFun = $scope.component.animation.keyFrames[right].timingFun
+            currentAnimation =  calculateInnerAnimation($scope.component.animation.keyFrames[left],$scope.component.animation.keyFrames[right],t,timingFun)
         }else if(left != -1){
-            return $scope.component.animation.keyFrames[left]
+            t = 0
+            timingFun = $scope.component.animation.keyFrames[left].timingFun
+            currentAnimation = $scope.component.animation.keyFrames[left]
         }else if(right != -1){
-            return $scope.component.animation.keyFrames[right]
+            t = 1
+            timingFun = $scope.component.animation.keyFrames[right].timingFun
+            currentAnimation =  $scope.component.animation.keyFrames[right]
         }else{
-            return null
+            t = 0
+            timingFun = null
+            currentAnimation = null
         }
+        updateEasingCanvas(t,timingFun)
+        return currentAnimation
     }
 
 
@@ -391,11 +410,12 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
 
     function updateEasingCanvas(t,easing){
         easingCtx.clearRect(0,0, easingCanvas.width, easingCanvas.height)
+        easingCtx.fillStyle = 'red'
         if(easing){
             easingCtx.beginPath()
             easingCtx.drawImage(EasingFunctions[easing].cacheBg,0,0)
             easingCtx.arc(t*easingCanvas.width, easingCanvas.height*(1-EasingFunctions[easing](t)),2,0,2*Math.PI)
-            easingCtx.stroke()
+            easingCtx.fill()
         }
         
     }

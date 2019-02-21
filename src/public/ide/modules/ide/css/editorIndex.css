@@ -689,6 +689,12 @@ body {
     position: relative;
 }
 
+.stage-content-wrap--showAnimationEditor{
+    
+    height: calc(60% - 30px);
+
+}
+
 .stage-content {
     width: 100%;
     height: 100%;
@@ -713,7 +719,7 @@ body {
 
 .stage__tools {
     width: 100%;
-    height: 300px;
+    /* height: 300px; */
     background-color: #e5e5e5;
     border-bottom: 1px solid #dcdcdc;
     box-sizing: border-box;
