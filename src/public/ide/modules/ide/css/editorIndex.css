@@ -842,6 +842,7 @@ body {
     /* height:22px; */
     padding: 0;
     padding-left:50px;
+    min-width: 660px;
 }
 
 /* .animationEditor__timeLineMarker{
