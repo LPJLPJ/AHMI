@@ -756,7 +756,7 @@
                                 <!-- <div class="animationEditor__marker"  style="left:50px"></div>
                                 <div class="animationEditor__marker" style="left:150px"></div> -->
                                 <!-- <div class="animationEditor__marker" style="left:150px" ></div> -->
-                                <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animationOptions.curKeyFrameIdx)}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4 +50}" ></div>
+                                <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animationOptions.curKeyFrameIdx),'animationEditor__marker-disabled':keyFrame.fixed}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4 +50}"></div>
                             </div>
                         </div>
                     </div>

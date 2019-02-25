@@ -246,6 +246,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
     //             target.style.left = (e.clientX - d) + 'px'
                 var nextTime = parseFloat(((e.clientX - $scope.component.ui.paddingLeft -d)/100.0).toFixed(3))
                 nextTime = nextTime < 0 ? 0 : nextTime
+                nextTime = nextTime > 5 ? 5 : nextTime
                 
                 $scope.component.animation.keyFrames[id].time = nextTime
                 // console.log($scope.component.animation.keyFrames[id])
