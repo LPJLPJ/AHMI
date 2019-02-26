@@ -703,7 +703,7 @@
                 <div class="animationEditor__header">
                         <span class="animationEditor__title">动画编辑</span>
                         <button class="animationEditor__cancel animationEditor__cancel-right" ng-click="component.ui.hide()">关闭</button>
-                        <button class="animationEditor__save animationEditor__save-right" ng-click="component.ui.save()">保存</button>
+                        <button class="animationEditor__save animationEditor__save-right" ng-click="component.ui.save()" ng-class="{'animationEditor__save-saving':component.ui.savingStatus=='saving','animationEditor__save-saved':component.ui.savingStatus=='saved' }" ng-disabled="component.ui.savingStatus=='saving'" >保存</button>
                 </div>
                 <div class="animationEditor__body">
                     <div class="row animationEditor__row">

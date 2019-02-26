@@ -831,6 +831,26 @@ body {
     border-bottom: 1px solid gray;
 }
 
+.animationEditor__save-saving{
+
+}
+
+.animationEditor__save-saved{
+    animation-name: savedOk;
+    animation-duration: 1s;
+    
+}
+
+@keyframes savedOk {
+    from {
+      
+    }
+  
+    to {
+      color:green;
+    }
+  }
+
 .animationEditor__cancel-right,.animationEditor__save-right{
     float:right
 }

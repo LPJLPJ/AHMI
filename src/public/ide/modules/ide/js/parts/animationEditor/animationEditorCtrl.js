@@ -223,9 +223,15 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
 
     //save current animation to level
     function saveAnimation(){
+        $scope.component.ui.savingStatus = 'saving'
         var animation = editorAnimationToProjectAnimation($scope.component.animation)
         AnimationService.updateAnimationByIndex(animation, $scope.component.ui.selectedAnimationIdx, function () {
             // $scope.animations = AnimationService.getAllAnimations();
+            $scope.component.ui.savingStatus = 'saved'
+            toastr.info("保存成功")
+            $timeout(function(){
+                $scope.component.ui.savingStatus = ''
+            },1000)
         }.bind(this));
     }
 
