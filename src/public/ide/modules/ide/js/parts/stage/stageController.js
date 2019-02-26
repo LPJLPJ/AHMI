@@ -58,6 +58,9 @@
                 menuOptions:{
                     contextMenu:null,
                     allMenuItems:[]
+                },
+                animationEditor:{
+                    show:false
                 }
 
             };
@@ -175,6 +178,12 @@
                 toastr.info('显示子图层');
                 renderAllCanvases();
 
+            })
+
+
+            $scope.$on('AnimationEditorUpdate',function(event,shouldShow){
+                console.log(event, shouldShow)
+                $scope.component.animationEditor.show = shouldShow
             })
 
 

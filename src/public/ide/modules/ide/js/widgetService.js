@@ -93,6 +93,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.lockRotation=true;
             this.hasRotatingPoint=false;
             // this.backgroundImg =
+            this.animation = null
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
@@ -115,12 +116,36 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.on('OnRefresh',function (cb) {
                 this.refresh(self,cb);
             })
+
+            this.on('updateAnimation',function(arg){
+                self.animation = arg.animation
+                console.log(self.animation)
+                // this.refresh(self,arg.cb);
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
+                arg.cb && arg.cb();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                ctx.save()
+                if(this.animation){
+                    
+                    // ctx.scale(this.scaleX,this.scaleY)
+                    ctx.translate(this.animation.translateX - this.left,this.animation.translateY - this.top)
+                    ctx.translate(-this.width/2 ,-this.height/2 )
+
+                    //scale
+                    ctx.scale(this.animation.scaleX, this.animation.scaleY)
+                    //
+                    ctx.translate(this.width/2 ,this.height/2 )
+
+                    
+                    
+                }
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -151,6 +176,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         this.backgroundImg.width,
                         this.backgroundImg.height);
                 }
+                ctx.restore()
             }catch (err) {
                 console.log('错误描述',err);
                 toastr.warning('渲染Layer出错');

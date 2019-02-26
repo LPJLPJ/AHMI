@@ -682,10 +682,17 @@ body {
 
 .stage-content-wrap {
     width: 100%;
+    /* float: left; */
     height: calc(100% - 30px);
     box-sizing: border-box;
     background-color: #f5f4f6;
     position: relative;
+}
+
+.stage-content-wrap--showAnimationEditor{
+    
+    height: calc(60% - 30px);
+
 }
 
 .stage-content {
@@ -708,6 +715,210 @@ body {
     position: absolute;
     left: 0;
     top: 0;
+}
+
+.stage__tools {
+    width: 100%;
+    /* height: 300px; */
+    background-color:#fcfcfc;
+    /* border-bottom: 1px solid #dcdcdc; */
+    box-sizing: border-box;
+    text-align: center;
+    /* line-height: 30px; */
+    font-size: 14px;
+    /* color: #005599; */
+    position: absolute;
+    bottom:0;
+}
+
+
+/* animationEditor */
+
+.animationEditor__body{
+    /* display: table; */
+    clear: both;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.animationEditor__row{
+    /* display: table-row; */
+    /* display: block;
+    margin:0;
+    padding:0;
+    height: 50px;
+    background-color: dodgerblue; */
+    /* height: 30px; */
+    min-width: 1200px;
+}
+
+.animationEditor__col{
+    /* display:table-column; */
+    /* display: inline-block;
+    margin:0;
+    background-color: grey;
+    border:1px solid white; */
+    height:30px;
+    
+}
+
+.animationEditor__attributeLabel,.animationEditor__attributeValue{
+    display: inline-block;
+    width:40%;
+    height:30px;
+    line-height: 30px;
+    color: #7d7d7d;
+}
+
+.animationEditor__attributeValue{
+    border:none;
+    background: transparent;
+    outline: none;
+    text-align: right;
+    
+}
+
+.animationEditor__attributeValue::-webkit-inner-spin-button, 
+.animationEditor__attributeValue::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.animationEditor__attribute,.animationEditor__buttons,.animationEditor__timeLine,.animationEditor__timeLineMarker,.animationEditor__hold{
+    /* background-color: grey; */
+    border:1px solid #e5e5e5;
+}
+
+/* .animationEditor__hold{
+    padding-left:50px;
+} */
+
+.animationEditor__attribute,.animationEditor__buttons{
+    width:25%;
+}
+
+.animationEditor__button{
+    display:inline-block;
+    margin:0 4px;
+    height:30px;
+    line-height: 30px;
+    border:none;
+    box-sizing: border-box;
+    background: transparent;
+    min-width: 40px;
+    color:#7d7d7d;
+}
+
+.animationEditor__title{
+    padding:5px 0;
+    margin:5px 0;
+    display:inline-block;
+}
+
+.animationEditor__cancel,.animationEditor__save{
+    /* padding:0; */
+    /* outline: none; */
+    border:none;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color:black;
+    padding:5px;
+    margin:5px 10px;
+}
+
+.animationEditor__cancel:hover,.animationEditor__save:hover{
+    background: transparent;
+    border-bottom: 1px solid gray;
+}
+
+.animationEditor__cancel-right,.animationEditor__save-right{
+    float:right
+}
+.animationEditor__cancel-right::after,.animationEditor__save-right::after{
+    clear: both;
+}
+
+
+.animationEditor__timeLine,.animationEditor__timeLineMarker,.animationEditor__hold{
+    /* width:70%; */
+    position: relative;
+    /* height:22px; */
+    padding: 0;
+    padding-left:50px;
+    min-width: 660px;
+}
+
+/* .animationEditor__timeLineMarker{
+    height:20px;
+} */
+
+.animationEditor__marker{
+    /* border-radius: 50%; */
+    display: inline-block;
+    /* background-color: black; */
+    width:8px;
+    height:8px;
+    position: absolute;
+    border:1px solid rgba(116, 113, 113, 0.6);
+    transform: rotate(45deg);
+    top:0;
+    bottom:0;
+    margin-top:auto;
+    margin-bottom: auto;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.animationEditor__marker-highlight{
+    background-color: black;
+}
+
+.animationEditor__marker-disabled{
+    cursor:not-allowed;
+}
+
+.animationEditor__ruler{
+    text-align: left;
+    position: absolute;
+    bottom:0;
+    cursor: pointer;
+}
+
+.animationEditor__handler{
+    position:absolute;
+    display: inline-block;
+    background-color: blue;
+    width:2px;
+    height:30px;
+    bottom:0;
+    cursor: pointer;
+}
+
+
+.animationEditor__tickUnit{
+    display: inline-block;
+    width:100px;
+    position: relative;
+    height:20px;
+    vertical-align: bottom;
+}
+
+.animationEditor__tick{
+    position: absolute;
+    width:1px;
+    height:5px;
+    background: rgba(70,70,70,0.8);
+    bottom:0;
+}
+
+.animationEditor__unit{
+    position: absolute;
+    left: 5px;
+    bottom: 0;
+    line-height: 1em;
+    font-size:0.8em;
+    /* width:30px;
+    height:20px; */
 }
 
 #c {

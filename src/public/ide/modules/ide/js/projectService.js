@@ -4560,6 +4560,26 @@ ideServices
                 _successCallback&&_successCallback();
             };
 
+            this.ChangeLayerAnimation = function(_animation,_successCallback){
+                var selectObj = _self.getCurrentSelectObject();
+                var arg = {
+                    animation:_animation,
+                    cb:_successCallback
+                }
+                selectObj.target.fire('updateAnimation',arg);
+                
+            };
+
+            this.turnOffLayerAnimation = function(obj,_successCallback){
+                
+                var arg = {
+                    animation:null,
+                    cb:_successCallback
+                }
+                obj.target.fire('updateAnimation',arg);
+                
+            }
+
             this.AddAttributeTransition = function(_transition,_successCallback){
                 var selectObj = _self.getCurrentSelectObject();
                 selectObj.level.transition=_transition;
