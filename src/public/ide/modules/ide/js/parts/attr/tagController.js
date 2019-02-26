@@ -1242,7 +1242,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyRotateImg:
             case Type.MyScriptTrigger:
             case Type.MySlideBlock:
-            //case Type.MyVideo:
+            case Type.MyVideo:
             case Type.MyAnimation:
             case Type.MyTexNum:
             case Type.MyTouchTrack:
