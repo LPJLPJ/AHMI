@@ -93,18 +93,35 @@
         var sceneObj = AdvancedDrawEngine.getSharedScene()
         
         var plane = sceneObj.plane
+        window.plane = plane
 
         //position
-        plane.position.x = (options.position.x/size) || 0
-        plane.position.y = (options.position.y/size) || 0
-        plane.position.z = (options.position.z/size) || 0
-
-        plane.rotation.x = options.rotation.x || 0
-        plane.rotation.y = options.rotation.y || 0
-        plane.rotation.z = options.rotation.z || 0
-
+        if(options.position){
+            plane.position.x = (options.position.x/size) || 0
+            plane.position.y = (options.position.y/size) || 0
+            plane.position.z = (options.position.z/size) || 0
+        }
        
 
+        if(options.rotation){
+            plane.rotation.x = options.rotation.x || 0
+            plane.rotation.y = options.rotation.y || 0
+            plane.rotation.z = options.rotation.z || 0
+        }
+
+        
+
+        if(options.shearZ){
+            
+            
+        }
+        var m = new BABYLON.Matrix.Identity()
+            // m.m[8] = (options.shearZ) ||0
+            m.m[2] = (options.shearZ) ||0
+            // m.m[0] = (options.shearZ) ||0
+            console.log(m)
+            plane.setPivotMatrix(m,false)
+        // console.log(new BABYLON.Matrix.Identity())
 
        
         //Create dynamic texture

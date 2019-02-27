@@ -5452,6 +5452,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var rotateRad,z
                 var d = 0;
                 var i = 0;
+                console.log("----------")
                 for(i=0;i<this.texList.length;i++){
                 
                     if(i!=centerIdx){
@@ -5464,9 +5465,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                                 position:{
                                     z:z
                                 },
-                                rotation:{
-                                    y:rotateRad
-                                }
+                                // rotation:{
+                                //     y:rotateRad
+                                // },
+                                shearZ:-rotateRad
                             })
                         
                             ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i]-maxSize, -maxSize,2*maxSize,2*maxSize)
@@ -5490,9 +5492,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                                 position:{
                                     z:z
                                 },
-                                rotation:{
-                                    y:rotateRad
-                                }
+                                // rotation:{
+                                //     y:rotateRad
+                                // },
+                                shearZ:-rotateRad
                             })
                         
                             ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i] - maxSize, -maxSize,2*maxSize,2*maxSize)
@@ -5513,9 +5516,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     position:{
                         z:z
                     },
-                    rotation:{
-                        y:rotateRad
-                    }
+                    // rotation:{
+                    //     y:rotateRad
+                    // }，
+                    shearZ:-rotateRad
                 })
             
                 ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curPosXList[centerIdx] - maxSize, -maxSize,2*maxSize,2*maxSize)
