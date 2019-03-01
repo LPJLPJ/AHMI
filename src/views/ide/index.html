@@ -3886,58 +3886,67 @@
                             </div>
 
                             <div class="modal-body">
-                                <table class="table table-bordered attr-item__table">
-                                    <thead>
-                                    <tr align="center">
-                                        <td class="col-xs-1">#</td>
-                                        <td class="col-xs-2">名称</td>
-                                        <td class="col-xs-2">背景图片</td>
-                                        <td class="col-xs-2">背景色</td>
-                                        <td class="col-xs-2">预览</td>
-                                        <td class="col-xs-1">操作</td>
-                                    </tr>
-                                    </thead>
+                                <div style="max-height: 600px; overflow-y: auto;">
+                                    <table class="table table-bordered attr-item__table">
+                                        <thead>
+                                        <tr align="center">
+                                            <td class="col-xs-1">#</td>
+                                            <td class="col-xs-2">名称</td>
+                                            <td class="col-xs-2">背景图片</td>
+                                            <td class="col-xs-2">背景色</td>
+                                            <td class="col-xs-2">预览</td>
+                                            <td class="col-xs-1">操作</td>
+                                        </tr>
+                                        </thead>
 
-                                    <tbody>
-                                    <tr class="texRow" ng-repeat="slice in tex.slices" ng-click="selectItem($index)" ng-class="{'active':$index===curIndex}">
-                                        <td align="center" style="vertical-align: middle;">{{$index}}</td>
-                                        <td>
-                                            <div class="form-group">
-                                                <input class="form-control"
-                                                       type="text"
-                                                       ng-model="slice.name"
-                                                       ng-focus="store(this)"
-                                                       ng-blur="enterName(this)"
-                                                       ng-keypress="enterPress($event,this)"
-                                                       ng-disabled="disableEditName"/>
+                                        <tbody>
+                                        <tr class="texRow" ng-repeat="slice in tex.slices | paging: currentNum" ng-init="sliceIndex = (currentNum-1)*10"
+                                            ng-click="selectItem($index)"
+                                            ng-class="{'active':$index===curIndex}">
+                                            <td align="center" style="vertical-align: middle;">{{$index+sliceIndex+1}}</td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input class="form-control"
+                                                           type="text"
+                                                           ng-model="slice.name"
+                                                           ng-focus="store(this)"
+                                                           ng-blur="enterName(this)"
+                                                           ng-keypress="enterPress($event,this)"
+                                                           ng-disabled="disableEditName"/>
 
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" ng-show="canInputText" ng-model="slice.text" placeholder="可输入文本...">
-                                            </div>
-                                        </td>
-                                        <!--image-->
-                                        <td><select class="form-control" ng-model="slice.imgSrc"
-                                                    ng-options="image.src as image.name for image in images"
-                                                    ng-change="disableColorInput(slice)" ng-disabled="disableEditImg">
-                                            <!--<option value="">-&#45;&#45;</option>-->
-                                        </select></td>
-                                        <!--color-->
-                                        <td><input class="form-control" colorpicker="rgba" type="text"
-                                                   ng-model="slice.color" ng-disabled="slice.imgSrc!==''"/></td>
-                                        <td style="background-color: #B0B0B0" align="center">
-                                            <div style="background-color:{{slice.color}};width:100px;height:100px;">
-                                                <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
-                                                     height="100px"/>
-                                            </div>
-                                        </td>
-                                        <td align="center" style="vertical-align: middle;">
-                                            <span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont c-p" style="font-size: 30px">&#xe646;</span>
-                                            <span ng-click="downloadFile($index)" class="iconfont c-p" style="font-size: 22px">&#xe666;</span>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" ng-show="canInputText" ng-model="slice.text" placeholder="可输入文本...">
+                                                </div>
+                                            </td>
+                                            <!--image-->
+                                            <td><select class="form-control" ng-model="slice.imgSrc"
+                                                        ng-options="image.src as image.name for image in images"
+                                                        ng-change="disableColorInput(slice)" ng-disabled="disableEditImg">
+                                                <!--<option value="">-&#45;&#45;</option>-->
+                                            </select></td>
+                                            <!--color-->
+                                            <td><input class="form-control" colorpicker="rgba" type="text"
+                                                       ng-model="slice.color" ng-disabled="slice.imgSrc!==''"/></td>
+                                            <td style="background-color: #B0B0B0" align="center">
+                                                <div style="background-color:{{slice.color}};width:100px;height:100px;">
+                                                    <img ng-src="{{(slice.imgSrc||'/public/images/blank.png')}}" width="100px"
+                                                         height="100px"/>
+                                                </div>
+                                            </td>
+                                            <td align="center" style="vertical-align: middle;">
+                                                <span ng-click="removeSlice($index)" ng-show="canAddNewSlice" class="iconfont c-p" style="font-size: 30px">&#xe646;</span>
+                                                <span ng-click="downloadFile($index)" class="iconfont c-p" style="font-size: 22px">&#xe666;</span>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <button ng-click="changeNum(0)">上一页</button><span style="padding: 0 10px">{{currentNum}}</span><button ng-click="changeNum(1)">下一页</button>
+                                    <span style="margin-left: 20px">总页数：{{pageNum}}</span><span style="margin-left: 20px">总数量：{{tex.slices.length}}</span>
+                                </div>
+
                                 <!--<button type="button" class="btn-sm btn" ng-show="canAddNewSlice" ng-click="addSlice()">-->
                                 <!--添加图片-->
                                 <!--</button>-->
@@ -3969,7 +3978,17 @@
                     <script type="text/ng-template" id="batchSelectorModal.html">
                         <div class="modal-header">
                             <h3 class="modal-title">批量选择</h3>
-                            <span>说明：批量选择完成后将会按照文件名“例如：<span style="color: red">图片名(1)</span>”中的“()”里面的数字从小到大按顺序排列，请按示例样式命名文件。</span>
+                            <span>默认按 “(n)” 格式</span>
+                            <div>
+                                <label title="示例： 名称#类名_序号">
+                                    <input type="checkbox" ng-model="component.classCheckStatus" ng-click="component.checkClasses()">按类别"#n_n"过滤
+                                </label>
+                                <select ng-change="component.checkByClass()"
+                                        ng-show="component.classCheckStatus"
+                                        ng-model="component.currentClass"
+                                        ng-options="class for class in component.classes">
+                                </select>
+                            </div>
                         </div>
                         <div class="modal-body batch-select-wrap">
                             <table class="table table-bordered attr-item__table">
@@ -3977,25 +3996,24 @@
                                 <tr>
                                     <th class="col-xs-2">操作</th>
                                     <th class="col-xs-7">名称</th>
-                                    <th class="col-xs-3">预览图</th>
+                                    <!--<th class="col-xs-3">预览图</th>-->
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="img in imgResources" ng-click="selectResource($index)">
-                                    <td><input type="checkbox" ng-model="batchSelectArr[$index]" ng-click="stopProp($event)"/></td>
+                                <tr ng-repeat="img in imgResources track by $index" ng-click="component.selectResource($index)">
+                                    <td><input type="checkbox" ng-model="img.select" ng-click="component.stopProp($event)"/></td>
                                     <td>{{img.name}}</td>
-                                    <td><img class="batch-select-img" ng-src="{{img.src}}"/></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="modal-footer">
                         <span class="fl">
-                            <button class="btn btn-default" ng-click="selectAll()">全选</button>
-                            <button class="btn btn-default" ng-click="invertSelect()">反选</button>
+                            <button class="btn btn-default" ng-click="component.selectAll()">全选</button>
+                            <button class="btn btn-default" ng-click="component.invertSelect()">反选</button>
                         </span>
                         <span class="my-but-right">
-                            <button class="modal-btn btn-confirm" type="button" ng-click="add()">添加</button>
+                            <button class="modal-btn btn-confirm" type="button" ng-click="component.add()">添加</button>
                             <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                         </span>
                         </div>
@@ -4009,8 +4027,11 @@
                                 <span class="tagSelect__title input-group-btn">
                                     <button class="btn btn-default">标签</button>
                                 </span>
-                                    <select ng-model="component.curTagClassName"  ng-focus="component.syncTagClasses()" ng-change="component.changeCurTagClass()"
-                                            class="tagSelect__select form-control">{{component.curTagClassName}}
+                                    <select ng-model="component.curTagClassName"
+                                            ng-focus="component.syncTagClasses()"
+                                            ng-change="component.changeCurTagClass()"
+                                            class="tagSelect__select form-control">
+                                        {{component.curTagClassName}}
                                         <option ng-repeat="tagClass in component.tagClasses"
                                                 value="{{tagClass.name}}">{{tagClass.name}}
                                         </option>
@@ -4548,7 +4569,7 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr ng-repeat="file in component.top.uploadingArray">
+                                        <tr ng-repeat="file in component.top.uploadingArray track by $index">
                                             <td>{{file.name}}</td>
                                             <td>{{file.type}}</td>
                                             <td>{{file.size}}</td>
@@ -4582,11 +4603,11 @@
                             <div class="attr-item__table-wrap" ng-show="component.top.files.length">
 
                                 <ul class="resource-list" ui-sortable="resourcesTree" ng-model="component.top.files">
-                                    <li class="rl__item row" ng-repeat="file in component.top.files track by $index">
-                                        <div class="col-lg-4 rl_item-icon">
+                                    <li class="rl__item row" ng-repeat="file in component.top.files track by file.id">
+                                        <!--<div class="col-lg-4 rl_item-icon">
                                             <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
                                             <span style="display: inline-block" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
-                                        </div>
+                                        </div>-->
                                         <div class="col-lg-5 rl_item-info">
                                             <input class="rl_item-name"
                                                    type='text'
