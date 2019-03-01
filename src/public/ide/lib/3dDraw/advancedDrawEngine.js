@@ -110,17 +110,19 @@
         }
 
         
-
+        var m = new BABYLON.Matrix.Identity()
         if(options.shearZ){
+            
+            // m.m[8] = (options.shearZ) ||0
+            m.m[2] = Math.tan((options.shearZ) ||0)
+            // m.m[2] = Math.tan(89/90*Math.PI/2)
+            // m.m[0] = (options.shearZ) ||0
+            // console.log(m)
             
             
         }
-        var m = new BABYLON.Matrix.Identity()
-            // m.m[8] = (options.shearZ) ||0
-            m.m[2] = (options.shearZ) ||0
-            // m.m[0] = (options.shearZ) ||0
-            console.log(m)
-            plane.setPivotMatrix(m,false)
+        plane.setPivotMatrix(m,false)
+       
         // console.log(new BABYLON.Matrix.Identity())
 
        

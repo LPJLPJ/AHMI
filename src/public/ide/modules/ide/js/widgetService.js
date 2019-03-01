@@ -5452,7 +5452,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var rotateRad,z
                 var d = 0;
                 var i = 0;
-                console.log("----------")
+                // console.log("----------")
                 for(i=0;i<this.texList.length;i++){
                 
                     if(i!=centerIdx){
