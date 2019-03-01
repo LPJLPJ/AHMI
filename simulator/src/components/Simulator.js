@@ -2196,9 +2196,10 @@ module.exports = React.createClass({
                         position:{
                             z:z
                         },
-                        rotation:{
-                            y:rotateRad
-                        }
+                        // rotation:{
+                        //     y:rotateRad
+                        // },
+                        shearZ:-rotateRad
                     })
                 
                     ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
@@ -2223,9 +2224,10 @@ module.exports = React.createClass({
                         position:{
                             z:z
                         },
-                        rotation:{
-                            y:rotateRad
-                        }
+                        // rotation:{
+                        //     y:rotateRad
+                        // },
+                        shearZ:-rotateRad
                     })
                 
                     ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
@@ -2248,9 +2250,10 @@ module.exports = React.createClass({
             position:{
                 z:z
             },
-            rotation:{
-                y:rotateRad
-            }
+            // rotation:{
+            //     y:rotateRad
+            // },
+            shearZ:-rotateRad
         })
     
         ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
