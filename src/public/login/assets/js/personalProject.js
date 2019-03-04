@@ -814,7 +814,7 @@ $(function(){
                     fs.writeFileSync(filePath,JSON.stringify(project));
                     addNewProject(project);
                 }catch (e){
-                    console.log('write error')
+                    toastr.error(e)
                 }
 
 
@@ -831,7 +831,7 @@ $(function(){
 
                     },
                     error: function (err, status, xhr) {
-                        console.log(err)
+                        toastr.error(err.responseJSON.errMsg)
                     }
                 })
             }
@@ -1118,6 +1118,9 @@ $(function(){
                     success:function(data,status,xhr){
                         var newCANProject = JSON.parse(data);
                         addNewCANProject(newCANProject);
+                    },
+                    error:function(err){
+                        toastr.error(err.responseJSON.errMsg)
                     }
                 })
             }

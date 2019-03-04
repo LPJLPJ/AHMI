@@ -5402,6 +5402,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 reRender()
                 arg.callback && arg.callback()
             },
+            OnRelease:function(){
+                // console.log('rerender gallery')
+                this.scaleX = 1
+                this.scaleY = 1
+                // reRender()
+            },
             changePhotoWidth:function(arg){
                 this.photoWidth = arg.photoWidth
                 reRender()
