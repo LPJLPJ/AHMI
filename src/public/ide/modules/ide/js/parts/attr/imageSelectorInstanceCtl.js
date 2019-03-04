@@ -1,8 +1,16 @@
 /**
  * Created by Zzen1sS on 24/3/2016
  */
-ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService',function ($scope,$uibModal,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService) {
 
+ide.filter('paging',function () {
+    return function (lists,currentNum) {
+        var end = 10*currentNum,
+            start = end - 10 ;
+        return lists.slice(start,end);
+    }
+});
+
+ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService','$filter',function ($scope,$uibModal,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService,$filter) {
 
     $scope.images = ResourceService.getAllImagesAndTemplates();
     $scope.images.unshift({
@@ -109,17 +117,21 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
     //last edtor: liuhuan 2017/8/17
     //从当前行的下一行插入默认新行
     $scope.addSlice = function () {
-        $scope.tex.slices.splice($scope.curIndex+1,0,TexService.getDefaultSlice());
+        var start = ($scope.currentNum-1)*10 +  $scope.curIndex +1;
+        $scope.tex.slices.splice(start,0,TexService.getDefaultSlice());
+        calPageNum();
     };
 
-    //向上一行插入 tang
+    //向上一行插入
     $scope.addSlicePrev=function(){
-        if($scope.curIndex==0){
+        var start = ($scope.currentNum-1)*10 +  $scope.curIndex;
+        if($scope.curIndex===0){
             $scope.tex.slices.unshift(TexService.getDefaultSlice());
         }else{
-            $scope.tex.slices.splice($scope.curIndex,0,TexService.getDefaultSlice());
+            $scope.tex.slices.splice(start,0,TexService.getDefaultSlice());
         }
         $scope.curIndex+=1;
+        calPageNum();
     };
 
     $scope.removeSlice = function (index) {
@@ -151,97 +163,155 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
     //开机动画批量插入 add by tang
     $scope.batchSelect=function(){
-        var imgResources=ResourceService.getAllImagesAndTemplates();
-        var selectImgs=[];
+        var imgResources=ResourceService.getAllImagesAndTemplates()
+            ,selectImgs=[];
 
         var modalInstance = $uibModal.open({
             templateUrl: 'batchSelectorModal.html',
             size :"md",
             controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
-                $scope.batchSelectArr=[];
-                $scope.selectAll=function(){//全选
-                    for(var i=0;i<imgResources.length;i++){
-                        $scope.batchSelectArr[i]=true;
+                init();
+
+                function init(){
+                    $scope.component = {
+                        checkClasses:checkClasses,
+                        selectAll:selectAll,
+                        invertSelect:invertSelect,
+                        selectResource:selectResource,
+                        stopProp:stopProp,
+                        add:add,
+                        checkByClass:checkByClass,
+                        currentClass:null,
+                        classes:[],
+                        classCheckStatus:false
+                    };
+                    $scope.imgResources = _.cloneDeep(imgResources);
+                    $scope.batchSelectList = [];
+                }
+
+
+                function selectAll(){//全选
+                    for(var i=0;i<$scope.imgResources.length;i++){
+                        $scope.imgResources[i].select=true;
                     }
-                };
-                $scope.invertSelect=function(){//反选
-                    for(var i=0;i<imgResources.length;i++){
-                        if($scope.batchSelectArr[i]==null){
-                            $scope.batchSelectArr[i]=true;
-                        }else{
-                            $scope.batchSelectArr[i]=!$scope.batchSelectArr[i];
-                        }
+                }
+
+                function invertSelect(){//反选
+                    for(var i=0;i<$scope.imgResources.length;i++){
+                        $scope.imgResources[i].select = $scope.imgResources[i].select ? !$scope.imgResources[i].select : true;
                     }
-                };
-                $scope.selectResource=function(i){//点击tr选择
-                    if($scope.batchSelectArr[i]==null){
-                        $scope.batchSelectArr[i]=true;
-                    }else{
-                        $scope.batchSelectArr[i]=!$scope.batchSelectArr[i];
-                    }
-                };
-                $scope.stopProp=function(e){//阻止点击冒泡
+                }
+
+                function selectResource(i){//点击tr选择
+                    $scope.imgResources[i].select = $scope.imgResources[i].select ? !$scope.imgResources[i].select : true;
+                }
+
+                function stopProp(e){//阻止点击冒泡
                     e.stopPropagation();
-                };
+                }
 
-                $scope.imgResources=imgResources;
-
-                $scope.add=function(){//添加
+                function add(){//添加
                     var images;
-                    for(var i=0;i<imgResources.length;i++){
-                        if($scope.batchSelectArr[i]){
-                            selectImgs.push(imgResources[i]);
+                    for(var i=0;i<$scope.imgResources.length;i++){
+                        if($scope.imgResources[i].select){
+                            delete $scope.imgResources[i].select;
+                            selectImgs.push($scope.imgResources[i]);
                         }
                     }
+
+
                     if(checkImg(selectImgs)){
-                        images=selectImgs.sort(numSort);
+                        images=selectImgs.sort(function (a, b) {
+                            var x= a.name,y= b.name;
+                            var reg1 = /[^\(\)]+(?=\))/g;
+                            var reg2 = /#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_(?<index>\d{0,5})/;
+                            var i1= parseInt(x.match(reg1) || reg2.exec(x).groups.index);
+                            var i2= parseInt(y.match(reg1) || reg2.exec(y).groups.index);
+                            return i1-i2;
+                        });
+
                         $uibModalInstance.close(images);
+
                     }else{
                         alert("队列中含有不符合格式的命名文件");
                         $uibModalInstance.close();
                     }
-                };
-
-                $scope.cancel = function () {
-                    $uibModalInstance.close();
-                };
-
-                function numSort(a,b){
-                    var x= a.name,y= b.name;
-                    var reg=/[^\(\)]+(?=\))/g;
-                    var i1= parseInt(x.match(reg));
-                    var i2= parseInt(y.match(reg));
-                    return i1-i2;
                 }
+
+
 
                 function checkImg(imgs){
                     for(var i=0;i<imgs.length;i++){
                         var imgName=imgs[i].name;
-                        if(!imgName.match(/[^\(\)]+(?=\))/g)){
+                        console.log()
+                        if(!imgName.match(/[^\(\)]+(?=\))/g) && !imgName.match(/#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_(?<index>\d{0,5})/)){
                             return false;
                         }
                     }
                     return true;
                 }
+
+
+                function checkClasses() {
+                    if ($scope.component.classCheckStatus) {
+                        var reg = /#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_(?<index>\d{0,5})/,
+                            classReg,
+                            check,
+                            classes,
+                            imgArr = imgResources.filter(function (img) {
+                                return img.name.match(reg);
+                            });
+
+                        check = {};
+                        classReg = /#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_/;
+                        imgArr.forEach(function (img) {
+                            var checkResult = classReg.exec(img.name).groups.class;
+                            //console.log(checkResult);
+                            if (!check[checkResult]) {
+                                check[checkResult] = true;
+                            }
+                        });
+
+                        classes = [];
+                        for (var key in check) {
+                            classes.push(key);
+                        }
+                        $scope.component.classes = classes;
+                    }else {
+                        $scope.component.classes = [];
+                        $scope.imgResources = _.cloneDeep(imgResources);
+                    }
+                }
+                
+                function checkByClass() {
+                    var result = $scope.component.currentClass,
+                        reg = new RegExp("#"+result+"_(?<index>\d{0,5})");
+                    $scope.imgResources = imgResources.filter(function (img) {
+                        return img.name.match(reg);
+                    });
+                }
+
+
+                $scope.cancel = function () {
+                    $uibModalInstance.close();
+                };
         }],
-            resolve: {
-                /*selectImg:function(){
-                    return imgResources;
-                }*/
-            }
+            resolve: {}
         });
 
         modalInstance.result.then(function (imgs) {
             if(imgs){//插入图片
                 if(imgs.length){
-                    for(var i=0;i<imgs.length;i++){
-                        var defaultSlice={
+                    imgs = imgs.map(function (img) {
+                        return {
                             name:'defaultSlice',
-                            imgSrc:imgs[i].src,
+                            imgSrc:img.src,
                             color:'rgba(0,0,0,0)'
-                        };
-                        $scope.tex.slices.push(defaultSlice);
-                    }
+                        }
+                    });
+
+                    $scope.tex.slices = $scope.tex.slices.concat(imgs);
+                    calPageNum();
                 }else{
                     alert("未选择图片");
                     return;
@@ -275,10 +345,19 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
         $scope.canInputText = _canInputText;
         $scope.sliceNum = _sliceNum;
         $scope.tex = _tex;
+        $scope.currentTextList = _tex.slices.slice(0,10);
         $scope.disableEditName = _disableEditName;
         $scope.disableEditImg = _disableEditImg;
         $scope.disableEditColor = _disableEditColor;
         $scope.canBatchAddImg = _canBatchAddImg;
+        //分页
+        $scope.currentNum = 1;
+        $scope.pageIndex = 10;
+        calPageNum();
+    }
+    
+    function calPageNum() {
+        $scope.pageNum = Math.ceil($scope.tex.slices.length/10);
     }
 
     //edit by lixiang
@@ -353,4 +432,11 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
         }
     };
 
+    $scope.changeNum = function (n) {
+        if (n && $scope.currentNum < $scope.pageNum){
+            $scope.currentNum ++;
+        } else if (n === 0 && $scope.currentNum > 1) {
+            $scope.currentNum --;
+        }
+    }
 }]);
