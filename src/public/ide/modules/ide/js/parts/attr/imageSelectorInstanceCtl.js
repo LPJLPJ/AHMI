@@ -137,9 +137,11 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
     $scope.removeSlice = function (index) {
         if($scope.tex.slices.length==1){
             toastr.warning('至少有一张纹理');
+            return;
         }else{
             $scope.tex.slices.splice(index,1);
         }
+        calPageNum();
     };
 
 
@@ -224,9 +226,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                         images=selectImgs.sort(function (a, b) {
                             var x= a.name,y= b.name;
                             var reg1 = /[^\(\)]+(?=\))/g;
-                            var reg2 = /#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_(?<index>\d{0,5})/;
-                            var i1= parseInt(x.match(reg1) || reg2.exec(x).groups.index);
-                            var i2= parseInt(y.match(reg1) || reg2.exec(y).groups.index);
+                            var reg2 = /\w+\#(\w+)\_(\d+)/;
+                            var i1= parseInt(x.match(reg1) || x.match(reg2)[2]);
+                            var i2= parseInt(y.match(reg1) || y.match(reg2)[2]);
                             return i1-i2;
                         });
 
@@ -243,8 +245,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                 function checkImg(imgs){
                     for(var i=0;i<imgs.length;i++){
                         var imgName=imgs[i].name;
-                        console.log()
-                        if(!imgName.match(/[^\(\)]+(?=\))/g) && !imgName.match(/#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_(?<index>\d{0,5})/)){
+                        if(!imgName.match(/[^\(\)]+(?=\))/g) && !imgName.match(/\w+\#(\w+)\_(\d+)/)){
                             return false;
                         }
                     }
@@ -254,8 +255,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
                 function checkClasses() {
                     if ($scope.component.classCheckStatus) {
-                        var reg = /#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_(?<index>\d{0,5})/,
-                            classReg,
+                        var reg = /\w+\#(\w+)\_(\d+)/,
                             check,
                             classes,
                             imgArr = imgResources.filter(function (img) {
@@ -263,10 +263,8 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                             });
 
                         check = {};
-                        classReg = /#+(?<class>[\u4e00-\u9fa5_a-zA-Z0-9]{0,5})_/;
                         imgArr.forEach(function (img) {
-                            var checkResult = classReg.exec(img.name).groups.class;
-                            //console.log(checkResult);
+                            var checkResult = img.name.match(reg)[1];
                             if (!check[checkResult]) {
                                 check[checkResult] = true;
                             }
@@ -403,7 +401,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
     //验证新值
     $scope.enterName=function(th){
-        console.log("$scope.canInputText:",$scope.canInputText)
+        //console.log("$scope.canInputText:",$scope.canInputText);
 
         //判断是否和初始一样
         if (th.slice.name===restoreValue){
