@@ -1,0 +1,33 @@
+<div class="index-top-nav clearfix">
+    <a class="top-nav__logo" href="/"><img src="../../public/login/assets/images/logo.png"/></a>
+    <div class="personal-info">
+        <img class="personal-info__icon" src="../../public/login/assets/img/personal-icon.png"/>
+        <div class="personal-info__drop-down">
+            <div class="personal-info__content">
+                <ul class="personal-info__list">
+                    <li style="color: #005599"><span class="iconfont">&#xe7e4;</span><%= userInfo.name %></li>
+                    <li><span class="iconfont">&#xe66e;</span><%= userInfo.type %></li>
+                    <li><span class="iconfont">&#xe66b;</span><a href="/user/logout" class="personal-info__logout">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <ul class="top-nav__menu-list">
+        <li class="top-menu__item">
+            <a href="/">首页</a>
+        </li>
+        <li class="top-menu__item">
+            <a href="/download/index.html" target="_blank">下载</a>
+        </li>
+        <li class="top-menu__item">
+            <a href="/blog/" target="_blank">博客</a>
+        </li>
+        <li class="top-menu__item">
+            <a href="http://docs.graphichina.com/" target="_blank">教程</a>
+        </li>
+        <li class="top-menu__item">
+            <a href="/update-log" target="_blank">更新日志</a>
+        </li>
+    </ul>
+</div>

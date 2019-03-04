@@ -93,6 +93,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.lockRotation=true;
             this.hasRotatingPoint=false;
             // this.backgroundImg =
+            this.animation = null
 
             //开始移动时Layer的Scale
             this.on('OnRelease', function () {
@@ -115,12 +116,36 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.on('OnRefresh',function (cb) {
                 this.refresh(self,cb);
             })
+
+            this.on('updateAnimation',function(arg){
+                self.animation = arg.animation
+                console.log(self.animation)
+                // this.refresh(self,arg.cb);
+                var pageNode = CanvasService.getPageNode();
+                pageNode.renderAll();
+                arg.cb && arg.cb();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
         },
         _render: function (ctx) {
             try{
+                ctx.save()
+                if(this.animation){
+                    
+                    // ctx.scale(this.scaleX,this.scaleY)
+                    ctx.translate(this.animation.translateX - this.left,this.animation.translateY - this.top)
+                    ctx.translate(-this.width/2 ,-this.height/2 )
+
+                    //scale
+                    ctx.scale(this.animation.scaleX, this.animation.scaleY)
+                    //
+                    ctx.translate(this.width/2 ,this.height/2 )
+
+                    
+                    
+                }
                 ctx.fillStyle =this.backgroundColor;
                 ctx.fillRect(
                     -(this.width / 2),
@@ -151,6 +176,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         this.backgroundImg.width,
                         this.backgroundImg.height);
                 }
+                ctx.restore()
             }catch (err) {
                 console.log('错误描述',err);
                 toastr.warning('渲染Layer出错');
@@ -304,6 +330,94 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyMatte.fromLevel=function(callback,option){
         var matte=new fabric.MyMatte(option);
         callback&&callback(matte);
+    };
+
+
+    //MyOutBorder
+    fabric.MyOutBorder = fabric.util.createClass(fabric.Object,{
+        type:'MyOutBorder',
+        initialize:function (options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.selectable=false;
+            this.currentSize = options.currentSize
+            this.initSize = options.initSize
+
+            // this.patternSrc = '/public/ide/modules/ide/images/paper.png'
+            // this.pattern = null
+            // if(!window.outBorderPattern){
+            //     window.outBorderPattern = new Image()
+            //     window.outBorderPattern.src = this.patternSrc
+            // }
+
+            this.on('changeCurrentSize',function(currentSize){
+                this.width = currentSize.width
+                this.height = currentSize.height
+                this.left = parseInt((this.initSize.width - this.width)/2)
+                this.top = parseInt((this.initSize.height - this.height)/2)
+                this.currentSize = currentSize
+
+                //console.log('change current size',this.currentSize.width,this.currentSize.height)
+                // pageNode.renderAll();
+            })
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render:function(ctx){
+            try{
+                var color = '#f5f4f6'
+                var cWidth = this.currentSize.width
+                var cHeight = this.currentSize.height
+                //console.log('render',cWidth,cHeight)
+                var iWidth = this.initSize.width
+                var iHeight = this.initSize.height
+                var halfCWidth = parseInt(cWidth/2)
+                var halfCHeight = parseInt(cHeight/2)
+                var halfIWidth = parseInt(iWidth/2)
+                var halfIHeight = parseInt(iHeight/2)
+
+                //pattern
+                //var pattern = ctx.createPattern(window.outBorderPattern, 'repeat');
+
+
+                ctx.save()
+                //ctx.translate(parseInt((iWidth-cWidth)/2),parseInt((iHeight-cHeight)/2))
+                ctx.beginPath()
+                ctx.rect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                ctx.moveTo(-halfIWidth,-halfIHeight)
+                ctx.lineTo(-halfIWidth,halfIHeight)
+                ctx.lineTo(halfIWidth,halfIHeight)
+                ctx.lineTo(halfIWidth,-halfIHeight)
+                
+                
+                ctx.lineTo(-halfIWidth,-halfIHeight)
+                //ctx.rect(-iWidth/2,-iHeight/2,iWidth,iHeight)
+                // ctx.globalCompositeOperation = 'destination-out';
+                // ctx.closePath()
+                // ctx.moveTo(80, 100);
+                // ctx.lineTo(50, 150)
+                // ctx.lineTo(110, 150);
+                // ctx.lineTo(80, 100);
+                //ctx.closePath()
+                ctx.clip()
+                ctx.fillStyle = color
+                ctx.fillRect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                // ctx.fillStyle = pattern
+                // ctx.fillRect(-halfCWidth,-halfCHeight,cWidth,cHeight)
+                ctx.restore()
+            }catch (err) {
+                console.log('渲染错误',err)
+            }
+        }
+    });
+    
+    fabric.MyOutBorder.fromLevel=function(callback,option){
+        var outBorder=new fabric.MyOutBorder(option);
+        callback&&callback(outBorder);
     };
 
 
@@ -469,6 +583,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var subLayerNode = CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
             })
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
 
         },
         toObject: function () {
@@ -1178,6 +1302,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             })
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1738,6 +1871,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1808,6 +1951,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxValue=level.info.maxValue;
             this.initValue=level.info.initValue;
             this.arrange=level.info.arrange;
+            this.slideBlockModeId=level.info.slideBlockModeId;
 
             this.backgroundColor=level.texList[0].slices[0].color;
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
@@ -1823,6 +1967,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 this.setCoords();
                 this.fire('image:loaded');
             }
+
+            if(level.texList[2]){
+                this.progressColor = level.texList[2].slices[0].color;
+                this.progressImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+            }
+
             this.on('changeTex', function (arg) {
                 var level=arg.level;
                 var _callback=arg.callback;
@@ -1836,6 +1986,11 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(level.texList&&level.texList[1]){
                     self.slideColor=level.texList[1].slices[0].color;
                     self.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[2]){
+                    self.progressColor=level.texList[2].slices[0].color;
+                    self.progressImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
                 }
 
                 var subLayerNode=CanvasService.getSubLayerNode();
@@ -1867,6 +2022,44 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeSlideBlockMode',function(arg){
+                var _callback = arg.callback;
+                if(arg.hasOwnProperty('slideBlockMode')){
+                    self.slideBlockModeId = arg.slideBlockModeId;
+                }
+
+                if(level.texList&&level.texList[0]){
+                    self.backgroundColor=level.texList[0].slices[0].color;
+                    self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[1]){
+                    self.slideColor=level.texList[1].slices[0].color;
+                    self.slideImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[2]){
+                    self.progressColor=level.texList[2].slices[0].color;
+                    self.progressImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                }else{
+                    self.progressColor='rgb(0,0,0)';
+                    self.progressImageElement = null;
+                }
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -1884,6 +2077,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if (this.backgroundImageElement){
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
+                if(this.progressImageElement){
+                    if(this.arrange == 'horizontal'){
+                        ctx.drawImage(this.progressImageElement, 0, 0,this.progressImageElement.width*progress,this.progressImageElement.height,-this.width / 2, -this.height / 2,this.width*progress,this.height);
+                    }else{
+                        ctx.drawImage(this.progressImageElement,0,this.progressImageElement.height*(1-progress),this.progressImageElement.width,this.progressImageElement.height*progress, -this.width / 2, this.height / 2-this.height*progress,this.width,this.height*progress);
+                    }
+                }
                 if(this.slideImageElement){
                     if(this.arrange=='horizontal'){
                         ctx.drawImage(this.slideImageElement,-this.width/2+((this.width-this.slideImageElement.width/this.scaleX)*progress),-this.slideImageElement.height/(2*this.scaleY),this.slideImageElement.width/this.scaleX,this.slideImageElement.height/this.scaleY);
@@ -1893,16 +2093,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 //将图片超出canvas的部分裁剪
-                this.clipTo=function(ctx){
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.rect(-this.width / 2,
-                        -this.height / 2,
-                        this.width,
-                        this.height);
-                    ctx.closePath();
-                    ctx.restore();
-                };
+                // this.clipTo=function(ctx){
+                //     ctx.save();
+                //     ctx.beginPath();
+                //     ctx.rect(-this.width / 2,
+                //         -this.height / 2,
+                //         this.width,
+                //         this.height);
+                //     ctx.closePath();
+                //     ctx.restore();
+                // };
             }
             catch(err){
                 console.log('错误描述',err);
@@ -2128,6 +2328,124 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyDateTime.async = true;
 
 
+    //my touch track
+    fabric.MyTouchTrack = fabric.util.createClass(fabric.Object, {
+        type: Type.MyTouchTrack,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+            this.backgroundColor=level.texList[0].slices[0].color;
+            
+            this.pointerColor = level.texList[1].slices[0].color
+
+
+            this.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            this.pointerElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+            if (this.imageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                if(level.texList&&level.texList[0]){
+                    self.backgroundColor=level.texList[0].slices[0].color;
+
+                    self.imageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                }
+
+                if(level.texList&&level.texList[1]){
+                    self.pointerColor = level.texList[1].slices[0].color
+
+                    self.pointerElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                }
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            // this.on('changeInitValue',function(arg){
+            //     var _callback=arg.callback;
+
+            //     if(arg.hasOwnProperty('initValue')){
+            //         self.initValue=arg.initValue;
+            //     }else if(arg.hasOwnProperty('maxValue')){
+            //         self.maxValue=arg.maxValue;
+            //     }else if(arg.hasOwnProperty('minValue')){
+            //         self.minValue=arg.minValue;
+            //     }
+            //     var subLayerNode=CanvasService.getSubLayerNode();
+            //     subLayerNode.renderAll();
+            //     _callback&&_callback();
+            // })
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                // ctx.rotate((Math.PI/180)*this.initValue);
+                ctx.save()
+                
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.imageElement){
+                    ctx.drawImage(this.imageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+                var pointerL = Math.min(this.width,this.height)/10
+                ctx.fillStyle = this.pointerColor
+                ctx.fillRect(-pointerL/2,-pointerL/2,pointerL,pointerL)
+                if(this.pointerElement){
+                    ctx.drawImage(this.pointerElement, -pointerL / 2, -pointerL/ 2,pointerL,pointerL);
+                }
+                ctx.restore()
+            }
+            catch(err){
+                ctx.restore()
+                console.log('错误描述',err);
+                toastr.warning('渲染透明图出错');
+            }
+        }
+    });
+    fabric.MyTouchTrack.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyTouchTrack(level, option));
+    };
+    fabric.MyTouchTrack.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                imageElement:this.imageElement,
+                backgroundColor:this.backgroundColor
+            });
+        }
+    })(fabric.MyTouchTrack.prototype.toObject);
+    fabric.MyTouchTrack.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyTouchTrack(level, object));
+    };
+    fabric.MyTouchTrack.async = true;
+
     //my alpha img
     //rotateImg
     fabric.MyAlphaImg = fabric.util.createClass(fabric.Object, {
@@ -2177,6 +2495,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             })
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2729,7 +3057,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     }
 
 
-
+    //Button
     fabric.MyButton = fabric.util.createClass(fabric.Object, {
         type: Type.MyButton,
         initialize: function (level, options) {
@@ -2810,6 +3138,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -2874,6 +3212,113 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyButton(level, object));
     };
     fabric.MyButton.async = true;
+
+
+    //ButtonSwitch
+    fabric.MyButtonSwitch = fabric.util.createClass(fabric.Object, {
+        type: Type.MyButtonSwitch,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+
+            this.normalColor=level.texList[0].slices[0].color;
+            this.switchColor=level.texList[1].slices[0].color;
+
+            this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            this.switchImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                self.normalColor=level.texList[0].slices[0].color;
+                self.switchColor=level.texList[1].slices[0].color;
+                self.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                self.switchImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                ctx.fillStyle=this.fontColor;
+                ctx.save();
+                ctx.fillStyle=this.normalColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width ,
+                    this.height);
+
+                if (this.normalImageElement){
+                    ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+                ctx.restore();
+                ctx.fillStyle = this.switchColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2),
+                    this.width/2,
+                    this.height);
+
+                if(this.switchImageElement){
+                    ctx.drawImage(this.switchImageElement, -this.width / 2, -this.height / 2,this.width/2,this.height);
+                }
+
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染按钮出错');
+            }
+        }
+    });
+    fabric.MyButtonSwitch.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyButtonSwitch(level, option));
+    };
+    fabric.MyButtonSwitch.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                normalImageElement:this.normalImageElement,
+                normalColor:this.normalColor
+            });
+        }
+    })(fabric.MyButtonSwitch.prototype.toObject);
+    fabric.MyButtonSwitch.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyButtonSwitch(level, object));
+    };
+    fabric.MyButtonSwitch.async = true;
 
 
     //Text area
@@ -2979,6 +3424,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3045,6 +3500,239 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MyTextArea.async = true;
 
+
+    //textInput
+    fabric.MyTextInput = fabric.util.createClass(fabric.Object,{
+        type: Type.MyTextInput,
+        initialize: function (level, options) {
+            var self=this;
+            var ctrlOptions={
+                bl:false,
+                br:false,
+                mb:false,
+                ml:false,
+                mr:false,
+                mt:false,
+                tl:false,
+                tr:false
+            };
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.setControlsVisibility(ctrlOptions);//使text控件只能左右拉伸
+            this.hasRotatingPoint=false;
+            this.backgroundColor=level.texList[0].slices[0].color;
+            this.arrange=level.info.arrange;
+
+            this.text=level.info.text;
+            this.fontFamily=level.info.fontFamily;
+            this.fontSize=level.info.fontSize;
+            this.fontColor=level.info.fontColor;
+            this.fontBold=level.info.fontBold;
+            this.fontItalic=level.info.fontItalic;
+            this.fontUnderline=level.info.fontUnderline;
+
+            this.spacing = level.info.spacing||0
+            this.halfSpacing = level.info.halfSpacing||0
+
+            this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            if (this.backgroundImageElement) {
+                this.loaded = true;
+                this.setCoords();
+                this.fire('image:loaded');
+            }
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                var tex=level.texList[0];
+                self.backgroundColor=tex.slices[0].color;
+
+                self.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+            this.on('changeTextContent', function (arg) {
+                //console.log('enter on changeTextContent');
+                if(arg.text){
+                    self.text=arg.text;
+                }
+                if(arg.fontFamily){
+                    self.fontFamily=arg.fontFamily;
+                }
+                if(arg.fontSize){
+                    self.fontSize=arg.fontSize;
+                }
+                if(arg.fontColor){
+                    self.fontColor=arg.fontColor;
+                }
+                if(arg.fontBold){
+                    self.fontBold=arg.fontBold;
+                }
+                if(arg.hasOwnProperty('fontItalic')){
+                    self.fontItalic=arg.fontItalic;
+                }
+
+                //重新设置canvas的宽高
+                if(self.fontSize&&self.text){
+                    // self.setWidth(self.fontSize*(self.text.length+1));
+                    self.setHeight(self.fontSize*2);
+                }
+
+                var _callback=arg.callback;
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+
+            });
+
+            this.on('changeTextInputAttr',function(arg){
+                if(arg.spacing!==undefined){
+                    self.spacing =  arg.spacing
+                }
+
+                if(arg.halfSpacing!==undefined){
+                    self.halfSpacing =  arg.halfSpacing
+                }
+
+                var subLayerNode = CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                arg.callback && arg.callback();
+            })
+
+            this.on('changeArrange',function(arg){
+                var _callback=arg.callback;
+                self.arrange=arg.arrange;
+                if(arg.arrange=='vertical'){
+                    self.setAngle(90);
+                    self.set({
+                        originY:'bottom'
+                    });
+                }else if(arg.arrange=='horizontal'){
+                    self.setAngle(0);
+                    self.set({
+                        originY:'top'
+                    });
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                var curSpacing = this.spacing
+                var lastLetterType,curLetterType
+                ctx.fillStyle=this.fontColor;
+                ctx.save();
+                ctx.fillStyle=this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2) ,
+                    this.width,
+                    this.height);
+
+                if (this.backgroundImageElement){
+                    ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+                ctx.restore();
+                //var subLayerNode=CanvasService.getSubLayerNode();
+
+                if(this.text){
+                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                    //console.log(fontString);
+                    ctx.scale(1/this.scaleX,1/this.scaleY);
+                    ctx.font=fontString;
+                    ctx.textAlign='center';
+                    ctx.textBaseline='middle';//使文本垂直居中
+                    //ctx.fillText(this.text,-(this.width/2),0);
+                    //draw with byte mode
+                    var maxWidth = this.fontSize;
+                    var centerX = 0
+                    centerX = 0.5*maxWidth  - (this.width/2)
+                    for(var i=0;i<this.text.length;i++){
+                        curLetterType = getLetterType(this.text[i])
+                        if(lastLetterType === undefined){
+                            curSpacing = 0
+                        }else if(lastLetterType === 0){
+                            curSpacing = curLetterType ? (this.spacing + this.halfSpacing)/2 : this.halfSpacing
+                            curSpacing += maxWidth
+                        }else{
+                            curSpacing = curLetterType ? this.spacing : (this.spacing + this.halfSpacing)/2
+                            curSpacing += maxWidth
+                        }
+                        centerX += curSpacing
+                        ctx.fillText(this.text[i],centerX, 0)
+                        lastLetterType = curLetterType
+                        
+                        
+
+                    }
+                }
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染文本出错');
+            }
+        }
+    });
+    fabric.MyTextInput.fromLevel = function(level,callback,option){
+        callback && callback(new fabric.MyTextInput(level, option));
+    };
+    fabric.MyTextInput.prototype.toObject = (function (toObject){
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                backgroundImageElement: this.backgroundImageElement,
+                backgroundColor: this.backgroundColor
+            });
+        }
+    })(fabric.MyTextInput.prototype.toObject);
+    fabric.MyTextInput.fromObject = function(object,callback){
+        var level=ProjectService.getLevelById(object.id);
+        callback&&callback(new fabric.MyTextInput(level,object));
+    };
+    fabric.MyTextInput.async = true;
+
+
+    function getLetterType(letter){
+        var codePoint = letter.codePointAt(0)
+        if (codePoint < 128){
+            return 0
+        }else{
+            return 1
+        }
+    }
+
+
+    //num
     fabric.MyNum = fabric.util.createClass(fabric.Object,{
         type: Type.MyNum,
         initialize: function (level, options) {
@@ -4290,6 +4978,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -4423,6 +5121,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -4532,6 +5240,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({width:widgetWidth,height:widgetHeight},function(){
+                    var subLayerNode=CanvasService.getSubLayerNode();
+                    subLayerNode.renderAll();
+                    _callback&&_callback();
+                });
+            });
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -4572,5 +5291,255 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MyAnimation.async = true;
 
+
+    function reRender(){
+        var subLayerNode=CanvasService.getSubLayerNode();
+        subLayerNode.renderAll();
+    }
+
+    //General Widget Generation
+    function generateFabricWidget(widget){
+        var widgetType = widget.widgetType;
+        fabric[widgetType]  = fabric.util.createClass(fabric.Object,{
+            type: widgetType,
+            initialize: function (level, options) {
+                this.callSuper('initialize',options);
+                
+                this.lockRotation=true;
+                this.hasRotatingPoint=false;
+                var ctrlOptions=options.ctrlOptions;
+                if(ctrlOptions){
+                    this.setControlsVisibility(ctrlOptions);
+                }
+
+
+                //info attrs
+
+                var attr
+                for(attr in widget.info){
+                    this[attr] = level.info[attr]
+                }
+
+                //func attrs, pass as function
+                for(attr in widget.funcAttrs){
+                    this[attr] = widget.funcAttrs[attr](level)
+                }
+
+
+                //triggers
+                for(var triggerName in widget.triggers){
+                    this.on(triggerName,widget.triggers[triggerName].bind(this))
+                }
+    
+            },
+            toObject: function () {
+                return fabric.util.object.extend(this.callSuper('toObject'));
+            },
+            _render: function(ctx){
+                widget.render.call(this,ctx)
+            }
+        });
+        fabric[widgetType].fromLevel = function(level,callback,option){
+            callback && callback(new fabric[widgetType](level, option));
+        };
+        fabric[widgetType].prototype.toObject = (function (toObject){
+            return function () {
+                return fabric.util.object.extend(toObject.call(this), {
+                });
+            }
+        })(fabric[widgetType].prototype.toObject);
+        fabric[widgetType].fromObject = function(object,callback){
+            var level=ProjectService.getLevelById(object.id);
+            callback&&callback(new fabric[widgetType](level,object));
+        };
+        fabric[widgetType].async = true;
+    }
+
+
+    //MyGallery Prototype
+    var widgetPrototypes = []
+    var MyGallery = {
+        widgetType:Type.MyGallery,
+        info:{
+            interval:0,
+            arrange:'horizontal',
+            curValue:0,
+            photoWidth:100
+        },
+        funcAttrs:{
+            texList:function(level){
+                return level.texList.map(function(t){
+                    return {
+                        image:ResourceService.getResourceFromCache(t.slices[0].imgSrc),
+                        color:t.slices[0].color
+                    }
+                })
+            }
+        },
+        triggers:{
+            changeArrange:function(arg){
+                this.arrange = arg.arrange
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeInterval:function(arg){
+                this.interval = arg.interval
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeTex:function(arg){
+                this.texList = arg.level.texList.map(function(t){
+                    return {
+                        image:ResourceService.getResourceFromCache(t.slices[0].imgSrc),
+                        color:t.slices[0].color
+                    }
+                })
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeCurValue:function(arg){
+                this.curValue = arg.curValue
+                reRender()
+                arg.callback && arg.callback()
+            },
+            OnRelease:function(){
+                // console.log('rerender gallery')
+                this.scaleX = 1
+                this.scaleY = 1
+                // reRender()
+            },
+            changePhotoWidth:function(arg){
+                this.photoWidth = arg.photoWidth
+                reRender()
+                arg.callback && arg.callback()
+            }
+        },
+        render:function(ctx){
+            try{
+                var count = this.texList.length||1;
+                var width= this.photoWidth
+                var height=this.height;
+                var maxSize = Math.max(width,height)
+                var interval=this.interval;
+                var distanceBetweenPhotos = width*2/3;
+
+                var singleSideLimit = 3
+                
+                var curTex
+                if (width<0){
+                    return;
+                }
+                ctx.save();
+                var drawHandler = function(_ctx){
+                    _ctx.translate(maxSize/2,maxSize/2)
+                    if(curTex.image){
+                        _ctx.drawImage(curTex.image, -width / 2, -height / 2,width,height);
+                    }else{
+                        _ctx.fillStyle=curTex.color
+                        _ctx.fillRect(
+                            -(width / 2),
+                            -(height / 2) ,
+                            width ,
+                            height );
+                    }
+                }.bind(this)
+                
+                var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
+                var totalLen = this.texList.length
+                var centerIdx = this.curValue||0
+                var staticRotateRad = Math.PI/4;
+                var staticPositionZ = maxSize/5;
+                var curPosXList = []
+
+                for(i=0;i<count;i++){
+                    curPosXList.push((i-centerIdx)*distanceBetweenPhotos)
+                }
+                var width3d = width/2
+                var rotateRad,z
+                var d = 0;
+                var i = 0;
+                // console.log("----------")
+                for(i=0;i<this.texList.length;i++){
+                
+                    if(i!=centerIdx){
+                        if(Math.abs(i-centerIdx)<=singleSideLimit){
+                            rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                            z = staticPositionZ
+                            curTex = this.texList[i]
+                            AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                                size:maxSize,
+                                position:{
+                                    z:z
+                                },
+                                // rotation:{
+                                //     y:rotateRad
+                                // },
+                                shearZ:-rotateRad
+                            })
+                        
+                            ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i]-maxSize, -maxSize,2*maxSize,2*maxSize)
+                        }
+                    }else{
+                        break;
+                    }
+                    
+                    //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+                }
+
+                for(i=this.texList.length-1;i>0;i--){
+                
+                    if(i!=centerIdx){
+                        if(Math.abs(i-centerIdx)<=singleSideLimit){
+                            rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                            z = staticPositionZ
+                            curTex = this.texList[i]
+                            AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                                size:maxSize,
+                                position:{
+                                    z:z
+                                },
+                                // rotation:{
+                                //     y:rotateRad
+                                // },
+                                shearZ:-rotateRad
+                            })
+                        
+                            ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curPosXList[i] - maxSize, -maxSize,2*maxSize,2*maxSize)
+                        }
+                    }else{
+                        break;
+                    }
+                    
+                    //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+                }
+                //draw center
+                d = curPosXList[centerIdx]
+                rotateRad = d/distanceBetweenPhotos * staticRotateRad
+                z = Math.abs(d)/distanceBetweenPhotos * staticPositionZ
+                curTex = this.texList[centerIdx]
+                AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                    size:maxSize,
+                    position:{
+                        z:z
+                    },
+                    // rotation:{
+                    //     y:rotateRad
+                    // }，
+                    shearZ:-rotateRad
+                })
+            
+                ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curPosXList[centerIdx] - maxSize, -maxSize,2*maxSize,2*maxSize)
+                ctx.restore();
+            }catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染'+this.type+'出错');
+            }
+        }
+    }
+    widgetPrototypes.push(MyGallery)
+    for(var i=0;i<widgetPrototypes.length;i++){
+        generateFabricWidget(widgetPrototypes[i])
+    }
+    
 
 }]);

@@ -207,19 +207,27 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
 
 
         // 验证持续时间参数
-        $scope.checkDuration = function (e) {
+        function checkDuration(e) {
             if ($scope.animation.duration < 0) {
-                toastr.error('持续时间必须大于0s');
+                toastr.warning('持续时间必须大于0s');
                 $scope.animation.duration = 0;
+                return false;
             } else if ($scope.animation.duration > 5000) {
-                toastr.error('持续时间不能大于5s');
+                toastr.warning('持续时间不能大于5s');
                 $scope.animation.duration = 5000;
+                return false
+            }else{
+                return true
             }
         };
 
         // 确定按钮
         $scope.confirm = function (th) {
             if (!checkScale()) {
+                toastr.warning('缩放参数必须在[1/127, 8]');
+                return;
+            }
+            if (!checkDuration()) {
                 return;
             }
             fixData($scope.animation, $scope.switchButtons);
@@ -281,21 +289,49 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             return true;
         }
 
+        //scale should in [1/127, 8]
+        var scaleMin = 1/127
+        var scaleMax = 8
+        function checkEachScale(s){
+            if(s>=scaleMin && s <= scaleMax){
+                return true
+            }
+            return false
+        }
+
         function checkScale() {
             var advanceMode = $scope.animation.advanceMode;
-            var scaleX, scaleY;
+            var attrs = ['srcScale','dstScale']
+            var subAttrs = ['x','y']
+            var attr,subAttr
             if (advanceMode === true) {
-                scaleX = $scope.animation.animationAttrs.scale.srcScale.x.value;
-                scaleY = $scope.animation.animationAttrs.scale.srcScale.y.value;
+                
+                for(attr in attrs){
+                    for(subAttr in subAttrs){
+                        if(!$scope.animation.animationAttrs.scale[attrs[attr]][subAttrs[subAttr]].tag){
+                            //check value
+                            if(!checkEachScale($scope.animation.animationAttrs.scale[attrs[attr]][subAttrs[subAttr]].value)){
+                                return false
+                            }
+                        }
+                    }
+                }
+                
             } else if (advanceMode === false) {
-                scaleX = $scope.animation.animationAttrs.scale.srcScale.x;
-                scaleY = $scope.animation.animationAttrs.scale.srcScale.y;
+                for(attr in attrs){
+                    for(subAttr in subAttrs){
+                        //check value
+                        if(!checkEachScale($scope.animation.animationAttrs.scale[attrs[attr]][subAttrs[subAttr]])){
+                            return false
+                        }
+                    }
+                }
             }
 
-            if (scaleX < 0 || scaleY < 0) {
-                alert("缩放倍率禁止使用负数");
-                return false;
-            }
+            // if (scaleX < 0 || scaleY < 0 || stopScaleX<0 || stopScaleY<0) {
+            //     toastr.warning("缩放倍率禁止使用负数");
+            //     return false;
+            // }
             return true;
 
         }
@@ -307,7 +343,7 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
             }
         };
 
-        $scope.timingFuns = ['linear', 'easeInQuad', 'easeOutQuad', 'easeInOutQuad', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic', 'easeInQuart', 'easeOutQuart', 'easeInOutQuart', 'easeInQuint', 'easeOutQuint', 'easeInOutQuint'];
+        $scope.timingFuns = ['linear',  'easeInCubic', 'easeOutCubic', 'easeInOutCubic'];
 
         //修正数据，将为绑定tag的属性置空,将绑定了tag的属性的value置0
         function fixData(animation, switchButtons) {

@@ -1,10 +1,25 @@
-<li data-project='<%= JSON.stringify(project) %>'  class="projectpanel" title="工程名称<%=project.name%>&#10创建工具:<%=project.originalSite%>&#10创建时间:<%=project.createTime%>&#10修改时间:<%=project.lastModifiedTime%>">
-    <div class="img">
-        <i class="projectdelete iconfont createIcon">&#xe607;</i>
-        <a href="#"><img src='<%= thumbnail || "../../public/login/assets/img/pro_1.png" %> '/></a>
+<li class="project-list__item project-panel project-tool" data-project='<%= JSON.stringify(project) %>'>
+    <div class="project-item__thumb">
+        <div class="project-thumb-box thumb-img">
+            <img class="project-thumb" src=<%= thumbnail||'../../public/login/assets/images/project.png' %> />
+        </div>
+        <div class="project-item__hover-menu">
+            <div class="hover-menu__item play-project">
+                <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
+                <span>打开工程</span>
+            </div>
+            <div class="hover-menu__item edit-project">
+                <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
+                <span>编辑信息</span>
+            </div>
+            <p class="hover-menu__item2">
+                <span class="hover-menu__share-project share-project"></span>
+                <span class="hover-menu__delete-project delete-project"></span>
+            </p>
+        </div>
     </div>
-    <p class="text projectinfo" data-toggle="modal" data-target="#myModal">
-        <span><%= project.name %></span>
-        <!--<span class="day"><%= project.lastModified %></span>-->
-    </p>
+    <div class="project-item__title"
+         title="创建工具:<%=project.originalSite%>&#10创建时间:<%=project.createTime%>&#10修改时间:<%=project.lastModifiedTime%>">
+        <p><%= project.name %></p>
+    </div>
 </li>

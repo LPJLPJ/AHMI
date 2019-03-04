@@ -18,7 +18,7 @@ module.exports = React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
+                    return StringConverter.convertUint8ArrayToStr(tag.value,this.encoding)
                 default:
                     console.log('tag type unsupported')
             }
@@ -89,6 +89,8 @@ module.exports = React.createClass({
             this.setState({tagList: nextProps.tagList});
         }
 
+        this.encoding = nextProps.encoding
+
 
     },
     render: function () {
@@ -96,49 +98,50 @@ module.exports = React.createClass({
             'verticalAlign':'middle'
         }
         return (
-            <div className='tag-table-wrapper'>
-                <table className='tag-table table table-responsive'>
-                    <thead className='tag-table-header'>
-                    <tr className='tag-table-row'>
-                        <td className='tag-table-col'> 名称
-                        </td>
-                        <td className='tag-table-col'> 寄存器号
-                        </td>
-                        <td className='tag-table-col'> 值
-                        </td>
-                    </tr >
+            <div className='simulator-tag-table-wrapper'>
+                <table className='simulator-tag-table simulator-tag-title'>
+                    <thead className='simulator-tag-table__header'>
+                        <tr className='simulator-tag-table__row'>
+                            <td className='simulator-tag-table__col tag-table-col-4'>名称</td>
+                            <td className='simulator-tag-table__col tag-table-col-2'>寄存器号</td>
+                            <td className='simulator-tag-table__col tag-table-col-4'>值</td>
+                        </tr >
                     </thead>
-                    <tbody className='tag-table-body'>
-                    {
-                        this.state.tagList.map(function (tag, index) {
-                            if (tag.register) {
-                                {/*var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');*/}
-                                var disabled = false;
-                                var curValue
-                                if (this.state.inputingTag && this.state.curTagIdx === index){
-                                    curValue = tag.value
-                                }else{
-                                    curValue = this.getTagTrueValue(tag)
-                                }
-                                return (
-                                    <tr key={index} className='tag-table-row'>
-                                        <td className={'tag-table-col '+(tag.valueType==1?'tag-string':'tag-num')} style={tdDefaultStyle}> {tag.name}</td>
-                                        <td className='tag-table-col' style={tdDefaultStyle}> {tag.indexOfRegister}</td>
-                                        <td className='tag-table-col' style={tdDefaultStyle}>
-                                            <input className={'value form-control '} name={tag.name} type='text' disabled={disabled}
-                                                   value={curValue}
-                                                   onFocus={this.handleValueInputFocus}
-                                                   onBlur={this.handleValueInputBlur}
-                                                   onKeyDown={this.handleValueInputEnter}
-                                                   onChange={this.handleValueInputChange}
-                                            />
-                                        </td>
-                                    </tr>
-                                );
-                            }
-                        }.bind(this))}
-                    </tbody>
                 </table>
+
+                <div className='simulator-tag-content'>
+                    <table className='simulator-tag-table'>
+                        <tbody className='simulator-tag-table__body'>
+                        {
+                            this.state.tagList.map(function (tag, index) {
+                                if (tag.register) {
+                                    {/*var disabled = !(tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite');*/}
+                                    var disabled = false;
+                                    var curValue
+                                    if (this.state.inputingTag && this.state.curTagIdx === index){
+                                        curValue = tag.value
+                                    }else{
+                                        curValue = this.getTagTrueValue(tag)
+                                    }
+                                    return (
+                                        <tr key={index} className={'simulator-tag-table__row '+(tag.valueType==1?'tagName-str':'') }>
+                                            <td className='simulator-tag-table__col tag-table-col-4' style={tdDefaultStyle}> {tag.name}</td>
+                                            <td className='simulator-tag-table__col tag-table-col-2' style={tdDefaultStyle}> {tag.indexOfRegister}</td>
+                                            <td className='simulator-tag-table__col tag-table-col-4' style={tdDefaultStyle}>
+                                                <input className={'simulator-tag-table__input'} name={tag.name} type='text' disabled={disabled}
+                                                       value={curValue}
+                                                       onFocus={this.handleValueInputFocus}
+                                                       onBlur={this.handleValueInputBlur}
+                                                       onKeyDown={this.handleValueInputEnter}
+                                                       onChange={this.handleValueInputChange} />
+                                            </td>
+                                        </tr>
+                                    );
+                                }
+                            }.bind(this))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         );
     }

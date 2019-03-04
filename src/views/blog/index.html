@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    <title>AHMI-IDE BLOG</title>
+    <title>博客</title>
     <link rel="stylesheet" href="../../public/blog/libs/bootstrap-3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../../public/blog/css/index.css">
+    <link rel="stylesheet" type="text/css" href="../../public/blog/css/blog.css">
     <!-- CUSTOM STYLE CSS -->
     <link href="../../public/login/assets/css/style.css" rel="stylesheet"/>
 
@@ -16,25 +16,53 @@
 </head>
 <body>
 
-<header>
+<header style="border-bottom: 1px solid #cccccc">
     <% include header.html %>
 </header>
-<div class="main-container">
-    <div class="blog-list-container">
-        <ul class="blog-list"></ul>
-        <div id="paginator"></div>
+
+<div class="blog-wrap">
+    <div class="blog-top-nav">
+        <div class="blog-nav-content">
+            <ul class="blog-nav-list">
+                <li class="active" id="nav__all-blog" data-id="all-blog"><a>最新更新</a></li>
+                <li id="nav__my-blog" data-id="my-blog"><a>我的帖子</a></li>
+            </ul>
+        </div>
     </div>
-    <footer>
-        <% include ../all/footer.html %>
-    </footer>
+    <div class="blog-content">
+        <div class="blog-list-content" id="all-blog">
+            <ul class="blog-list-menu blog-list" id="all-blog-menu">
+
+            </ul>
+            <div style="text-align: center;">
+                <div class="blog-list-container">
+                    <div id="paginator" style="padding-top: 100px"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="blog-list-content" id="my-blog" style="display: none">
+            <ul class="blog-list-menu blog-list" id="my-blog-menu">
+
+            </ul>
+        </div>
+
+        <div class="blog-list__item-right" id="blog-right-operate">
+            <div class="blog-feature">
+                <a class="add-blog" id="create">新建帖子</a>
+                <div class="blog-course">
+                    <h3>精选</h3>
+                    <div class="blog-course__list" id="blog-recommend">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-
-
-
-
 <script>
-    ;(function () {
+    (function () {
         var paginationer = new Paginationer(5,<%=currentPage%>,<%=totalPage%>);
         paginationer.setElem(document.getElementById('paginator'))
     }())

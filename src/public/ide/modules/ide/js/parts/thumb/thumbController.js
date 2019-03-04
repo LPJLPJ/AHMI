@@ -23,6 +23,7 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
         $scope.component = {
             addPage: null,
             uitree: null,
+            showLeft:showLeft,
             menuOptions:[],
             allContextMenus:[],
             out:{
@@ -31,7 +32,9 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
         }
     }
 
-
+    function showLeft() {
+        $scope.$emit('ChangeShownArea', 0);
+    }
 
     function initProject() {
 

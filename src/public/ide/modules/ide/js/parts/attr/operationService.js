@@ -50,10 +50,11 @@ ideServices.service('OperationService',[function () {
         ['WRITE_DATA_CAN', 'w_can'],
         ['ANIMATE','animate'],
         ['SET_STR','setStr'],
-        ['CONCAT_STR','concatStr'],
-        ['DEL_STR_FROM_TAIL','delStrFromTail'],
-        ['DEL_STR_FROM_HEAD','delStrFromHead'],
-        ['GET_STR_LEN','getStrLen'],
+        ['DELAY','delay'],
+        // ['CONCAT_STR','concatStr'],
+        // ['DEL_STR_FROM_TAIL','delStrFromTail'],
+        // ['DEL_STR_FROM_HEAD','delStrFromHead'],
+        // ['GET_STR_LEN','getStrLen'],
     ];
 
     for (var i=0;i<opsRaw.length;i++ ){

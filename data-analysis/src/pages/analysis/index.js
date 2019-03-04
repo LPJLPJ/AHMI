@@ -32,6 +32,8 @@ class Analysis extends PureComponent {
     subLayersCnt: null,
     widgetsCnt: null,
     resourcesCnt: null,
+    tagsCnt: null,
+    timersCnt: null,
     barDataWidgets: [],
     barDataResources: [],
 
@@ -82,6 +84,7 @@ class Analysis extends PureComponent {
     const resolution = project.resolution;
     const content = JSON.parse(project.content);
     let pagesCnt = 0, layersCnt = 0, subLayersCnt = 0, widgetsCnt = 0, resourcesCnt = 0;
+    let tagsCnt = content.tagClasses[0].tagArray.length,timersCnt = content.tagClasses[1].tagArray.length;
 
     let pages, layers, subLayers, widgets, resourceList;
 
@@ -112,6 +115,8 @@ class Analysis extends PureComponent {
       subLayersCnt,
       widgetsCnt,
       resourcesCnt,
+      tagsCnt,
+      timersCnt
     }
   }
 
@@ -284,6 +289,14 @@ class Analysis extends PureComponent {
           <p>资源数</p>
           <p>{this.state.resourcesCnt}</p>
         </div>
+        <div className={styles.statItem}>
+          <p>变量数</p>
+          <p>{this.state.tagsCnt}</p>
+        </div>
+        <div className={styles.statItem}>
+          <p>定时器数</p>
+          <p>{this.state.timersCnt}</p>
+        </div>
       </div>
     );
 
@@ -341,6 +354,21 @@ class Analysis extends PureComponent {
             </Tabs>
           </div>
         </Card>
+
+        <Row gutter={24}>
+          <Col xl={24} lg={24} md={24} sm={24} xs={24}>
+            <Card
+              loading={this.state.loading}
+              bordered={false}
+              className={styles.salesCard}
+              title="变量绑定情况"
+              bodyStyle={{padding: 24}}
+              style={{marginTop: 24, minHeight: 509}}
+            >
+
+            </Card>
+          </Col>
+        </Row>
 
         <Row gutter={24}>
           <Col xl={12} lg={24} md={24} sm={24} xs={24}>

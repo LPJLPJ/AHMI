@@ -1,6 +1,6 @@
 {
     "name": "AHMI-IDE",
-    "version": "1.10.6",
+    "version": "1.10.7",
     "description": "",
     "main": "./views/login/personalProject.html",
     "scripts": {

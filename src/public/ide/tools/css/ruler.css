@@ -1,10 +1,4 @@
-* {
-    margin: 0;
-    padding: 0;
-}
-
-
-/*¸¨ÖúÏß*/
+/*åˆ»åº¦å°º*/
 #rulerX {
     background: url("../../../images/ruler/ruler_h.png") repeat-x;
     position: absolute;
@@ -23,7 +17,7 @@
 
 #rulerX, #rulerY {
     display: none;
-    z-index: 1000;
+    z-index: 100;
     overflow: hidden;
 }
 
@@ -51,7 +45,7 @@
     position: absolute;
     left: 0;
     cursor: url("../../../images/ruler/cur_move_h.cur"), move;
-    z-index: 999;
+    z-index: 99;
 }
 
 .lineY {
@@ -61,7 +55,7 @@
     position: absolute;
     top: 0;
     cursor: url("../../../images/ruler/cur_move_v.cur"), move;
-    z-index: 999;
+    z-index: 99;
 }
 
 .xNum {
@@ -90,7 +84,7 @@
     left: 0;
     top: 0;
     display: none;
-    z-index: 999;
+    z-index: 99;
 }
 
 #dotLineX {
@@ -113,10 +107,9 @@
     padding: 2px 5px;
     color: red;
     font-size: 10px;
-    z-index: 999;
+    z-index: 99;
 }
 
-/*Ä£¾ß¿ò*/
 #mask {
     width: 200px;
     height: 200px;
@@ -124,8 +117,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 998;
-    display: none;
+    z-index: 101;
 }
 
 #maskWrap {
@@ -143,5 +135,5 @@
     height: 14px;
     border: 1px solid rgba(0,0,0,.6);
     position: absolute;
-    z-index: 999;
+    z-index: 101;
 }

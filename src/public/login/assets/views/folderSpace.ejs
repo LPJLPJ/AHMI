@@ -1,0 +1,36 @@
+<div class="folder-space-list">
+    <div class="folder-space__bar">
+        <a href="#">返回上一级</a>
+        <span>|</span>
+        <span>个人中心 > <%= folder.name %></span>
+    </div>
+    <ul class="project-list clearfix" id="folder-project-list">
+        <%for(var i=0;i<projects.length;i++){%>
+        <li class="project-list__item project-panel project-tool" data-project='<%= JSON.stringify(projects[i].projectInfo) %>'>
+            <div class="project-item__thumb">
+                <div class="project-thumb-box thumb-img">
+                    <img class="project-thumb" src=<%= projects[i].thumbnail||'../../public/login/assets/images/project.png' %> />
+                </div>
+                <div class="project-item__hover-menu">
+                    <div class="hover-menu__item play-project">
+                        <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
+                        <span>打开工程</span>
+                    </div>
+                    <div class="hover-menu__item edit-project">
+                        <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
+                        <span>编辑信息</span>
+                    </div>
+                    <p class="hover-menu__item2">
+                        <span class="hover-menu__share-project share-project"></span>
+                        <span class="hover-menu__delete-project delete-project"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="project-item__title"
+                 title="创建工具:<%=projects[i].projectInfo.originalSite%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
+                <p><%= projects[i].projectInfo.name %></p>
+            </div>
+        </li>
+        <%}%>
+    </ul>
+</div>

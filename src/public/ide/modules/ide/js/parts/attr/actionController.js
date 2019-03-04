@@ -60,6 +60,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         }
         ////console.log(currentSelectedObject);
         switch (currentSelectedObject.type) {
+            case Type.MyButtonSwitch:
             case Type.MyButton:
             case Type.MyNumber:
             case Type.MyProgress:
@@ -74,6 +75,7 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             case Type.MySlideBlock:
             case Type.MyTexNum:
             case Type.MyAlphaImg:
+            case Type.MyTouchTrack:
                 $scope.showActionPanel = true;
                 break;
             case Type.MySlide:
@@ -273,6 +275,9 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
             $scope.currentChosenIdx += 1;
             $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
 
+            //selectedTag
+            $scope.selectedTagObjArray[0].tagName=$scope.chosenCmd[1].tag;
+
             $scope.validateArr.push({
                 pass:true,
                 tooltip:''
@@ -437,9 +442,9 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 GET_STR_LEN:"操作数1必须是变量，且类型为'数字'型,操作数2必须是变量，且类型为'字符串'型",
                 EMPTY:"操作符不能为空",
                 NOT_NUMBER:"操作数2的值必须为数字类型",
+                NOT_TAG:"操作数1必须为变量",
                 NEGATIVE:'值不能是负数',
-                POSITIVE_INTEGER:'值只能是非0正整数',
-                NO_ZERO_INTEGER:'值只能是非零整数'
+                NO_ZERO_INTEGER:'值只能是非0整数'
             };
             var getTagValueType = function(tagName){
                 for(var i=0,il=tags.length;i<il;i++){
@@ -494,6 +499,14 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                             pass = false;
                         }
                         break;
+                    case 'ANIMATE':
+                        if(!cmd[1].tag){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NOT_TAG']
+                            pass = false
+                        }
+                    break;
+                    case 'DELAY':
                     case 'SET_TIMER_START':
                     case 'SET_TIMER_STOP':
                     case 'SET_TIMER_STEP':

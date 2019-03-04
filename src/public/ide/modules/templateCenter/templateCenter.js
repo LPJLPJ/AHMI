@@ -172,10 +172,10 @@ $(function () {
     }
 
     function renderTemplate(template) {
-        return '<div class="template-panel-wrapper col-md-3" >'+'<div class="template-panel" data-id="'+template._id+'">' +
+        return '<div class="template-panel-wrapper col-lg-2" >'+'<div class="template-panel" data-id="'+template._id+'">' +
                     '<div class="template-thumbnail-wrapper">' +
                         '<div class="template-thumbnail-container">' +
-                            '<img class="template-thumbnail" src="'+(template.thumbnail||'../../public/login/assets/img/pro_1.png')+'">'+
+                            '<img class="template-thumbnail" src="'+(template.thumbnail||'../../public/login/assets/images/project.png')+'">'+
                             '<div class="template-info"><div class="template-info-title">'+template.name+'</div><div class="template-info-size">'+template.resolution+'</div></div>'+
                         '</div>'+
 

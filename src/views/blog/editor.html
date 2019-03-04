@@ -11,35 +11,33 @@
     <link rel="stylesheet" href="../../public/blog/libs/jquery-confirm/jquery-confirm.min.css">
 
     <script type="text/javascript" src ="../../public/blog/libs/bootstrap-3.3.7/js/bootstrap.js"></script>
-    <!-- <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet"> -->
     <link rel="stylesheet" type="text/css" href="../../public/blog/libs/summernote/summernote.css">
-    <link rel="stylesheet" type="text/css" href="../../public/blog/css/editor.css">
-    <!-- <script  src="./lib/summernote/summernote.js"></script> -->
+    <!--<link rel="stylesheet" type="text/css" href="../../public/blog/css/editor.css">-->
     <script type="text/javascript" src="../../public/blog/libs/summernote.js"></script>
     <script type="text/javascript" src="../../public/blog/libs/summernote/lang/summernote-zh-CN.js"></script>
-    <!--<script type="text/javascript" src="../../public/blog/libs/jquery-confirm/jquery-confirm.min.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="../../public/blog/css/blog.css">
 </head>
-<body>
-
-    <header>
+<body style="background-color: #f5f4f6;">
+    <header style="border-bottom: 1px solid #cccccc">
         <% include header.html %>
     </header>
-    <div class="main-container row">
-        <div class="editor-info-wrapper col-lg-3 ">
-            <div class="editor-info">
+
+    <div class="release-wrap row container">
+        <div class="editor-info-wrapper">
+            <div>
                 <form class="form">
-                    <div class="form-group">
-                        <label class="">Title:</label><input id="title" class="form-control" />
+                    <div class="row blog-row">
+                        <span class="blog-label">标&emsp;题 :</span><input id="title" class=" blog-input form-group" />
                     </div>
-                    <div class="form-group">
-                        <label class="">Description:</label><input id="desp" class="form-control" />
+                    <div class="row blog-row">
+                        <span class="blog-label">说&emsp;明 :</span><input id="desp" class="blog-input" />
                     </div>
-                    <div class="form-group">
-                        <label class="">Keywords:</label><input id="keyword" class="form-control" placeholder="separate by ;" />
+                    <div class="row blog-row">
+                        <span class="blog-label">密&emsp;码 :</span><input id="keyword" class="blog-input" />
                     </div>
-                    <div class="form-group">
-                        <label class="">Category:</label>
-                        <select id="category" class="form-control">
+                    <div class="row blog-row">
+                        <span class="blog-label">分&emsp;类 :</span>
+                        <select id="category" class="blog-input">
                             <option value="technology">技术</option>
                             <option value="design">设计</option>
                             <option value="update">更新</option>
@@ -47,31 +45,19 @@
                             <option value="other">其它</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label class="">&nbsp;</label>
-                        <div class="submit-wrapper">
-                            <button id="publish" class="btn btn-default" >Publish</button>
-                            <button id="save" class="btn btn-default" >Save</button>
-                        </div>
-
+                    <div class="row blog-row">
+                        <button id="publish" class="btn btn-success" style="margin-right: 50px">发布</button>
+                        <button id="save" class="btn btn-info">保存</button>
                     </div>
-                    <div class="form-group">
-
-                        <div class="editor-status-wrapper">
-                            <span class="editor-status"></span>
-                        </div>
-
+                    <div class="editor-status-wrapper">
+                        <span class="editor-status"></span>
                     </div>
                 </form>
             </div>
         </div>
-        <div class="col-lg-9 editor-wrapper">
-
-            <div id="summernote">Hello Blog</div>
+        <div class="editor-wrapper">
+            <div id="summernote"></div>
         </div>
-        <footer>
-            <% include footer.html %>
-        </footer>
     </div>
 
     <script src="../../public/blog/js/customSN.js"></script>

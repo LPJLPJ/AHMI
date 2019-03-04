@@ -3,430 +3,394 @@
 <head>
     <meta charset="UTF-8">
     <title>个人空间</title>
-
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css" type="text/css" />
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
-    <link href="../../public/login/assets/css/bootstrap.css" rel="stylesheet" />
-    <link href="/public/login/assets/css/style.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="../../public/login/assets/css/personalProject.css" type="text/css" />
+    <link href="../../public/login/assets/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../public/login/assets/css/jquery.contextMenu.min.css" type="text/css" />
-    <link rel="stylesheet" href="../../public/ide/modules/templateCenter/templateCenter.css" />
-    <link rel="stylesheet" href="../../public/login/assets/css/templates.css" />
-    <script src="../../public/login/assets/js/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="../../public/login/assets/css/personalSpace.css" type="text/css">
+
+    <script src="../../public/login/assets/js/jquery-1.10.2.min.js"></script>
     <script src="../../public/login/assets/js/jquery.contextMenu.min.js"></script>
-    <script src="../../public/login/assets/js/bootstrap.js"></script>
+    <script src="../../public/login/assets/js/bootstrap.min.js"></script>
     <script src="../../public/login/assets/js/ejs_production.js"></script>
     <script src="../../public/login/assets/js/personalProject.js"></script>
-    <script src="../../public/login/assets/js/templates.js"></script>
+    <script src="../../public/login/assets/js/projectSpaceView.js"></script>
     <script src="../../public/login/assets/js/compatibilityCheck.js"></script>
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
-
-
 </head>
 <body>
-    <div class="header" id="mianHeader" >
-        <div class="header_main">
-            <div class="header_main_logo"><a id="mainhref" href="/">
-                <img src="../../public/login/assets/img/速显微.png" />
-            </a></div>
-            <div class="nav">
-                <!--<ul>-->
-                    <!--<li><a href="personalProject.html">项目</a></li>-->
-                    <!--&lt;!&ndash;<li><a href="#">任务</a></li>&ndash;&gt;-->
-                    <!--<li><a href="#">IDE</a></li>-->
-                    <!--<li><a href="#">产品介绍</a></li>-->
-                    <!--<li><a href="#">联系我们</a></li>-->
-                    <!--<li><%= username %></li>-->
-                <!--</ul>-->
+<header class="project-top-nav">
+    <% include header.html %>
+</header>
+<!--工程列表-->
+<div class="wrapper" id="filedrag">
+    <div class="project-content" id="project-content">
+        <div class="project-content__operate clearfix">
+            <div class="project-operate__view clearfix">
+                <a href="/project/recycle" target="_blank" class="p-o__item"><i class="iconfont">&#xe643;</i><span>回收站</span></a>
+                <span class="project-operate__view-line"></span>
+                <a href="/templatecenter" target="_blank" class="p-o__item"><i class="iconfont">&#xe76a;</i><span>工程模板</span></a>
             </div>
-            <div id="user-icon"   class="dropdown right">
-                <a id="icon-dropdown" data-toggle="dropdown"><img src="../../public/login/assets/img/Fruit.png" /></a>
-
-                <!--<div id="user-icon-menu" class="menu">-->
-                    <!--<a href="/private/info">个人信息</a>-->
-                    <!--<a href="/user/logout">退出</a>-->
-                <!--</div>-->
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <!--<li><a href="/private/info">个人信息</a></li>-->
-                    <li><a href="/user/logout">退出</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="exampleModalLabel">确认删除?</h4>
+            <div class="project-operate__create">
+                <div class="project-operate__create-item add-folder" id="add-folder" data-toggle="modal" data-target="#folder-info-modal">
+                    <img class="default-img" src="../../public/login/assets/images/add-project.png"/>
+                    <img class="active-img" src="../../public/login/assets/images/add-project-active.png"/>
+                    <span>新建文件夹</span>
                 </div>
-                <div class="modal-footer">
-                    <button id="closeModalConfirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-
+                <div class="project-operate__create-item add-project" id="add-project" data-toggle="modal" data-target="#project-info-modal">
+                    <img class="default-img" src="../../public/login/assets/images/add-project.png"/>
+                    <img class="active-img" src="../../public/login/assets/images/add-project-active.png"/>
+                    <span>新建工程</span>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--项目删除-->
-    <div class="modal fade" id="deleteFolderModal" tabindex="-1" role="dialog" aria-labelledby="deleteFolderLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="deleteFolderLabel">确认删除?</h4>
-                </div>
-                <div class="modal-body">
-                    <h4 style="color: red;text-align: center">删除项目将会删除该项目中所有的工程！</h4>
-                </div>
-                <div class="modal-footer">
-                    <button id="deleteFolderConfirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="template-modal" tabindex="-1" role="dialog" aria-labelledby="template-modal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="template-modal-delete">确认删除?</h4>
-                </div>
-                <div class="modal-footer">
-                    <button id="template-modal-confirm" type="button" class="btn btn-primary" data-dismiss="modal">确认</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="main filedragOverflow" id="filedrag">
-        <div class="top" ng-click="console.log('123')">
-            <button id="addFolder" class="createPro btn addFolder" data-toggle="modal" data-target="#myFolderModal"><span class="iconfont icon">&#xe606;</span> 创建项目</button>
-            <!--（<em class="var">2</em> )-->
-            <!--<span class="pro2">-->
-                <!--<input type="text" placeholder="项目名搜索" name="name" />-->
-                <!--<i class="iconfont">&#xe605;</i>-->
-            <!--</span>-->
-        </div>
-        <!--<div class="pro_tab">-->
-            <!--<ul>-->
-                <!--<li><a href="#">所有</a></li>-->
-                <!--&lt;!&ndash;<li><a href="#">私有</a></li>-->
-                <!--<li><a href="#">公开</a></li>&ndash;&gt;-->
-            <!--</ul>-->
-        <!--</div>-->
-        <div class="all">
-            <!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">基础选项</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="job">
-                                <span class="modal-label col-lg-2">名称</span><input id="basicinfo-title" type="text" autocomplete="off" placeholder="工程名称" class="modal_input col-lg-10" />
-                            </div>
-                            <div class="job">
-                                <span class="modal-label col-lg-2">作者</span><input id="basicinfo-author" type="text" placeholder="" class="modal_input col-lg-10" />
-                            </div>
-                            <div class="job">
-                                <span class="modal-label col-lg-2">分辨率</span>
-                                <select id="basicinfo-resolution" class="col-lg-10 modal_input" value="">
-                                    <option value="1280*480">1280 * 480</option>
-                                    <option value="1280*800">1280 * 800</option>
-                                    <option value="1920*1080">1920 * 1080</option>
-                                    <option value="1000*600">1000 * 600</option>
-                                    <option value="800*600">800 * 600</option>
-                                    <option value="800*480">800 * 480</option>
-                                    <option value="480*272">480 * 272</option>
-                                    <option value="320*240">320 * 240</option>
-                                    <option value="custom">自定义</option>
-                                </select>
-                            </div>
-                            <div class="job" id="basicinfo-customResolution">
-                                <span class="modal-label col-lg-2">自定义</span>
-                                <span class="modal-label col-lg-1">宽</span>
-                                <input type="number" class="col-lg-4 modal_input" id="customWidth" placeholder="1~1920"/>
-                                <span class="modal-label col-lg-1">高</span>
-                                <input type="number" class="col-lg-4 modal_input" id="customHeight" placeholder="1~1920">
-                            </div>
-                            <div class="job">
-                                <span class="modal-label col-lg-2">IDE版本</span>
-                                <select id="basicinfo-ideversion" class="col-lg-10 modal_input" value="">
-                                    <option value="">---</option>
-                                </select>
-                            </div>
-                            <div class="job compatibility-container">
-                                <span class="modal-label col-lg-8">一体化软件兼容性</span>
-                                <div class="compatibility-show col-lg-12"></div>
-                            </div>
-                            <div class="job">
-                                <span class="modal-label col-lg-2">模板</span>
-                                <select id="basicinfo-template" class="col-lg-10 modal_input" value="">
-                                    <option value="">---</option>
-                                    <option value="defaultTemplate">默认模板</option>
-                                    <option value="collectedTemplate">收藏模板</option>
-                                </select>
-
-                            </div>
-                            <div>
-                                <div class="basicinfo-template-options">
-
-                                </div>
-                            </div>
-                            <div class="job">
-                                <span class="modal-label col-lg-2">触屏</span>
-                                <select id="basicinfo-supportTouch" class="col-lg-10 modal_input" value="">
-                                    <option value="true">触屏设备</option>
-                                    <option value="false">非触屏设备</option>
-                                </select>
-                            </div>
-                            <!--<div class="des">-->
-                                <!--<textarea placeholder="项目描述" class="modal_text"></textarea>-->
-                            <!--</div>-->
-                        </div>
-                        <div class="modal-footer">
-                            <button id="modal-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
-                            <button id="modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal fade" id="myFolderModal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myFolderLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myFolderLabel">项目选项</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="job">
-                                <span class="modal-label col-lg-2">名称</span><input id="folder-title" type="text" autocomplete="off" placeholder="项目名称" class="modal_input col-lg-10" />
-                            </div>
-                            <div class="job">
-                                <span class="modal-label col-lg-2">作者</span><input id="folder-author" type="text" placeholder="" class="modal_input col-lg-10" />
+        <!--工程列表-->
+        <div id="list-wrap">
+            <div class="project-list-wrap" id="project-list-wrap">
+                <ul class="project-list clearfix" id="project-list">
+                    <%for(var f=0;f<folders.length;f++){%>
+                    <li class="project-list__item folder-panel" data-folder='<%= JSON.stringify(folders[f].folderInfo) %>'>
+                        <div class="project-item__thumb">
+                            <img class="folder-thumb-icon" src="../../public/login/assets/images/folder.png">
+                            <div class="project-item__hover-menu">
+                                <a class="hover-menu__item open-folder" href="#/folder?id=<%= folders[f].folderInfo._id %>">
+                                    <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
+                                    <span>打开文件夹</span>
+                                </a>
+                                <a class="hover-menu__item edit-folder">
+                                    <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
+                                    <span>编辑信息</span>
+                                </a>
+                                <p class="hover-menu__item2">
+                                    <span class="hover-menu__delete-project delete-folder"></span>
+                                </p>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button id="folder-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>
-                            <button id="folder-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <div class="project-item__title folder-tool"
+                             title="创建作者:<%= folders[f].folderInfo.author %>&#10创建时间:<%= folders[f].folderInfo.createTime %>&#10修改时间:<%= folders[f].folderInfo.lastModifiedTime %>">
+                            <p class="project-item_folder-title"><%= folders[f].folderInfo.name %></p>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <ul class="projectlist" id="projectlist">
-                <li id="addproject" class="addproject">
-                    <a href="#">
-                        <div class="img1 btn btn-primary btn-lg"  data-toggle="modal" data-target="#myModal">
-                            <i class="iconfont createIcon">&#xe606;</i>
-                        </div>
-                    </a>
-                    <p class="text">创建工程</p>
-                </li>
-                <!-- 识别符 勿删 -->
-                <!-- webProFlag -->
-
-                <!--项目列表 add by tang-->
-                <%for(var f=0;f<folders.length;f++){%>
-                    <li data-folder='<%= JSON.stringify(folders[f].folderInfo) %>' class="folderPanel" title="项目名称:<%= folders[f].folderInfo.name %>&#10创建作者:<%= folders[f].folderInfo.author %>&#10创建时间:<%= folders[f].folderInfo.createTime %>&#10修改时间:<%= folders[f].folderInfo.lastModifiedTime %>">
-                        <div class="img">
-                            <i class="folderDelete iconfont createIcon">&#xe607;</i>
-                            <a href="#"><img src='<%= "../../public/login/assets/img/folder.png" %>'/></a>
-                        </div>
-                        <p class="text folderInfo">
-                            <span><%= folders[f].folderInfo.name %></span>
-                        </p>
                     </li>
-                <%}%>
+                    <%}%>
+                    <span id="boundary"></span>
+                    <%for(var i=0;i<projects.length;i++){%>
+                    <li class="project-list__item project-panel project-tool" data-project='<%= JSON.stringify(projects[i].projectInfo) %>'>
+                        <div class="project-item__thumb">
+                            <div class="project-thumb-box thumb-img">
+                                <img class="project-thumb" src=<%= projects[i].thumbnail||'../../public/login/assets/images/project.png' %> />
+                            </div>
+                            <div class="project-item__hover-menu">
+                                <div class="hover-menu__item play-project">
+                                    <img class="default-img" src="../../public/login/assets/images/play-project.png"/>
+                                    <span>打开工程</span>
+                                </div>
+                                <div class="hover-menu__item edit-project">
+                                    <img class="active-img" src="../../public/login/assets/images/edit-project-active.png"/>
+                                    <span>编辑信息</span>
+                                </div>
+                                <p class="hover-menu__item2">
+                                    <span class="hover-menu__share-project share-project"></span>
+                                    <span class="hover-menu__delete-project delete-project"></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="project-item__title"
+                             title="创建工具:<%=projects[i].projectInfo.originalSite%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
+                            <p><%= projects[i].projectInfo.name %></p>
+                        </div>
+                    </li>
+                    <%}%>
+                </ul>
+                <div class="empty-prompt" id="project-empty" style="display:<%if(projects.length<1&&folders.length<1){%>block<%}else{%>none<%}%>">
+                    <img src="../../public/login/assets/images/empty.png"/>
+                    <p>空空如也，请点击<span class="prompt-add-project">&nbsp;新建工程&nbsp;</span>创建你的工程吧！</p>
+                </div>
+            </div>
 
-                <!--工程列表-->
-                <%for(var i=0;i<projects.length;i++){%>
-                <!--<li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  context-menu="component.menuOptions"  class="projectpanel" title="创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">-->
-                <li  data-project='<%= JSON.stringify(projects[i].projectInfo) %>'  class="projectpanel" title="工程名称:<%=projects[i].projectInfo.name%>&#10创建工具:<%=projects[i].projectInfo.originalSite%>&#10创建时间:<%=projects[i].projectInfo.createTime%>&#10修改时间:<%=projects[i].projectInfo.lastModifiedTime%>">
-                    <div class="img">
-                        <i class="projectdelete iconfont createIcon">&#xe607;</i>
-                        <a href="#"><img src=<%= projects[i].thumbnail||"../../public/login/assets/img/pro_1.png" %> /></a>
-                        <!--<div class="img_bot">-->
-                        <!--<div class="img_bg">haha</div>-->
-                        <!--<div class="img_bot_test">-->
-                        <!--<a href="#">编辑</a>-->
-                        <!--<a href="#">预览</a>-->
-                        <!--</div>-->
-                        <!--</div>-->
+            <div class="folder-space-wrap" id="folder-space-wrap">
+                <div class="folder-space-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="updater_wrapper">
+    <div class="displayInfo">
+        <p id="updateInfoText"></p>
+        <div id="myprogressBackground">
+            <div id="myprogress"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框 -->
+<!--新建、修改工程-->
+<div class="modal fade" id="project-info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                <h4 class="modal-title">工程选项</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">名&emsp;称</span><input id="basicinfo-title" type="text" autocomplete="off" placeholder="请输入工程名称" class="modal-input col-lg-9" />
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">作&emsp;者</span><input id="basicinfo-author" type="text" placeholder="请输入作者名称" class="modal-input col-lg-9" />
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">分辨率</span>
+                    <select id="basicinfo-resolution" class="col-lg-9 modal-input">
+                        <option value="1280*480">1280 * 480</option>
+                        <option value="1280*800">1280 * 800</option>
+                        <option value="1920*1080">1920 * 1080</option>
+                        <option value="1000*600">1000 * 600</option>
+                        <option value="800*600">800 * 600</option>
+                        <option value="800*480">800 * 480</option>
+                        <option value="480*272">480 * 272</option>
+                        <option value="320*240">320 * 240</option>
+                        <option value="custom">自定义</option>
+                    </select>
+                </div>
+                <div class="modal-row" id="basicinfo-customResolution">
+                    <span class="modal-label col-lg-2">宽度:</span>
+                    <input type="number" class="col-lg-4 modal-input" id="customWidth" placeholder="1~1920"/>
+                    <span class="modal-label col-lg-2">高度:</span>
+                    <input type="number" class="col-lg-4 modal-input" id="customHeight" placeholder="1~1920">
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">IDE版本</span>
+                    <select id="basicinfo-ideversion" class="col-lg-9 modal-input" value="">
+                        <option value="">---</option>
+                    </select>
+                </div>
+                <div class="modal-row compatibility-container">
+                    <span class="modal-label col-lg-6">一体化软件兼容性</span>
+                    <span class="compatibility-show col-lg-6"></span>
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">模&emsp;板</span>
+                    <select id="basicinfo-template" class="col-lg-9 modal-input" value="">
+                        <option value="">---</option>
+                        <option value="defaultTemplate">默认模板</option>
+                        <option value="collectedTemplate">收藏模板</option>
+                    </select>
+
+                </div>
+                <div>
+                    <div class="basicinfo-template-options row">
+
                     </div>
-
-                    <p class="text projectinfo" data-toggle="modal" data-target="#myModal">
-                        <span><%= projects[i].projectInfo.name %></span>
-                        <span hidden class="day"><%= projects[i].projectInfo.lastModifiedTime %></span>
-                    </p>
-                </li>
-                <%}%>
-                <!-- webProFlag_end -->
-
-            </ul>
-        </div>
-        <!--<div class="main">-->
-            <!--<div class="top">-->
-                <!--<span calss="pro">CAN配置项目</span>-->
-            <!--</div>-->
-            <!--<div class="all">-->
-                <!--&lt;!&ndash; Modal &ndash;&gt;-->
-                <!--<div class="modal fade" id="myCANModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">-->
-                    <!--<div class="modal-dialog" role="document">-->
-                        <!--<div class="modal-content">-->
-                            <!--<div class="modal-header">-->
-                                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
-                                <!--<h4 class="modal-title" id="myModalLabel">基础选项</h4>-->
-                            <!--</div>-->
-                            <!--<div class="modal-body">-->
-                                <!--<div class="job">-->
-                                    <!--<span class="modal-label col-lg-2">名称</span><input id="CAN-basicinfo-title" type="text" autocomplete="off" placeholder="项目名称" class="modal_input col-lg-10" />-->
-                                <!--</div>-->
-                                <!--<div class="job">-->
-                                    <!--<span class="modal-label col-lg-2">作者</span><input id="CAN-basicinfo-author" type="text" placeholder="" class="modal_input col-lg-10" />-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--<div class="modal-footer">-->
-                                <!--<button id="CAN-modal-ok" type="button" class="btn btn-primary" data-dismiss="modal">创建</button>-->
-                                <!--<button id="CAN-modal-cancel" type="button" class="btn btn-default" data-dismiss="modal">取消</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">触&emsp;屏</span>
+                    <select id="basicinfo-supportTouch" class="col-lg-9 modal-input" value="">
+                        <option value="true">触屏设备</option>
+                        <option value="false">非触屏设备</option>
+                    </select>
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">编&emsp;码</span>
+                    <select id="basicinfo-encoding" class="col-lg-9 modal-input" value="">
+                        <option value="ascii">ASCII</option>
+                        <option value="utf-8">UTF-8</option>
+                        <option value="gb2312">GB2312</option>
+                    </select>
+                </div>
+                <!--<div class="des">-->
+                <!--<textarea placeholder="项目描述" class="modal-text"></textarea>-->
                 <!--</div>-->
-
-                <!--<ul class="projectlist" id="CANProjectlist">-->
-                    <!--<li id="addCANproject" class="addproject">-->
-                        <!--<a href="#">-->
-                            <!--<div class="img1 btn btn-primary btn-lg"  data-toggle="modal" data-target="#myCANModal">-->
-                                <!--<i class="iconfont">&#xe606;</i>-->
-                            <!--</div>-->
-                        <!--</a>-->
-                        <!--<p class="text">创建项目</p>-->
-                    <!--</li>-->
-                    <!--&lt;!&ndash; webProFlag &ndash;&gt;-->
-                    <!--<%for(var i=0;i<CANProjects.length;i++){%>-->
-                    <!--<li data-project='<%= JSON.stringify(CANProjects[i].CANProjectInfo) %>'  class="CANProjectPanel">-->
-                        <!--<div class="img">-->
-                            <!--<i class="CANProjectdelete iconfont">&#xe607;</i>-->
-                            <!--<a href="#"><img src="../../public/login/assets/img/pro_2.png"/></a>-->
-                        <!--</div>-->
-
-                        <!--<p class="text projectinfo" data-toggle="modal" data-target="#myCANModal">-->
-                            <!--<span><%= CANProjects[i].CANProjectInfo.name %></span>-->
-                            <!--<span hidden class="day"><%= CANProjects[i].CANProjectInfo.lastModifiedTime %></span>-->
-                        <!--</p>-->
-                    <!--</li>-->
-                    <!--<%}%>-->
-                    <!--&lt;!&ndash; webProFlag_end &ndash;&gt;-->
-                <!--</ul>-->
-            <!--</div>-->
-        <!--</div>-->
-    </div>
-    <div class="main templates-container" >
-        <div class="top" >
-            <span class="pro">工程模板</span>
-            <a target="_blank" class="templates-tools-getmore" href="/templatecenter">获取更多模板</a>
-            <!--（<em class="var">2</em> )-->
-            <!--<span class="pro2">-->
-            <!--<input type="text" placeholder="项目名搜索" name="name" />-->
-            <!--<i class="iconfont">&#xe605;</i>-->
-            <!--</span>-->
-        </div>
-        <!--<div class="pro_tab">-->
-        <!--<ul>-->
-        <!--<li><a href="#">所有</a></li>-->
-        <!--&lt;!&ndash;<li><a href="#">私有</a></li>-->
-        <!--<li><a href="#">公开</a></li>&ndash;&gt;-->
-        <!--</ul>-->
-        <!--</div>-->
-        <div class="templates">
-
-
-
-
-        </div>
-
-    </div>
-    <div id="updater_wrapper">
-        <div class="displayInfo">
-            <p id="updateInfoText"></p>
-            <div id="myprogressBackground">
-                <div id="myprogress"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="project-info-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">创建</button>
+                <button id="modal-cancel" type="button" class="btn-cancel modal-btn" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
-                    <h4 class="modal-title" id="myModalLabel">上传本地工程</h4>
+</div>
+<!--新建、修改项目-->
+<div class="modal fade" id="folder-info-modal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myFolderLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myFolderLabel">文件夹选项</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">名&emsp;称</span>
+                    <input id="folder-title" type="text" autocomplete="off" placeholder="文件夹名称" class="modal-input col-lg-9" />
                 </div>
-                <div class="modal-body">
-                    <p>合法的本地工程，确定上传？</p>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">作&emsp;者</span>
+                    <input id="folder-author" type="text" placeholder="创建人名称" class="modal-input col-lg-9" />
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="confirmReleaseBtn">确定</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="folder-ok" type="button" class="btn-confirm modal-btn" data-dismiss="modal">创建</button>
+                <button id="folder-cancel" type="button" class="modal-btn" data-dismiss="modal">取消</button>
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">IDE编辑器检测到更新：<span id="update-new-version"></span></h4>
+</div>
+<!--删除工程-->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">删除工程</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-text-h">您确定要删除&nbsp;<span class="project-delete__prompt"></span>&nbsp;吗?</h4>
+                <p class="modal-text-h">可在回收站中找回已删除的工程</p>
+            </div>
+            <div class="modal-footer">
+                <button id="delete-project-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--删除模板-->
+<div class="modal fade" id="template-modal" tabindex="-1" role="dialog" aria-labelledby="template-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="template-modal-delete">确认删除?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="template-modal-confirm" type="button" class="modal-btn btn-confirm" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--删除项目-->
+<div class="modal fade" id="delete-folder-modal" tabindex="-1" role="dialog" aria-labelledby="deleteFolderLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteFolderLabel">删除文件夹</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-text-h">你确定要删除&nbsp;<span class="folder-delete__prompt"></span>&nbsp;吗？</h4>
+                <p class="modal-text-h">可在回收站中找回已删除的工程</p>
+            </div>
+            <div class="modal-footer">
+                <button id="deleteFolderConfirm" type="button" class="modal-btn btn-confirm" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--上传工程-->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="uploadLabel">上传本地工程</h4>
+            </div>
+            <div class="modal-body">
+                <h4 style="color: #7d7d7d;text-align: center">合法的本地工程，确定上传？</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn btn-confirm" id="confirmReleaseBtn">确定</button>
+                <button type="button" class="modal-btn" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--分享工程-->
+<div class="modal fade" id="share-project-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">分享工程</h4>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <button class="btn btn-primary" id="share-button">开启分享</button>
+                <div class="share-wrap" id="share-wrap">
+                    <p id="share-url"></p>
+                    <p id="share-key"></p>
+                    <p id="readOnly-key"></p>
                 </div>
-                <div class="modal-body update-options-body">
+            </div>
+            <div class="modal-footer">
+                <button id="share-cancel" type="button" class="modal-btn" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--工程版本-->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">IDE编辑器检测到更新：<span id="update-new-version"></span></h4>
+            </div>
+            <div class="modal-body update-options-body">
+                <div class="modal-row">
                     <label class="btn btn-primary active">
                         <input type="radio" name="update-options" id="update-option-1" class="update-option" value='1' autocomplete="off" > 不升级，打开旧版本
                     </label>
+                </div>
+                <div class="modal-row">
                     <label class="btn btn-primary">
                         <input type="radio" name="update-options" id="update-option-2" class="update-option" value='2' autocomplete="off"> 保存副本，升级工程
                     </label>
+                </div>
+                <div class="modal-row">
                     <label class="btn btn-primary">
                         <input type="radio" name="update-options" id="update-option-3" class="update-option" value='3' autocomplete="off"> 不保存副本，升级工程
                     </label>
-                    <div >
-                        <span class="update-alert"></span>
-                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="updateConfirmBtn">确定</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="updateCancelBtn">取消</button>
+                <div >
+                    <span class="update-alert"></span>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn btn-confirm" id="updateConfirmBtn">确定</button>
+                <button type="button" class="modal-btn" data-dismiss="modal" id="updateCancelBtn">取消</button>
             </div>
         </div>
     </div>
+</div>
+<!--创建工具提示-->
+<div class="modal fade" id="originSiteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">工程创建工具检测</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-text-h">此工程的创建工具为&nbsp;<span class="origin-site" style="color: #005599"></span>&nbsp;!</h4>
+                <p class="modal-text-h">与当前使用工具不匹配，打开可能会出现问题，是否继续打开？</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn btn-confirm modal-confirm" data-dismiss="modal" id="originSiteConfirm">确定</button>
+                <button type="button" class="modal-btn modal-cancel" data-dismiss="modal" id="originSiteCancel">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+    //        for local
+    try{
+        var os = require('os');
+        var mainhref = document.getElementById('mainhref');
+        mainhref.setAttribute('href','#');
+        var iconDropdown = document.getElementById('icon-dropdown');
+        iconDropdown.parentNode.removeChild(iconDropdown);
+    }catch (e){
 
+    }
 
-    <script>
-//        for local
-
-        try{
-            var os = require('os');
-            var mainhref = document.getElementById('mainhref');
-            mainhref.setAttribute('href','#');
-            var iconDropdown = document.getElementById('icon-dropdown');
-            iconDropdown.parentNode.removeChild(iconDropdown);
-        }catch (e){
-
-        }
-
-    </script>
-
+    /*var loadFont = function() {
+        document.body.className+='customFont';
+    }*/
+</script>
 </body>
 <script src="../../public/general/js/versionTag.js"></script>
 <script src="../../public/general/js/browserCheck.js"></script>

@@ -217,13 +217,17 @@ Route_admin.releaseUpdate = function(req,res){
         var blogPattern = /public[\\\/]blog/;
         var downloadPattern = /public[\\\/]download/;
         var srcJSPattern = /public[\\\/]ide[\\\/]modules[\\\/]ide[\\\/]js/;
-        return !(blogPattern.test(src)||srcJSPattern.test(src)||downloadPattern.test(src));
-    }
+        var updateLogPattern = /public[\\\/]updateLog/;
+        var recyclePattern = /public[\\\/]recycle/;
+        return !(blogPattern.test(src)||srcJSPattern.test(src)||downloadPattern.test(src)||updateLogPattern.test(src)||recyclePattern.test(src));
+    };
     //views文件夹过滤函数
     var filterFunForViews = function(src){
         var blogPattern = /views[\\\/]blog/;
         var downloadPattern = /views[\\\/]download/;
-        return !(blogPattern.test(src)||downloadPattern.test(src));
+        var updateLogPattern = /views[\\\/]updateLog/;
+        var recyclePattern = /views[\\\/]recycle/;
+        return !(blogPattern.test(src)||downloadPattern.test(src)||updateLogPattern.test(src)||recyclePattern.test(src));
     };
     //打包更新包
     var zipDistFiles = function(){
@@ -344,8 +348,15 @@ Route_admin.releaseUpdate = function(req,res){
                         if(file.type==='views'){
                             //修改psersonalProject.html文件 删除ejs语句
                             var targetHtmlPath = path.join(tempViewsFolderPath,'login','personalProject.html');
-                            var editHtmlStr = editPersonalProjectHtml(targetHtmlPath);
-                            fse.writeFile(targetHtmlPath,editHtmlStr,function(err){
+                            var localHtml = path.join(tempViewsFolderPath,'login','personalProject_local.html');
+                            var finalHtml;
+                            if(localHtml){
+                                finalHtml = editPersonalProjectHtml(localHtml);
+                            }else{
+                                finalHtml = editPersonalProjectHtml(targetHtmlPath);
+                            }
+
+                            fse.writeFile(targetHtmlPath,finalHtml,function(err){
                                 if(err){
                                     console.log('err',err);
                                     errHandler(res,500,'edit personalProject.html err');

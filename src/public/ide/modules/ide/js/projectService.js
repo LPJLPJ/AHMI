@@ -247,6 +247,23 @@ ideServices
                 return project.projectId;
             };
 
+            this.getProjectName = function(){
+                if(project.name){
+                    return project.name;
+                }
+            }
+
+            this.getProjectInitSize = function(){
+                if(project.initSize){
+                    return project.initSize
+                }else{
+                    return {
+                        width:0,
+                        height:0
+                    }
+                }
+            }
+
             /**
              * 获得当前Page
              * @returns {*}
@@ -382,6 +399,30 @@ ideServices
                     currentLayerInfo:currentLayerInfo,
                     initAbsoluteX:Math.round(absoluteX),
                     initAbsoluteY:Math.round(absoluteY)
+                };
+            };
+
+            //输入相对坐标，预先计算绝对坐标
+            this.getFutureAbsolutePosition = function (widgetInfo,layerInfo) {
+                var currentLayer=this.getCurrentLayer(),
+                    absoluteX=null,absoluteY=null
+                    
+                //如果传入layerInfo就不使用getCurrentLayer()获取的参数；
+                if(widgetInfo&&layerInfo){
+                    absoluteX=widgetInfo.left+layerInfo.left;
+                    absoluteY=widgetInfo.top+layerInfo.top;
+                    
+                }else{
+                    if(widgetInfo&&currentLayer){
+                        absoluteX=widgetInfo.left+currentLayer.info.left;
+                        absoluteY=widgetInfo.top+currentLayer.info.top;
+                        
+                    }
+                }
+                return {
+                    absoluteX:Math.round(absoluteX),
+                    absoluteY:Math.round(absoluteY)
+                    
                 };
             };
 
@@ -622,13 +663,13 @@ ideServices
                             }else{
                                 //从page a 进入 page b
                                 _self.OnPageSelected(_pageIndex,function(){
-                                    _successCallback&&_successCallback(true);
+                                    _successCallback&&_successCallback();
                                 });
                             }
                         }else{
                             //进入同一个页面，从sublayer状态进入
                             _self.OnPageSelected(_pageIndex,function(){
-                                _successCallback&&_successCallback(true);
+                                _successCallback&&_successCallback();
                             },isInit);
                         }
                     }else {
@@ -654,9 +695,12 @@ ideServices
 
                     var pageCount=currentPage.layers.length;
                     var options = !!currentPage.backgroundImage?{
-                        width:project.currentSize.width,
-                        height:project.currentSize.height
+                        width:project.initSize.width,
+                        height:project.initSize.height
                     }:null;
+                    // if(!currentPage.initSize){
+                    //     currentPage.initSize = project.initSize
+                    // }
                     pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
                         pageNode.setBackgroundImage(currentPage.backgroundImage||null,function(){
                             //-
@@ -694,7 +738,7 @@ ideServices
                                     console.log('不更新layer');
                                     console.log('cb in intoNewPage',currentPage.name);
                                     var layers = currentPage.layers||[];
-                                    layers.map(function(layer,index){
+                                    layers.forEach(function(layer,index){
                                         var layerFab = _self.getFabLayerByLayer(layer);
                                         if(layerFab){
                                             layerFab.fire('OnRefresh',function(){
@@ -1214,15 +1258,38 @@ ideServices
                         syncSublayer(fabWidget);
                     },initiator);
                 }else if(_newWidget.type===Type.MyTexNum){
-                    console.log(_newWidget);
                     fabric.MyTexNum.fromLevel(_newWidget,function (fabWidget) {
                         _self.currentFabLayerIdList = [fabWidget.id];
                         subLayerNode.add(fabWidget);
                         subLayerNode.renderAll.bind(subLayerNode)();
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MyTouchTrack){
+                    fabric.MyTouchTrack.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else if(_newWidget.type===Type.MyAlphaImg){
                     fabric.MyAlphaImg.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
+                }else if(_newWidget.type===Type.MyButtonSwitch){
+                    fabric.MyButtonSwitch.fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
                         fabWidget.urls=_newWidget.subSlides;
                         subLayerNode.add(fabWidget);
@@ -1991,6 +2058,50 @@ ideServices
                 _successCallback && _successCallback();
             }
 
+
+            this.calculateCurrentSizeToSurroundLayers = function(){
+                var _page = this.getCurrentPage()
+                var layers = _page.layers;
+                var leftMost = 0
+                var rightMost = project.initSize.width
+                var topMost = 0
+                var bottomMost = project.initSize.height
+                var curLayer, curRight, curBottom
+                for(var i=0;i<layers.length;i++){
+                    curLayer = layers[i]
+                    if(curLayer.info.left < leftMost){
+                        leftMost = curLayer.info.left
+                    }
+                    if(curLayer.info.top < topMost){
+                        topMost = curLayer.info.top
+                    }
+                    curRight = curLayer.info.left + curLayer.info.width
+                    if(curRight > rightMost){
+                        rightMost = curRight
+                    }
+                    curBottom = curLayer.info.top + curLayer.info.height
+                    if(curBottom > bottomMost){
+                        bottomMost = curBottom
+                    }
+                }
+                _page.currentSize = {
+                    width:parseInt(2*Math.max(Math.abs(rightMost- project.initSize.width/2),Math.abs(leftMost- project.initSize.width/2))),
+                    height:parseInt(2*Math.max(Math.abs(topMost- project.initSize.height/2),Math.abs(bottomMost- project.initSize.height/2)))
+                }
+
+                // console.log(_page.currentSize)
+            }
+
+            this.updateOutBorder = function(){
+                var pageNode=CanvasService.getPageNode();
+                var page = _self.getCurrentPage()
+                _.forEach(pageNode.getObjects(), function (_fabObj) {
+                    if (_fabObj.type == 'MyOutBorder') {
+                        _fabObj.fire('changeCurrentSize',page.currentSize)
+                    }
+                });
+            }
+
             /**
              * 主要操作
              * 放下一个可操作对象
@@ -2013,7 +2124,13 @@ ideServices
 
                 }
                 if (selectObj.type==Type.MyLayer){
+                    
                     selectObj.target.fire('OnRelease',selectObj.target.id);
+                    //calculate new page border
+                    this.calculateCurrentSizeToSurroundLayers()
+                    //update border
+                    this.updateOutBorder();
+                    _self.ScaleCanvas('page');
 
                 }else if (selectObj.type==Type.MyGroup&&selectObj.mode==0) {
                     var fabGroup = selectObj.target;
@@ -2316,8 +2433,8 @@ ideServices
                     //+
                     //切换到另一页，不需要更新这一页的缩率图
                     var options = !!currentPage.backgroundImage?{
-                        width:project.currentSize.width,
-                        height:project.currentSize.height
+                        width:project.initSize.width,
+                        height:project.initSize.height
                     }:null;
                     //+
                     pageNode.setBackgroundColor(currentPage.backgroundColor,function(){
@@ -2340,6 +2457,8 @@ ideServices
                                 pageNode.renderAll();
                                 // currentPage.proJsonStr=pageNode.toJSON();
                                 currentPage.mode=0;
+
+                                _self.ScaleCanvas('page');
                                 _successCallback && _successCallback();
 
                                 // console.log('cost time is:',Date.now()-timeStamp);
@@ -3278,8 +3397,8 @@ ideServices
                     case Type.MyPage:
                         var pageNode=CanvasService.getPageNode();
                         var opts = (!!_option.image)?{
-                            width:pageNode.getWidth()/pageNode.getZoom(),
-                            height:pageNode.getHeight()/pageNode.getZoom()
+                            width:project.initSize.width,
+                            height:project.initSize.height
                         }:null;
                         var img = _option.image?_option.image:null;
                         pageNode.setBackgroundImage(img, function () {
@@ -3324,6 +3443,36 @@ ideServices
                 selectObj.level.pressImg=_option.image;
             };
 
+            this.ChangeAttributePhotoWidth = function (_option, _successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+
+
+                selectObj.level.info.photoWidth=_option.photoWidth;
+
+                var arg={
+                    photoWidth:_option.photoWidth,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changePhotoWidth',arg);
+
+
+            };
+
+            this.ChangeAttributeCurValue = function (_option, _successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+
+
+                selectObj.level.info.curValue=_option.curValue;
+
+                var arg={
+                    curValue:_option.curValue,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeCurValue',arg);
+
+
+            };
+
             this.ChangeAttributeProgressValue= function (_option, _successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
 
@@ -3357,6 +3506,24 @@ ideServices
                 };
                 selectObj.target.fire('changeArrange',arg);
 
+            };
+
+            /**
+             * 切换滑块模式
+             */
+            this.ChangeAttributeSlideBlockModeId = function(_option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                selectObj.level.info.slideBlockModeId = _option.slideBlockModeId;
+                var level = selectObj.level;
+                selectObj.level.slideBlockModeId = _option.slideBlockModeId;
+                level.texList = TemplateProvider.getSlideBlockTex(level.slideBlockModeId);
+                var arg={
+                    level:level,
+                    backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
+                    slideBlockModeId:_option.slideBlockModeId,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeSlideBlockMode',arg);
             };
 
             /**
@@ -3942,7 +4109,7 @@ ideServices
                 var initValue=_option.initValue;
                 var selectObj= _self.getCurrentSelectObject();
                 selectObj.level.info.initValue=_option.initValue;
-                arg={
+                var arg={
                     initValue:initValue,
                     callback:_successCallback
                 };
@@ -3967,6 +4134,26 @@ ideServices
                 }
                 selectObj.target.fire('changeDateTimeAttr',arg);
             };
+
+            this.ChangeAttributeOfTextInput=function(_option,_successCallback){
+                //var currentOperate = SaveCurrentOperate();
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    callback:_successCallback
+                };
+                if(_option.hasOwnProperty('spacing')){
+                    selectObj.level.info.spacing=_option.spacing;
+                    arg.spacing=_option.spacing;
+                }
+                if(_option.hasOwnProperty('halfSpacing')){
+                    selectObj.level.info.halfSpacing=_option.halfSpacing;
+                    arg.halfSpacing=_option.halfSpacing;
+                }
+                selectObj.target.fire('changeTextInputAttr',arg);
+            };
+
+
+
             //改变时间控件的显示模式
             this.ChangeAttributeDateTimeModeId = function(_option,_successCallback){
                 var dateTimeModeId = _option.dateTimeModeId;
@@ -4110,7 +4297,7 @@ ideServices
 
                 //改变slice，背景颜色会成为新值，需要将此新的颜色值传递给render，来重绘canvas
                 var level = _.cloneDeep(selectObj.level);
-                arg={
+                var arg={
                     level:level,
                     backgroundColor: _.cloneDeep(selectObj.level.texList[0].slices[0].color),
                     dashboardModeId:_option.dashboardModeId,
@@ -4169,7 +4356,7 @@ ideServices
             //改变仪表盘的覆盖角度
             this.ChangeAttributeDashboardCoverAngle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                arg={
+                var arg={
                     callback:_successCallback
                 };
                 if(_option.hasOwnProperty('minCoverAngle')){
@@ -4207,9 +4394,26 @@ ideServices
                 selectObj.target.fire('changeInterval',arg);
 
             };
-            this.ChangeAttributeButtonCount= function (_option, _successCallback) {
+
+
+            this.ChangeAttributeCount= function (_option, _successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
                 selectObj.level.info.count=_option.count;
+                var ignoreHighlight = false
+                var defaultTexFun
+
+                switch(selectObj.type){
+                    case Type.MyButtonGroup:
+                        ignoreHighlight = false
+
+                        defaultTexFun = TemplateProvider.getDefaultButtonTex
+                        break
+                    case Type.MyGallery:
+                        ignoreHighlight = true
+                        defaultTexFun = TemplateProvider.getDefaultTex
+                        break
+                }
+                var reserved = ignoreHighlight ? 0 : 1
                 checkTexList(selectObj.level,selectObj.level.info.count, function () {
                     var arg={
                         level:selectObj.level,
@@ -4226,11 +4430,11 @@ ideServices
                  * @param _callback 回调函数
                  */
                 function checkTexList(_level,_count,_callback){
-                    if (_level.texList.length<_count+1){
-                        _level.texList.splice(_level.texList.length-1,0,TemplateProvider.getDefaultButtonTex());
+                    if (_level.texList.length<_count+reserved){
+                        _level.texList.splice(_level.texList.length-1,0,defaultTexFun());
                         checkTexList(_level,_count,_callback);
-                    }else if (_level.texList.length>_count+1){
-                        _level.texList.splice(_level.texList.length-2,1);
+                    }else if (_level.texList.length>_count+reserved){
+                        _level.texList.splice(_level.texList.length-(1+reserved),1);
                         checkTexList(_level,_count,_callback);
 
                     }else {
@@ -4267,6 +4471,12 @@ ideServices
                         currentLayer.info.top = _option.top;
 
                     }
+                    //calculate new page border
+                    this.calculateCurrentSizeToSurroundLayers()
+                    //update border
+                    this.updateOutBorder();
+                    _self.ScaleCanvas('page');
+
                     pageNode.renderAll();
                     // currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
                     _self.OnLayerSelected(currentLayer, function () {
@@ -4350,6 +4560,26 @@ ideServices
                 _successCallback&&_successCallback();
             };
 
+            this.ChangeLayerAnimation = function(_animation,_successCallback){
+                var selectObj = _self.getCurrentSelectObject();
+                var arg = {
+                    animation:_animation,
+                    cb:_successCallback
+                }
+                selectObj.target.fire('updateAnimation',arg);
+                
+            };
+
+            this.turnOffLayerAnimation = function(obj,_successCallback){
+                
+                var arg = {
+                    animation:null,
+                    cb:_successCallback
+                }
+                obj.target.fire('updateAnimation',arg);
+                
+            }
+
             this.AddAttributeTransition = function(_transition,_successCallback){
                 var selectObj = _self.getCurrentSelectObject();
                 selectObj.level.transition=_transition;
@@ -4363,6 +4593,8 @@ ideServices
                     selectObj.level.transition.show=_option.show;
                 }else if(_option.hasOwnProperty('duration')){
                     selectObj.level.transition.duration=_option.duration;
+                }else if(_option.hasOwnProperty('timingFun')){
+                    selectObj.level.transition.timingFun=_option.timingFun;
                 }
                 _successCallback&&_successCallback(currentOperate);
             };
@@ -4411,15 +4643,41 @@ ideServices
              */
             this.ChangeAttributeWidgetSize=function(_successCallback){
                 var selectObj=_self.getCurrentSelectObject();
-                var arg={
-                    callback:_successCallback,
-                };
-                var image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
-                arg.widgetWidth=image.width;
-                arg.WidgetHeight=image.height;
+                var image;
+                switch (selectObj.type){
+                    case 'MySlide':
+                    case 'MyDashboard':
+                    case 'MyRotateImg':
+                    case 'MyTextArea':
+                    case 'MyButton':
+                    case 'MySlideBlock':
+                    case 'MyAnimation':
+                    case 'MySwitch':
+                    case 'MyTouchTrack':
+                    case 'MyAlphaSlide':
+                    case 'MyTextInput':
+                    case 'MyButtonSwitch':
+                        image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+                        break;
+                    case 'MyProgress':
+                        image = ResourceService.getResourceFromCache(selectObj.level.texList[1].slices[0].imgSrc);
+                        break;
+                    default :
+                        break;
+                }
+
+                if(!image){
+                    return;
+                }
+
                 if(image.width==selectObj.level.info.width&&image.height==selectObj.level.info.height&&selectObj.target.scaleX==1&&selectObj.target.scaleY==1){
                     return;
                 }
+                var arg={
+                    callback:_successCallback,
+                    widgetWidth:image.width,
+                    WidgetHeight:image.height
+                };
                 selectObj.level.info.width=image.width;
                 selectObj.level.info.height=image.height;
                 selectObj.target.fire('changeWidgetSize',arg);
@@ -4792,6 +5050,12 @@ ideServices
                     //for fix scale bug!!!
                     object.target.fire('OnRelease',object.target.id);
 
+                    //calculate new page border
+                    this.calculateCurrentSizeToSurroundLayers()
+                    //update border
+                    this.updateOutBorder();
+                    _self.ScaleCanvas('page');
+
                     pageNode.renderAll();
                     // currentPage.proJsonStr = JSON.stringify(pageNode.toJSON());
                     //console.log(currentPage.proJsonStr);
@@ -4989,6 +5253,15 @@ ideServices
                 })
             };
 
+            this.calculatePanWithCurrentSize = function(currentSize,initSize){
+                var pan =  {
+                    x:parseInt((initSize.width - currentSize.width)/2),
+                    y:parseInt((initSize.height - currentSize.height)/2)
+                }
+                // console.log(pan)
+                return pan
+            }
+
             /**
              * 缩放画布
              * @param _scaleMode 模式 'page' or 'subCanvas'
@@ -5001,9 +5274,17 @@ ideServices
                     var pageNode=CanvasService.getPageNode();
                     _scale=ViewService.getScaleFloat('page');
                     pageNode.setZoom(_scale);
-
-                    pageNode.setWidth(project.currentSize.width*_scale);
-                    pageNode.setHeight(project.currentSize.height*_scale);
+                    if(!currentPage.currentSize){
+                        currentPage.currentSize = {
+                            width:project.initSize.width,
+                            height:project.initSize.height
+                        }
+                    }
+                    // console.log('scale',currentPage.currentSize.width,currentPage.currentSize.height)
+                    pageNode.setWidth(currentPage.currentSize.width*_scale);
+                    pageNode.setHeight(currentPage.currentSize.height*_scale);
+                    //move viewPoint make current center at init center
+                    pageNode.absolutePan(_self.calculatePanWithCurrentSize(currentPage.currentSize,project.initSize))
 
                 }else if (_scaleMode=='subCanvas'){
                     var currentLayer=_level?_level:_self.getCurrentLayer();
@@ -5123,6 +5404,10 @@ ideServices
                 var index=-1;
                 if (!_array){
                     return index;
+                }
+                if(!_item){
+                    console.log(_item)
+                    throw Error('_item is null')
                 }
                 _.forEach(_array, function (__item,_index) {
                     if (__item.id==_item.id){
@@ -5245,10 +5530,10 @@ ideServices
                 var _height = parseInt(height*_scale);
                 var currentPage = _self.getCurrentPage();
 
-                var pageColor = currentPage.backgroundColor||'rgba(54,71,92,0.3)';
+                var pageColor = currentPage.backgroundColor||'rgba(191,191,191,0.3)';
                 var pageBackgroundImgSrc = currentPage.backgroundImage||"";
-                var pageWidth = (project.currentSize&&project.currentSize.width)||1280;
-                var pageHeight = (project.currentSize&&project.currentSize.height)||480;
+                var pageWidth = (project.initSize&&project.initSize.width)||1280;
+                var pageHeight = (project.initSize&&project.initSize.height)||480;
 
                 var backgroundCanvas=document.getElementById('backgroundCanvas');
                 backgroundCanvas.width=_width;
@@ -5267,7 +5552,7 @@ ideServices
                 }
 
                 if(pageBackgroundImgSrc!=""&&pageBackgroundImgSrc!="/public/images/blank.png"){
-                    pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
+                    var pageBackgroundImg = ResourceService.getResourceFromCache(pageBackgroundImgSrc);
                     var sourceX = parseInt(pageBackgroundImg.width/pageWidth*x);
                     var sourceY = parseInt(pageBackgroundImg.height/pageHeight*y);
                     var sourceWidth =parseInt(pageBackgroundImg.width/pageWidth*width);
@@ -5379,6 +5664,10 @@ ideServices
                                 _addMatteInCanvasNode(data.matte)
                             }
                         }
+
+                        //draw outborder
+                        addOutBorder()
+
                         break;
                     case Type.MySubLayer:
                         widgets = data.widgets;
@@ -5484,12 +5773,18 @@ ideServices
                     case 'MyTexTime':
                         node.add(new fabric.MyTexTime(dataStructure,initiator));
                         break;
+                    case 'MyTouchTrack':
+                        fabric.MyTouchTrack.fromLevel(dataStructure, addFabWidget, initiator);
+                        break;
                     case 'MyAlphaImg':
                         fabric.MyAlphaImg.fromLevel(dataStructure, addFabWidget, initiator);
                         break;
                     default :
                         //console.error('not match widget in _addFabricObjInCanvasNode!');
-                        fabric[dataStructure.type].fromLevel(dataStructure, addFabWidget, initiator);
+                        if (dataStructure.type in fabric){
+                            fabric[dataStructure.type].fromLevel(dataStructure, addFabWidget, initiator);
+                        }
+                        
                         
                 }
                 _cb&&_cb();
@@ -5566,6 +5861,38 @@ ideServices
 
             };
 
+            //add OutBorder
+
+            function addOutBorder(borderData){
+
+                var pageNode = CanvasService.getPageNode();
+                
+                var currentPage=_self.getCurrentPage();
+
+                if(!currentPage.currentSize){
+                    currentPage.currentSize = {
+                        width:project.initSize.width,
+                        height:project.initSize.height
+                    }
+                }
+                var pan = _self.calculatePanWithCurrentSize(currentPage.currentSize,project.initSize)
+                var outBorder=new fabric.MyOutBorder({
+                    width:currentPage.currentSize.width,
+                    height:currentPage.currentSize.height,
+                    left:pan.x,
+                    top:pan.y,
+                    currentSize:currentPage.currentSize,
+                    initSize:project.initSize
+                });
+                pageNode.add(outBorder);
+                outBorder.moveTo(pageNode,0);
+                pageNode.renderAll.bind(pageNode)();
+
+                
+                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
+                
+            }
+
             /**
              * 模具框
              * @return maskStyle
@@ -5617,8 +5944,8 @@ ideServices
                     matteData.matteOn=true;
                     matteInfo=matteData;
                     initiator={
-                        width:pageNode.getWidth()/pageNode.getZoom(),
-                        height:pageNode.getHeight()/pageNode.getZoom(),
+                        width:project.initSize.width,
+                        height:project.initSize.height,
                         top:matteData.info.top,
                         left:matteData.info.left,
                         backgroundImg:matteData.info.backgroundImg,

@@ -92,7 +92,7 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
         };
 
         $scope.configWidgetSize=function(){
-            if($scope.texList[0].slices[0].imgSrc!=""){
+            if($scope.texList[0].slices[0].imgSrc!==''||($scope.widgetType === 'MyProgress'&&$scope.texList[1].slices[0].imgSrc!=='')){
                 var oldOperate=ProjectService.SaveCurrentOperate();
                 ProjectService.ChangeAttributeWidgetSize(function(){
                     $scope.$emit('ChangeCurrentPage',oldOperate);
@@ -122,13 +122,15 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
                     $scope.showTexPanel=false;
                     $scope.showSizeButtion=false;
                     break;
-                case "MySwitch":
+                case "MyDateTime":
+                case "MyButtonGroup":
+                case "MyTexNum":
                     $scope.showTexPanel=true;
-                    $scope.showSizeButtion=true;
+                    $scope.showSizeButtion=false;
                     break;
                 default :
                     $scope.showTexPanel = true;
-                    $scope.showSizeButtion=false;
+                    $scope.showSizeButtion=true;
                     break;
             }
         }else{

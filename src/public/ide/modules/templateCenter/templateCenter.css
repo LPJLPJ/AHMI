@@ -1,18 +1,57 @@
-.title{
-    float:none;
-    margin-top:100px;
+* {
+    margin: 0;
+    padding: 0;
 }
-.templates-wrapper{
-    padding:2em;
-    /*text-align:center;*/
-    /*display:inline-block;*/
-    border-top:1px solid grey;
+
+@font-face {
+    font-family: SOURCEHANSANSCN-NORMAL;
+    src: url('../../../font/custom/SOURCEHANSANSCN-NORMAL.OTF')
+}
+
+body {
+    width: 100%;
+    border: none;
+    font-family: SOURCEHANSANSCN-NORMAL;
+    background-color: #f5f4f6;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+a, a:hover, a:focus {
+    text-decoration: none;
+}
+
+ul > li {
+    list-style: none;
+}
+
+a img {
+    border: 0;
+}
+
+.template-content{
+    padding: 0 20px 20px 20px;
+}
+
+.template-title{
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+}
+
+.template-title>h3{
+    font-weight: 600;
+    font-size: 25px;
+    color: #005599;
 }
 
 .template-tools-wrapper{
-    margin-left:1em;
-    margin-right:1em;
-    margin-bottom: 1em;
+    padding: 1em;
+    margin: 0;
+    border-bottom:1px solid #cccccc;
 }
 
 .template-tools-filters-wrapper{
@@ -25,6 +64,14 @@
     float:right;
 }
 
+.templates-wrapper{
+    margin: 0 auto;
+}
+
+
+
+
+
 .template-tools-delete-wrapper{
     padding:0 1em;
     display: inline-block;
@@ -32,7 +79,12 @@
 }
 
 .template-tools-search{
-    /*border-radius: 2px;*/
+    outline: none!important;
+    border-color: #a9a9a9;
+}
+
+.template-tools-search:focus{
+    border-color: #005599;
 }
 
 .filter-highlight{
@@ -47,17 +99,12 @@
 }
 
 .template-panel{
-    /*margin:1em;*/
     padding:1em;
     display:inline-block;
     border-radius:5px;
     border:1px solid lightgray;
     box-shadow: 1px 1px 2px rgba(0,0,0,.08);
-    /*width:calc(20% - 2em);*/
-    /*min-width:calc(200px + 2em);*/
 }
-
-
 
 .template-thumbnail-container{
     text-align: center;
@@ -76,11 +123,6 @@
     margin-top:0.5em;
     position:relative;
 }
-
-/*.template-btn-collect{*/
-    /*right:0px;*/
-    /*position:absolute;*/
-/*}*/
 
 .template-info{
     display:none;

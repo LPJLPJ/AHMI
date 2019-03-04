@@ -17,7 +17,6 @@ ideServices.
         var MyGroup = this.MyGroup = 'group';
         var MyLayerArray = this.MyLayerArray = 'MyLayerArray';
         var MyWidgetArray = this.MyWidgetArray = 'MyWidgetArray';
-
         var MyKnob = this.MyKnob = 'MyKnob';
         var MyTextArea = this.MyTextArea = 'MyTextArea';
         var MyNum = this.MyNum = 'MyNum';
@@ -33,8 +32,11 @@ ideServices.
         var MyTexNum=this.MyTexNum="MyTexNum";
         var MyTexTime = this.MyTexTime = 'MyTexTime';
         var MyAlphaImg = this.MyAlphaImg = 'MyAlphaImg';
+        var MyTouchTrack = this.MyTouchTrack = 'MyTouchTrack';
+        var MyButtonSwitch = this.MyButtonSwitch = 'MyButtonSwitch';
         this.MyAlphaSlide = 'MyAlphaSlide';
-
+        this.MyTextInput = 'MyTextInput';
+        this.MyGallery = 'MyGallery';
 
 
     this.getFabWidgetByName= function (_typeStr) {
@@ -45,18 +47,40 @@ ideServices.
     };
 
     this.isWidget= function (_typeStr) {
-        if (_typeStr==this.MySlide||_typeStr==this.MyButton||
-            _typeStr==this.MyProgress||_typeStr==this.MyNumber||_typeStr==this.MyButtonGroup||_typeStr == this.MyDashboard||
-            _typeStr==this.MyKnob||_typeStr==this.MyTextArea||_typeStr==this.MyNum||_typeStr==this.MyOscilloscope||_typeStr==this.MyImage||
-            _typeStr==this.MySwitch||_typeStr==this.MyRotateImg||_typeStr==this.MyDateTime||_typeStr==this.MyScriptTrigger||_typeStr==this.MySlideBlock||
-            _typeStr==this.MyVideo||_typeStr==this.MyAnimation||_typeStr==this.MyTexNum||_typeStr==this.MyTexTime||_typeStr==this.MyAlphaImg||_typeStr==this.MyAlphaSlide){
-            return true;
+
+        var widgets = [
+            this.MySlide,
+            this.MyButton,
+            this.MyProgress,
+            this.MyNumber,
+            this.MyButtonGroup,
+            this.MyDashboard,
+            this.MyKnob,
+            this.MyTextArea,
+            this.MyNum,
+            this.MyOscilloscope,
+            this.MyImage,
+            this.MySwitch,
+            this.MyRotateImg,
+            this.MyDateTime,
+            this.MyScriptTrigger,
+            this.MySlideBlock,
+            this.MyVideo,
+            this.MyAnimation,
+            this.MyTexNum,
+            this.MyTexTime,
+            this.MyAlphaImg,
+            this.MyTouchTrack,
+            this.MyAlphaSlide,
+            this.MyTextInput,
+            this.MyGallery,
+            this.MyButtonSwitch
+        ];
+        for(var i=0;i<widgets.length;i++){
+            if(widgets[i]==_typeStr){
+                return true
+            }
         }
         return false
     };
-
-
-
-
-
 }]);

@@ -2,7 +2,7 @@
  * created by lixiang in 2017/12/21
  * 提供一些中间数据处理的接口 Inject
  */
-ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (AnimationService, Type) {
+ideServices.service('MiddleWareService', ['AnimationService', 'Type','TagService', function (AnimationService, Type,TagService) {
     var IDEVersion = window.ideVersion;
 
     var utils = {
@@ -215,6 +215,13 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 info.fontBold = "100";
                 info.fontItalic = '';
             }
+        },
+        slideBlock:function(){
+            var level = arguments[0];
+            var info = level.info;
+            if(info.slideBlockModeId === undefined){
+                info.slideBlockModeId = '0';
+            }
         }
     });
 
@@ -313,6 +320,9 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                 case Type.MyRotateImg:
                     this.rotateImg(widget);
                     break;
+                case Type.MySlideBlock:
+                    this.slideBlock(widget);
+                    break;
                 default:
                     // console.log('not match widget type in inject data');
                     break;
@@ -373,11 +383,13 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
         if(timerList.length){
             timers = timers.concat(timerList);
         }
+
         var tmr = [],tmrTest={};
         timers.forEach(function (timer) {
             if (timer.valueType === undefined) {
                 timer.valueType = 0;
             }
+
             if (pattern.test(timer.name)) {
                 if(!tmrTest[timer.name]){
                     var index = timer.name.split('_')[1];
@@ -385,7 +397,15 @@ ideServices.service('MiddleWareService', ['AnimationService', 'Type', function (
                     tmrTest[timer.name]=true;
                 }
             }
+
+            for (var t = 0; t < tmr.length; t++) {
+                var timerItem = tmr[t];
+                if (!timerItem) {
+                    tmr[t] = TagService.generateDefaultTimer(t);
+                }
+            }
         });
+
         project.timerTags = tmr;
 
         tagClasses = project.tagClasses;

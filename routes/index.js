@@ -28,6 +28,12 @@ var loginAPI = require('./api/loginAPI');
 var projectInfo = require('./projectinfo');
 var generateProject = require('./generateProject');
 
+//recycle
+var recycle = require('./route_recycle');
+
+//docs
+var docs = require('./route_docs');
+
 //CAN projects
 var CANProjectInfo = require('./CANProjectInfo');
 
@@ -74,7 +80,8 @@ var UpdateLogRoute = require('./route_updateLog');
 //index.html
 router
 .get('/',function(req,res){
-	res.render('login/index.html')
+	// res.render('login/index.html')
+    res.render('login/home.html');
 });
 
 
@@ -249,7 +256,7 @@ router.route('/project/:id/userType')
 
 
 router.route('/project/create')
-    .post(projectInfo.createProject);
+    .post(projectInfo.checkCountAvailable, projectInfo.createProject);
 router.route('/project/delete')
     .post(projectInfo.deleteProject);
 router.route('/project/moveToClass')
@@ -267,6 +274,22 @@ router.route('/folder/getFolderList')
     .get(projectInfo.getFolderList);
 router.route('/folder/:id/space')
     .get(folder_space);
+router.route('/folder/space')
+    .post(folder_space);
+
+//project recycle
+router.route('/project/recycle')
+    .get(recycle.getRecycle);
+router.route('/recycle/delete')
+    .post(recycle.deleteRecycle);
+router.route('/recycle/refund')
+    .post(recycle.refundRecycle);
+router.route('/recycle/clear')
+    .post(recycle.clearRecycle);
+
+//docs
+router.route('/docs')
+    .get(docs.getDocs);
 
 
 //CAN project
@@ -431,7 +454,11 @@ router.route('/blog/unpublish')
     .post(BlogRoute.unpublishBlog)
 router.route('/blog/deleteblog')
     .all(UserControl.admin)
-    .delete(BlogRoute.deleteBlog)
+    .post(BlogRoute.deleteBlog)
+router.route('/blog/getMyBlog')
+    .get(BlogRoute.getMyBlog);
+router.route('/blog/getRecommend')
+    .get(BlogRoute.getRecommendBlog);
 
 
 //blog library

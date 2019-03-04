@@ -124,8 +124,8 @@ ideServices
                     enableAnimation:false,
                     pointerImgWidth:0,
                     pointerImgHeight:0,
-                    posRotatePointX:50,
-                    posRotatePointY:50
+                    posRotatePointX:125,
+                    posRotatePointY:125
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -167,6 +167,32 @@ ideServices
                     }]
                 }]
             },
+            defaultTouchTrack={
+                info:{
+                    width: 100,
+                    height: 100,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center'
+                    
+                },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(63,63,63,1)',
+                        imgSrc:'',
+                        name:'滑块背景'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'指针',
+                    slices:[{
+                        color:'rgba(180,180,180,1)',
+                        imgSrc:'',
+                        name:'滑块'
+                    }]
+                }]
+            },
             defaultAlphaImage={
                 info:{
                     width: 100,
@@ -196,7 +222,8 @@ ideServices
                     minValue:0,maxValue:100,
                     lowAlarmValue:0,highAlarmValue:100,
                     initValue:0,
-                    arrange:"horizontal"
+                    arrange:"horizontal",
+                    slideBlockModeId:'0'
                 },
                 texList:[{
                     currentSliceIdx:0,
@@ -255,9 +282,9 @@ ideServices
          * @returns {{url, id, proJsonStr, layers}}
          */
         this.getRandomPage = function () {
-            var r = 54;
-            var g = 71;
-            var b = 92;
+            var r = 191;
+            var g = 191;
+            var b = 191;
             // var jsonStr = {"objects":[],"background":"rgb(" + r + "," + g + "," + b + ")"};
             return {
                 url: '',
@@ -279,9 +306,9 @@ ideServices
         };
 
         this.getDefaultLayer = function () {
-            var pageNode=CanvasService.getPageNode();
+            //var pageNode=CanvasService.getPageNode();
             var info = {
-                width:(pageNode.getWidth()/pageNode.getZoom()) / 2, height: (pageNode.getHeight()/pageNode.getZoom()) / 2,
+                width:(project.initSize.width) / 2, height: (project.initSize.height) / 2,
 
 
                 //width: project.currentSize.width / 2, height: project.currentSize.height / 2,
@@ -380,7 +407,6 @@ ideServices
             }
         };
 
-
         this.getDefaultAlphaSlide = function () {
             var info = {
                 width:200, height: 150,
@@ -429,10 +455,6 @@ ideServices
 
             }
         };
-
-
-
-
 
         this.getDefaultButton= function () {
             var info = _.cloneDeep(defaultButton.info);
@@ -520,6 +542,47 @@ ideServices
             }
         };
 
+        this.getDefaultTextInput = function(){
+            
+            var text='文本输入';
+            var fontSize=15;
+            var info={
+                width:fontSize*(text.length+1),height:fontSize*2,
+
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+
+                arrange:"horizontal",   //horizontal:水平   vertical:竖直
+
+                text:text,
+                fontName:'正文',
+                fontFamily:'宋体',
+                fontSize:fontSize,
+                fontColor:'rgba(0,0,0,1)',
+                fontBold:"100",
+                fontItalic:"",
+                fontUnderline:null
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTextInput',
+                type: Type.MyTextInput,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:[{
+                    name:'文本框',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:'rgba(0,0,0,0)',
+                        imgSrc:'',
+                        name:'文本框背景'
+                    }]
+                }]
+            }
+        };
+
         this.getDefaultButtonGroup= function () {
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -580,6 +643,61 @@ ideServices
             }
         };
 
+        this.getDefaultGallery= function () {
+            var subLayerNode=CanvasService.getSubLayerNode();
+            var defaultWidth = (subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
+            var info={
+                width:defaultWidth, height: (subLayerNode.getHeight()/subLayerNode.getZoom()) / 4,
+                left: 0, top: 0,
+                originX: 'center', originY: 'center',
+                interval:0,//间距
+                photoWidth:parseInt(defaultWidth/3),
+                curValue:1,
+                intervalScale:0,//间距长度占总长度的比例,缩放时用到
+                count:3,
+                arrange:"horizontal"  //horizontal:水平   vertical:竖直
+                
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                normalImg:'',
+                pressImg:'',
+                name: 'NewGallery',
+                type: Type.MyGallery,
+                expand:true,
+                url:'',
+                buttonModeId:'0',
+                zIndex:0,
+                transition:_.cloneDeep(defaultTransition),
+                texList:[{
+                    name:'图片1',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'图片1'
+                    }]
+                },{
+                    name:'图片2',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'图片2'
+                    }]
+                },{
+                    name:'图片3',
+                    currentSliceIdx:0,
+                    slices:[{
+                        color:_getRandomColor(),
+                        imgSrc:'',
+                        name:'图片3'
+                    }]
+                }]
+            }
+        };
+
         this.getDefaultButtonTex= function () {
             return{
                 name:'按钮纹理',
@@ -592,6 +710,18 @@ ideServices
                     color:_getRandomColor(),
                     imgSrc:'',
                     name:'按下后'
+                }]
+            }
+        };
+
+        this.getDefaultTex= function () {
+            return{
+                name:'纹理',
+                currentSliceIdx:0,
+                slices:[{
+                    color:_getRandomColor(),
+                    imgSrc:'',
+                    name:'纹理'
                 }]
             }
         };
@@ -846,6 +976,21 @@ ideServices
             }
         };
 
+        this.getDefaultTouchTrack=function(){
+            var info = _.cloneDeep(defaultTouchTrack.info);
+            var texList=_.cloneDeep(defaultTouchTrack.texList);
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewTouchTrack',
+                type: Type.MyTouchTrack,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList
+            }
+        };
+
         this.getDefaultAlphaImg=function(){
             var info = _.cloneDeep(defaultAlphaImage.info);
             var texList=_.cloneDeep(defaultAlphaImage.texList);
@@ -1061,6 +1206,46 @@ ideServices
             }
         };
 
+        this.getDefaultButtonSwitch = function(){
+            var info = {
+                width:100,
+                height:50,
+                left:0,
+                top:0,
+                originX: 'center',
+                originY: 'center',
+                enableAnimation:false
+            };
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                subSlides: [],
+                name: 'NewButtonSwitch',
+                type:Type.MyButtonSwitch,
+                expand:true,
+                zIndex:0,
+                url:'',
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'开关背景纹理',
+                    slices:[{
+                        color:'rgba(100,100,100,1)',
+                        imgSrc:'',
+                        name:'开关背景纹理'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'开关滑块纹理',
+                    slices:[{
+                        color:'rgba(120,120,120,1)',
+                        imgSrc:'',
+                        name:'开关滑块纹理'
+                    }]
+                }],
+                transition:_.cloneDeep(defaultTransition)
+            }
+        };
+
         function _getRandomColor(){
             var r = _.random(64, 255);
             var g = _.random(64, 255);
@@ -1080,8 +1265,8 @@ ideServices
         this.getDefaultMatte=function(){
             var pageNode=CanvasService.getPageNode();
             var info={
-                width:pageNode.getWidth()/pageNode.getZoom(),
-                height:pageNode.getHeight()/pageNode.getZoom(),
+                width:project.initSize.width,
+                height:project.initSize.height,
                 left: 0,
                 top: 0,
                 backgroundColor:'rgba(0,0,0,0)',
@@ -1134,6 +1319,35 @@ ideServices
                     tex.push(background,pointer);
                     break;
 
+            }
+            return tex
+        };
+
+        //切换滑块模式纹理
+        this.getSlideBlockTex = function(mode){
+            var background = _.cloneDeep(defaultSlideBlock.texList[0]);
+            var slideblock = _.cloneDeep(defaultSlideBlock.texList[1]);
+            var progress = {
+                currentSliceIdx:0,
+                name:'进度条背景',
+                slices:[{
+                    color:'rgba(0,0,0,0)',
+                    imgSrc:'',
+                    name:'进度条背景'
+                }]
+            };
+
+            var tex = [];
+            switch (mode){
+                case '0':
+                    tex.push(background,slideblock);
+                    break;
+                case '1':
+                    tex.push(background,slideblock,progress);
+                    break;
+                default:
+                    tex.push(background,slideblock);
+                    break;
             }
             return tex
         }

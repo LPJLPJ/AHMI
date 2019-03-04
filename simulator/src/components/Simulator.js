@@ -11,6 +11,7 @@ var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
 var math = require('mathjs');
 var StringConverter = require('./StringConverter')
+var WaveFilterManager = require('./WaveFilterManager')
 var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev') {
@@ -69,6 +70,7 @@ module.exports = React.createClass({
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
+        WaveFilterManager.reset()
         cancelAnimationFrame(this.paintKey)
     },
     initCanvas: function (data, callBack) {
@@ -92,7 +94,8 @@ module.exports = React.createClass({
         lg('initializing: ', data)
         //initialize canvas context
 
-
+        //encoding
+        this.encoding = data.encoding||'ascii'
         //initialize inputkeyboard
         var keyboardData = InputKeyboard.getInputKeyboard(projectWidth, projectHeight, 0, 0);
         // console.log(keyboardData);
@@ -109,9 +112,16 @@ module.exports = React.createClass({
         ctx.fillStyle = "white";
         ctx.fillText("加载中...", 0.5 * projectWidth, 0.5 * projectHeight);
 
+
+        //init wavefilters
+        if(data.waveFilterList&&data.waveFilterList.length){
+            data.waveFilterList.forEach(function(wf){
+                WaveFilterManager.addWaveFilter(wf.title,wf.type,wf.args)
+            })
+        }
+
         //initialize tagList
         //check curPage tag
-
 
         data.tag = '当前页面序号';
         // this.state.tagList = data.tagList
@@ -125,6 +135,13 @@ module.exports = React.createClass({
         //     indexOfRegister:3,
         //     type:'custom'
         // })
+        //init tag init value
+        data.tagList.forEach(function(t){
+            if(t.valueType != 1){
+                t.value = t.initValue || 0
+            }
+            
+        })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
         console.log('tagList loaded', data.tagList, this.state.tagList);
@@ -132,7 +149,7 @@ module.exports = React.createClass({
         this.registers = {};
         var curTag;
         var curRegIdx;
-        for (var i = 0; i < data.tagList.length; i++) {
+        for (i = 0; i < data.tagList.length; i++) {
             curTag = data.tagList[i];
             curRegIdx = curTag.indexOfRegister;
             if (curTag.register && curRegIdx !== undefined && curRegIdx !== '' && curRegIdx !== null) {
@@ -145,7 +162,12 @@ module.exports = React.createClass({
                     }
                 }
             }
+            //add to wavefilter
+            if(curTag.waveFilter!==undefined&&curTag.waveFilter!==''){
+                WaveFilterManager.registerWaveFilter(curTag.waveFilter,curTag.name)
+            }
         }
+        console.log(WaveFilterManager.getWaveFilters())
         // console.log(this.registers);
         this.state.registers = this.registers;
         this.setState({registers: this.registers});
@@ -153,7 +175,7 @@ module.exports = React.createClass({
         //initialize timer
         var timerList = [];
         // var postfix = ['Start','Stop','Step','Interval','CurVal','Mode'];
-        for (var i = 0; i < parseInt(data.timers); i++) {
+        for (i = 0; i < parseInt(data.timers); i++) {
             var newTimer = {};
             newTimer['timerID'] = 0;
             newTimer['SysTmr_' + i + '_Start'] = 0;
@@ -292,7 +314,7 @@ module.exports = React.createClass({
         this.simState = {};
         this.initProject();
         this.paintKey = requestAnimationFrame(this.paint);
-        console.log(this.paintKey)
+        //console.log(this.paintKey)
 
     },
     componentWillReceiveProps: function (newProps) {
@@ -322,6 +344,8 @@ module.exports = React.createClass({
             this.paintKey = requestAnimationFrame(this.paint);
 
         }
+        //reset wave filters
+        WaveFilterManager.reset()
 
         // this.initProject();
         // console.log('receive new project data', this.state.project)
@@ -358,8 +382,8 @@ module.exports = React.createClass({
         }
         this.drawingArray.push(
             {
-                project: _.cloneDeep(_project),
-                options: _.cloneDeep(options)
+                project: _project,
+                options: options
             }
         )
         this.manageDraw();
@@ -539,13 +563,16 @@ module.exports = React.createClass({
     compareZIndex: function (canvasA, canvasB) {
         return (canvasA.zIndex || 0) - (canvasB.zIndex || 0);
     },
+    getEasingFunc:function(elem){
+        return (elem.transition && elem.transition.timingFun )||'easeInOutCubic';
+    },
     drawPage: function (page, options) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var canvas = this.refs.canvas;
         var ctx = this.ctx;
         var frames = 30;
-        var easing = 'easeInOutCubic';
+        var easing = this.getEasingFunc(page)
         var method = page.transition && page.transition.name;
         var duration = (page.transition && page.transition.duration ) || 1000;
         var count = frames;
@@ -916,12 +943,13 @@ module.exports = React.createClass({
         //         }
         //     }
         // };
-        var srcScale = (animationAttrs.scale&&animationAttrs.scale.srcScale&&this.getAnimationAtrr(animationAttrs.scale.srcScale))||{x:1,y:1};
-        var dstScale = (animationAttrs.scale&&animationAttrs.scale.dstScale&&this.getAnimationAtrr(animationAttrs.scale.dstScale))||{x:1,y:1};
+        var srcScale = (animationAttrs.scale&&animationAttrs.scale.srcScale&&this.getAnimationAtrr(animationAttrs.scale.srcScale,true))||{x:1,y:1};
+        var dstScale = (animationAttrs.scale&&animationAttrs.scale.dstScale&&this.getAnimationAtrr(animationAttrs.scale.dstScale,true))||{x:1,y:1};
         var srcTranslate = (animationAttrs.translate&&animationAttrs.translate.srcPos&&this.getAnimationAtrr(animationAttrs.translate.srcPos))||{x:0,y:0};
         var dstTranslate = (animationAttrs.translate&&animationAttrs.translate.dstPos&&this.getAnimationAtrr(animationAttrs.translate.dstPos))||{x:0,y:0};
         var type = target.type;
         var duration = (animation && animation.duration) || 1000;
+        var easingFunc = (animation && animation.timingFun) || 'easeInOutCubic';
         // console.log(scale,translate,duration)
         var frames = 30;
         var srcTransformObj = {};
@@ -1009,7 +1037,7 @@ module.exports = React.createClass({
         ]))
 
 
-        var easingFunc = 'easeInOutCubic';
+        //var easingFunc = 'easeInOutCubic';
         // console.log('anAttr',animationAttrs)
         // console.log('srcT',srcTransformObj,'dstT',dstTransformObj)
 
@@ -1031,15 +1059,39 @@ module.exports = React.createClass({
         })
 
     },
-    getAnimationAtrr:function (attr) {
+    getAnimationAtrr:function (attr,scaleTagValue) {
         var values = {}
         for(var key in attr){
             if (attr.hasOwnProperty(key)){
                 //own key
-                values[key] = this.getParamValue(attr[key])
+                values[key] = this.getAnimationParamValue(attr[key],scaleTagValue)
             }
         }
         return values
+    },
+    getAnimationParamValue:function(param,scaleTagValue){
+        scaleTagValue = scaleTagValue || false
+        var value
+        if ((typeof param) === 'number'||(typeof param)==='string') {
+            value = Number(param)||0;
+        } else {
+            if (param) {
+                if (param.tag) {
+                    if(scaleTagValue){
+                        value = this.getValueByTagName(param.tag)/100;//animation from tag will be 100x
+                    }else{
+                        value = this.getValueByTagName(param.tag);
+                    }
+                    
+                } else {
+                    value = Number(param.value)||0;
+                }
+            } else {
+                value = 0;
+            }
+        }
+        // console.log(value,param,(typeof param));
+        return value;
     },
     matrixMultiply: function (matrixArray) {
         var length = matrixArray.length
@@ -1231,12 +1283,16 @@ module.exports = React.createClass({
             var method = transition && transition.name;
             var duration = (transition && transition.duration ) || 1000;
             var frames = 30;
-            var easing = 'easeInOutCubic';
+            var easing = this.getEasingFunc(subCanvas)
             var hWidth = w / 2 + x
             var hHeight = h / 2 + y
-            if (!firstSubCanvas && (!options || (options && !options.pageAnimate))) {
+            if (!options || (options && !options.pageAnimate)) {
                 switch (method) {
                     case 'MOVE_LR':
+                        subCanvas.translate = {
+                            x: -w,
+                            y: 0
+                        }
                         AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
@@ -1256,6 +1312,10 @@ module.exports = React.createClass({
                         this.dropCurrentDraw()
                         break;
                     case 'MOVE_RL':
+                        subCanvas.translate = {
+                            x: w,
+                            y: 0
+                        }
                         AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
@@ -1295,6 +1355,7 @@ module.exports = React.createClass({
                             [0, 1, 0],
                             [0, 0, 1]
                         ];
+                        subCanvas.transform = math.multiply(math.multiply(afterTranslateMatrix, beforeScaleMatrix), beforeTranslateMatrix);
                         AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
                             var curScaleMatrix = [
                                 [deltas.a.curValue, deltas.c.curValue, deltas.e.curValue],
@@ -1441,73 +1502,13 @@ module.exports = React.createClass({
 
             }
 
-
-            switch (subType) {
-                case 'MySlide':
-                    this.drawSlide(curX, curY, widget, options, cb);
-                    break;
-                case 'MyAlphaSlide':
-                    this.drawAlphaSlide(curX,curY,widget,options,cb);
-                    break;
-                case 'MyButton':
-                    this.drawButton(curX, curY, widget, options, cb);
-                    break;
-                case 'MySwitch':
-                    this.drawSwitch(curX, curY, widget, options, cb);
-                    break;
-                case 'MyButtonGroup':
-                    this.drawButtonGroup(curX, curY, widget, options, cb);
-                    break;
-                case 'MyNumber':
-                    this.drawNumber(curX, curY, widget, options, cb);
-                    break;
-                case 'MyProgress':
-                    //draw progressbar
-                    this.drawProgress(curX, curY, widget, options, cb);
-                    break;
-                case 'MyDashboard':
-                    this.drawDashboard(curX, curY, widget, options, cb);
-                    break;
-                case 'MyOscilloscope':
-                    this.drawOscilloscope(curX, curY, widget, options, cb);
-                    break;
-                case 'MyRotateImg':
-                    this.drawRotateImg(curX, curY, widget, options, cb);
-                    break;
-                case 'MyNum':
-                    this.drawNum(curX, curY, widget, options, cb)
-                    break;
-                case 'MyTexNum':
-                    this.drawTexNum(curX, curY, widget, options, cb)
-                    break;
-                case 'MyDateTime':
-                    this.drawTime(curX, curY, widget, options, cb);
-                    break;
-                case 'MyTexTime':
-                    this.drawTexTime(curX, curY, widget, options, cb);
-                    break;
-                case 'MyTextArea':
-                    this.drawTextArea(curX, curY, widget, options, cb);
-                    break;
-                case 'MySlideBlock':
-                    this.drawSlideBlock(curX, curY, widget, options, cb);
-                    break;
-                case 'MyScriptTrigger':
-                    this.drawScriptTrigger(curX, curY, widget, options, cb);
-                    break;
-                case 'MyVideo':
-                    this.drawVideo(curX, curY, widget, options, cb);
-                    break;
-                case 'MyInputKeyboard':
-                    this.drawInputKeyboard(curX, curY, widget, options, cb);
-                    break;
-                case 'MyAnimation':
-                    this.drawAnimation(curX, curY, widget, options, cb);
-                    break;
-                case 'MyAlphaImg':
-                    this.drawAlphaImg(curX, curY, widget, options, cb);
-                    break;
+            var drawFunc = 'draw'+subType.slice(2)
+            if(this[drawFunc]){
+                this[drawFunc](curX, curY, widget, options, cb);
+            }else{
+                cb();
             }
+            
 
         }
 
@@ -1547,72 +1548,11 @@ module.exports = React.createClass({
             offctx.restore();
         }
 
-
-        switch (subType) {
-            case 'MySlide':
-                this.paintSlide(curX, curY, widget, options, cb);
-                break;
-            case 'MyAlphaSlide':
-                this.paintAlphaSlide(curX, curY, widget, options, cb);
-                break;    
-            case 'MyButton':
-                this.paintButton(curX, curY, widget, options, cb);
-                break;
-            case 'MySwitch':
-                this.paintSwitch(curX, curY, widget, options, cb);
-                break;
-            case 'MyButtonGroup':
-                this.paintButtonGroup(curX, curY, widget, options, cb);
-                break;
-            case 'MyNumber':
-                this.paintNumber(curX, curY, widget, options, cb);
-                break;
-            case 'MyProgress':
-                //paint progressbar
-                this.paintProgress(curX, curY, widget, options, cb);
-                break;
-            case 'MyDashboard':
-                this.paintDashboard(curX, curY, widget, options, cb);
-                break;
-            case 'MyOscilloscope':
-                this.paintOscilloscope(curX, curY, widget, options, cb);
-                break;
-            case 'MyRotateImg':
-                this.paintRotateImg(curX, curY, widget, options, cb);
-                break;
-            case 'MyNum':
-                this.paintNum(curX, curY, widget, options, cb)
-                break;
-            case 'MyTexNum':
-                this.paintTexNum(curX, curY, widget, options, cb)
-                break;
-            case 'MyDateTime':
-                this.paintTime(curX, curY, widget, options, cb);
-                break;
-            case 'MyTexTime':
-                this.paintTexTime(curX, curY, widget, options, cb);
-                break;
-            case 'MyTextArea':
-                this.paintTextArea(curX, curY, widget, options, cb);
-                break;
-            case 'MySlideBlock':
-                this.paintSlideBlock(curX, curY, widget, options, cb);
-                break;
-            case 'MyScriptTrigger':
-                this.paintScriptTrigger(curX, curY, widget, options, cb);
-                break;
-            case 'MyVideo':
-                this.paintVideo(curX, curY, widget, options, cb);
-                break;
-            case 'MyInputKeyboard':
-                this.paintInputKeyboard(curX, curY, widget, options, cb);
-                break;
-            case 'MyAnimation':
-                this.paintAnimation(curX, curY, widget, options, cb);
-                break;
-            case 'MyAlphaImg':
-                this.paintAlphaImg(curX,curY,widget,options,cb);
-                break;
+        var paintFunc = 'paint'+subType.slice(2)
+        if(this[paintFunc]){
+            this[paintFunc](curX,curY,widget,options,cb)
+        }else{
+            cb && cb()
         }
 
 
@@ -1830,6 +1770,58 @@ module.exports = React.createClass({
 
         cb && cb();
     },
+    drawButtonSwitch: function (curX, curY, widget, options, cb) {
+        /*var slideImg = this.getImage(widget.texList[1].slices[0].imgSrc);
+        slideImg = (slideImg && slideImg.content) || null;
+        widget.imgWidth = slideImg.width;
+        widget.imgHeight = slideImg.height;
+        widget.imgPosY = curY - (slideImg.height - widget.info.height) * 0.5;
+        console.log(widget.imgPosY);*/
+        var buttonSwitchState = this.getValueByTagName(widget.tag, 0)||0;
+        var oldPosX = widget.oldPosX||0,curPosX;
+        if(buttonSwitchState == 0){
+            curPosX = 0;
+        }else{
+            //curPosX = slideImg?widget.info.width-slideImg.width:widget.info.width/2;
+            curPosX = widget.info.width/2;
+        }
+        if(curPosX != oldPosX){
+            var oldValue;
+            if(widget.info.enableAnimation){
+                var duration = (widget.transition && widget.transition.duration) || 0;
+                if (widget.animationKey != -1 && widget.animationKey != undefined) {
+                    oldValue = widget.currentPosX || 0;
+                    AnimationManager.clearAnimationKey(widget.animationKey);
+                    widget.animationKey = -1;
+                } else {
+                    oldValue = widget.oldPosX || 0;
+                }
+                widget.oldPosX = curPosX;
+                widget.animationKey = AnimationManager.stepValue(oldPosX, curPosX, duration, 30, null, function (obj) {
+                    widget.currentPosX = obj.curX;
+                    this.draw()
+                }.bind(this), function () {
+                    widget.currentPosX = curPosX;
+                }.bind(this));
+                //initial
+                widget.currentPosX = oldValue;
+            }else{
+                widget.oldPosX = curPosX;
+                widget.currentPosX = curPosX;
+            }
+        }else{
+        }
+    },
+    paintButtonSwitch: function (curX, curY, widget, options, cb) {
+        var tex = widget.texList;
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var currentPosX = widget.currentPosX||curX;
+        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color);
+        this.drawBg(currentPosX, curY, width/2, height, tex[1].slices[0].imgSrc, tex[1].slices[0].color);
+        cb && cb();
+
+    },
     drawSwitch: function (curX, curY, widget, options, cb) {
         var bindTagValue = this.getValueByTagName(widget.tag, 0);
         var switchState;
@@ -1890,19 +1882,59 @@ module.exports = React.createClass({
         }
         cb && cb();
     },
+    drawTextInput: function (curX, curY, widget, options, cb) {
+        var tag = this.findTagByName(widget.tag)
+        if(tag){
+
+            widget.curValue = ''+this.getTagTrueValue(tag) //convert to string even is number tag
+
+        }
+    },
+    paintTextInput: function (curX, curY, widget, options, cb) {
+        var info = widget.info;
+        var width = info.width;
+        var height = info.height;
+        var bgSlice = widget.texList[0].slices[0];
+        var arrange = info.arrange === 'vertical' ? 'vertical' : 'horizontal';
+        this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
+        //draw text
+        if (info.text) {
+            //
+            var font = {};
+            font['font-style'] = info.fontItalic;
+            font['font-weight'] = info.fontBold;
+            font['font-size'] = info.fontSize;
+            font['font-family'] = info.fontFamily;
+            font['font-color'] = info.fontColor;
+            font['text-align'] = 'left';
+            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,{
+                spacing:info.spacing||0,
+                halfSpacing:info.halfSpacing||0
+            });
+        }
+        cb && cb();
+    },
     drawTextByTempCanvas: function (curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth, spacing, paddingRatio) {
 
         var text = text || '';
         var font = font || {};
         // console.log(font);
         var offcanvas = this.refs.offcanvas;
+        var halfSpacing = 0
+        var curSpacing = 0
+        var lastLetterType, curLetterType
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
         tempcanvas.width = width;
         tempcanvas.height = height;
         var tempctx = tempcanvas.getContext('2d');
         tempctx.save();
-        if (spacing === undefined) spacing = 0;
+        if (spacing === undefined) {
+            spacing = 0
+        }else if (typeof spacing === 'object'){ //support halfSpacing
+            halfSpacing = spacing.halfSpacing
+            spacing = spacing.spacing
+        }
         if (paddingRatio === undefined) paddingRatio = 0;
         if (arrange === 'vertical') {
             tempctx.translate(tempcanvas.width / 2, tempcanvas.height / 2);
@@ -1911,8 +1943,8 @@ module.exports = React.createClass({
             // tempctx.translate(0,-tempcanvas.width)
         }
         tempctx.clearRect(0, 0, width, height);
-        tempctx.textAlign = font.textAlign || 'center';
-        tempctx.textBaseline = font.textBaseline || 'middle';
+        
+        tempctx.textBaseline = font['text-baseline'] || 'middle';
         //font style
         var fontStr = (font['font-style'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-weight'] || '') + ' ' + (font['font-size'] || 24) + 'px' + ' ' + ('"' + font['font-family'] + '"' || 'arial');
         tempctx.font = fontStr;
@@ -1922,25 +1954,69 @@ module.exports = React.createClass({
             // var widthOfDateTimeStr=maxFontWidth*text.length;
             // var initXPos = (width-widthOfDateTimeStr)/2;
             // var xCoordinate = initXPos+maxFontWidth/2;
-            var xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth / 2 : ((width - maxFontWidth * text.length) + maxFontWidth) / 2;//如果装不下字符串，从maxFontWidth处开始显示
+            var xCoordinate
+            tempctx.textAlign = 'center'
+            var targetAlign = font['text-align'] || 'center';
+            switch(targetAlign){
+                case 'center':
+                    xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth / 2 : ((width - maxFontWidth * text.length) + maxFontWidth) / 2;//如果装不下字符串，从maxFontWidth处开始显示
+                break;
+                case 'left':
+                    xCoordinate = maxFontWidth/2
+                break;
+                case 'right':
+                    xCoordinate = width - maxFontWidth/2 - (text.length - 1) * maxFontWidth
+                break;
+            }
+            
             if (paddingRatio !== 0) xCoordinate = paddingRatio * maxFontWidth + 0.5 * maxFontWidth;
             var notItalic = (-1 == fontStr.indexOf('italic'));
             var italicAjust = notItalic ? 0 : maxFontWidth / 2; //如果是斜体的话，需要斜体往右伸出的宽度
             // var displayStep = (maxFontWidth*text.length > width) ? ((width - maxFontWidth - italicAjust)/(text.length - 1)) : maxFontWidth;
             // displayStep+=spacing;
             var yCoordinate = 0.5 * height;
-            for (i = 0; i < text.length; i++) {
+            for (var i = 0; i < text.length; i++) {
                 tempctx.fillText(text[i], xCoordinate, yCoordinate);
-                xCoordinate += spacing;
-                xCoordinate += maxFontWidth;
+                if(i+1 < text.length){
+                    lastLetterType = this.getLetterType(text[i])
+                    curLetterType = this.getLetterType(text[i+1])
+                    if(lastLetterType === 0){
+                        curSpacing = curLetterType ? (spacing + halfSpacing)/2 : halfSpacing
+                    }else{
+                        curSpacing = curLetterType ? spacing : (spacing + halfSpacing)/2
+                    }
+                    xCoordinate += curSpacing;
+                    xCoordinate += maxFontWidth;
+                }
+                
 
             }
 
         } else {
-            tempctx.fillText(text, 0.5 * width, 0.5 * height);
+            tempctx.textAlign = font['text-align'] || 'center';
+            switch(tempctx.textAlign){
+                case 'center':
+                    tempctx.fillText(text, 0.5 * width, 0.5 * height);
+                break;
+                case 'left':
+                    tempctx.fillText(text, 0, 0.5 * height);
+                break;
+                case 'right':
+                    tempctx.fillText(text, width, 0.5 * height);
+                break;
+            }
+            
         }
         tempctx.restore();
         offctx.drawImage(tempcanvas, curX, curY, width, height);
+    },
+    getLetterType(letter){
+        var codePoint = letter.codePointAt(0)
+        if (codePoint < 128){
+            return 0
+        }else{
+            return 1
+        }
     },
     drawButtonGroup: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag);
@@ -1995,13 +2071,200 @@ module.exports = React.createClass({
 
         cb && cb();
     },
+    drawGallery: function (curX, curY, widget, options, cb) {
+        var tag = this.findTagByName(widget.tag);
+        var count = widget.info.count;
+        var curValue = (tag && tag.value) || 0;
+        var enableAnimation = widget.info.enableAnimation;
+        var width = widget.info.width;
+        var interval = widget.info.interval;
+        var singleWidth=widget.info.photoWidth
+        widget.curValue = curValue;
 
+        var distanceBetweenPhotos = singleWidth*2/3;
+
+        //galleryOffset
+        var galleryOffset = 0
+        galleryOffset = curValue * distanceBetweenPhotos
+        
+        if(widget.galleryOffset!==undefined){
+            if(enableAnimation){
+
+                // if(widget.animateTimerId!==undefined && widget.animateTimerId !== 0){
+                //     clearInterval(widget.animateTimerId)
+                //     widget.animateTimerId = 0
+                // }
+                if(widget.animateTimerId===undefined || widget.animateTimerId === 0){
+
+                    var fps = 30
+                    var duration = (widget.transition && widget.transition.duration) || 1000
+                    var easing = this.getEasingFunc(widget)
+                    widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, duration, fps, easing, function (obj) {
+                        widget.galleryOffset = obj.curX
+                        this.draw()
+                    }.bind(this), function () {
+                        widget.galleryOffset = galleryOffset
+                        widget.animateTimerId = 0
+    
+                    }.bind(this))
+                }
+
+                
+                
+            }else{
+                widget.galleryOffset = galleryOffset
+            }
+        }else{
+            widget.galleryOffset = galleryOffset
+        }
+        
+    },
+    paintGallery:function(curX, curY, widget, options, cb){
+        var curPosXList = []
+        
+        var ctx = this.offctx
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var interval = widget.info.interval;
+        var count = widget.info.count;
+
+        var centerX = curX + width/2
+        var centerY = curY + height/2
+        var i
+        var curValue = widget.curValue;
+        var texList = widget.texList
+        var curTex
+        var singleWidth=widget.info.photoWidth
+        var maxSize = Math.max(singleWidth,height)
+        var totalFrame = widget.totalFrame||30
+        var curFrame = widget.curFrame ||totalFrame
+
+        var distanceBetweenPhotos = singleWidth*2/3;
+
+        var singleSideLimit = 3
+
+        for(i=0;i<count;i++){
+            curPosXList.push((i-0)*distanceBetweenPhotos - widget.galleryOffset+ width/2)
+        }
+        widget.curPosXList = curPosXList
+        
+        var drawHandler = function(_ctx){
+            _ctx.translate(maxSize/2,maxSize/2)
+            // if(curTex.image){
+            //     _ctx.drawImage(curTex.image, -singleWidth / 2, -height / 2,singleWidth,height);
+            // }else{
+            //     _ctx.fillStyle=curTex.color
+            //     _ctx.fillRect(
+            //         -(singleWidth / 2),
+            //         -(height / 2) ,
+            //         singleWidth ,
+            //         height );
+            // }
+            this.drawBg(-singleWidth / 2, -height / 2,singleWidth,height,curTex.slices[0].imgSrc,curTex.slices[0].color,_ctx)
+        }.bind(this)
+        
+        var targetCanvas = AdvancedDrawEngine.getSharedCanvas()
+        //var totalLen = this.texList.length
+        var centerIdx = -1
+        //calculate the one closest to center
+        var curDistanceMin = width
+        var curDistance
+        for(i=0;i<count;i++){
+            curDistance = Math.abs(widget.curPosXList[i] - width/2)
+            if(curDistance < curDistanceMin){
+                curDistanceMin = curDistance
+                centerIdx = i
+            }
+        }
+
+
+        var width3d = singleWidth/2
+        var rotateRad,z
+        
+        
+        var staticRotateRad = Math.PI/4;
+        var staticPositionZ = maxSize/5;
+        for(i=0;i<count;i++){
+        
+            if(i!=centerIdx){
+                if(Math.abs(i-centerIdx)<=singleSideLimit){
+                    rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                    z = staticPositionZ
+                    curTex = texList[i]
+                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                        size:maxSize,
+                        position:{
+                            z:z
+                        },
+                        // rotation:{
+                        //     y:rotateRad
+                        // },
+                        shearZ:-rotateRad
+                    })
+                
+                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+                }
+                
+            }else{
+                break;
+            }
+            
+            //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+        }
+
+        for(i=count-1;i>0;i--){
+        
+            if(i!=centerIdx){
+                if(Math.abs(i-centerIdx)<=singleSideLimit){
+                    rotateRad = (i>centerIdx?1:-1) * staticRotateRad
+                    z = staticPositionZ
+                    curTex = texList[i]
+                    AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+                        size:maxSize,
+                        position:{
+                            z:z
+                        },
+                        // rotation:{
+                        //     y:rotateRad
+                        // },
+                        shearZ:-rotateRad
+                    })
+                
+                    ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+
+                }
+                
+            }else{
+                break;
+            }
+            
+            //ctx.drawImage(targetCanvas,0,0,maxSize,maxSize,-this.width / 2+(width+interval)*i - (2*maxSize-width)/2, -this.height / 2 - (2*maxSize - height)/2,2*maxSize,2*maxSize)
+        }
+        //draw center
+        var d = widget.curPosXList[centerIdx] - width/2
+        rotateRad = d/distanceBetweenPhotos * staticRotateRad
+        z = Math.abs(d)/distanceBetweenPhotos * staticPositionZ
+        curTex = texList[centerIdx]
+        AdvancedDrawEngine.drawCanvasPerspective(drawHandler,{
+            size:maxSize,
+            position:{
+                z:z
+            },
+            // rotation:{
+            //     y:rotateRad
+            // },
+            shearZ:-rotateRad
+        })
+    
+        ctx.drawImage(targetCanvas,0,0,maxSize,maxSize, curX + widget.curPosXList[i] - maxSize, centerY-maxSize,2*maxSize,2*maxSize)
+
+        cb && cb()
+    },
     drawProgress: function (curX, curY, widget, options, cb) {
 
         // widget.currentValue = curProgress
         // this.handleAlarmAction(curProgress, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
         // widget.oldValue = curProgress;
-
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
 
@@ -2038,7 +2301,7 @@ module.exports = React.createClass({
 
 
                 widget.animationKey = AnimationManager.stepValue(oldValue, curProgress, duration, 30, null, function (obj) {
-                    widget.currentValue = obj.curX
+                    widget.currentValue = obj.curX;
                     this.draw()
                 }.bind(this), function () {
                     widget.currentValue = curProgress
@@ -2060,7 +2323,6 @@ module.exports = React.createClass({
                 widget.currentValue = curProgress
 
             }
-
             // this.paintProgress(curX,curY,widget,options,cb)
 
 
@@ -2218,6 +2480,11 @@ module.exports = React.createClass({
 
             var curScale = widget.curScale;
 
+            if(widget.texList[2]&&widget.texList[2].slices[0]){
+                var progressSlice = widget.texList[2].slices[0];
+                var progressImg = this.getImage(progressSlice.imgSrc);
+                progressImg = (progressImg && progressImg.content) || null;
+            }
 
             var slideSlice = widget.texList[1].slices[0];
             var slideImg = this.getImage(slideSlice.imgSrc);
@@ -2226,15 +2493,19 @@ module.exports = React.createClass({
                 var slideRatio;
                 switch (widget.info.arrange) {
                     case 'vertical':
-
-                        this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
+                        if(progressImg){
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
+                        }
+                        //this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
+                        this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height)-slideImg.height,width,height,false, slideSlice.imgSrc, slideSlice.color)
                         break;
                     case 'horizontal':
                     default:
-                        // console.log(slideRatio,curScale);
-
-
-                        this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
+                        if(progressImg){
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
+                        }
+                        //this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
+                        this.drawCursorWithoutLimit(curScale * (width - slideImg.width) + curX, curY ,width,height,true, slideSlice.imgSrc, slideSlice.color)
                         break
                 }
             }
@@ -2319,6 +2590,26 @@ module.exports = React.createClass({
             } else {
                 //vertical
                 this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
+            }
+        }
+
+
+    },
+    drawCursorWithoutLimit: function (beginX, beginY, width,height,align, img, color) {
+
+        var cursorImg = this.getImage(img);
+        cursorImg = (cursorImg && cursorImg.content) || null;
+        if (cursorImg) {
+            var imgW = cursorImg.width;
+            var imgH = cursorImg.height;
+            if (align) {
+                //horizontal
+                //this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
+                this.drawBg(beginX,beginY - (imgH - height) * 0.5,imgW,imgH,img,color);
+            } else {
+                //vertical
+                //this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
+                this.drawBg(beginX - (imgW - width) * 0.5,beginY,imgW,imgH,img,color);
             }
         }
 
@@ -2430,7 +2721,7 @@ module.exports = React.createClass({
 
         return curDate;
     },
-    drawTime: function (curX, curY, widget, options, cb) {
+    drawDateTime: function (curX, curY, widget, options, cb) {
         var curDate;
         if (widget.info.RTCModeId == '0') {
             curDate = this.getCurDateOriginalData(widget, 'inner', widget.timeOffset);
@@ -2448,7 +2739,7 @@ module.exports = React.createClass({
             this.setState({innerTimerList: innerTimerList});
         }
     },
-    paintTime: function (curX, curY, widget, options, cb) {
+    paintDateTime: function (curX, curY, widget, options, cb) {
         var width = widget.info.width;
         var height = widget.info.height;
         var dateTimeModeId = widget.info.dateTimeModeId;
@@ -2884,6 +3175,7 @@ module.exports = React.createClass({
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
         var enableAnimation = widget.info.enableAnimation;
+        var easing = this.getEasingFunc(widget)
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -2922,24 +3214,37 @@ module.exports = React.createClass({
                         widget.curTotalFrameNum = totalFrameNum
                         // var startTime = new Date()
                         // console.log('start time',startTime)
-                        widget.animateTimerId = setInterval(function () {
-                            if (widget.curFrameNum != undefined) {
-                                widget.curFrameNum += 1
-                            } else {
-                                widget.curFrameNum = 1
-                            }
-                            if (widget.curFrameNum > totalFrameNum - 1) {
-                                clearInterval(widget.animateTimerId)
-                                // var endTime = new Date()
-                                // console.log('end time',endTime,endTime-startTime)
 
-                                widget.animateTimerId = 0
-                                widget.curFrameNum = 0
-
-                            }
+                        widget.animateTimerId = AnimationManager.stepValue(0, totalFrameNum, duration, 30, easing, function (obj) {
+                            widget.curFrameNum = Math.round(obj.curX)
                             this.draw()
-                        }.bind(this), 1000 / fps)
+                        }.bind(this), function () {
+                            widget.curFrameNum = 0
+                            widget.animateTimerId = 0
+        
+                        }.bind(this))
+
+                        // widget.animateTimerId = setInterval(function () {
+                        //     if (widget.curFrameNum != undefined) {
+                        //         widget.curFrameNum += 1
+                        //     } else {
+                        //         widget.curFrameNum = 1
+                        //     }
+                        //     if (widget.curFrameNum > totalFrameNum - 1) {
+                        //         clearInterval(widget.animateTimerId)
+                        //         // var endTime = new Date()
+                        //         // console.log('end time',endTime,endTime-startTime)
+
+                        //         widget.animateTimerId = 0
+                        //         widget.curFrameNum = 0
+
+                        //     }
+                        //     this.draw()
+                        // }.bind(this), 1000 / fps)
                     }
+
+
+                    
                 }
 
             }
@@ -3031,7 +3336,7 @@ module.exports = React.createClass({
                 var totalFrameNum = widget.curTotalFrameNum || 1
                 // //draw
                 var oldHeight = 0;
-                var oleWidth = 0;
+                var oldWidth = 0;
                 var curFrameNum = changeDirection < 0 ? (totalFrameNum - widget.curFrameNum) : widget.curFrameNum
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
@@ -3066,15 +3371,15 @@ module.exports = React.createClass({
                     }
                     this.drawStyleString(tempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
-                    if (oleWidth > 0) {
+                    if (oldWidth > 0) {
                         offctx.drawImage(tempcanvas, 0, 0, oldWidth, curHeight, curX + curWidth - oldWidth, curY, oldWidth, curHeight)
                     }
 
                     this.drawStyleString(newTempNumValue, curWidth, curHeight, numString, bgTex, tempcanvas, arrange, align, maxFontWidth, decimalCount, spacing)
 
                     oldWidth = curFrameNum / totalFrameNum * curWidth;
-                    if (oleWidth > 0) {
-                        offctx.drawImage(tempcanvas, curWidth - oleWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
+                    if (oldWidth > 0) {
+                        offctx.drawImage(tempcanvas, curWidth - oldWidth, 0, oldWidth, curHeight, curX, curY, oldWidth, curHeight)
                     }
 
                 }
@@ -3104,6 +3409,7 @@ module.exports = React.createClass({
         var curValue = this.getValueByTagName(widget.tag);
         var numModeId = widget.info.numModeId;
         var enableAnimation = widget.info.enableAnimation;
+        var easing = this.getEasingFunc(widget)
         // console.log(curValue)
         if (curValue === null || curValue === 'undefined') {
             curValue = widget.info.numValue;
@@ -3137,21 +3443,37 @@ module.exports = React.createClass({
                     totalFrameNum = totalFrameNum > 1 ? totalFrameNum : 1
 
                     if (widget.animateTimerId == undefined || widget.animateTimerId === 0) {
+                        // console.log(totalFrameNum)
                         widget.curTotalFrameNum = totalFrameNum
-                        widget.animateTimerId = setInterval(function () {
-                            if (widget.curFrameNum != undefined) {
-                                widget.curFrameNum += 1
-                            } else {
-                                widget.curFrameNum = 1
-                            }
-                            if (widget.curFrameNum > totalFrameNum - 1) {
-                                clearInterval(widget.animateTimerId)
-                                widget.animateTimerId = 0
-                                widget.curFrameNum = 0
+                        // var startTime = new Date()
+                        // console.log('start time',startTime)
 
-                            }
+                        widget.animateTimerId = AnimationManager.stepValue(0, totalFrameNum, duration, 30, easing, function (obj) {
+                            widget.curFrameNum = Math.round(obj.curX)
                             this.draw()
-                        }.bind(this), 1000 / fps)
+                        }.bind(this), function () {
+                            widget.curFrameNum = 0
+                            widget.animateTimerId = 0
+        
+                        }.bind(this))
+
+                        // widget.animateTimerId = setInterval(function () {
+                        //     if (widget.curFrameNum != undefined) {
+                        //         widget.curFrameNum += 1
+                        //     } else {
+                        //         widget.curFrameNum = 1
+                        //     }
+                        //     if (widget.curFrameNum > totalFrameNum - 1) {
+                        //         clearInterval(widget.animateTimerId)
+                        //         // var endTime = new Date()
+                        //         // console.log('end time',endTime,endTime-startTime)
+
+                        //         widget.animateTimerId = 0
+                        //         widget.curFrameNum = 0
+
+                        //     }
+                        //     this.draw()
+                        // }.bind(this), 1000 / fps)
                     }
                 }
 
@@ -3233,7 +3555,7 @@ module.exports = React.createClass({
                 var totalFrameNum = widget.curTotalFrameNum || 1
                 // //draw
                 var oldHeight = 0;
-                var oleWidth = 0;
+                var oldWidth = 0;
                 var curFrameNum = changeDirection < 0 ? (totalFrameNum - widget.curFrameNum) : widget.curFrameNum
                 var newTempNumValue = ''
                 if (arrange === 'horizontal') {
@@ -3266,11 +3588,11 @@ module.exports = React.createClass({
                     }
 
                     oldWidth = (totalFrameNum - curFrameNum) / totalFrameNum * curWidth
-                    if (oleWidth > 0) {
+                    if (oldWidth > 0) {
                         this.paintStyledTexNum(widget, tempNumValue, curX - curWidth + oldWidth, curY, curX, curY, curWidth, oldHeight)
                     }
                     oldWidth = curFrameNum / totalFrameNum * curWidth;
-                    if (oleWidth > 0) {
+                    if (oldWidth > 0) {
                         this.paintStyledTexNum(widget, newTempNumValue, curX + curWidth - oldWidth, curY, curX + curWidth - oldWidth, curY, curWidth, oldHeight)
                     }
 
@@ -3566,7 +3888,7 @@ module.exports = React.createClass({
         var maxValue = widget.info.maxValue;
         var curDashboardTag = this.findTagByName(widget.tag);
         var curDashboardTagValue;
-
+        var easing = this.getEasingFunc(widget)
 
         curDashboardTagValue = parseFloat(curDashboardTag && curDashboardTag.value || 0);
 
@@ -3599,7 +3921,7 @@ module.exports = React.createClass({
                 }
 
 
-                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, duration, 30, null, function (obj) {
+                widget.animationKey = AnimationManager.stepValue(oldValue, curDashboardTagValue, duration, 30, easing, function (obj) {
                     widget.currentValue = obj.curX
                     this.draw()
                 }.bind(this), function () {
@@ -3680,9 +4002,13 @@ module.exports = React.createClass({
             maxCoverAngle = maxCoverAngle * Math.PI / 180 + Math.PI / 2;
             // console.log(curArc,widget.oldValue);
             var radPhase = Math.atan(pointerWidth/pointerHeight)
+            if (!radPhase){
+                radPhase = Math.PI/4
+            }
             var arcPhase = radPhase*180/Math.PI;
             var innerW = innerRadius * Math.sin(radPhase)
             var innerH = innerRadius * Math.cos(radPhase)
+
             if (clockwise != '2') {
                 clockwise = clockwise == '1' ? 1 : -1;
                 if (widget.dashboardModeId == '0') {
@@ -3693,9 +4019,9 @@ module.exports = React.createClass({
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                     }
                     //draw pointer
-                    
+
                     this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
-                    
+
                     //draw circle
                     // var circleTex = widget.texList[2].slices[0]
                     // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -3710,9 +4036,9 @@ module.exports = React.createClass({
                     var lightStripTex = widget.texList[2].slices[0];
                     this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
                     //draw pointer
-                    
+
                     this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY,pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
-                    
+
                     //draw circle
                     // var circleTex = widget.texList[3].slices[0]
                     // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -3729,9 +4055,9 @@ module.exports = React.createClass({
                         this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
                     }
                     //draw pointer
-                    
+
                     this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY,pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
-                    
+
                     //draw circle
                     // var circleTex = widget.texList[2].slices[0]
                     // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
@@ -3747,9 +4073,9 @@ module.exports = React.createClass({
                         var lightStripTex = widget.texList[2].slices[0];
                         this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
                         //draw pointer
-                        
+
                         this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
-                        
+
                     } else if (curArc < 0) {
                         var bgTex = widget.texList[0].slices[0];
                         if (widget.backgroundModeId === '0') {
@@ -3759,9 +4085,9 @@ module.exports = React.createClass({
                         var lightStripTex = widget.texList[2].slices[0];
                         this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
                         //draw pointer
-                        
+
                         this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
-                        
+
                     }
                 } else if (widget.dashboardModeId == '2') {
                     var lightStripTex = widget.texList[0].slices[0];
@@ -3811,6 +4137,47 @@ module.exports = React.createClass({
                 arc = -arc;
             }
             this.drawRotateElem(curX, curY, width, height,posRotatePointX,posRotatePointY, width, height, arc, widget.texList[0].slices[0], -posRotatePointX/width, -posRotatePointY/height, widget.subType,null,null,false,this.pixelRatio);
+        }
+
+        cb && cb();
+
+    },
+    drawTouchTrack: function (curX, curY, widget, options, cb) {
+        // var lowAlarm = widget.info.lowAlarmValue;
+        // var highAlarm = widget.info.highAlarmValue;
+        // var minValue = widget.info.minValue;
+        // var maxValue = widget.info.maxValue;
+        var curValue = this.getValueByTagName(widget.tag, 0) ;
+        // if (curValue > maxValue) {
+        //     curValue = maxValue
+        // } else if (curValue < minValue) {
+        //     curValue = minValue;
+        // }
+        widget.curValue = curValue;
+        // this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
+        widget.oldValue = curValue;
+    },
+    paintTouchTrack: function (curX, curY, widget, options, cb) {
+        var offctx = this.offctx
+        var width = widget.info.width;
+        var height = widget.info.height;
+        if (widget.texList) {
+
+            //pointer
+
+            //var initValue = widget.info.initValue;
+            // var curArc = widget.info.value;
+            var curValue = widget.curValue||0;
+            var x = Math.round(curValue /10000)
+            var y = curValue%10000
+            var pointL = Math.round(Math.min(width,height)/10)
+            offctx.save()
+
+            this.drawBg(curX,curY,width,height,widget.texList[0].slices[0].imgSrc,widget.texList[0].slices[0].color,offctx)
+
+            this.drawBg(curX+x-pointL/2,curY+y-pointL/2,pointL,pointL,widget.texList[1].slices[0].imgSrc,widget.texList[1].slices[0].color,offctx)
+            offctx.restore()
+
         }
 
         cb && cb();
@@ -4461,6 +4828,14 @@ module.exports = React.createClass({
                 this.handleSlideBlockInnerPress(widget, x, y);
 
                 break;
+            case 'MyTouchTrack':
+
+                x = x - left;
+                y = y - top;
+                //console.log('relative rect',x,y)
+                this.handleTouchTrackInnerPress(widget, x, y);
+
+                break;
             case 'MyInputKeyboard':
                 //relative pos
                 var keys = widget.info.keys;
@@ -4569,6 +4944,13 @@ module.exports = React.createClass({
         curValue = this.limitValueBetween(curValue, widget.info.minValue, widget.info.maxValue);
         widget.curValue = curValue;
         // console.log(curValue,widget.info);
+    },
+    handleTouchTrackInnerPress:function(widget,x,y){
+        var curValue = x*10000+y
+        var curTag = this.findTagByName(widget.tag)
+        if  (curTag){
+            this.setTagByTag(curTag,curValue)
+        }
     },
     handlePress: function (e) {
         // console.log(e);
@@ -4905,6 +5287,11 @@ module.exports = React.createClass({
                 needRedraw = true;
                 this.setTagByName(widget.tag, widget.curValue || 0);
                 break;
+            case 'MyTouchTrack':
+                this.handleTouchTrackInnerPress(widget, relativeX, relativeY);
+                widget.mouseState = mouseState;
+                needRedraw = true;
+                break
         }
 
         if (needRedraw) {
@@ -4932,6 +5319,16 @@ module.exports = React.createClass({
                         this.setTagByTag(targetTag, (targetTag.value > 0 ? 0 : 1))
                     }
 
+                }
+                widget.mouseState = mouseState;
+                needRedraw = true;
+                break;
+            case 'MyButtonSwitch':
+                var targetTag = this.findTagByName(widget.tag);
+                if (targetTag) {
+                    targetTag.value = parseInt(targetTag.value);
+                    // targetTag.value = targetTag.value > 0 ? 0 : 1;
+                    this.setTagByTag(targetTag, (targetTag.value > 0 ? 0 : 1))
                 }
                 widget.mouseState = mouseState;
                 needRedraw = true;
@@ -5011,6 +5408,10 @@ module.exports = React.createClass({
                     case 'MyInputKeyboard':
                         elem.mouseState = mouseState;
                         elem.curPressedKey = null;
+                        needRedraw = true;
+                        break;
+                    case 'MySlideBlock':
+                        elem.mouseState = mouseState;
                         needRedraw = true;
                         break;
                 }
@@ -5100,7 +5501,7 @@ module.exports = React.createClass({
         var tag = this.findTagByName(name)
         if (tag) {
             this.setTagByType(tag,value)
-            this.setState({tag: tag})
+            // this.setState({tag: tag})
         }
     },
     setTagByType:function (tag,_value) {
@@ -5108,11 +5509,26 @@ module.exports = React.createClass({
             switch (tag.valueType){
                 case 1:
                     //str
-                     tag.value = StringConverter.convertStrToUint8Array(_value,tag.encoding||StringConverter.supportedEncodings['utf-8']).slice(0,32)
+                    tag.value = StringConverter.convertStrToUint8Array(_value,this.encoding).slice(0,32)
+                    this.setState({tag:tag})
                     break;
                 default:
                     //num
-                    tag.value = Number(_value)||0
+                    //consider wavefilters
+                    if(tag.waveFilter!==undefined && tag.waveFilter!==null&& tag.waveFilter!==''){
+                        WaveFilterManager.calTagWithWaveFilter(tag.name,tag.value,Number(_value)||0,tag.waveFilter,function(currentVal){
+                            tag.value = currentVal
+                            this.setState({tag:tag},function(){
+                                this.draw(null, {
+                                    updatedTagName: tag.name
+                                })
+                            }.bind(this))
+                        }.bind(this))
+                    }else{
+                        tag.value = Number(_value)||0
+                        this.setState({tag:tag})
+                    }
+                    
 
             }
         }
@@ -5125,7 +5541,7 @@ module.exports = React.createClass({
                     return Number(tag.value)||0
                 case 1:
                     //str
-                    return StringConverter.convertUint8ArrayToStr(tag.value,tag.encoding||StringConverter.supportedEncodings['utf-8'])
+                    return StringConverter.convertUint8ArrayToStr(tag.value,this.encoding)
                 default:
                     console.log('tag type unsupported')
             }
@@ -5134,7 +5550,7 @@ module.exports = React.createClass({
     setTagByTag: function (tag, value) {
         if (tag) {
             this.setTagByType(tag,value)
-            this.setState({tag: tag})
+            // this.setState({tag: tag})
         }
     },
     setTagByTagRawValue:function (tag, rawValue) {
@@ -5184,7 +5600,7 @@ module.exports = React.createClass({
                 if (param.tag) {
                     value = this.getValueByTagName(param.tag);
                 } else {
-                    value = Number(param.value);
+                    value = param.value;
                 }
             } else {
                 value = 0;
@@ -5214,10 +5630,12 @@ module.exports = React.createClass({
       if (typeof pValue === 'string'||typeof pValue === 'number'){
           return ''+pValue
       }else{
-          return StringConverter.convertUint8ArrayToStr(pValue,StringConverter.supportedEncodings['utf-8'])
+          return StringConverter.convertUint8ArrayToStr(pValue,this.encoding)
       }
     },
     process: function (cmds,index) {
+        //console.log(cmds,index);
+
         var cmdsLength = cmds.length;
         if (index >= cmdsLength) {
             return;
@@ -5238,7 +5656,8 @@ module.exports = React.createClass({
         timerFlag = this.timerFlag(param1);
         var nextStep = {
             process: true,
-            step: 1
+            step: 1,
+            delay: false
         }
         switch (op) {
             case 'GOTO':
@@ -5255,7 +5674,7 @@ module.exports = React.createClass({
 
 
                 // }
-                var param2Value = this.getParamValue(param2);
+                var param2Value = Number(this.getParamValue(param2));
                 if (curPageTag) {
                     if (param2Value > 0 && param2Value <= project.pageList.length) {
                         // curPageTag.value = param2;
@@ -5412,18 +5831,18 @@ module.exports = React.createClass({
                 break;
             //compare
             case 'EQ':
-                var firstValue = this.getParamValue(param1)
-                var secondValue = this.getParamValue(param2)
-                if ((typeof firstValue === typeof secondValue )&& firstValue == secondValue){
+                var firstValue = Number(this.getParamValue(param1))
+                var secondValue = Number(this.getParamValue(param2))
+                if (firstValue == secondValue){
                     nextStep.step = 2;
                 } else {
                     nextStep.step = 1;
                 }
                 break;
             case 'NEQ':
-                var firstValue = this.getParamValue(param1)
-                var secondValue = this.getParamValue(param2);
-                if ((typeof firstValue !== typeof secondValue )|| firstValue != secondValue){
+                var firstValue = Number(this.getParamValue(param1))
+                var secondValue = Number(this.getParamValue(param2))
+                if (firstValue != secondValue){
                     nextStep.step = 2;
                 } else {
                     nextStep.step = 1;
@@ -5603,20 +6022,20 @@ module.exports = React.createClass({
                     }
                 })
                 break;
-
             case 'SET_STR':
-
                 var targetTag = this.findTagByName(param1.tag);
-
                 if (targetTag) {
-                    // targetTag.value = parseInt(param2);
                     this.setTagByTag(targetTag, this.getParamValue(param2))
                     this.draw(null,{
                         updatedTagName:param1.tag
                     });
                 }
                 break;
-
+            case 'DELAY':
+                if (param2.value) {
+                    nextStep.delay = true;
+                }
+                break;
             case 'CONCAT_STR':
 
                 var targetTag = this.findTagByName(param1.tag);
@@ -5688,7 +6107,13 @@ module.exports = React.createClass({
 
         //process next
         if (nextStep.process) {
-            this.process(cmds, index + nextStep.step);
+            if (nextStep.delay){
+                setTimeout(function () {
+                    this.process(cmds, index + nextStep.step);
+                }.bind(this),Number(param2.value))
+            }else {
+                this.process(cmds, index + nextStep.step);
+            }
         }
 
     },
@@ -5768,65 +6193,50 @@ module.exports = React.createClass({
         }
     },
     render: function () {
-        // console.log('registers',this.state.registers);
         return (
             < div className='simulator'>
-                <div className='simulator-tools-wrapper'>
-                    <div className='simulator-tools tools-scale'>
-                        <select className='btn btn-default' onChange={this.handleViewScale} defaultValue='1'>
-                            <option value='0.5'>50%</option>
-                            <option value='0.75'>75%</option>
-                            <option value='1'>100%</option>
-                            <option value='1.5'>150%</option>
-                            <option value='2'>200%</option>
-                        </select>
-
-                    </div>
-                    <div className='simulator-tools tools-fps'>
-                        <span className='btn btn-default'>{this.state.fps}</span>
-                    </div>
-                    {/*
-                    <div className='simulator-tools tools-step'>
-                        <div className='btn btn-default' onClick={this.handleStep}>-&gt;</div>
-                    </div>
-                    <div className='simulator-tools tools-bp'>
-                        <select className='btn btn-default select' onChange={this.handleDebugChooseWidget}>
-                            {generalCommandsDOM}
-                        </select>
-                        <select className='btn btn-default' onChange={this.handleDebugChooseTrigger}>
-                            {triggerDOM}
-                        </select>
-                        <select className='btn btn-default' onChange={this.handleDebugChooseLine}>
-                            {commandsDOM}
-                        </select>
-                    </div>
-                    */}
-                </div>
-                < div className='canvas-wrapper col-md-9' onMouseDown={this.handlePress} onMouseMove={this.handleMove}
+                < div className='simulator-canvas-wrapper' onMouseDown={this.handlePress} onMouseMove={this.handleMove}
                       onMouseUp={this.handleRelease}>
-                    <canvas ref='canvas' className='simulator-canvas'/>
+                    <div className='simulator-tools-wrapper'>
+                        <div className='simulator-tools__fps'>
+                            <span>帧率&nbsp;</span>
+                            <span>{this.state.fps}</span>
+                        </div>
+
+                        <div className='simulator-tools__scale'>
+                            <select onChange={this.handleViewScale} defaultValue='1'>
+                                <option value='0.5'>50%</option>
+                                <option value='0.75'>75%</option>
+                                <option value='1'>100%</option>
+                                <option value='1.5'>150%</option>
+                                <option value='2'>200%</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <canvas ref='canvas' className='simulator-canvas' id="simulator-canvas"/>
                     < canvas ref='offcanvas' hidden className='simulator-offcanvas'/>
                     < canvas ref='tempcanvas' hidden className='simulator-tempcanvas'/>
                 </div>
-                <div className='col-md-3'>
-                    <div className='setting-wrapper'>
-                        <div className='row'>
-                            <span>像素宽高比： 1：</span><input type='number' min='0' onKeyDown={this.setPixelRatio}/>
+
+                <div className='simulator-attribute-wrapper'>
+                    <div className='simulator-setting-wrapper'>
+                        <div className='simulator-setting__ratio'>
+                            <span>纵横比&nbsp;&nbsp;1&nbsp;:&nbsp;</span><input type='number' min='0' onKeyDown={this.setPixelRatio}/>
+                        </div>
+                        <div className="simulator-setting__keyboard">
+                            <span onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </span>
+                            <span onMouseDown={this.handleOk.bind(null, 'press')} onMouseUp={this.handleOk.bind(null, 'release')}>OK</span>
+                            <span onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </span>
                         </div>
                     </div>
-                    <div className="phical-keyboard-wrapper" style={{margin: '1em'}}>
-                        <button className='btn btn-default'
-                                onClick={this.handleMoveNext.bind(null, 'left')}> &lt; </button>
-                        <button className='btn btn-default' onMouseDown={this.handleOk.bind(null, 'press')}
-                                onMouseUp={this.handleOk.bind(null, 'release')}>OK
-                        </button>
-                        <button className='btn btn-default'
-                                onClick={this.handleMoveNext.bind(null, 'right')}> &gt; </button>
-
+                    <div className="simulator-tag-wrapper">
+                        < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag} encoding={this.encoding}  />
+                        <RegisterList registers={this.state.registers || {}}
+                                      handleRegisterChange={this.handleRegisterChange}
+                                      encoding={this.encoding}
+                                      />
                     </div>
-                    < TagList tagList={_.cloneDeep(this.state.tagList)} updateTag={this.updateTag}/>
-                    <RegisterList registers={this.state.registers || {}}
-                                  handleRegisterChange={this.handleRegisterChange}/>
                 </div>
 
             </div>);

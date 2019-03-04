@@ -153,15 +153,17 @@ $(function () {
     }
 
     function renderOptionTemplate(template) {
-        return  '<div class="template-option-panel" data-id="'+template._id+'">' +
+        return  '<div class="col-lg-4 template-option-wrap">'+
+                    '<div class="template-option-panel" data-id="'+template._id+'">' +
                         '<div class="template-option-thumbnail-container">' +
-                            '<img class="template-option-thumbnail" draggable="false" src="'+template.thumbnail+'">'+
+                            '<img class="template-option-thumbnail" draggable="false" src="'+(template.thumbnail||'../../public/login/assets/images/project.png')+'">'+
                         '</div>'+
-                        '<div class="template-option-info">' +
+                        '<div class="template-option-info" title="'+template.name+'">' +
                             '<div class="template-option-info-title">'+template.name+'</div>' +
                             '<div class="template-option-info-size">'+template.resolution+'</div>' +
                         '</div>'+
-                    '</div>'
+                    '</div>'+
+                '</div>'
 
     }
 

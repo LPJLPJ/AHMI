@@ -31,6 +31,13 @@ var moment = require('moment');
 var Excel = require('exceljs');
 var generateExcel = require('./generateTagExcel');
 
+var projectCountLimits = {
+    basic:3,
+    pro:100,
+    ultimate:Infinity,
+    admin:Infinity
+}
+
 projectRoute.getAllProjects = function (req, res) {
     ProjectModel.fetch(function (err, projects) {
         if (err) {
@@ -113,6 +120,7 @@ projectRoute.checkSharedKey = function (req, res) {
             } else {
                 if (project.shared && (project.sharedKey == sharedKey || project.readOnlySharedKey == sharedKey)) {
                     //valid key
+
                     generateUserKey(projectId, sharedKey, function (data) {
                         req.session.user.sharedKey = data
                         res.end('ok')
@@ -137,6 +145,7 @@ function addVersionQueryFunc(ideVersion) {
 }
 
 function renderIDEEditorPageWithResources(res, ideVersion) {
+
     var versionScripts = ''
     var isInVersions = false
     for(var i=0;i<VersionManager.versions.length;i++){
@@ -183,7 +192,7 @@ projectRoute.getProjectById = function (req, res) {
                 // res.render('ide/index.html')
                 renderIDEEditorPageWithResources(res, ideVersion)
             } else if (!userId) {
-                res.render('login/login.html', {
+                res.render('login/login_new.html', {
                     title: '重新登录'
                 });
             } else {
@@ -225,7 +234,7 @@ projectRoute.getProjectTreeById = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session && req.session.user && req.session.user.id;
     if (!userId) {
-        res.render('login/login.html', {
+        res.render('login/login_new.html', {
             title: '重新登录'
         })
     } else {
@@ -271,7 +280,7 @@ projectRoute.renderDataAnalysis = function (req, res) {
     var projectId = req.params.id;
     var userId = req.session && req.session.user && req.session.user.id;
     if (!userId) {
-        res.render('login/login.html', {
+        res.render('login/login_new.html', {
             title: '重新登录'
         })
     } else {
@@ -343,7 +352,15 @@ projectRoute.getProjectContent = function (req, res) {
 projectRoute.updateShare = function (req, res) {
 
     var projectId = req.params.id
-    var shareState = !!req.body.share
+    var shareState = req.body.share
+    if((typeof shareState) === 'string'){
+        if(shareState == 'true'){
+            shareState = true;
+        }else{
+            shareState = false;
+        }
+    }
+
     var userId = req.session.user && req.session.user.id;
 
     if (projectId && projectId != '') {
@@ -457,6 +474,43 @@ projectRoute.getBackupList = function (req, res) {
     }
 }
 
+
+//check count for create
+projectRoute.checkCountAvailable = function(req, res, next){
+    if (req.session.user) {
+        //user exists
+        var userId = req.session.user.id;
+        UserModel.findById(userId,function(err,_user){
+            if(err){
+                errHandler(res, 500, JSON.stringify(err))
+            }else{
+                if(_user){
+                    var countLimit = projectCountLimits[_user.type||'basic']
+                    ProjectModel.countByUser(userId,function(err,_count){
+                        if(err){
+                            errHandler(res, 500, JSON.stringify(err))
+                        }else{
+                            //compare _count
+                            if(_count + 1 > countLimit){
+                                //overflow
+                                return errHandler(res, 500, '工程数量超出权限范围，您的权限最多创建'+countLimit+'个工程')
+                            }else{
+                                next()
+                            }
+                        }
+                    })
+                }else{
+                    //invalid user
+                    errHandler(res, 500, 'user invalid')
+                }
+            }
+        })
+
+    }else{
+        errHandler(res, 500, 'not login')
+    }
+}
+
 projectRoute.createProject = function (req, res) {
     var data = _.cloneDeep(req.body)
 
@@ -497,7 +551,7 @@ projectRoute.createProject = function (req, res) {
                     errHandler(res, 500, 'project is null');
                 } else {
                     //console.log('find project');
-                    var copyProject = copyProject = _.cloneDeep(data)
+                    var copyProject = _.cloneDeep(data)
 
                     copyProject.thumbnail = _.cloneDeep(template.thumbnail);
                     copyProject.content = _.cloneDeep(template.content);
@@ -566,6 +620,7 @@ function getProjectInfo(newProject) {
     info.createTime = moment(newProject.createTime).format('YYYY-MM-DD HH:mm');
     info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
     info.supportTouch = newProject.supportTouch;
+    info.encoding = newProject.encoding;
     info.author = newProject.author;
     return info
 }
@@ -665,30 +720,18 @@ projectRoute.deleteProject = function (req, res) {
     var projectId = req.body.projectId;
     //console.log(projectId)
     if (projectId) {
-        //exitst
-        ProjectModel.deleteById(projectId, function (err) {
+        ProjectModel.findById(projectId, function (err,project) {
             if (err) {
                 errHandler(res, 500, 'delete error')
             }
-            //delete directory
-            var targetDir = path.join(__dirname, '../project/', String(projectId))
-            fs.stat(targetDir, function (err, stats) {
-                if (stats && stats.isDirectory && stats.isDirectory()) {
-                    //exists
-                    //delete
-                    rmdirAsync(targetDir, function (rmErr) {
-                        if (rmErr) {
-                            errHandler(res, 500, 'rm directory error')
-                        } else {
-                            res.end('ok')
-                        }
-                    })
+            project.update({recycle: {recycleStatus: true, recycleTime: Date.now()}}, function (err, docs) {
+                if (err) {
+                    errHandler(res, 500, 'delete error');
                 } else {
-                    res.end('ok')
+                    res.end('ok');
                 }
             })
-
-        })
+        });
     } else {
         errHandler(res, 500, 'invalid project id')
     }
@@ -836,6 +879,8 @@ projectRoute.saveProjectAs = function (req, res) {
                     copyProject.curSize = project.curSize;
                     copyProject.thumbnail = project.thumbnail;
                     copyProject.content = project.content;
+                    copyProject.originalSite = project.originalSite||data.currentOriginalSite;
+                    copyProject.encoding = project.encoding||'ascii';
 
                     copyProject.name = data.saveAsName ? (data.saveAsName) : (copyProject.name + "副本");
                     copyProject.author = data.saveAsAuthor ? (data.saveAsAuthor) : (copyProject.author);
@@ -1184,6 +1229,8 @@ projectRoute.generateLocalProject = function (req, res) {
                 tempPro.supportTouch = project.supportTouch;
                 tempPro.resolution = project.resolution;
                 tempPro.ideVersion = project.ideVersion;
+                tempPro.originalSite = project.originalSite||'';
+                tempPro.encoding = project.encoding||'ascii';
                 tempPro._id = project._id;
                 tempPro.createTime = new Date().toLocaleString();
                 tempPro.lastModifiedTime = new Date().toLocaleString();
@@ -1557,50 +1604,24 @@ projectRoute.updateFolder = function (req, res) {
     }
 };
 projectRoute.deleteFolder = function (req, res) {
-    var folderId = req.body.folderId;
+    var classId = req.body.folderId;
     var _user = req.session.user;
-    if (folderId) {
-        //删除分类
-        ClassModel.deleteById(folderId, function (err) {
+    if (classId) {
+        ClassModel.deleteById(classId, function (err) {
             if (err) {
                 errHandler(res, 500, 'delete folder err')
             } else {
-                //查找分类下的project
-                ProjectModel.findProByClass(_user.id, folderId, function (err, projects) {
+                ProjectModel.update({classId: classId}, {
+                    recycle: {
+                        recycleStatus: true,
+                        recycleTime: Date.now()
+                    },
+                    classId:'space'
+                }, {multi: true}, function (err, docs) {
                     if (err) {
-                        errHandler(res, 500, 'delete folder err')
+                        errHandler(res, 500, 'delete folder err');
                     } else {
-                        if (projects != '') {
-                            var proArr = _.cloneDeep(projects).map(function (project) {
-                                return project._id;
-                            });
-                            //删除project
-                            ProjectModel.deleteByClass(folderId, function (err) {
-                                if (err) {
-                                    errHandler(res, 500, 'delete folder err')
-                                } else {
-                                    //删除project文件夹
-                                    proArr.map(function (pro) {
-                                        var targetDir = path.join(__dirname, '../project/', String(pro));
-                                        fs.stat(targetDir, function (err, stats) {
-                                            if (stats && stats.isDirectory && stats.isDirectory()) {
-                                                rmdirAsync(targetDir, function (rmErr) {
-                                                    if (rmErr) {
-                                                        errHandler(res, 500, 'rm directory error')
-                                                    } else {
-                                                        res.end('ok')
-                                                    }
-                                                })
-                                            } else {
-                                                res.end('ok')
-                                            }
-                                        })
-                                    });
-                                }
-                            });
-                        } else {
-                            res.end('delete folder ok')
-                        }
+                        res.end('ok');
                     }
                 });
             }

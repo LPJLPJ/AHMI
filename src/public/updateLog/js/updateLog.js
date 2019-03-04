@@ -2,7 +2,7 @@ $(function () {
     //导航栏
     $(window).scroll(function () {
         var top = $(document).scrollTop();
-        if (top > 50) {
+        if (top > 68) {
             $('.update-log-headline').addClass('nav-fixed');
         } else {
             $('.update-log-headline').removeClass('nav-fixed');

@@ -5,6 +5,7 @@ var mongoose = require('mongoose')
 
 var BlogSchema = new mongoose.Schema({
     authorId:mongoose.Schema.Types.ObjectId,
+    author:String,
     publish:{type:Boolean,default:false},
     title:String,
     desp:String,
@@ -22,6 +23,7 @@ var BlogSchema = new mongoose.Schema({
             content:String
         }
     ],
+    visits:{type:Number,default:0},
     resources:[String],
     publishTime:{type:Date,default:Date.now},
     createTime:{type:Date,default:Date.now},
@@ -89,18 +91,20 @@ BlogSchema.statics = {
     },
     findById:function(id,cb){
         return this
-            .findOne({_id:id})
+            .findOneAndUpdate({_id:id},{$inc:{visits:1}})
             .exec(cb)
     },
-    findByTitle:function(title,cb){
+    findByRecommend:function(cb){
         return this
-            .findOne({title:title})
+            .find({publish:true})
+            .sort({'visits':-1})
+            .limit(4)
             .exec(cb)
     },
     findByAuthor:function (authorId,cb) {
         return this
             .find({authorId:authorId})
-            .sort('publishTime')
+            .sort({'publishTime':-1})
             .exec(cb)
     },
     deleteById: function (blogId, cb) {

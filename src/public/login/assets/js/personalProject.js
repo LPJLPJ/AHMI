@@ -1,26 +1,18 @@
 $(function(){
-	// $('#user-icon').on('click',function(){
-	// 	$('#user-icon-menu').
-	// })
-	// $(".right").hover(function(){
- //        $(".menu").stop().animate({"height":"60px"})
- //    },function(){
- //        $(".menu").stop().animate({"height":"0px"})
- //    })
     var curSelectedPanel = null;
     var curPanel = null;
     var curFolder = null;
     var closeModal = $('#exampleModal');
     var curProject = null;
     var fs,path,mkdir,__dirname;
-    var closeModalConfirmButton = $('#closeModalConfirm');
+    var deleteProjectButton = $('#delete-project-confirm');
     var localProjectDir='';
     var localCANProjectDir='';
-    var curIDEVersion = window.ideVersion.split('_')[0].trim()
-    var userType = localStorage.getItem('userType')
+    var curIDEVersion = window.ideVersion.split('_')[0].trim();
+    var userType = localStorage.getItem('userType');
+    var listWrap = $('#list-wrap');
 
-    closeModalConfirmButton.on('click',function (e) {
-        //console.log('project',curProject);
+    deleteProjectButton.on('click',function (e) {
         if(curProject.resolution){
             deleteProject(curProject,curPanel);
         }else{
@@ -28,16 +20,16 @@ $(function(){
         }
     });
 
-    //update modal
 
+    //update modal
     var updateModal = $('#updateModal')
     var updateConfirmBtn = $('#updateConfirmBtn')
     var updateCancelBtn = $('#updateCancelBtn')
     var updateNewVersion = $('#update-new-version')
     var updateAlert = $('.update-alert')
     var userUpdateChoice = null
-
     var local = false;
+
     try {
         var os = require('os');
         if (os){
@@ -102,13 +94,8 @@ $(function(){
 
     //render projects
     if (local){
-        //delte projectPanels
 
-        // $('.projectpanel').each(function (index,elem) {
-        //     $(elem).remove();
-        // });
-
-        $('#addproject').siblings().each(function (index,elem) {
+        $('#add-project').siblings().each(function (index,elem) {
             $(elem).remove();
         });
         $('#addCANproject').siblings().each(function(index,elem){
@@ -133,7 +120,6 @@ $(function(){
         //console.log('projects',projects);
         //console.log('CANprojects',CANProjects);
 
-        var addProjectButton =  $('#addproject');
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
             console.log('newProject.createTime',newProject.createTime);
@@ -143,8 +129,7 @@ $(function(){
             delete newProject.content;
             delete newProject.backups;
             var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
-
-            addProjectButton.after(html);
+            $('#project-list').prepend(html);
         }
 
         var addCANprojectButton = $('#addCANproject');
@@ -154,24 +139,20 @@ $(function(){
             newCANProject.thumbnail = getResourceRelativePath(newCANProject.thumbnail);
             delete newCANProject.content;
             var html = new EJS({url:'../../public/login/assets/views/CANProjectpanel.ejs'}).render({project:newCANProject,thumbnail:newCANProject.thumbnail});
-            addCANprojectButton.after(html);
+            $('#project-list').prepend(html);
         }
-    }
-
-    if(!local){
-        showOriginalSite()
     }
 
     //versionOptions
     if(!local){
         var versionWrapper = $('.version-wrapper')
-        
+
         var $versionSelector = $('#basicinfo-ideversion')
         if(userType!=='admin'){
             $versionSelector.attr('disabled',true)
         }
         $versionSelector.html($('<option value="'+curIDEVersion+'">'+curIDEVersion+'(最新)'+'</option>'))
-        
+
         $.ajax({
             type:'GET',
             url:'/api/versions',
@@ -194,69 +175,69 @@ $(function(){
         $('.update-options-body input').on('change', function() {
             updateAlert.html('')
             userUpdateChoice =  $('.update-options-body input[name=update-options]:checked').val()
-         });
+        });
 
-         updateConfirmBtn.on('click',function(){
-             var toUpdateProject = null
-             var targetUrl = ''
-             if(!userUpdateChoice){
+        updateConfirmBtn.on('click',function(){
+            var toUpdateProject = null
+            var targetUrl = ''
+            if(!userUpdateChoice){
                 updateAlert.html('选项未选择')
-             }else{
-                 switch(userUpdateChoice){
+            }else{
+                switch(userUpdateChoice){
                     case '1':
-                    //no update
-                    updateModal.modal('hide')
-                    targetUrl = '/project/'+curProject._id+'/editor'+(curProject.ideVersion?'?ideVersion='+curProject.ideVersion:'');
-                    window.open(targetUrl)
-                    break;
+                        //no update
+                        updateModal.modal('hide')
+                        targetUrl = '/project/'+curProject._id+'/editor'+(curProject.ideVersion?'?ideVersion='+curProject.ideVersion:'');
+                        window.open(targetUrl)
+                        break;
                     case '2':
-                    //update with copy
-                    saveProjectCopy(curProject._id,curProject.name+'_'+curProject.ideVersion,function(err){
-                        if(err){
-                            updateAlert.html('保存副本出错'+err)
-                        }else{
-                            var thumbnailDOM = curPanel.find('img');
-                            var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
-                            curProject.name = curProject.name+'_'+curProject.ideVersion
-                            addNewProject(curProject)
-                            toUpdateProject = JSON.parse(curPanel.attr('data-project'))
-                            toUpdateProject.ideVersion = curIDEVersion
-                            updateProjectInfo(toUpdateProject,function(err){
-                                if(err){
-                                    updateAlert.html('更新版本出错')
-                                }else{
-                                    var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
-                                    curPanel.replaceWith(html)
-                                    updateModal.modal('hide')
-                                    targetUrl = '/project/'+curProject._id+'/editor'
-                                    window.open(targetUrl)
-                                }
-                            })
-                        }
-                    })
-                    break;
+                        //update with copy
+                        saveProjectCopy(curProject._id,curProject.name+'_'+curProject.ideVersion,function(err){
+                            if(err){
+                                updateAlert.html('保存副本出错'+err)
+                            }else{
+                                var thumbnailDOM = curPanel.find('img');
+                                var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
+                                curProject.name = curProject.name+'_'+curProject.ideVersion
+                                addNewProject(curProject)
+                                toUpdateProject = JSON.parse(curPanel.attr('data-project'))
+                                toUpdateProject.ideVersion = curIDEVersion
+                                updateProjectInfo(toUpdateProject,function(err){
+                                    if(err){
+                                        updateAlert.html('更新版本出错')
+                                    }else{
+                                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                                        curPanel.replaceWith(html)
+                                        updateModal.modal('hide')
+                                        targetUrl = '/project/'+curProject._id+'/editor'
+                                        window.open(targetUrl)
+                                    }
+                                })
+                            }
+                        })
+                        break;
                     case '3':
-                    //update without copy
-                    toUpdateProject = JSON.parse(curPanel.attr('data-project'))
-                    toUpdateProject.ideVersion = curIDEVersion
-                    var thumbnailDOM = curPanel.find('img');
-                    var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
-                    updateProjectInfo(toUpdateProject,function(err){
-                        if(err){
-                            updateAlert.html('更新版本出错')
-                        }else{
-                            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
-                            curPanel.replaceWith(html)
-                            updateModal.modal('hide')
-                            targetUrl = '/project/'+curProject._id+'/editor'
-                            window.open(targetUrl)
-                        }
-                    })
-                    break;
-                 }
+                        //update without copy
+                        toUpdateProject = JSON.parse(curPanel.attr('data-project'))
+                        toUpdateProject.ideVersion = curIDEVersion
+                        var thumbnailDOM = curPanel.find('img');
+                        var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
+                        updateProjectInfo(toUpdateProject,function(err){
+                            if(err){
+                                updateAlert.html('更新版本出错')
+                            }else{
+                                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                                curPanel.replaceWith(html)
+                                updateModal.modal('hide')
+                                targetUrl = '/project/'+curProject._id+'/editor'
+                                window.open(targetUrl)
+                            }
+                        })
+                        break;
+                }
                 // targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
-             }
-         })
+            }
+        })
     }
 
     function saveProjectCopy(projectId,saveAsName,cb){
@@ -278,21 +259,7 @@ $(function(){
             }
 
         })
-            
-    }
 
-    //show original site
-    function showOriginalSite(){
-        $('.projectpanel').each(function(p){
-            var $p = $(this)
-            var ogSite = $p.data('project').originalSite
-            if(ogSite){
-                if(ogSite!==window.location.host){
-                    $p.addClass('panel-other-site')
-                }
-                //$p.addClass('panel-other-site')
-            }
-        })
     }
 
     function readLocalProjects(projectType) {
@@ -503,7 +470,7 @@ $(function(){
     }
 
     $.contextMenu({
-        selector: '.projectpanel',
+        selector: '.project-tool',
         callback: function(key) {
             var project = $(this).attr('data-project');
             project = JSON.parse(project);
@@ -512,16 +479,16 @@ $(function(){
             curProject = project;
             switch (key){
                 case "openFolder":
-                   var localprojectpath = path.join(localProjectDir,String(project._id));
-                   var gui = require('nw.gui');
-                   gui.Shell.openItem(localprojectpath);
-                   break;
+                    var localprojectpath = path.join(localProjectDir,String(project._id));
+                    var gui = require('nw.gui');
+                    gui.Shell.openItem(localprojectpath);
+                    break;
                 case "showInfo":
-                   showProInfo($(this));
-                   break;
+                    showProInfo($(this));
+                    break;
                 case "deletePro":
-                   closeModal.modal('show');
-                   break;
+                    closeModal.modal('show');
+                    break;
                 case "visualization":
                     window.open('/project/'+project._id+'/visualization');
                     break;
@@ -547,8 +514,9 @@ $(function(){
                     break;
                 case "space":
                     moveToClass(project,key);
+                    break;
                 default:
-             }
+            }
 
             //移动到分类
             if(folderList.length>0){
@@ -581,7 +549,7 @@ $(function(){
                     items:{
                         "showInfo": {name: "修改工程信息"},
                         "sep1":"---------",
-                        "moveToClass":{name:"移动至",items:loadClass(project)},
+                        "moveToClass":{name:"移动至项目",items:loadClass(project)},
                         "sep5":"---------",
                         "showProjectVersion": {name: "打开较早保存的工程",items: loadItems(project._id)},
                         "sep2":"---------",
@@ -625,213 +593,164 @@ $(function(){
         $.when(promise).then(completedPromise, failPromise, notifyPromise);
     };
 
-    $('#projectlist')
-        .on('click','.projectpanel', function (e) {
-        curPanel = $(this);
+    //运行工程
+    var customModal = {
+        confirm:function(modal,content,cb){
+            modal.find('.origin-site').html(content.msg||'');
+            modal.modal('show');
+            modal.find(".modal-cancel").off("click").on("click",function(){
+                cb(false);
+            });
+            modal.find(".modal-confirm").off("click").on("click",function(){
+                cb(true);
+            })
+        }
+    };
+
+    listWrap.on('click','.play-project',function(){
+        var modal = $('#originSiteModal');
+        curPanel = $(this).parents('.project-panel');
         curSelectedPanel = curPanel;
         $('#basicinfo-template').attr('disabled',false);
         $('#basicinfo-supportTouch').attr('disabled',false);
-        var project = $(this).attr('data-project');
+        var project = $(this).parents('.project-panel').attr('data-project');
         project = JSON.parse(project);
         curProject = project;
-        var curNodeName = e.target.nodeName;
-        if (curNodeName == 'IMG'){
-            //img
-            //open in new window
-            var targetUrl = '';
-            if (local){
+        var targetUrl = '';
 
-                targetUrl = '../ide/index.html?project_id='+project._id;
-                window.open(targetUrl);
-            }else{
-                // if (project.ideVersion&&project.ideVersion!=curIDEVersion){
-                //     targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
-                //     window.open(targetUrl);
-                // }else{
-                //     updateModal.modal('show')
-                //     targetUrl = '/project/'+project._id+'/editor';
-                //     // window.open(targetUrl);
-                // }
-                //reset update modal
-                updateNewVersion.html(curIDEVersion)
-                updateAlert.html('')
-                if(project.ideVersion){
-                    if(project.ideVersion == curIDEVersion){
-                        targetUrl = '/project/'+project._id+'/editor';
-                        window.open(targetUrl);
-                    }else{
-                        updateModal.modal('show')
+        if(local){
+            targetUrl = '../ide/index.html?project_id='+project._id;
+            window.open(targetUrl);
+        }else{
+
+            var originalSite = window.location.host;
+            if (project.originalSite && originalSite != project.originalSite) {
+                customModal.confirm(modal, {msg: project.originalSite}, function (result) {
+                    if (result) {
+                        openProject();
                     }
+                })
+            } else {
+                openProject();
+            }
+        }
+
+        function openProject(){
+            updateNewVersion.html(curIDEVersion);
+            updateAlert.html('');
+
+            if(project.ideVersion){
+                if(project.ideVersion == curIDEVersion){
+                    targetUrl = '/project/'+project._id+'/editor';
+                    window.open(targetUrl);
                 }else{
                     updateModal.modal('show')
-                    // targetUrl = '/project/'+project._id+'/editor';
                 }
-
-            }
-
-            
-
-        }else if (curNodeName == 'SPAN'){
-            //span
-            //show modal
-            $('#modal-ok').html('确认');
-            var title = $('#basicinfo-title');
-            var author = $('#basicinfo-author');
-            var resolution = $('#basicinfo-resolution');
-            var customWidth = $('#customWidth');
-            var customHeight = $('#customHeight');
-            var template = $('#basicinfo-template');
-            var ideVersion = $('#basicinfo-ideversion');
-            var supportTouch = $('#basicinfo-supportTouch');
-            title.val(project.name);
-            author.val(project.author);
-            if(identifyCustomResolution(project.resolution)){
-                resolution.val(project.resolution);
-                $('#basicinfo-customResolution').hide();
             }else{
-                //console.log('custom');
-                resolution.val('custom');
-                $('#basicinfo-customResolution').show();
-                var arr=project.resolution.split('*');
-                customWidth.val(arr[0]);
-                customHeight.val(arr[1]);
+                updateModal.modal('show')
             }
-            template.val(project.template);
-            template.attr('disabled',true);
-            ideVersion.val(project.ideVersion);
-            ideVersion.trigger('change')
-            supportTouch.val(project.supportTouch);
-            supportTouch.attr('disabled',true);
-        }else if (curNodeName == 'I'){
-            //delete
-            // if(confirm('确认删除?')){
-            //     deleteProject(project,curPanel)
-            // }else{
-            //
-            // }
-            closeModal.modal('show');
-
         }
     });
 
-    //控制右键菜单是否显示
-    // if(local===false){
-    //     $('.projectpanel').contextMenu(false);
-    // }
+    //删除工程
+    listWrap.on('click','.delete-project',function(){
+        curPanel = $(this).parents('.project-panel');
+        var project = $(this).parents('.project-panel').attr('data-project');
+        project = JSON.parse(project);
+        curProject = project;
+        $('.project-delete__prompt').text(project.name);
+        closeModal.modal('show');
+    });
+
+    //修改信息
+    listWrap.on('click','.edit-project',function(){
+        curPanel = $(this).parents('.project-panel');
+        showProInfo(curPanel);
+    });
 
     function showProInfo(cur){
-         curPanel = cur;
-         curSelectedPanel = curPanel;
-         $('#basicinfo-template').attr('disabled',false);
-         $('#basicinfo-supportTouch').attr('disabled',false);
-         var project = cur.attr('data-project');
-         project = JSON.parse(project);
-         curProject = project;
+        curPanel = cur;
+        curSelectedPanel = curPanel;
+        $('#basicinfo-template').attr('disabled',false);
+        $('#basicinfo-supportTouch').attr('disabled',false);
+        $('.basicinfo-template-options').hide();
+        var project = cur.attr('data-project');
+        project = JSON.parse(project);
+        curProject = project;
 
-         $('#modal-ok').html('确认');
-         var title = $('#basicinfo-title');
-         var author = $('#basicinfo-author');
-         var resolution = $('#basicinfo-resolution');
-         var customWidth = $('#customWidth');
-         var customHeight = $('#customHeight');
-         var ideVersion = $('#basicinfo-ideversion')
-         var template = $('#basicinfo-template');
-         var supportTouch = $('#basicinfo-supportTouch');
-         title.val(project.name);
-         author.val(project.author);
-         if(identifyCustomResolution(project.resolution)){
-             resolution.val(project.resolution);
-             $('#basicinfo-customResolution').hide();
-         }else{
-             resolution.val('custom');
-             $('#basicinfo-customResolution').show();
-             var arr=project.resolution.split('*');
-             customWidth.val(arr[0]);
-             customHeight.val(arr[1]);
-         }
-         ideVersion.val(project.ideVersion)
-         ideVersion.trigger('change')
-         template.val(project.template);
-         template.attr('disabled',true);
-         supportTouch.val(project.supportTouch);
-         supportTouch.attr('disabled',true);
-         $('#myModal').modal('show');
+        $('#project-info-confirm').html('确认');
+        var title = $('#basicinfo-title');
+        var author = $('#basicinfo-author');
+        var resolution = $('#basicinfo-resolution');
+        var customWidth = $('#customWidth');
+        var customHeight = $('#customHeight');
+        var ideVersion = $('#basicinfo-ideversion');
+        var template = $('#basicinfo-template');
+        var supportTouch = $('#basicinfo-supportTouch');
+        var encoding = $('#basicinfo-encoding');
+        title.val(project.name);
+        author.val(project.author);
+        if(identifyCustomResolution(project.resolution)){
+            resolution.val(project.resolution);
+            $('#basicinfo-customResolution').hide();
+        }else{
+            resolution.val('custom');
+            $('#basicinfo-customResolution').show();
+            var arr=project.resolution.split('*');
+            customWidth.val(arr[0]);
+            customHeight.val(arr[1]);
+        }
+        ideVersion.val(project.ideVersion);
+        ideVersion.trigger('change');
+        template.val(project.template);
+        template.attr('disabled',true);
+        supportTouch.val(project.supportTouch);
+        supportTouch.attr('disabled',true);
+        encoding.val(project.encoding);
+        $('#project-info-modal').modal('show');
     }
 
     function identifyCustomResolution(resolution){
         var result=false;
         $("#basicinfo-resolution option").each(function(){
             if($(this).val().trim()==resolution){
-                // console.log('haha',$(this).val().trim());
                 result=true;
             }
         });
         return result;
     }
 
-
-
-    $('#projectlist').on('mouseenter','.projectpanel',function (e) {
-        //console.log('hover',e)
-        //console.log($(this))
-        var icon = $(this).find('.projectdelete')
-        //console.log((icon))
-        if (icon){
-            icon.css('display','block')
-        }
-    })
-        .on('mouseleave','.projectpanel',function (e) {
-            var icon = $(this).find('.projectdelete')
-            if (icon){
-                icon.css('display','none')
-            }
-        })
-        .on('mouseenter','.folderPanel',function (e) {
-            var icon = $(this).find('.folderDelete');
-            if (icon){
-                icon.css('display','block')
-            }
-        })
-        .on('mouseleave','.folderPanel',function (e) {
-            var icon = $(this).find('.folderDelete');
-            if (icon){
-                icon.css('display','none')
-            }
-        });
-
-
-
-    $('#addproject').on('click', function (e) {
+    //创建按钮
+    $('#add-project').on('click', function (e) {
         $('#basicinfo-title').val('');
         $('#basicinfo-author').val('');
-        $('#basicinfo-template').attr('disabled',false);
+        $('#basicinfo-template').attr('disabled',false).val('');
+        $('.basicinfo-template-options').hide();
         $('#basicinfo-supportTouch').attr('disabled',false);
+        $('#basicinfo-encoding').val('ascii');
         $('#basicinfo-resolution').val('800*480');
         $('#basicinfo-ideversion').val(curIDEVersion);
         //trigger change
-        $('#basicinfo-ideversion').trigger('change')
+        $('#basicinfo-ideversion').trigger('change');
         $('#basicinfo-customResolution').hide();
         $('#customWidth').val('');
         $('#customHeight').val('');
-        $('#modal-ok').html('创建');
+        $('#project-info-confirm').html('创建');
     });
 
     $('#basicinfo-resolution').on('change',function(e){
         var resolution = $('#basicinfo-resolution').val().trim();
         if(resolution==="custom"){
             $('#basicinfo-customResolution').show();
-            //$('#customWidth').val('');
-            //$('#customHeight').val('');
         }else{
             $('#basicinfo-customResolution').hide();
         }
     });
 
-
-    $('#modal-ok').on('click',changeProject);
+    $('#project-info-confirm').on('click',changeProject);
 
     function changeProject(e){
-        var op = $('#modal-ok').html();
+        var op = $('#project-info-confirm').html();
         //console.log(op);
         if (op == '确认'){
             updateProject(e,local)
@@ -847,24 +766,23 @@ $(function(){
         var template = $('#basicinfo-template');
         var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
+        var encoding = $('#basicinfo-encoding');
         var resolution = $('#basicinfo-resolution');
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
-        var folderId=$('#addproject').attr('folder-id');
+        var folderId=$('#add-project').attr('folder-id');
 
-        if(folderId){
-            project.classId=folderId;
-        }else{
-            project.classId='space';
-        }
+        project.classId = folderId || 'space';
 
-        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''){
+        if (resolution.val().trim()!=''&&supportTouch.val().trim()!=''&&encoding.val()!=''){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
             project.template = template.val().trim();
-            project.ideVersion = ideVersion.val().trim();
+            if(project.template == 'collectedTemplate'){project.template=''}
+            project.ideVersion = ideVersion.val()&&ideVersion.val().trim()||'';
             project.supportTouch = supportTouch.val().trim();
+            project.encoding = encoding.val()&&encoding.val().trim()||'';
             if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
                 return;
@@ -896,7 +814,7 @@ $(function(){
                     fs.writeFileSync(filePath,JSON.stringify(project));
                     addNewProject(project);
                 }catch (e){
-                    console.log('write error')
+                    toastr.error(e)
                 }
 
 
@@ -909,10 +827,11 @@ $(function(){
                     data:project,
                     success: function (data, status, xhr) {
                         var newProject = JSON.parse(data)
-                        addNewProject(newProject)
+                        addNewProject(newProject);
+
                     },
                     error: function (err, status, xhr) {
-                        console.log(err)
+                        toastr.error(err.responseJSON.errMsg)
                     }
                 })
             }
@@ -920,8 +839,8 @@ $(function(){
 
     }
 
-
     function deleteProject(project,curPanel){
+
         if (local){
             //console.log('project id',project._id);
             var projectdirpath = path.join(localProjectDir,String(project._id));
@@ -941,8 +860,10 @@ $(function(){
                 success:function (data, status, xhr){
                     //delete ok
                     //console.log(data)
-                    curPanel.remove()
-
+                    curPanel.remove();
+                    if($('#project-list').find('.project-list__item').length<1){
+                        $('#project-empty').show();
+                    }
                 },
                 error: function (err, status, xhr) {
                     console.log(err)
@@ -954,7 +875,6 @@ $(function(){
     }
 
     function checkName() {
-        // name.match(/["'\/\\\(\){},\.\+\-\*\?]/)
         try {
             for (var i=0;i<arguments.length;i++){
                 var name = arguments[i].value;
@@ -983,6 +903,24 @@ $(function(){
         }
     }
 
+    function updateProjectInfo(project,cb) {
+
+        $.ajax({
+            type:'POST',
+            url:'/project/'+project._id+'/basicinfo',
+            data:project,
+            success: function (data, status, xhr) {
+
+                cb && cb(null,data)
+
+            },
+            error: function (err, status, xhr) {
+                cb && cb(err)
+            }
+        })
+
+    }
+
     function checkCustomResolution(){
         var width = arguments[0]||0;
         var height = arguments[1]||0;
@@ -992,24 +930,6 @@ $(function(){
             }
         }
         return false;
-    }
-
-    function updateProjectInfo(project,cb) {
-        
-        $.ajax({
-            type:'POST',
-            url:'/project/'+project._id+'/basicinfo',
-            data:project,
-            success: function (data, status, xhr) {
-                
-                cb && cb(null,data)
-
-            },
-            error: function (err, status, xhr) {
-                cb && cb(err)
-            }
-        })
-        
     }
 
     function updateProject(e,local) {
@@ -1026,10 +946,10 @@ $(function(){
         var template = $('#basicinfo-template');
         var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
-        var thumbnailDOM = curPanel.find('img');
-        console.log("thumbnailDOM",thumbnailDOM);
+        var encoding = $('#basicinfo-encoding');
+        var thumbnailDOM = curPanel.find('.project-thumb');
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
-        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val().trim() || project.ideVersion != ideVersion.val().trim()){
+        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val() || project.ideVersion != ideVersion.val()||project.encoding!=encoding.val()){
             //changed
             project.name = title.val().trim();
             project.author = author.val().trim();
@@ -1041,7 +961,7 @@ $(function(){
             //check resolution
             if(resolution.val().trim()=='custom'){
                 if(!checkCustomResolution(customWidth.val().trim(),customHeight.val().trim())){
-                    toastr.error('分辨率有误');
+                    toastr.error('分辨率有误, 宽、高必须是小于1920的正整数');
                     return;
                 }else
                     project.resolution=customWidth.val().trim()+"*"+customHeight.val().trim();
@@ -1054,6 +974,7 @@ $(function(){
                 project.ideVersion = oldIdeVersion||'';
             }
             project.supportTouch = supportTouch.val().trim();
+            project.encoding = encoding.val()&&encoding.val().trim()||'';
             var updateSuccess = false;
             if (local){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');
@@ -1072,12 +993,9 @@ $(function(){
                     data:project,
                     success: function (data, status, xhr) {
                         //update success
-                        //console.log('success',data)
-                        //update panel
                         updateSuccess = true;
-                        console.log(project,thumbnail,JSON.stringify(project),JSON.stringify(thumbnail))
                         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
-                        curPanel.replaceWith(html)
+                        curPanel.replaceWith(html);
 
                     },
                     error: function (err, status, xhr) {
@@ -1094,20 +1012,19 @@ $(function(){
     window.generateNewProjectView = generateNewProjectView;
 
     function generateNewProjectView(project,thumbnail){
-       return new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+        return new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
     }
 
 
     function addNewProject(newProject){
-        // console.log(newProject)
-        // console.log(newProject,JSON.stringify(newProject));
         var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
-        // console.log(html,JSON.stringify(html));
-        var folder=$('#projectlist').find('.folderPanel');
-        if(!folder||folder.length==0){
-            $('#addproject').after(html);
-        }else{
-            folder.last().after(html);
+        if (location.hash === '') {
+            $('#project-list').prepend(html);
+            if($('#project-list').find('.project-list__item').length){
+                $('#project-empty').hide();
+            }
+        }else {
+            $('#folder-project-list').prepend(html);
         }
     }
 
@@ -1153,9 +1070,6 @@ $(function(){
                 var author = $('#CAN-basicinfo-author');
                 title.val(project.name);
                 author.val(project.author);
-            }else if(curNodeName=='I'){
-                //deleteCANProject(project,curPanel);
-                closeModal.modal('show');
             }
         });
 
@@ -1208,6 +1122,9 @@ $(function(){
                     success:function(data,status,xhr){
                         var newCANProject = JSON.parse(data);
                         addNewCANProject(newCANProject);
+                    },
+                    error:function(err){
+                        toastr.error(err.responseJSON.errMsg)
                     }
                 })
             }
@@ -1325,62 +1242,96 @@ $(function(){
 
     /**
      * @author tang
-     * 分类相关方法
+     * 项目分类
      */
-    var folder;
-    var folderList;
-    var deleteFolderModal=$('#deleteFolderModal');
-    var deleteFolderConfirm=$('#deleteFolderConfirm');
-    $('#projectlist').on('click','.folderPanel',function(e){
-        curFolder=$(this);
-        var fol = curFolder.attr('data-folder');
-        fol = JSON.parse(fol);
-        folder=fol;
-        var point=e.target.nodeName;
+    var folder,
+        folderList,
+        deleteFolderModal=$('#delete-folder-modal'),
+        deleteFolderConfirm=$('#deleteFolderConfirm'),
+        projectList = $('#project-list'),
+        folderWrap = $('#folder-space-wrap'),
+        projectWrap = $('#project-list-wrap');
 
-        if(point=='I'){
-            deleteFolderModal.modal('show');
-        }else if(point=='IMG'){
-            var url = '/folder/'+folder._id+'/space';
-            window.open(url,"_self");
-        }
-    });
-    deleteFolderConfirm.on('click',function(){
-       deleteFolder(folder,curFolder);
-    });
-    $('#addFolder').on('click',function(){
+    //创建、修改项目
+    $('#add-folder').on('click',function(){
         $('#folder-ok').html('创建');
         $('#folder-title').val('');
         $('#folder-author').val('');
     });
     $('#folder-ok').on('click',changeFolder);
-    $.contextMenu({
-        selector:'.folderPanel',
-        build:function($trigger,e){
-            return{
-                items:{
-                    "folderInfo":{name:"修改信息"},
-                    "sep1":"---------",
-                    "deleteFolder":{name:"删除项目"}
-                }
-            }
-        },
-        callback:function(key){
-            curFolder=$(this);
-            var fol = curFolder.attr('data-folder');
-            fol = JSON.parse(fol);
-            folder=fol;
 
-            switch (key){
-                case 'folderInfo':
-                    showFolderInfo($(this));
-                    break;
-                case 'deleteFolder':
-                    deleteFolderModal.modal('show');
-                    break;
+    //打开项目
+    projectList.on('click','.open-folder',function(e){
+        curFolder=$(this).parents('.folder-panel');
+        var fol = curFolder.attr('data-folder');
+        fol = JSON.parse(fol);
+        folder=fol;
+        $.ajax({
+            url:'/folder/space',
+            type:'post',
+            data: {folderId:folder._id},
+            success: function (data) {
+                if (data) {
+                    folderWrap.show();
+                    projectWrap.hide();
+                    data = JSON.parse(data);
+                    var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder});
+                    folderWrap.find('.folder-space-list').replaceWith(html);
+                    $('#add-project').attr('folder-id',data.folder.id);
+                }
+            },
+            error:function (err) {
+                console.log(err);
             }
+
+        })
+    });
+
+    var addFolder = $('#add-folder');
+
+    window.addEventListener('hashchange',function () {
+        if (location.hash === '') {
+            folderWrap.hide();
+            addFolder.show();
+            projectWrap.show();
+            $('#add-project').attr('folder-id','');
+        }else {
+            folderWrap.show();
+            addFolder.hide();
+            projectWrap.hide();
         }
     });
+
+    //删除确认按钮
+    projectList.on('click','.delete-folder',function(){
+        curFolder=$(this).parents('.folder-panel');
+        var fol = curFolder.attr('data-folder');
+        fol = JSON.parse(fol);
+        folder=fol;
+        $('.folder-delete__prompt').text(fol.name);
+        deleteFolderModal.modal('show');
+    });
+    deleteFolderConfirm.on('click',function(){
+        deleteFolder(folder,curFolder);
+    });
+
+    //编辑项目
+    projectList.on('click','.edit-folder',function(){
+        curFolder=$(this).parents('.folder-panel');
+        var fol = curFolder.attr('data-folder');
+        fol = JSON.parse(fol);
+        folder=fol;
+        showFolderInfo(curFolder);
+    });
+    function showFolderInfo(cur){
+        $('#folder-ok').html('确认');
+        var fol = cur.attr('data-folder');
+        fol = JSON.parse(fol);
+        curFolder=cur;
+        $('#folder-title').val(fol.name);
+        $('#folder-author').val(fol.author);
+        $('#folder-info-modal').modal('show');
+    }
 
     function changeFolder(){
         if($(this).html()==='确认'){
@@ -1408,7 +1359,8 @@ $(function(){
             success: function (data, status, xhr) {
                 var newFolder = JSON.parse(data);
                 var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:newFolder});
-                $('#addproject').after(html);
+                projectList.prepend(html);
+                if($('#project-empty').css('display')=='block'){$('#project-empty').hide()}
             },
             error: function (err, status, xhr) {
                 console.log(err)
@@ -1420,7 +1372,6 @@ $(function(){
         var author=$('#folder-author');
         name=name.val().trim();
         author=author.val().trim();
-
         var folder = curFolder.attr('data-folder');
         folder = JSON.parse(folder);
 
@@ -1435,11 +1386,11 @@ $(function(){
                 type:'POST',
                 url:'/folder/update',
                 data:folder,
-                success: function (data, status, xhr) {
+                success: function (data) {
                     var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:folder});
-                    curFolder.replaceWith(html)
+                    curFolder.replaceWith(html);
                 },
-                error: function (err, status, xhr) {
+                error: function (err) {
                     console.log('err',err);
                     alert('修改失败')
                 }
@@ -1452,22 +1403,13 @@ $(function(){
             url:'/folder/delete',
             data:{folderId:folder._id},
             success:function (data, status, xhr){
-                curFolder.remove()
+                curFolder.remove();
             },
             error: function (err, status, xhr) {
                 console.log(err);
                 alert('删除失败')
             }
         })
-    }
-    function showFolderInfo(cur){
-        $('#folder-ok').html('确认');
-        var fol = cur.attr('data-folder');
-        fol = JSON.parse(fol);
-        curFolder=cur;
-        $('#folder-title').val(fol.name);
-        $('#folder-author').val(fol.author);
-        $('#myFolderModal').modal('show');
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();
@@ -1506,9 +1448,87 @@ $(function(){
             url:'/project/moveToClass',
             data:project,
             success:function(data){
-                console.log(data);
                 curPanel.remove();
             }
         })
     }
+
+    /*分享工程*/
+    var shareModal = $('#share-project-modal');
+
+    /*var socket = io(path||'');
+     socket.on('connect',function(){});*/
+
+    var shareButton = $('#share-button'),
+        shareUrl = $('#share-url'),
+        shareKey = $('#share-key'),
+        reddOnlyKye = $('#readOnly-key'),
+        shareWrap = $('#share-wrap'),
+        projectShared = false,
+        projectData = null,
+        sharedOwn = false;
+
+    listWrap.on('click','.share-project',function(){
+        var project = $(this).parents('.project-panel').attr('data-project');
+        projectData = JSON.parse(project);
+        var projectId = projectData._id;
+        var ideVersion = projectData.ideVersion?'?ideVersion='+projectData.ideVersion:'';
+        var openUrl = window.location.origin+'/project/'+projectId+'/editor'+ideVersion;
+        shareUrl.html("路径："+openUrl);
+        $.ajax({
+            type:'GET',
+            url:'/project/' + projectId + '/share',
+            success:function(data){
+                data = JSON.parse(data);
+                projectShared = data.shared;
+                sharedOwn = data.own;
+                shareKey.html("密码："+data.sharedKey);
+                reddOnlyKye.html("只读密码："+data.readOnlySharedKey);
+
+                if(projectShared){
+                    shareButton.html('取消分享');
+                    shareWrap.show();
+                }else{
+                    shareButton.html('开始分享');
+                    shareWrap.hide();
+                }
+            },
+            error:function(err){
+                console.log(err);
+                alert('加载出错');
+            }
+        });
+
+        shareModal.modal('show');
+    });
+
+    shareButton.on('click',function(){
+        var projectId = projectData._id;
+        projectShared = !projectShared;
+        $.ajax({
+            type:'POST',
+            url:'/project/' + projectId + '/share',
+            data:{
+                share:projectShared
+            },
+            success:function(data){
+                data = JSON.parse(data);
+                projectShared = data.shared;
+                sharedOwn = data.own;
+                shareKey.html("密码："+data.sharedKey);
+                reddOnlyKye.html("只读密码："+data.readOnlySharedKey);
+
+                if(projectShared){
+                    shareButton.html('取消分享');
+                    shareWrap.show();
+                }else{
+                    shareButton.html('开启分享');
+                    shareWrap.hide();
+                }
+            },
+            error:function(err){
+                console.log(err);
+            }
+        });
+    })
 });

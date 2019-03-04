@@ -90,6 +90,11 @@ ideServices.
     };
 
 
+    this.DoSave = function(){
+        // will have implementaion when navcontroller load
+    }
+
+
     var deleting=false;     //删除中标志位,防止连续删除
     this.DoDelete= function (_callback) {
         if (!_self.getDeleteStatus()){

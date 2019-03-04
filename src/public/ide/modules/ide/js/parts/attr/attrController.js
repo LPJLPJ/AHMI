@@ -37,26 +37,39 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
         };
 
         $scope.widgetIcon={
-            MySlide:"&#xe6e0;",
-            MySwitch:"&#xe64e;",
-            MyProgress:"&#xe62a;",
-            MyDashboard:"&#xe632;",
-            MyRotateImg:"&#xe64f;",
-            MyDateTime:"&#xe64d;",
-            MyNum:"&#xe631;",
-            MyTextArea:"&#xe62f;",
-            MyButton:"&#xe658;",
-            MySlideBlock:"&#xe77e;",
-            MyButtonGroup:"&#xe637;",
-            MyScriptTrigger:"&#xe7d0;",
-            MyVideo:"&#xe6ad;",
-            MyAnimation:"&#xe633;",
-            MyTexNum:"&#xe675;",
-            MyTexTime:"&#xe655;",
-            MyAlphaImg:"&#xe6e0;"
-            /*MyAlphaSlide:"&#xe669;"*/
+            MySlide:"slide",
+            MySwitch:"switch",
+            MyProgress:"progress",
+            MyDashboard:"dashboard",
+            MyRotateImg:"rotate-img",
+            MyDateTime:"time",
+            MyNum:"num",
+            MyTextArea:"text",
+            MyButton:"button",
+            MySlideBlock:"slide-block",
+            MyButtonGroup:"button-group",
+            MyScriptTrigger:"script-trigger",
+            MyVideo:"video",
+            MyAnimation:"animation",
+            MyTexNum:"tex-num",
+            MyTexTime:"tex-time",
+            MyTouchTrack:"touch-track",
+            MyAlphaSlide:"alpha-slide",
+            MyTextInput:"text-input",
+            MyGallery:"gallery",
+            MyAlphaImg:"alpha-img",
+            MyButtonSwitch:'button-switch'
         };
     }
+
+    $scope.showRight = function() {
+        $scope.$emit('ChangeShownArea', 1);
+    };
+
+    $scope.showBottom = function() {
+        $scope.$emit('ChangeShownArea', 2);
+    };
+
 
     function initProject(){
         $timeout(function () {
@@ -89,7 +102,6 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
                 pageIndex=index;
             }
         });
-        logs.push('选择了第'+pageIndex+'个页面');
         console.log('选择了第' + pageIndex + '个页面');
         ProjectService.OnPageSelected(pageIndex,function () {
             $scope.$emit('ChangeCurrentPage',null, function () {

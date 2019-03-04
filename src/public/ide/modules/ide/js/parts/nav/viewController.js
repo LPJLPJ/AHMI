@@ -127,7 +127,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
         function startIntro() {
             var intro = new SXIntro()
                 .setIntro([{
-                    tooltip: '<h4>导航栏</h4><p>1.在文件菜单中可以对工程进行基本操作</p> <p>2.在开始菜单中有基本操作按钮</p><p>3.编辑中有常用辅助操作功能</p>  <p>4.在格式中可以选择字体</p> <p>5.视图能够显示或隐藏侧边栏, 帮助栏中有丰富的资料</p>',
+                    tooltip: '<h4>导航栏</h4><p>1.在文件菜单中可以对工程进行基本操作</p> <p>2.在编辑菜单中有基本操作按钮和常用辅助操作功能</p> <p>3.视图栏中有辅助开发的工具</p><p>4.帮助栏中有丰富的资料</p>',
                     position: 'bottom'
                 }, {
                     tooltip: '<h4>页面缩略图栏</h4> <p>在这里您可以点击+号新增一个页面</p> <p>也可以通过缩略图选择页面，甚至可以拖动页面进行排序！</p>',
@@ -149,7 +149,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
             var intro = new SXIntro(null, {flag: 'data-step-c1'})
                 .setIntro([{
                     index: 1,
-                    tooltip: '<h4>添加画布</h4><p>你好~接下来让我们开始一个简单的DEMO工程</p> <p>1.请点击导航栏上的开始栏目</p><p>2.请点击开始栏目下的添加画布按钮</p>',
+                    tooltip: '<h4>添加画布</h4><p>你好~接下来让我们开始一个简单的DEMO工程</p> <p>1.请点击导航栏上的编辑栏目</p><p>2.请点击编辑栏目下的添加画布按钮</p>',
                     position: 'bottom'
                 }, {
                     index: 2,
@@ -157,7 +157,7 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                     position: 'right'
                 }, {
                     index: 3,
-                    tooltip: '<h4>添加控件</h4><p>恭喜你进入画布编辑，现在可以添加控件了</p> <p>1.请点击导航栏上的开始栏目</p><p>2.点击添加控件按钮，并选择按钮控件和仪表盘控件</p>',
+                    tooltip: '<h4>添加控件</h4><p>恭喜你进入画布编辑，现在可以添加控件了</p> <p>1.请点击导航栏上的编辑栏目</p><p>2.点击添加控件按钮，并选择按钮控件和仪表盘控件</p>',
                     position: 'bottom'
                 }, {
                     index: 4,
@@ -166,11 +166,11 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                 }, {
                     index: 5,
                     tooltip: '<h4>新建变量</h4><p>接下来，让我添加一个变量</p> <p>1.请点击属性栏上的变量栏目</p><p>2.点击添加新Tag</p><p>3.输入变量名称:速度</p>',
-                    position: 'bottom',
+                    position: 'bottom'
                 }, {
                     index: 6,
                     tooltip: '<h4>选中控件</h4><p>在层级栏，可以快速的选中某个控件</p> <p>1.请点击NewDashboard以选中仪表盘控件</p>',
-                    position: 'left',
+                    position: 'left'
                 },{
                     index:7,
                     tooltip:'<h4>绑定变量</h4><p>接下来，让我们为这个控件绑定‘速度’变量</p> <p>1.点击属性栏</p><p>2.点击属性栏,并向下滚动，找到‘变量’</p><p>3.点击变量选择器，选中‘速度’变量。此时仪表盘控件已与速度变量相绑定</p>',
@@ -181,15 +181,15 @@ ide.controller('ViewCtl', ['$scope', 'ViewService', 'ProjectService', '$uibModal
                     position:'left'
                 },{
                     index:9,
-                    tooltip:'<h4>为按钮控件设定‘动作’</h4><p>在‘动作’中，可以操作‘变量’</p> <p>1.点击属性栏，并向下滚动，找到‘动作列表’</p><p>2.点击‘action0’，出现配置模态框</p><p>3.触发条件选择‘释放’,点击添加指令</p><p>4.操作选择‘+’。操作数1勾选启用变量，并选择‘速度’变量。操作数2值填入1</p><p>5.点击保存</p>',
+                    tooltip:'<h4>为按钮控件设定‘动作’</h4><p>在‘动作’中，可以操作‘变量’</p> <p>1.点击属性栏，并向下滚动，找到‘动作列表’</p><p>2.点击‘action0’，出现配置模态框</p><p>3.触发条件选择‘释放’,点击添加指令</p><p>4.操作选择‘+’。操作数1选择‘速度’变量。操作数2值填入1</p><p>5.点击保存</p>',
                     position:'bottom'
                 },{
                     index:10,
-                    tooltip:'<h4>仿真运行</h4><p>恭喜你已经完成了DEMO的设计，接下来可以模拟运行</p> <p>1.点击开始栏</p><p>2.点击运行按钮，然后点击运行。会出现仿真页面，接着点击按钮会发现仪表盘指针随之改变。</p>',
+                    tooltip:'<h4>仿真运行</h4><p>恭喜你已经完成了DEMO的设计，接下来可以模拟运行</p> <p>1.点击编辑栏</p><p>2.点击运行按钮，然后点击运行。会出现仿真页面，接着点击按钮会发现仪表盘指针随之改变。</p>',
                     position:'bottom'
                 },{
                     index:11,
-                    tooltip:'<h4>生成下载</h4><p>设计完成，可以生成配置包以供烧录至硬件系统</p> <p>1.点击文件栏</p><p>2.点击保存按钮，提示保存生成</p><p>3.点击生成，会自动下载一个压缩包，选择默认，烧录到硬件系统上试试吧~。</p>',
+                    tooltip:'<h4>生成下载</h4><p>设计完成，可以生成配置包以供烧录至硬件系统</p> <p>1.点击文件栏</p><p>2.点击保存按钮，提示保存成功</p><p>3.点击生成，选择默认，确认后会自动下载一个压缩包，烧录到硬件系统上试试吧~。</p>',
                     position:'bottom'
                 }
 

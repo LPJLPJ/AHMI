@@ -1,7 +1,7 @@
 /**
  * Created by shenaolin on 16/2/26.
  */
-var ide = angular.module('ide', ['ui.bootstrap.contextMenu', 'colorpicker.module', 'btford.modal', 'ui.bootstrap', 'ngAnimate', 'GlobalModule', 'ui.tree', 'IDEServices','ui.select', 'ngSanitize']);
+var ide = angular.module('ide', ['ui.bootstrap.contextMenu', 'colorpicker.module', 'btford.modal', 'ui.bootstrap', 'ngAnimate', 'GlobalModule', 'ui.tree', 'IDEServices','ui.select', 'ngSanitize','ui.sortable']);
 
 
 ide.config(['$compileProvider',
@@ -32,13 +32,14 @@ console.log = (function (console) {
 })(console);
 
 
-var logs = [];
-ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
+
+ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'WaveFilterService','TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
     'socketIOService', 'MiddleWareService', function ($scope, $timeout, $http, $interval,
                                                       ProjectService,
                                                       GlobalService,
                                                       Preference,
                                                       ResourceService,
+                                                      WaveFilterService,
                                                       TagService,
                                                       TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
 
@@ -127,7 +128,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         }
 
         function readUserType() {
-            var userType = 'basic';
+            var userType
             if (window.local) {
                 var userInfoUrl = path.join(__dirname, 'public', 'nw', 'userInfo.json');
                 var userInfo = {
@@ -233,7 +234,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             var templateId = data.template;
             //add templateId to template
             TemplateProvider.setTemplateId(templateId);
-            if (templateId && templateId !== '') {
+            if (templateId) {
                 $http({
                     method: 'GET',
                     url: '/public/templates/defaultTemplate/defaultTemplate.json'
@@ -310,103 +311,74 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //change html title to name
             var name = data && data.name || '';
             document.title = '工程编辑-' + name;
+            var globalProject
             if (data.content) {
                 //var globalProject = GlobalService.getBlankProject()
-                var globalProject = JSON.parse(data.content);
-                timeStamp = Date.now();
-                MiddleWareService.useMiddleWare(globalProject);
-                console.log('time costs in inject Data:', Date.now() - timeStamp);
+                globalProject = JSON.parse(data.content);
+            }else{
+                globalProject = GlobalService.getBlankProject();
+            }
+             
+            var timeStamp = Date.now();
+            MiddleWareService.useMiddleWare(globalProject);
+            console.log('time costs in inject Data:', Date.now() - timeStamp);
 
 
-                var resolution = data.resolution.split('*').map(function (r) {
-                    return Number(r)
-                });
-                globalProject.name = data.name;
-                globalProject.author = data.author;
-                globalProject.initSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.currentSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.maxSize = data.maxSize;
-                globalProject.projectId = id;
-                //console.log('globalProject',globalProject);
-                var resourceList = globalProject.resourceList;
-                // console.log('resourceList',resourceList);
-                var count = resourceList.length;
-                var rLen = resourceList.length
-                var globalResources = ResourceService.getGlobalResources();
-                window.globalResources = globalResources;
+            var resolution = data.resolution.split('*').map(function (r) {
+                return Number(r)
+            });
+            globalProject.name = data.name;
+            globalProject.author = data.author;
+            globalProject.initSize = {
+                width: resolution[0],
+                height: resolution[1]
+            }
+            globalProject.currentSize = {
+                width: resolution[0]+200,
+                height: resolution[1]+100
+            }
+            globalProject.maxSize = data.maxSize;
+            globalProject.projectId = id;
+            globalProject.encoding = data.encoding;
+            //console.log('globalProject',globalProject);
+            var resourceList = globalProject.resourceList;
+            // console.log('resourceList',resourceList);
+            var count = resourceList.length;
+            var rLen = resourceList.length;
+            var globalResources = ResourceService.getGlobalResources();
+            window.globalResources = globalResources;
 
-                var coutDown = function (e, resourceObj) {
-                    if (e.type === 'error') {
-                        // console.log(e)
-                        toastr.warning('资源加载失败: ' + resourceObj.name);
-                        resourceObj.complete = false;
-                    } else {
-                        resourceObj.complete = true;
-                    }
-                    count = count - 1;
-
-                    updateSpinner((rLen - count) / rLen)
-                    if (count <= 0) {
-                        // toastr.info('loaded');
-                        TemplateProvider.saveProjectFromGlobal(globalProject);
-                        syncServices(globalProject);
-                        ProjectService.saveProjectFromGlobal(globalProject, function () {
-
-                            $scope.$broadcast('GlobalProjectReceived');
-
-                        });
-                    }
-                }.bind(this);
-                if (count > 0) {
-                    for (var i = 0; i < resourceList.length; i++) {
-                        var curRes = resourceList[i];
-                        // console.log('caching ',i)
-                        ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
-                    }
+            var coutDown = function (e, resourceObj) {
+                if (e.type === 'error') {
+                    // console.log(e)
+                    toastr.warning('资源加载失败: ' + resourceObj.name);
+                    resourceObj.complete = false;
                 } else {
-                    // console.log(globalProject);
-                    updateSpinner(100)
+                    resourceObj.complete = true;
+                }
+                count = count - 1;
+
+                updateSpinner((rLen - count) / rLen)
+                if (count <= 0) {
+                    // toastr.info('loaded');
                     TemplateProvider.saveProjectFromGlobal(globalProject);
-                    syncServices(globalProject)
+                    syncServices(globalProject);
                     ProjectService.saveProjectFromGlobal(globalProject, function () {
 
                         $scope.$broadcast('GlobalProjectReceived');
 
                     });
                 }
-
-
-                //readCache();
+            }.bind(this);
+            if (count > 0) {
+                for (var i = 0; i < resourceList.length; i++) {
+                    var curRes = resourceList[i];
+                    // console.log('caching ',i)
+                    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
+                }
             } else {
-                //console.log('获取信息失败');
-                //
-                //readCache();
-
-                globalProject = GlobalService.getBlankProject();
-                globalProject.projectId = id;
-                //change resolution
-                //console.log(data);
-                var resolution = data.resolution.split('*').map(function (r) {
-                    return Number(r)
-                })
-                globalProject.initSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.currentSize = {
-                    width: resolution[0],
-                    height: resolution[1]
-                }
-                globalProject.maxSize = data.maxSize;
-                console.log('globalProject new', _.cloneDeep(globalProject));
-
-
+                // console.log(globalProject);
+                updateSpinner(1)
                 TemplateProvider.saveProjectFromGlobal(globalProject);
                 syncServices(globalProject)
                 ProjectService.saveProjectFromGlobal(globalProject, function () {
@@ -414,7 +386,9 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     $scope.$broadcast('GlobalProjectReceived');
 
                 });
-            }
+            } 
+
+
         }
 
         function loadFromBlank(options, id) {
@@ -490,18 +464,18 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             }, 200)
         }
 
-        function getUrlParams() {
-            var result = {};
-            var params = (window.location.search.split('?')[1] || '').split('&');
-            for (var param in params) {
-                if (params.hasOwnProperty(param)) {
-                    var paramParts = params[param].split('=');
-                    result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
-                }
-            }
-            console.log(result);
-            return result;
-        }
+        // function getUrlParams() {
+        //     var result = {};
+        //     var params = (window.location.search.split('?')[1] || '').split('&');
+        //     for (var param in params) {
+        //         if (params.hasOwnProperty(param)) {
+        //             var paramParts = params[param].split('=');
+        //             result[paramParts[0]] = decodeURIComponent(paramParts[1] || "");
+        //         }
+        //     }
+        //     console.log(result);
+        //     return result;
+        // }
 
         function reLogin(_callback, _errCallback) {
             $http({
@@ -525,11 +499,11 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 // var pid=result.user.projects[0].pid;
                 // PID=pid;
 
-                _callback && _callback(result);
+                _callback && _callback();
             }).error(function (err) {
                 _errCallback && _errCallback(err);
             });
-        };
+        }
 
         function refreshLoginStatus() {
             if (!window.local) {
@@ -863,6 +837,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         function syncServices(globalProject) {
             ResourceService.setMaxTotalSize(globalProject.maxSize || 100 * 1024 * 1024);
             ResourceService.syncFiles(globalProject.resourceList);
+            WaveFilterService.syncWaveFilters(globalProject.waveFilterList)
             //tags tbc
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);
@@ -931,7 +906,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //    ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
             //}
             if (totalNum > 0) {
-                templateList.map(function (curRes, index) {
+                templateList.forEach(function (curRes, index) {
                     ResourceService.cacheFileToGlobalResources(curRes, coutDown, coutDown);
                 });
             } else {
@@ -989,7 +964,6 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             i = 0;
             var pageLength = tempContentObj.pages.length;
             var page;
-            var index;
             var ergodicPages = function () {
                 page = null;
                 page = tempContentObj.pages[i];
@@ -1126,8 +1100,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                 }
                             });
                         }, {
-                            width: pageNode.getWidth(),
-                            height: pageNode.getHeight()
+                            width: tempContentObj.initSize.width,
+                            height: tempContentObj.initSize.height
                         });
                     } else {
                         pageNode.setBackgroundImage(null, function () {
@@ -1441,8 +1415,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
 
         function closeWebPage() {
-            if (navigator.userAgent.indexOf("MSIE") > 0) {
-                if (navigator.userAgent.indexOf("MSIE 6.0") > 0) {
+            if (navigator.userAgent.includes("MSIE")) {
+                if (navigator.userAgent.includes("MSIE 6.0")) {
                     window.opener = null;
                     window.close();
                 } else {
@@ -1450,7 +1424,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     window.top.close();
                 }
             }
-            else if (navigator.userAgent.indexOf("Firefox") > 0) {
+            else if (navigator.userAgent.includes("Firefox")) {
                 window.location.href = 'about:blank ';
             } else {
                 window.opener = null;

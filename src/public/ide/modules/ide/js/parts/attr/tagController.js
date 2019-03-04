@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService, Type, $uibModal,$http,$q) {
+ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService,Type, $uibModal,$http,$q) {
     $scope.selectedIdx = -1;
     $scope.animationsEnabled = true;
     $scope.component = {
@@ -39,7 +39,10 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         regCheckboxClick: regCheckboxClick,
 
         importTags: importTags,
-        generateExcel: generateExcel
+        generateExcel: generateExcel,
+        showTagBindStatus:showTagBindStatus,
+
+        editRemark: editRemark
     };
 
     $scope.$on('GlobalProjectReceived', function () {
@@ -49,7 +52,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     //导入tags事件
     $scope.$on('syncTagSuccess', function (event, data) {
         data = data || [];
-        data.map(function (item) {
+        data.forEach(function (item) {
             addTagToTagClass(item, $scope.component.curTagClassName);
         });
 
@@ -715,12 +718,12 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     //regCheckboxClick
     function regCheckboxClick(tag) {
-        if ($scope.component.curTagClassName !== $scope.component.tagClasses[0].name) {
+        /*if ($scope.component.curTagClassName !== $scope.component.tagClasses[0].name) {
             var index = IndexInTagClass(tag.name, $scope.component.tagClasses[0]);
             TagService.editTagByIndex(index, tag, function () {
                 readTagsInfo();
             });
-        }
+        }*/
     }
 
     /**
@@ -897,6 +900,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     function generateExcel(){
             var modalInstance = $uibModal.open({
                 templateUrl: 'generateExcel.html',
+                size: 'md',
                 controller: ['$scope','$uibModalInstance',function($scope,$uibModalInstance){
                     $scope.ok = function(){
                         generateTagExcel();
@@ -962,18 +966,56 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         window.location.href = '/project/' + project.projectId + '/downloadTagExcel';
     }
 
+    function showTagBindStatus(index){
+        var targetTag = $scope.component.curTagClass.tagArray[index].name;
+        TagService.getBindElement(targetTag,$scope.project,function(tagData){
+            $scope.tagBindStatusArr = tagData;
+        });
+    }
+
+    //定时器备注
+    function editRemark(index){
+        var selectTimer = $scope.component.allTimerTags[index];
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'editRemark.html',
+            size:'md',
+            controller: ['$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
+                $scope.remarkInfo = selectTimer.remark;
+                $scope.save = function () {
+                    $uibModalInstance.close($scope.remarkInfo);
+                };
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss('cancel');
+                };
+            }]
+        });
+
+        modalInstance.result.then(function (remarkInfo) {
+            selectTimer.remark = remarkInfo;
+            TagService.editTimerTagByIndex(index, selectTimer, function () {
+                readTagsInfo();
+            });
+        });
+    }
+
+
 }]);
 
 /**
  * tag模态框控制器
  */
-ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 'ProjectService', 'tag', 'type', 'index', function ($scope, $uibModalInstance, TagService, ProjectService, tag, type, index) {
+ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 'ProjectService','WaveFilterService', 'tag', 'type', 'index', function ($scope, $uibModalInstance, TagService, ProjectService, WaveFilterService,tag, type, index) {
 
     $scope.option1 = 1;
     $scope.tag = tag;
     $scope.type = type;
     $scope.showForceEditBtn = false;
     showBindBit();
+
+    $scope.getWaveFilters = function(){
+        return WaveFilterService.getWaveFilters()
+    }
 
     //保存
     $scope.save = function (th) {
@@ -1119,6 +1161,8 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
         $scope.bindBits.sort(function(a,b){return a-b});
     }
 
+
+    
 }]);
 
 /**
@@ -1187,6 +1231,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyButtonGroup:
+            case Type.MyGallery:
             case Type.MyLayer:
             case Type.MyPage:
             case Type.MyNum:
@@ -1197,10 +1242,14 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyRotateImg:
             case Type.MyScriptTrigger:
             case Type.MySlideBlock:
-            //case Type.MyVideo:
+            case Type.MyVideo:
             case Type.MyAnimation:
             case Type.MyTexNum:
+            case Type.MyTouchTrack:
             case Type.MyAlphaImg:
+            case Type.MyTextInput:
+            case Type.MyButton:
+            case Type.MyButtonSwitch:
                 $scope.component.showTagPanel = true;
                 break;
             default:
@@ -1210,8 +1259,13 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
 
     //选择tag，并将其绑定到当前对象上
     function selectedTagFun() {
-        var selectObject = ProjectService.getCurrentSelectObject();
         $scope.component.selectedTag = $scope.selectedTagObj.tagName;
+        ProjectService.getProjectCopyTo($scope);
+        TagService.checkBindTag($scope.component.selectedTag,$scope.project,function(bindNum){
+            if(bindNum){
+                toastr.warning('此Tag已被第'+bindNum+'次绑定');
+            }
+        });
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);
         });

@@ -21,7 +21,7 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
     var tLeaveHighAlarm = new Trigger('离开高警报','LeaveHighAlarm');
     var tEnter = new Trigger('进入','Enter');
     var tLeave = new Trigger('离开','Leave');
-    var tTagChange = new Trigger('Tag改变','TagChange')
+    var tTagChange = new Trigger('Tag改变','TagChange');
 
 
 
@@ -56,19 +56,27 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyButton:
                 triggers = [tRelease];
                 break;
+            case Type.MyButtonSwitch:
+                triggers = [tRelease];
+                break;
             case Type.MyButtonGroup:
                 triggers = [tRelease];
+                break;
+            case Type.MySlideBlock:
+                triggers = [tRelease,tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm,tTagChange];
                 break;
             case Type.MyScriptTrigger:
             case Type.MyProgress:
             case Type.MyDashboard:
             case Type.MyNum:
-            case Type.MySlideBlock:
             case Type.MyTexNum:
                 triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm,tTagChange];
                 break;
+            case Type.MyTouchTrack:
+                triggers = [tTagChange];
+                break;
             default:
-                triggers = [tEnter,tLeave]
+                triggers = [tEnter,tLeave];
         }
         return triggers;
     };

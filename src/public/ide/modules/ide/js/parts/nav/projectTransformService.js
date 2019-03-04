@@ -4,6 +4,14 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
 
     var tagList;
 
+    var supportedEncodings = {
+        ascii:'ascii',
+        'utf-8':'utf-8',
+        'gb2312':'gb2312'
+    };
+
+    var curProjectEncoding = supportedEncodings.ascii;
+
     function transCmds(cmds,changelt){
         // actionCompiler
         var reg = new RegExp("^-?[0-9]*$");
@@ -19,15 +27,30 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
             }
         };
 
+        // cmds.forEach(function(cmd){
+        //     cmd.forEach(function(op){
+        //         if(op.hasOwnProperty('value')){
+        //             if(!reg.test(op.value)&&!!op.value){
+        //                 //值为字符串
+        //                 var u8Value = convertStrToUint8Array(op.value,curProjectEncoding).slice(0,32)
+        //                 op.valueArray = convertUint8ArrayToArray(u8Value)
+        //             }
+        //         }
+        //     })
+        // });
+
+        //string related value to string buffer
         cmds.forEach(function(cmd){
-            cmd.forEach(function(op){
-                if(op.hasOwnProperty('value')){
-                    if(!reg.test(op.value)&&!!op.value){
+            if(cmd[0]&&cmd[0].name=='SET_STR'){
+                cmd.forEach(function(op){
+                    if(op.hasOwnProperty('value')){
                         //值为字符串
-                        op.value = convertStrToUint8Array(op.value,supportedEncodings.ascii)
+                        var u8Value = convertStrToUint8Array(op.value,curProjectEncoding).slice(0,32)
+                        op.valueArray = convertUint8ArrayToArray(u8Value)
                     }
-                }
-            })
+                })
+            }
+            
         });
 
         return actionCompiler.transformer.trans(actionCompiler.parser.parse(cmds),changelt);
@@ -50,7 +73,9 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.version = rawProject.version;
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
-        targetProject.size = rawProject.currentSize;
+        targetProject.encoding = rawProject.encoding
+        targetProject.size = rawProject.initSize;
+        curProjectEncoding = rawProject.encoding;
         //add last save info
         targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
         targetProject.lastSaveUUID = rawProject.lastSaveUUID;
@@ -171,7 +196,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;
         targetProject.lastSaveUUID = rawProject.lastSaveUUID;
 
-        targetProject.size = rawProject.currentSize;
+        targetProject.size = rawProject.initSize;
         var pages = rawProject.pages;
         targetProject.pages = [];
         for (var i=0;i<pages.length;i++){
@@ -240,16 +265,20 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
      * use for trans string type tag
      */
 
-    var supportedEncodings = {
-        ascii:'ascii',
-        'utf-8':'utf-8'
-    };
+    function convertUint8ArrayToArray(u8Array){
+        var arr = []
+        for(var i=0;i<u8Array.length;i++){
+            arr.push(u8Array[i])
+        }
+        return arr
+    }
 
     var convertStrToUint8Array=function (str,encoding) {
         encoding = encoding || supportedEncodings.ascii;
         var uint8array;
         switch (encoding) {
             case supportedEncodings.ascii:
+            case supportedEncodings.gb2312:
                 uint8array = new TextEncoder(encoding, {NONSTANDARD_allowLegacyEncoding: true}).encode(str);
                 break;
             case supportedEncodings['utf-8']:
@@ -267,6 +296,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         switch (encoding){
             case supportedEncodings.ascii:
             case supportedEncodings['utf-8']:
+            case supportedEncodings.gb2312:
                 str = new TextDecoder(encoding).decode(buf);
                 break;
 

@@ -310,7 +310,7 @@ ideServices
 
         this.appendFileUnique = function (file, noDuplication, cb) {
             if (noDuplication(file,files)) {
-                files.push(file);
+                files.unshift(file);
                 cb && cb();
             }
 
@@ -473,7 +473,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
             var baseUrl = ResourceService.getResourceUrl()
 
             scope.uploadFiles = function (files) {
-
                 if (files && files.length){
                     files = files.filter(isValidFile);
 
@@ -501,6 +500,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     case 'woff':
                         return true;
                     default:
+                        toastr.warning('不支持'+fileExt+'格式');
                         return false;
 
                 }
@@ -554,7 +554,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     }.bind(this));
                 };
 
-                var errHandler = function () {
+                var errHandler = function (err) {
                     translatedFile.progress = '上传失败';
                     deleteUploadingItem(translatedFile);
 
@@ -774,7 +774,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 ideServices.directive("maskform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
     return {
         restrict:'AE',
-        template:"<input type='file' ngf-select='uploadFiles($file)'  ngf-multiple='true' />",
+        template:"<input type='file' ngf-select='upload($file)'  ngf-multiple='true' />",
         replace:'true',
         link: function (scope) {
             var path;
@@ -788,7 +788,7 @@ ideServices.directive("maskform", ['uploadingService','idService','ResourceServi
 
             }
 
-            scope.uploadFiles = function (file) {
+            scope.upload = function (file) {
                 if (file){
                     if(isValidFile(file)){
                         var translatedFile = transFile(file);

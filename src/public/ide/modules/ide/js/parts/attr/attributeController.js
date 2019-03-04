@@ -34,7 +34,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     {name: 'SCALE', show: '缩放'}
                 ],
                 transitionName: null,
-
+                timingFun: '',
+                timingFuns: ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'],
                 page: {
                     enterImage: enterBackgroundImage,
                     selectImage: 'demo20.png',
@@ -63,11 +64,22 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterButtonMode: enterButtonMode,
                     enterArrange: enterArrange
                 },
+                buttonSwitch: {
+                    enableAnimationModeId: '0'
+                },
                 buttonGroup: {
                     enterInterval: enterInterval,
                     enterButtonCount: enterButtonCount,
                     enterArrange: enterArrange,
                     highlightModeId: '0'
+                },
+                gallery:{
+                    enableAnimationModeId: '0',
+                    // enterInterval:enterInterval,
+                    enterCurValue:enterCurValue,
+                    enterPhotoWidth:enterPhotoWidth,
+                    enterCount:enterCount,
+                    enterArrange:enterArrange
                 },
                 progress: {
                     progressModeId: '0',
@@ -120,6 +132,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterMaxCoverAngle: enterMaxCoverAngle
                 },
                 textArea: {
+                    enterText: enterText,
+                    selectCharacterSetByIndex: selectCharacterSetByIndex,
+                    selectCharacterSetByName: selectCharacterSetByName,
+                    addCharacterSet: addCharacterSet,
+                    deleteCharacterSetByIndex: deleteCharacterSetByIndex,
+                    enterArrange: enterArrange
+                },
+                textInput: {
                     enterText: enterText,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,
@@ -311,7 +331,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 //滑块
                 slideBlock: {
                     enterInitValue: enterInitValue,
-                    enterArrange: enterArrange
+                    enterArrange: enterArrange,
+                    enterSlideBlockMode:enterSlideBlockMode,
+                    slideBlockModeId:'0',
+                    slideBlockModes: [
+                        {id: '0', name: '普通模式'},
+                        {id: '1', name: '复杂模式'}
+                    ]
                 },
                 //视频
                 video: {
@@ -376,10 +402,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterMaxAlert: enterMaxAlert,
                 restore: restore,
                 changeTransitionName: changeTransitionName,
+                changeTimingFun: changeTimingFun,
                 changeTransitionDur: changeTransitionDur,
                 enterHighlightMode: enterHighlightMode,
                 enterEnableAnimationMode: enterEnableAnimationMode,
-                enterSpacing: enterSpacing
+                enterSpacing: enterSpacing,
+                enterHalfSpacing:enterHalfSpacing
             };
             $scope.animationsDisabled = UserTypeService.getAnimationAuthor()
         }
@@ -450,21 +478,22 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     case Type.MyLayer:
                         //调整Layer的ShowSubLayer
                         $scope.component.layer.selectModel = $scope.component.object.level.showSubLayer.id;
-                        // if ((typeof $scope.component.object.level.transition) !== 'object') {
-                        //     ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                        //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
-                        // }
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
+                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyPage:
                         //调整Page的背景图
                         $scope.component.page.selectImage = $scope.component.object.level.backgroundImage;
-                        // if ((typeof $scope.component.object.level.transition) !== 'object') {
-                        //     ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
-                        //     $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
-                        // }
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
+                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        }
                         $scope.component.transitionName = $scope.component.object.level.transition.name;
-
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         //matte add tang
                         if ($scope.component.object.level.matte) {
                             $scope.component.matte.matteOn = $scope.component.object.level.matte.matteOn;
@@ -550,6 +579,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.backgroundModeId = '0';
                         //     $scope.component.object.level.backgroundModeId = '0';
                         // }
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyTextArea:
                         $scope.component.textArea.arrangeModel = $scope.component.object.level.info.arrange;
@@ -567,6 +597,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.button.highlightModeId = '1';
                         }
                         break;
+                    case Type.MyButtonSwitch:
+                        if ($scope.component.object.level.info.enableAnimation === false) {
+                            $scope.component.buttonSwitch.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.buttonSwitch.enableAnimationModeId = '0'
+                        }
+                        break;
                     case Type.MyButtonGroup:
                         $scope.component.buttonGroup.arrangeModel = $scope.component.object.level.info.arrange;
                         // if ($scope.component.object.level.info.disableHighlight === undefined) {
@@ -579,6 +616,19 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.buttonGroup.highlightModeId = '1';
                         }
                         break;
+                    case Type.MyGallery:
+                        if (!$scope.component.object.level.info.enableAnimation||$scope.component.object.level.info.enableAnimation === false) {
+                            $scope.component.gallery.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.gallery.enableAnimationModeId = '0'
+                        }
+                        if ((typeof $scope.component.object.level.transition) !== 'object') {
+                            ProjectService.AddAttributeTransition(_.cloneDeep($scope.defaultTransition));
+                            $scope.component.object.level.transition = _.cloneDeep($scope.defaultTransition);
+                        }
+                        //$scope.component.transitionName = $scope.component.object.level.transition.name;
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
+                    break;
                     case Type.MyNum:
                         $scope.component.num.numModeId = $scope.component.object.level.info.numModeId;
                         $scope.component.num.symbolMode = $scope.component.object.level.info.symbolMode;
@@ -612,6 +662,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.transition.duration = 0;
                         //     $scope.component.object.level.transition.duration = 0;
                         // }
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyTexNum:
                         $scope.component.texNum.numModeId = $scope.component.object.level.info.numModeId;
@@ -648,6 +699,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     selectObject.level.transition.duration = 0;
                         //     $scope.component.object.level.transition.duration = 0;
                         // }
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
                         break;
                     case Type.MyDateTime:
                         $scope.component.dateTime.arrangeModel = $scope.component.object.level.info.arrange;
@@ -679,6 +731,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MySlideBlock:
                         $scope.component.slideBlock.arrangeModel = $scope.component.object.level.info.arrange;
+                        $scope.component.slideBlock.slideBlockModeId = $scope.component.object.level.info.slideBlockModeId;
                         break;
                     case Type.MyVideo:
                         $scope.component.video.sourceId = $scope.component.object.level.info.source;
@@ -751,6 +804,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     break;
                 }
             }
+            ProjectService.ChangeAttributeTransition(option);
+
+        }
+
+        function changeTimingFun() {
+            var option = {
+                timingFun: $scope.component.timingFun
+            };
             ProjectService.ChangeAttributeTransition(option);
 
         }
@@ -833,14 +894,31 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     toastr.warning('未改变值' + $scope.component.object.level.info.left);
                     return;
                 }
+
+                var isWidget = Type.isWidget($scope.component.object.level.type)
+                if(isWidget){
+                    //whether absoluteX absoluteY overflow
+                    var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
+                    if(futureAbsolutePos&&(futureAbsolutePos.absoluteX<-2000||futureAbsolutePos.absoluteX>2000)){
+                        toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
+                        restore();
+                        return;
+                    }
+                }
+
+                
+
                 var option = {
                     left: xCoor
                 };
 
                 ProjectService.ChangeAttributePosition(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
-                    var currentWidgetInfo = $scope.component.object.level.info;
-                    ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    if(isWidget){
+                        var currentWidgetInfo = $scope.component.object.level.info;
+                        ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    }
+                    
                 })
 
             }
@@ -856,22 +934,40 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     return;
                 }
                 if (yCoor < -2000 || yCoor > 2000) {
-                    toastr.warning('超出范围');
+                    toastr.warning('超出范围，相对坐标范围-2000 ~ 2000');
                     restore();
                     return;
                 }
                 //判断是否有变化
                 if (yCoor == initObject.level.info.top) {
+                    toastr.warning('未改变值' + $scope.component.object.level.info.top);
                     return;
                 }
+
+
+                var isWidget = Type.isWidget($scope.component.object.level.type)
+                if(isWidget){
+                    //whether absoluteX absoluteY overflow
+                    var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
+                    if(futureAbsolutePos&&(futureAbsolutePos.absoluteY<-2000||futureAbsolutePos.absoluteY>2000)){
+                        toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
+                        restore();
+                        return;
+                    }
+                }
+                
+
                 var option = {
                     top: yCoor
                 };
 
                 ProjectService.ChangeAttributePosition(option, function (oldOperate) {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
-                    var currentWidgetInfo = $scope.component.object.level.info;
-                    ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    if(isWidget){
+                        var currentWidgetInfo = $scope.component.object.level.info;
+                        ProjectService.setAbsolutePosition(currentWidgetInfo);
+                    }
+                    
                 })
 
             }
@@ -889,13 +985,19 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     return;
                 }
                 if (xCoor < -2000 || xCoor > 2000) {
-                    toastr.warning('超出画布范围');
+                    toastr.warning('超出画布范围，必须是-2000 ~ 2000');
                     $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
                     return;
                 }
                 //判断是否有变化
                 if (absoluteX == $rootScope.position.initAbsoluteX) {
                     toastr.warning('未改变值' + $rootScope.position.absoluteX);
+                    return;
+                }
+
+                if (absoluteX < -2000 || absoluteX > 2000) {
+                    toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
+                    $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
                     return;
                 }
                 var option = {
@@ -928,6 +1030,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 //判断是否有变化
                 if (absoluteY == $rootScope.position.initAbsoluteY) {
                     toastr.warning('未改变值' + $rootScope.position.absoluteY);
+                    return;
+                }
+                if (absoluteY < -2000 || absoluteY > 2000) {
+                    toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
+                    $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
                     return;
                 }
                 var option = {
@@ -1179,6 +1286,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             var selectObj = ProjectService.getCurrentSelectObject();
             switch (selectObj.type) {
                 case Type.MyTextArea:
+                case Type.MyTextInput:
                     ProjectService.ChangeAttributeTextContent(option, function () {
                         $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
@@ -1241,10 +1349,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectEnableAnimationMode = $scope.component.num.enableAnimationModeId;
             } else if (selectObj.type === Type.MyTexNum) {
                 selectEnableAnimationMode = $scope.component.texNum.enableAnimationModeId;
+            } else if(selectObj.type === Type.MyGallery){
+                selectEnableAnimationMode = $scope.component.gallery.enableAnimationModeId;
+            } else if(selectObj.type === Type.MyButtonSwitch){
+                selectEnableAnimationMode = $scope.component.buttonSwitch.enableAnimationModeId;
             }
             var option = {
                 enableAnimationModeId: selectEnableAnimationMode
-            }
+            };
             ProjectService.ChangeEnableAnimationMode(option, function (oldOperate) {
                 $scope.$emit('ChangeCurrentPage', oldOperate);
             })
@@ -1271,7 +1383,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             if ($scope.component.object.type == Type.MyPage) {
                 selectImage = $scope.component.page.selectImage;
                 if (!selectImage) {
-                    $scope.component.object.level.backgroundColor = 'rgb(54,71,92)';
+                    $scope.component.object.level.backgroundColor = 'rgb(191,191,191)';
                 }
                 else {
                     $scope.component.object.level.backgroundColor = 'rgb(0,0,0)'
@@ -1397,7 +1509,115 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 };
 
                 var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeButtonCount(option, function () {
+                ProjectService.ChangeAttributeCount(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+        function enterPhotoWidth(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.photoWidth))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.photoWidth == initObject.level.info.photoWidth) {
+                    return;
+                }
+
+                //判断是否在范围内
+                if ($scope.component.object.level.info.photoWidth <= 0
+                    || $scope.component.object.level.info.photoWidth > $scope.component.object.level.info.width) {
+                    toastr.warning('超出范围');
+
+                    restore();
+                    return;
+                }
+                var option = {
+                    photoWidth: $scope.component.object.level.info.photoWidth
+                };
+
+                ProjectService.ChangeAttributePhotoWidth(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+
+        function enterCurValue(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.curValue))) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.curValue == initObject.level.info.curValue) {
+                    return;
+                }
+
+                //判断是否在范围内
+                // if ($scope.component.object.level.info.progressValue < $scope.component.object.level.info.minValue
+                //     || $scope.component.object.level.info.progressValue > $scope.component.object.level.info.maxValue) {
+                //     toastr.warning('超出范围');
+
+                //     restore();
+                //     return;
+                // }
+                var option = {
+                    curValue: $scope.component.object.level.info.curValue
+                };
+
+                ProjectService.ChangeAttributeCurValue(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+
+            }
+        }
+
+        //general enter count
+        function enterCount(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                if (!_.isInteger(parseInt($scope.component.object.level.info.count)) ) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                var interval = $scope.component.object.level.info.interval || 0;
+                var count = $scope.component.object.level.info.count || 0;
+                var width = $scope.component.object.level.info.width || 0;
+                if (interval * (count - 1) > width) {
+                    toastr.warning('配置不合理');
+                    restore();
+                    return;
+                }
+                //判断是否有变化
+                if ($scope.component.object.level.info.count == initObject.level.info.count) {
+                    return;
+                }
+                if ($scope.component.object.level.info.count < 1) {
+                    toastr.warning('至少为1');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    count: parseInt($scope.component.object.level.info.count)
+                    //ignoreHighlight:$scope.component.object.level.type === Type.MyGallery
+                };
+
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.ChangeAttributeCount(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
 
                 })
@@ -1561,10 +1781,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectArrange = $scope.component.textArea.arrangeModel;
             } else if (selectObj.type == Type.MyButton) {
                 selectArrange = $scope.component.button.arrangeModel;
-            } else if (selectObj.type = Type.MyDateTime) {
+            } else if (selectObj.type == Type.MyDateTime) {
                 selectArrange = $scope.component.dateTime.arrangeModel;
-            } else if (selectObj.type = Type.MyTexTime) {
+            } else if (selectObj.type == Type.MyTexTime) {
                 selectArrange = $scope.component.texTime.arrangeModel;
+            } else if (selectObj.type == Type.MyGallery){
+                selectArrange = $scope.component.gallery.arrangeModel;
             } else {
                 return;
             }
@@ -1577,6 +1799,28 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             ProjectService.ChangeAttributeArrange(option, function () {
                 $scope.$emit('ChangeCurrentPage', oldOperate);
 
+            })
+        }
+
+        /**
+         * 切换滑块模式
+         */
+
+        function enterSlideBlockMode(){
+            var selectObj = ProjectService.getCurrentSelectObject();
+            var slideBlockModeId = null;
+            if (selectObj.type == Type.MySlideBlock) {
+                slideBlockModeId = $scope.component.slideBlock.slideBlockModeId;
+            } else {
+                return;
+            }
+            var option = {
+                slideBlockModeId:slideBlockModeId
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeSlideBlockModeId(option, function(){
+                $scope.$emit('ChangeCurrentPage', oldOperate);
             })
         }
 
@@ -1954,11 +2198,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     restore();
                     return;
                 }
+
+                //global limit
                 if ($scope.component.object.level.info.minValue < (-Math.pow(10, 9) + 1)) {
                     toastr.warning('小于最小临界值');
                     restore();
                     return;
                 }
+
+
+
                 //判断是否有变化
                 if ($scope.component.object.level.info.minValue == initObject.level.info.minValue) {
                     return;
@@ -1973,6 +2222,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if ($scope.component.object.level.type == Type.MyProgress) {
                     if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.progressValue) {
                         toastr.warning('不能比当前值大');
+
+                        restore();
+                        return;
+                    }
+                    if ($scope.component.object.level.info.minValue < -30000) {
+                        toastr.warning('不能小于-30000');
 
                         restore();
                         return;
@@ -2047,6 +2302,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if (type === Type.MyProgress) {
                     if (maxValue < $scope.component.object.level.info.progressValue) {
                         toastr.warning('不能比当前值小');
+                        restore();
+                        return;
+                    }
+
+                    if (maxValue > 30000) {
+                        toastr.warning('不能大于30000');
                         restore();
                         return;
                     }
@@ -2242,9 +2503,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 };
                 var oldOperate = ProjectService.SaveCurrentOperate();
                 // console.log("$scope.component.object",$scope.component.object)
-                if ($scope.component.object.type === "MyNum") {
+                // if ($scope.component.object.type === "MyNum") {
 
-                }
+                // }
                 switch ($scope.component.object.type) {
                     case "MyNum":
                         ProjectService.ChangeAttributeNumContent(option, function () {
@@ -2253,8 +2514,59 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         })
                         break;
                     case "MyDateTime":
-                        console.log("MyDateTimeEnterSpacing");
+                        //console.log("MyDateTimeEnterSpacing");
                         ProjectService.ChangeAttributeOfDateTime(option, function () {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                        })
+                        break;
+                    case "MyTextInput":
+                        ProjectService.ChangeAttributeOfTextInput(option, function () {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                        })
+                        break;
+                    default:
+                        console.log("error!");
+                }
+            }
+        }
+
+
+        //输入半角字符间距
+        function enterHalfSpacing(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                var halfSpacing = $scope.component.object.level.info.halfSpacing,
+                    fontSize = $scope.component.object.level.info.fontSize;
+                if (!_.isInteger(halfSpacing)) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+
+                if (halfSpacing === initObject.level.info.halfSpacing) {
+                    return;
+                }
+
+                if (halfSpacing < -fontSize || halfSpacing > fontSize) {
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    halfSpacing: halfSpacing
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                // console.log("$scope.component.object",$scope.component.object)
+                // if ($scope.component.object.type === "MyNum") {
+
+                // }
+                switch ($scope.component.object.type) {
+                    
+                    case "MyTextInput":
+                        ProjectService.ChangeAttributeOfTextInput(option, function () {
                             $scope.$emit('ChangeCurrentPage', oldOperate);
 
                         })
@@ -2902,7 +3214,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             var selectDateTimeModeId = null;
             if (selectObj.type == Type.MyDateTime) {
                 selectDateTimeModeId = $scope.component.dateTime.dateTimeModeId;
-                selectRTCModeId = $scope.component.dateTime.RTCModeId;
+                var selectRTCModeId = $scope.component.dateTime.RTCModeId;
             } else if (selectObj.type == Type.MyTexTime) {
                 selectDateTimeModeId = $scope.component.texTime.dateTimeModeId;
                 selectRTCModeId = $scope.component.texTime.RTCModeId;

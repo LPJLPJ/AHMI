@@ -11,6 +11,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
     'OperateQueService',
     'TagService',
     'ResourceService',
+    'WaveFilterService',
     '$http',
     'ProjectTransformService',
     'RenderSerive',
@@ -26,7 +27,15 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
               Type,
               CanvasService,
               $uibModal,
-              OperateQueService, TagService, ResourceService, $http, ProjectTransformService, RenderSerive, LinkPageWidgetsService, NavModalCANConfigService) {
+              OperateQueService, 
+              TagService, 
+              ResourceService,
+              WaveFilterService,
+              $http, 
+              ProjectTransformService, 
+              RenderSerive, 
+              LinkPageWidgetsService, 
+              NavModalCANConfigService) {
 
         var path, fs, __dirname, fse;
         initLocalPref();
@@ -64,9 +73,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 nav: {
                     currentNav: 0,
                     navs: [{name: '文件'},
-                        {name: '开始'},
                         {name: '编辑'},
-                        {name: '格式'},
                         {name: '视图'},
                         {name: '帮助'}],
                     changeNav: changeNav
@@ -101,20 +108,22 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     closeActionVisualizer:closeActionVisualizer,
                     saveProject: saveProject.bind(null, null, true),
                     saveProjectAs: saveProjectAs,
-                    showLeft: showLeft,
-                    showRight: showRight,
-                    showBottom: showBottom,
                     rotateCanvasLeft: rotateCanvasLeft,
                     rotateCanvasRight: rotateCanvasRight,
                     maskSwitch:maskSwitch
                 },
                 simulator: {
-                    show: false
+                    show: false,
+                    run:false
                 },
                 actionVisualization:{
                     show:false
                 }
             };
+
+
+            //init DoSave
+            NavService.DoSave = saveProject.bind(null, null, true)
 
         }
 
@@ -141,19 +150,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function hideSpinner() {
             window.spinner && window.spinner.hide();
-        }
-
-
-        function showLeft() {
-            $scope.$emit('ChangeShownArea', 0);
-        }
-
-        function showRight() {
-            $scope.$emit('ChangeShownArea', 1);
-        }
-
-        function showBottom() {
-            $scope.$emit('ChangeShownArea', 2);
         }
 
         $scope.maskView=false;
@@ -326,6 +322,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                     function postFun() {
                         curScope.project.resourceList = ResourceService.getAllResource();
+                        curScope.project.waveFilterList = _.cloneDeep(WaveFilterService.getWaveFilters())
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
                         curScope.project.timers = TagService.getTimerNum();//-
@@ -841,11 +838,18 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             } else if (_index === 15) {
                 newWidget = TemplateProvider.getDefaultTexTime();
             } else if(_index === 16) {
+                newWidget = TemplateProvider.getDefaultTouchTrack();
+            }else if(_index === 17) {
                 newWidget = TemplateProvider.getDefaultAlphaSlide();
-            }else if(_index === 30) {
+            }else if(_index === 18) {
+                newWidget = TemplateProvider.getDefaultTextInput();
+            }else if(_index === 19){
+                newWidget = TemplateProvider.getDefaultGallery();
+            }else if(_index === 20) {
                 newWidget = TemplateProvider.getDefaultAlphaImg();
-            }
-            else {
+            }else if(_index === 21) {
+                newWidget = TemplateProvider.getDefaultButtonSwitch();
+            } else {
                 return;
             }
             if (newWidget.name == $scope.oldWidget.name) {
@@ -1017,12 +1021,13 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 })
 
             }else{
-                generateData(format,physicalPixelRatio);
+                
                 if (window) {
                     if (window.spinner) {
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
                         showSpinner();
                     }
+                    generateData(format,physicalPixelRatio);
                     RenderSerive.renderProject(window.projectData, function () {
                         toastr.info('生成成功');
                         window.spinner && window.spinner.hide();
@@ -1033,6 +1038,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 } else {
                     saveProject(function () {
                         showSpinner();
+                        generateData(format,physicalPixelRatio);
                         $http({
                             method: 'POST',
                             url: '/project/' + $scope.project.projectId + '/generate',
@@ -1070,11 +1076,13 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
             temp.project.ideVersion = window.ideVersion;
-            temp.project.physicalPixelRatio = physicalPixelRatio
+            temp.project.physicalPixelRatio = physicalPixelRatio;
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
+            temp.project.waveFilterList = _.cloneDeep(WaveFilterService.getWaveFilters())
+
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
-            temp.project.tagList = TagService.getAllTags();
+            temp.project.tagList = TagService.getAllTagsWithSystemTagSorted();
             temp.project.timers = TagService.getTimerNum();
             temp.project.CANId = NavModalCANConfigService.getCANId();
             //link widgets
@@ -1138,8 +1146,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                 }
                             });
                         }, {
-                            width: pageNode.getWidth(),
-                            height: pageNode.getHeight()
+                            width: newProject.initSize.width,
+                            height: newProject.initSize.height
                         });
                     } else {
                         pageNode.setBackgroundImage(null, function () {
@@ -1249,9 +1257,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function play() {
             generateData()
             window.cachedResourceList = ResourceService.getGlobalResources();
-
             $scope.component.simulator.show = true;
-
+            $scope.$broadcast("InitRecord");
         }
 
         function showActionVisualization(){
@@ -1266,13 +1273,13 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         }
 
         function closeSimulator() {
-
             $scope.component.simulator.show = false;
-
+            $scope.component.simulator.run = false;
+            $scope.$broadcast("CloseRecord");
         }
 
         function runSimulator() {
-            // console.log(window.runSimulator);
+            $scope.component.simulator.run = true;
         }
 
         function closeActionVisualizer() {
@@ -1618,7 +1625,7 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
     $scope.formats = [
         {
             type: 'normal',
-            name: '默认'
+            name: '常规'
         },
         {
             type: 'dxt3',
@@ -1630,25 +1637,24 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         type: 'local',
         name: '本地'
     };
-    var localFormatCompatible = {
+    /*var localFormatCompatible = {
         type: 'localCompatible',
         name: '本地(兼容)'
-    }
+    }*/
     var templateFormat = {
         type:'template',
         name:'模板'
-    }
+    };
     var estimateFormat = {
         type:'estimate',
         name:'预估生成文件大小'
-    }
+    };
     if (!window.local) {
         $scope.formats[2] = localFormat;
-        $scope.formats[3] = localFormatCompatible
-        $scope.formats[4] = templateFormat
-        $scope.formats[5] = estimateFormat
+        /*$scope.formats[3] = localFormatCompatible*/
+        $scope.formats[3] = templateFormat
+        $scope.formats[4] = estimateFormat
     }
-    ;
     $scope.generateFormat = 'normal';
     $scope.ok = function () {
         $uibModalInstance.close({
@@ -1674,9 +1680,20 @@ ide.controller('shareModalCtl', ['$rootScope', '$scope', '$uibModalInstance', '$
         shared: false,
         sharedKey: '',
         readOnlySharedKey: '',
-        own: false
+        own: false,
+        copy:copy
     }
     loadInfo()
+
+    function copy() {
+        var info = document.querySelector('#share-info');
+        info.select();
+        if (document.execCommand('copy')) {
+            document.execCommand('copy');
+            toastr.info('已复制到剪贴板');
+            window.getSelection().empty();
+        }
+    }
 
     function loadInfo() {
         $http({
@@ -1849,10 +1866,10 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
     };
 
     $scope.ok = function () {
-        var data = "";
+        var data = {};
         if (!checkName($scope.saveAsName, $scope.saveAsAuthor)) {
             //invalid name
-            toastr.error('名称只能是汉字、英文和数字');
+            toastr.error('名称只支持：汉字、英文、数字、下划线_、英文破折号-、中文破折号—、英文()、小数点.');
             return;
         } else {
             if ($scope.isScale) {
@@ -1890,6 +1907,7 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
                     saveAsAuthor: $scope.saveAsAuthor
                 };
             }
+            data.currentOriginalSite = window.location.host;
             $uibModalInstance.close(data);
         }
     };
@@ -1902,7 +1920,7 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
         try {
             for (var i = 0; i < arguments.length; i++) {
                 var name = arguments[i];
-                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF| ]/)) {
+                if (name.match(/[^\d|A-Z|a-z|\u4E00-\u9FFF|_|\-|—|.|(|)]/)) {
                     return false;
                 }
             }
