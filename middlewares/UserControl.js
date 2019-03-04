@@ -13,7 +13,7 @@ var UserTypes = {
 var UserControl = {};
 
 
-for (type in UserTypes){
+for (var type in UserTypes){
     UserControl[type] = function (req,res,next) {
         hasValidPrivilege(type,req,res,next)
     }

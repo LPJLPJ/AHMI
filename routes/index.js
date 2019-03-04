@@ -256,7 +256,7 @@ router.route('/project/:id/userType')
 
 
 router.route('/project/create')
-    .post(projectInfo.createProject);
+    .post(projectInfo.checkCountAvailable, projectInfo.createProject);
 router.route('/project/delete')
     .post(projectInfo.deleteProject);
 router.route('/project/moveToClass')

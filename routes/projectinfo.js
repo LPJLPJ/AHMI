@@ -31,6 +31,13 @@ var moment = require('moment');
 var Excel = require('exceljs');
 var generateExcel = require('./generateTagExcel');
 
+var projectCountLimits = {
+    basic:3,
+    pro:100,
+    ultimate:Infinity,
+    admin:Infinity
+}
+
 projectRoute.getAllProjects = function (req, res) {
     ProjectModel.fetch(function (err, projects) {
         if (err) {
@@ -467,6 +474,43 @@ projectRoute.getBackupList = function (req, res) {
     }
 }
 
+
+//check count for create
+projectRoute.checkCountAvailable = function(req, res, next){
+    if (req.session.user) {
+        //user exists
+        var userId = req.session.user.id;
+        UserModel.findById(userId,function(err,_user){
+            if(err){
+                errHandler(res, 500, JSON.stringify(err))
+            }else{
+                if(_user){
+                    var countLimit = projectCountLimits[_user.type||'basic']
+                    ProjectModel.countByUser(userId,function(err,_count){
+                        if(err){
+                            errHandler(res, 500, JSON.stringify(err))
+                        }else{
+                            //compare _count
+                            if(_count + 1 > countLimit){
+                                //overflow
+                                return errHandler(res, 500, '工程数量超出权限范围，您的权限最多创建'+countLimit+'个工程')
+                            }else{
+                                next()
+                            }
+                        }
+                    })
+                }else{
+                    //invalid user
+                    errHandler(res, 500, 'user invalid')
+                }
+            }
+        })
+
+    }else{
+        errHandler(res, 500, 'not login')
+    }
+}
+
 projectRoute.createProject = function (req, res) {
     var data = _.cloneDeep(req.body)
 
@@ -507,7 +551,7 @@ projectRoute.createProject = function (req, res) {
                     errHandler(res, 500, 'project is null');
                 } else {
                     //console.log('find project');
-                    var copyProject = copyProject = _.cloneDeep(data)
+                    var copyProject = _.cloneDeep(data)
 
                     copyProject.thumbnail = _.cloneDeep(template.thumbnail);
                     copyProject.content = _.cloneDeep(template.content);

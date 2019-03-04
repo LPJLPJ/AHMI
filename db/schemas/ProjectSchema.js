@@ -82,6 +82,11 @@ ProjectSchema.statics = {
             .sort({'createTime':-1})
             .exec(cb)
     },
+    countByUser:function(_userId,cb){
+        return this.count({userId:_userId})
+                .exec(cb)
+               
+    },
     updateShare:function (id,stateInfo,cb) {
         return this.findOneAndUpdate({_id:id},{shared:stateInfo.shared,sharedKey:stateInfo.sharedKey,readOnlySharedKey:stateInfo.readOnlySharedKey})
             .exec(cb)
