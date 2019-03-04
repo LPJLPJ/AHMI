@@ -182,7 +182,7 @@
 
 
             $scope.$on('AnimationEditorUpdate',function(event,shouldShow){
-                console.log(event, shouldShow)
+                // console.log(event, shouldShow)
                 $scope.component.animationEditor.show = shouldShow
             })
 

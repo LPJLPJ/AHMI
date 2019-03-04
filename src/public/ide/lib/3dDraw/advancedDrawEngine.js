@@ -23,15 +23,22 @@
         if (sharedCanvasDOM){
             return sharedCanvasDOM
         }else{
-            sharedCanvasDOM = document.createElement('canvas')
-            document.body.appendChild(sharedCanvasDOM)
+            sharedCanvasDOM = document.getElementById('3dDrawEngine')
+            // if(!sharedCanvasDOM){
+            //     sharedCanvasDOM = document.createElement('canvas')
+            //     sharedCanvasDOM.setAttribute('class','drawEngine-hide')
+            //     document.body.appendChild(sharedCanvasDOM)
+            // }
             return sharedCanvasDOM
         }
     }
 
     AdvancedDrawEngine.getSharedEngine = function(){
         if(!sharedEngine){
-            sharedEngine = new BABYLON.Engine(AdvancedDrawEngine.getSharedCanvas(), true, { preserveDrawingBuffer: true, stencil: true });
+            var sharedCanvasDOM = AdvancedDrawEngine.getSharedCanvas()
+            sharedEngine = new BABYLON.Engine(sharedCanvasDOM, true, { preserveDrawingBuffer: true, stencil: true });
+            // sharedCanvasDOM.setAttribute('hidden',true)
+
         }
         return sharedEngine
     }
