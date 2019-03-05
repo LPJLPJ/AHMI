@@ -662,15 +662,19 @@ ideServices
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
                             }else{
                                 //从page a 进入 page b
-                                _self.OnPageSelected(_pageIndex,function(){
-                                    _successCallback&&_successCallback();
-                                });
+                                _self.OnPageSelected(_pageIndex,intoNewPage,true);
                             }
                         }else{
-                            //进入同一个页面，从sublayer状态进入
-                            _self.OnPageSelected(_pageIndex,function(){
+                            if (oldPage.mode==1){
+                                //进入同一个页面，从sublayer状态进入
+                                _self.OnPageSelected(_pageIndex,function(){
+                                    _successCallback&&_successCallback();
+                                },isInit);
+                            }else{
+                                //same page
                                 _successCallback&&_successCallback();
-                            },isInit);
+                            }
+                            
                         }
                     }else {
                         console.log('异常情况');
@@ -2456,6 +2460,7 @@ ideServices
                                 pageNode.deactivateAll();
                                 pageNode.renderAll();
                                 // currentPage.proJsonStr=pageNode.toJSON();
+                                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                                 currentPage.mode=0;
 
                                 _self.ScaleCanvas('page');

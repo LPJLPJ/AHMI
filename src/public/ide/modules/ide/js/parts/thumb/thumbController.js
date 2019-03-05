@@ -69,9 +69,7 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
                 selectThumb($scope.project.pages[e.source.index]);
             },
             function (e,oldOperate) {
-                selectThumb($scope.project.pages[e.dest.index],function(){
-                    $scope.$emit('ChangeCurrentPage',oldOperate)
-                });
+                selectThumb($scope.project.pages[e.dest.index]);
 
             }
         );
@@ -104,23 +102,23 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
     function deletePageByIndex(_index){
         var oldOperate=ProjectService.SaveCurrentOperate();
 
-        $timeout(function () {
+        //$timeout(function () {
             ProjectService.DeletePageByIndex(_index, function () {
                 $scope.$emit('SwitchCurrentPage', oldOperate, function () {
                 });
 
             });
-        })
+        //})
     }
 
     function copyPageByIndex(_index){
         //console.log('复制的是'+_index);
-        $timeout(function () {
+        //$timeout(function () {
             ProjectService.CopyPageByIndex(_index, function () {
                 updateShearPlate();
                 $scope.$emit('ChangeCurrentPage');
             });
-        })
+        //})
     }
 
 
@@ -130,14 +128,14 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
             return;
         }
         var oldOperate=ProjectService.SaveCurrentOperate();
-        $timeout(function () {
+        //$timeout(function () {
             ProjectService.PastePageByIndex(function(){
                 updateShearPlate();
                 $scope.$emit('AddNewPage', oldOperate, function () {
 
                 });
             })
-        });
+        //});
 
     }
 
