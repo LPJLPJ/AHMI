@@ -3900,7 +3900,7 @@
                                         </thead>
 
                                         <tbody>
-                                        <tr class="texRow" ng-repeat="slice in tex.slices | paging: currentNum" ng-init="sliceIndex = (currentNum-1)*10"
+                                        <tr class="texRow" ng-repeat="slice in tex.slices | paging: currentNum : 10" ng-init="sliceIndex = (currentNum-1)*10"
                                             ng-click="selectItem($index)"
                                             ng-class="{'active':$index===curIndex}">
                                             <td align="center" style="vertical-align: middle;">{{$index+sliceIndex+1}}</td>
@@ -4603,8 +4603,10 @@
                             <div class="attr-item__table-wrap" ng-show="component.top.files.length">
 
                                 <ul class="resource-list" ui-sortable="resourcesTree" ng-model="component.top.files">
-                                    <li class="rl__item row" ng-repeat="file in component.top.files track by file.id">
+                                    <li class="rl__item row" ng-repeat="file in component.top.files | paging: component.top.currentIndex : 100 "
+                                        ng-init="_fileIndex = $index + (component.top.currentIndex-1)*100">
                                         <div class="col-lg-4 rl_item-icon">
+                                            <span class="file-index">{{_fileIndex+1}}</span>
                                             <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
                                             <span style="display: inline-block" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
                                         </div>
@@ -4620,8 +4622,8 @@
                                         </div>
                                         <div class="col-lg-3 rl_item-operate">
                                             <div ng-show="component.top.showDel" class="rl_item-operate1">
-                                                <p ng-click="component.top.downloadFile($index)" ng-mousedown="stopProp($event)">下载</p>
-                                                <p ng-click="openPanel($index)" ng-mousedown="stopProp($event)">删除</p>
+                                                <p ng-click="component.top.downloadFile(_fileIndex)" ng-mousedown="stopProp($event)">下载</p>
+                                                <p ng-click="openPanel(_fileIndex)" ng-mousedown="stopProp($event)">删除</p>
                                             </div>
                                             <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                                 <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
@@ -4629,6 +4631,14 @@
                                         </div>
                                     </li>
                                 </ul>
+
+                                <div ng-show="component.top.files.length>100" style="text-align: center;margin-top: 10px">
+                                    <button ng-click="component.top.changeFileIndex(0)" class="btn btn-default attr-default-btn">上一页</button>
+                                    <span>{{component.top.currentIndex}}</span>
+                                    <button ng-click="component.top.changeFileIndex(1)" class="btn btn-default attr-default-btn">下一页</button>
+                                    <span>页数:{{component.top.indexCount}}</span>
+                                    <span>数量:{{component.top.files.length}}</span>
+                                </div>
                             </div>
 
                             <!--<div class="text-right">-->

@@ -1,6 +1,7 @@
 /**
  * Created by shenaolin on 16/3/10.
  */
+
 ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal', 'Upload',function(ResourceService,$scope,$timeout,
                                           ProjectService,
                                           Type,
@@ -28,6 +29,9 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             top:{
                 uploadingArray:[],
                 files:[],
+                currentIndex:1,
+                indexCount:0,
+                changeFileIndex:changeFileIndex,
                 deleteFile:deleteFile,
                 downloadFile:downloadFile,
                 toggleOperation:toggleOperation,
@@ -105,8 +109,24 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 $scope.$emit('ResourceUpdate');
             }
         };
+
+        $scope.component.top.indexCount = Math.ceil($scope.component.top.files.length/100);
     }
 
+    //切换资源分页
+    function changeFileIndex(n) {
+        var indexCount = $scope.component.top.indexCount,
+            currentIndex = $scope.component.top.currentIndex;
+        if (n === 1) {
+            if (currentIndex < indexCount) {
+                $scope.component.top.currentIndex ++;
+            }
+        }else {
+            if (currentIndex > 1) {
+                $scope.component.top.currentIndex --;
+            }
+        }
+    }
     /**
      * 删除文件
      * @param indexArr
