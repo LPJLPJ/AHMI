@@ -17,6 +17,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     $scope.$on('ResourceChanged', function () {
         $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
+        $scope.component.top.indexCount = Math.ceil($scope.component.top.files.length/100);
         $scope.$emit('ChangeCurrentPage');
     });
 
