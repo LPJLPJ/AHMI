@@ -192,6 +192,7 @@
 
         //next line
         var nextSpanIdx,nextTextIdx
+        var hasNext = false
         if(lineTrack.lastSpanIdx >= paragraph.spans.length-1 && lineTrack.lastTextIdx >= paragraph.spans[paragraph.spans.length-1].text.length-1){
             //finish
         }else if(lineTrack.lastSpanIdx < paragraph.spans.length-1){
@@ -202,18 +203,21 @@
                 nextSpanIdx += 1
                 nextTextIdx = 0
             }
-            lineTrack.firstSpanIdx = nextSpanIdx
-            lineTrack.firstTextIdx = nextTextIdx
-            lineTrack.lineHeight = 0
-            lineTrack.lineIdx+=1
-            layoutLine(paragraph,box,lineTrack,options)
+            hasNext = true
+            
         }else{
             nextSpanIdx = lineTrack.lastSpanIdx
             nextTextIdx += 1
+            hasNext = true
+            
+        }
+
+        if(hasNext){
             lineTrack.firstSpanIdx = nextSpanIdx
             lineTrack.firstTextIdx = nextTextIdx
-            lineTrack.lineHeight = 0
             lineTrack.lineIdx+=1
+            box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight))
+            lineTrack.lineHeight = 0
             layoutLine(paragraph,box,lineTrack,options)
         }
 
