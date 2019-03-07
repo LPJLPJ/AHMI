@@ -59,7 +59,7 @@ body {
     -khtml-user-select: none;
     user-select: none;
     border: none;
-    font-family: SOURCEHANSANSCN-NORMAL;
+    font-family: SOURCEHANSANSCN-NORMAL, Arial, sans-serif;
 }
 
 /*清除浮动影响*/
