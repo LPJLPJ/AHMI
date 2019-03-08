@@ -124,25 +124,36 @@
         //var lastSpanIdx = lineTrack.firstSpanIdx
         var lastTextIdx = lineTrack.firstTextIdx
         var curTotalWidth = 0
+        var nextTotalWidth = 0
         var lineHeight = 0
+        var indentationLeft = paragraph.paragraphAttrs.indentationLeft
+        var indentationRight = paragraph.paragraphAttrs.indentationRight
+        var singleLineWidth = box.w - indentationLeft - indentationRight
+        var isFirst = true
         for(var i = lineTrack.firstSpanIdx;i < paragraph.spans.length;i++){
             var curSpan = paragraph.spans[i]
             if(curSpan.fontAttrs.fontSize > lineHeight){
                 lineHeight = curSpan.fontAttrs.fontSize
             }
             for(var j=lastTextIdx;j < curSpan.text.length;j++){
-                curTotalWidth += curSpan.fontAttrs.fontSize 
-                if(curTotalWidth > box.w){
+                if(isFirst){
+                    nextTotalWidth = curTotalWidth + curSpan.fontAttrs.fontSize
+                    isFirst = false
+                }else{
+                    nextTotalWidth = curTotalWidth + curSpan.fontAttrs.fontSize + this.calculateNextSpacing(curSpan.text[j-1],curSpan.text[j],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)
+                }
+                
+                if(nextTotalWidth > singleLineWidth){
                     //need change line
                     return {
                         lastSpanIdx:i,
                         lastTextIdx:j-1,
                         lineHeight:lineHeight,
-                        totalWidth:curTotalWidth
+                        totalWidth:curTotalWidth 
                     }
                 }
                 //spacing
-                curTotalWidth +=  this.calculateNextSpacing(curSpan.text[j],curSpan.text[j+1],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)
+                curTotalWidth = nextTotalWidth
             }
             //next span
             if(paragraph.spans[i+1]){
@@ -167,18 +178,20 @@
         lineTrack.lastSpanIdx = lineInfo.lastSpanIdx
         lineTrack.lastTextIdx = lineInfo.lastTextIdx
         lineTrack.lineHeight = lineInfo.lineHeight
+        var indentationLeft = paragraph.paragraphAttrs.indentationLeft
+        var indentationRight = paragraph.paragraphAttrs.indentationRight
         var curTotalWidth = lineInfo.totalWidth
         var startXInLine 
-        switch(paragraph.align){
+        switch(paragraph.paragraphAttrs.align){
             case 'center':
-                startXInLine = box.x + (box.w - curTotalWidth)/2
+                startXInLine = box.x + indentationLeft + (box.w -indentationLeft - indentationRight - curTotalWidth)/2
             break;
             case 'right':
-                startXInLine = box.x + box.w - curTotalWidth
+                startXInLine = box.x + box.w - indentationRight - curTotalWidth
             break;
             default:
             //left
-                startXInLine = box.x
+                startXInLine = box.x + indentationLeft
         }
 
         //layout characters in line
@@ -250,6 +263,9 @@
     }
 
     FontLayoutEngine.calculateNextSpacing = function(formerCharacter,laterCharacter,fullWidthSpacing,halfWidthSpacing){
+        if(formerCharacter===undefined||formerCharacter===null||formerCharacter===''){
+            return 0
+        }
         var formerType = this.getCharacterType(formerCharacter)
         if(laterCharacter===undefined||laterCharacter===null||laterCharacter===''){
             return 0
@@ -369,7 +385,7 @@
         }
         var testParagraph2 = {
             paragraphAttrs:{
-                align:'left',
+                align:'center',
                 indentationLeft:10,
                 indentationRight:10,
                 firstLineIndentation:10,
@@ -401,6 +417,9 @@
         canvas.width = box.w+50
         canvas.height = box.h+50
         document.body.appendChild(canvas)
+        var ctx = canvas.getContext('2d')
+        ctx.rect(box.x,box.y,box.w,box.h)
+        ctx.stroke()
         // this.layoutParagraph(testParagraph,box)
         // console.log(testParagraph)
         // this.showLayout(testParagraph,canvas)
