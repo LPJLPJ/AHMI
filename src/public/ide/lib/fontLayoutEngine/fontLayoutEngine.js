@@ -81,16 +81,21 @@
     }
 
     LayoutBox.prototype.deleteVertical = function(box){
-        return new LayoutBox(this.x,this.y+box.h,this.w,this.h-box.h)
+        this.y += box.h
+        this.h -= box.h
+    }
+
+    LayoutBox.prototype.clone = function(){
+        return new LayoutBox(this.x,this.y,this.w,this.h)
     }
 
     //layout the total article
     FontLayoutEngine.layoutArticle = function(article, box, options){
-        var lastParagraphBox = null
-        var boxLeft = box
+        
         for(var i=0;i<article.paragraphs.length;i++){
-            lastParagraphBox = this.layoutParagraph(article.paragraphs[i],boxLeft, options)
-            boxLeft = boxLeft.deleteVertical(lastParagraphBox)
+            //console.log('box before p',box.clone())
+            this.layoutParagraph(article.paragraphs[i],box, options)
+            //console.log('box after p', box.clone())
         }
     }
 
@@ -109,10 +114,13 @@
         }
         // var lineIdx = 0
         //this.layoutSpan(paragraph,box,0,0,lineTrack)
+        box.deleteVertical(new LayoutBox(box.x,box.y,box.w,paragraph.paragraphAttrs.spacingBeforeParagraph))
         this.layoutLine(paragraph,box,lineTrack)
+        box.deleteVertical(new LayoutBox(box.x,box.y,box.w,paragraph.paragraphAttrs.spacingAfterParagraph))
+        //console.log('box after paragraph',box.clone())
     }
 
-    function preCalculateInfoInLine(paragraph,box,lineTrack,options){
+    FontLayoutEngine.preCalculateInfoInLine = function(paragraph,box,lineTrack,options){
         //var lastSpanIdx = lineTrack.firstSpanIdx
         var lastTextIdx = lineTrack.firstTextIdx
         var curTotalWidth = 0
@@ -123,7 +131,7 @@
                 lineHeight = curSpan.fontAttrs.fontSize
             }
             for(var j=lastTextIdx;j < curSpan.text.length;j++){
-                curTotalWidth += curSpan.fontAttrs.fontSize
+                curTotalWidth += curSpan.fontAttrs.fontSize 
                 if(curTotalWidth > box.w){
                     //need change line
                     return {
@@ -133,8 +141,14 @@
                         totalWidth:curTotalWidth
                     }
                 }
+                //spacing
+                curTotalWidth +=  this.calculateNextSpacing(curSpan.text[j],curSpan.text[j+1],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)
             }
             //next span
+            if(paragraph.spans[i+1]){
+                curTotalWidth +=  this.calculateNextSpacing(curSpan.text[j-1],paragraph.spans[i+1].text[0],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)
+            }
+            
             lastTextIdx = 0
         }
         return {
@@ -149,7 +163,7 @@
     FontLayoutEngine.layoutLine = function(paragraph,box,lineTrack,options){
         //calculate span and text range
         //update lastSpanIdx and lastTextIdx
-        var lineInfo = preCalculateInfoInLine(paragraph,box,lineTrack,options)
+        var lineInfo = this.preCalculateInfoInLine(paragraph,box,lineTrack,options)
         lineTrack.lastSpanIdx = lineInfo.lastSpanIdx
         lineTrack.lastTextIdx = lineInfo.lastTextIdx
         lineTrack.lineHeight = lineInfo.lineHeight
@@ -175,7 +189,7 @@
             if(i === lineTrack.lastSpanIdx){
                 maxTextIdx = lineTrack.lastTextIdx
             }else{
-                maxTextIdx = curSpan.text.length
+                maxTextIdx = curSpan.text.length-1
             }
             if(!curSpan.characterLayouts){
                 curSpan.characterLayouts = []
@@ -188,7 +202,10 @@
                     y:box.y + lineTrack.lineHeight - curSpan.fontAttrs.fontSize
                 }
                 //update startXInLine
-                startXInLine += curSpan.fontAttrs.fontSize // will add font spacing
+                startXInLine += curSpan.fontAttrs.fontSize + this.calculateNextSpacing(curSpan.text[j],curSpan.text[j+1],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)// will add font spacing
+            }
+            if(paragraph.spans[i+1]){
+                startXInLine +=  this.calculateNextSpacing(curSpan.text[j-1],paragraph.spans[i+1].text[0],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)
             }
             //next span
             startTextIdx = 0
@@ -220,14 +237,49 @@
             lineTrack.firstSpanIdx = nextSpanIdx
             lineTrack.firstTextIdx = nextTextIdx
             lineTrack.lineIdx+=1
-            box = box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight))
+            box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight+paragraph.paragraphAttrs.spacingBetweenLines))
             lineTrack.lineHeight = 0
             this.layoutLine(paragraph,box,lineTrack,options)
+        }else{
+            //finish a paragraph
+            // box.deleteVertical(new LayoutBox(box.x,box.y,box.w,paragraph.paragraphAttrs.spacingAfterParagraph))
+            box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight))
+            
         }
 
     }
 
+    FontLayoutEngine.calculateNextSpacing = function(formerCharacter,laterCharacter,fullWidthSpacing,halfWidthSpacing){
+        var formerType = this.getCharacterType(formerCharacter)
+        if(laterCharacter===undefined||laterCharacter===null||laterCharacter===''){
+            return 0
+        }
+        var laterType = this.getCharacterType(laterCharacter)
+        if(formerType == 0){
+            if(laterType == 0){
+                return halfWidthSpacing
+            }else{
+                return (fullWidthSpacing+halfWidthSpacing)/2
+            }
+        }else{
+            if(laterType == 0){
+                return (fullWidthSpacing+halfWidthSpacing)/2
+            }else{
+                return fullWidthSpacing
+            }
+        }
+    }
 
+    //0-127:half-width character, otherwise full-width character
+    FontLayoutEngine.getCharacterType = function(c){
+        if(c.charCodeAt(0)<128){
+            return 0
+        }else{
+            return 1
+        }
+    }
+
+    /*
 
     //layout span with spanIdx and textIdx
     FontLayoutEngine.layoutSpan = function(paragraph,box,spanIdx,textIdx,lineTrack){
@@ -247,7 +299,14 @@
         }
     }
 
-    FontLayoutEngine.showLayout = function(paragraph,canvas){
+    */
+   FontLayoutEngine.showArticleLayout = function(article,canvas){
+       article.paragraphs.forEach(function(p){
+           this.showParagraphLayout(p,canvas)
+       }.bind(this))
+   }
+
+    FontLayoutEngine.showParagraphLayout = function(paragraph,canvas){
         var ctx = canvas.getContext('2d')
         for(var i=0;i<paragraph.spans.length;i++){
             var span = paragraph.spans[i]
@@ -287,22 +346,66 @@
                         fontBold:true,
                         fontItalic:false,
                         fontColor:null,
-                        fontSpacing:10,
+                        fontSpacing:20,
                         fontHalfSpacing:10,
                         fontVerticalOffset:0
                     },
-                    text:'abc123'
+                    text:'a我c1'
+                },
+                {
+                    fontAttrs:{
+                        fontFamily:'Arial',
+                        fontSize:30,
+                        fontBold:true,
+                        fontItalic:false,
+                        fontColor:null,
+                        fontSpacing:20,
+                        fontHalfSpacing:10,
+                        fontVerticalOffset:0
+                    },
+                    text:'a我c1'
                 }
             ]
         }
-        var box = new LayoutBox(0,0,50,50)
+        var testParagraph2 = {
+            paragraphAttrs:{
+                align:'left',
+                indentationLeft:10,
+                indentationRight:10,
+                firstLineIndentation:10,
+                spacingBetweenLines:10,
+                spacingBeforeParagraph:10,
+                spacingAfterParagraph:10
+            },
+            spans:[
+                {
+                    fontAttrs:{
+                        fontFamily:'Arial',
+                        fontSize:24,
+                        fontBold:true,
+                        fontItalic:false,
+                        fontColor:null,
+                        fontSpacing:20,
+                        fontHalfSpacing:10,
+                        fontVerticalOffset:0
+                    },
+                    text:'a我c123'
+                }
+            ]
+        }
+        var testArticle = {
+            paragraphs:[testParagraph,testParagraph2]
+        }
+        var box = new LayoutBox(0,0,120,200)
         var canvas = document.createElement('canvas')
         canvas.width = box.w+50
         canvas.height = box.h+50
         document.body.appendChild(canvas)
-        this.layoutParagraph(testParagraph,box)
-        console.log(testParagraph)
-        this.showLayout(testParagraph,canvas)
+        // this.layoutParagraph(testParagraph,box)
+        // console.log(testParagraph)
+        // this.showLayout(testParagraph,canvas)
+        this.layoutArticle(testArticle,box)
+        this.showArticleLayout(testArticle,canvas)
     }
 
     return FontLayoutEngine
