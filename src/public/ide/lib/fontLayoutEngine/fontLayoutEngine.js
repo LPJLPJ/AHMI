@@ -138,6 +138,10 @@
             for(var j=lastTextIdx;j < curSpan.text.length;j++){
                 if(isFirst){
                     nextTotalWidth = curTotalWidth + curSpan.fontAttrs.fontSize
+                    if(lineTrack.lineIdx === 0){
+                        nextTotalWidth += paragraph.paragraphAttrs.firstLineIndentation||0
+                    }
+                    
                     isFirst = false
                 }else{
                     nextTotalWidth = curTotalWidth + curSpan.fontAttrs.fontSize + this.calculateNextSpacing(curSpan.text[j-1],curSpan.text[j],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)
@@ -192,6 +196,9 @@
             default:
             //left
                 startXInLine = box.x + indentationLeft
+        }
+        if(lineTrack.lineIdx === 0){
+            startXInLine += paragraph.paragraphAttrs.firstLineIndentation||0
         }
 
         //layout characters in line
