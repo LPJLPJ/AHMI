@@ -3980,8 +3980,8 @@
                             <h3 class="modal-title">批量选择</h3>
                             <span>默认按 “(n)” 格式</span>
                             <div>
-                                <label title="示例： 名称#类名_序号">
-                                    <input type="checkbox" ng-model="component.classCheckStatus" ng-click="component.checkClasses()">按类别"#n_n"过滤
+                                <label title="例如： 纹理#A_01#,  纹理#A_02#,  纹理#B_01#,  纹理#B_02#">
+                                    <input type="checkbox" ng-model="component.classCheckStatus" ng-click="component.checkClasses()" style="vertical-align: -2px">按 "#类别_序号#"过滤
                                 </label>
                                 <select ng-change="component.checkByClass()"
                                         ng-show="component.classCheckStatus"

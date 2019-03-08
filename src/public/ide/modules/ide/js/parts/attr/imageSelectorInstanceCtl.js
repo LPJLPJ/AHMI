@@ -226,7 +226,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                         images=selectImgs.sort(function (a, b) {
                             var x= a.name,y= b.name;
                             var reg1 = /[^\(\)]+(?=\))/g;
-                            var reg2 = /#([\s\S]+)\_(\d+)/;
+                            var reg2 = /#([\s\S]+)\_(\d+)+#/;
                             var i1= parseInt(x.match(reg1) || x.match(reg2)[2]);
                             var i2= parseInt(y.match(reg1) || y.match(reg2)[2]);
                             return i1-i2;
@@ -245,7 +245,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                 function checkImg(imgs){
                     for(var i=0;i<imgs.length;i++){
                         var imgName=imgs[i].name;
-                        if(!imgName.match(/[^\(\)]+(?=\))/g) && !imgName.match(/#([\s\S]+)\_(\d+)/)){
+                        if(!imgName.match(/[^\(\)]+(?=\))/g) && !imgName.match(/#([\s\S]+)\_(\d+)+#/)){
                             return false;
                         }
                     }
@@ -255,14 +255,13 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
                 function checkClasses() {
                     if ($scope.component.classCheckStatus) {
-                        var reg = /#([\s\S]+)\_(\d+)/,
+                        var reg = /#([\s\S]+)\_(\d+)+#/,
                             check,
                             classes,
                             imgArr = imgResources.filter(function (img) {
                                 return img.name.match(reg);
                             });
 
-                        console.log(reg);
                         check = {};
                         imgArr.forEach(function (img) {
                             var checkResult = img.name.match(reg)[1];
@@ -284,7 +283,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                 
                 function checkByClass() {
                     var result = $scope.component.currentClass,
-                        reg = new RegExp("#"+result+"+\\_(\\d+)");
+                        reg = new RegExp("#"+result+"+\\_(\\d+)+#");
                     $scope.imgResources = imgResources.filter(function (img) {
                         return img.name.match(reg);
                     });
