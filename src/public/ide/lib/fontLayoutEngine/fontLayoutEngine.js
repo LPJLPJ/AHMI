@@ -219,7 +219,7 @@
                 //calculate curCharacter
                 curSpan.characterLayouts[j] = {
                     x:startXInLine,
-                    y:box.y + lineTrack.lineHeight - curSpan.fontAttrs.fontSize
+                    y:box.y + lineTrack.lineHeight - curSpan.fontAttrs.fontSize + (curSpan.fontAttrs.fontVerticalOffset||0)
                 }
                 //update startXInLine
                 startXInLine += curSpan.fontAttrs.fontSize + this.calculateNextSpacing(curSpan.text[j],curSpan.text[j+1],curSpan.fontAttrs.fontSpacing,curSpan.fontAttrs.fontHalfSpacing)// will add font spacing
