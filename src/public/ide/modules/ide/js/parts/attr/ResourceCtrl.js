@@ -17,7 +17,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     $scope.$on('ResourceChanged', function () {
         $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
-        $scope.component.top.indexCount = Math.ceil($scope.component.top.files.length/100);
+        updateFileIndex();
         $scope.$emit('ChangeCurrentPage');
     });
 
@@ -32,6 +32,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 files:[],
                 currentIndex:1,
                 indexCount:0,
+                pagingNum:100,
+                fileIndex:0,
                 changeFileIndex:changeFileIndex,
                 deleteFile:deleteFile,
                 downloadFile:downloadFile,
@@ -111,7 +113,12 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             }
         };
 
+        updateFileIndex();
+    }
+    
+    function updateFileIndex() {
         $scope.component.top.indexCount = Math.ceil($scope.component.top.files.length/100);
+        $scope.component.top.fileIndex = ($scope.component.top.currentIndex-1)*100;
     }
 
     //切换资源分页
