@@ -4651,7 +4651,6 @@ ideServices
                 var image;
                 switch (selectObj.type){
                     case 'MySlide':
-                    case 'MyDashboard':
                     case 'MyRotateImg':
                     case 'MyTextArea':
                     case 'MyButton':
@@ -4667,6 +4666,10 @@ ideServices
                     case 'MyProgress':
                         image = ResourceService.getResourceFromCache(selectObj.level.texList[1].slices[0].imgSrc);
                         break;
+                    case 'MyDashboard':
+                        image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+                        selectObj.level.info.posRotatePointX = Math.round(image.width/2);
+                        selectObj.level.info.posRotatePointY = Math.round(image.height/2);
                     default :
                         break;
                 }
