@@ -173,7 +173,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
      * @author tang
      */
     function downloadFile(index){
-        var file = _.cloneDeep($scope.component.top.files)[index];
+        var file = $scope.component.top.files[index];
         var projectId = $scope.project.projectId;
         ResourceService.downloadFile(file,projectId);
     }
