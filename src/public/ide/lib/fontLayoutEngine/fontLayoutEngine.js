@@ -259,7 +259,7 @@
             lineTrack.firstSpanIdx = nextSpanIdx
             lineTrack.firstTextIdx = nextTextIdx
             lineTrack.lineIdx+=1
-            box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight+paragraph.paragraphAttrs.spacingBetweenLines))
+            box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight+(paragraph.paragraphAttrs.spacingBetweenLines||0)))
             lineTrack.lineHeight = 0
             this.layoutLine(paragraph,box,lineTrack,options)
         }else{
