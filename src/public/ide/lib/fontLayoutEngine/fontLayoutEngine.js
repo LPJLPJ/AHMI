@@ -74,20 +74,22 @@
 
     //the box to layout text
     function LayoutBox(x,y,w,h){
-        this.x = x
-        this.y = y
-        this.w = w
-        this.h = h
+        this.x = x||0
+        this.y = y||0
+        this.w = w||0
+        this.h = h||0
     }
 
     LayoutBox.prototype.deleteVertical = function(box){
-        this.y += box.h
-        this.h -= box.h
+        this.y += box.h||0
+        this.h -= box.h||0
     }
 
     LayoutBox.prototype.clone = function(){
         return new LayoutBox(this.x,this.y,this.w,this.h)
     }
+
+    FontLayoutEngine.LayoutBox = LayoutBox
 
     //layout the total article
     FontLayoutEngine.layoutArticle = function(article, box, options){
@@ -126,8 +128,8 @@
         var curTotalWidth = 0
         var nextTotalWidth = 0
         var lineHeight = 0
-        var indentationLeft = paragraph.paragraphAttrs.indentationLeft
-        var indentationRight = paragraph.paragraphAttrs.indentationRight
+        var indentationLeft = paragraph.paragraphAttrs.indentationLeft||0
+        var indentationRight = paragraph.paragraphAttrs.indentationRight||0
         var singleLineWidth = box.w - indentationLeft - indentationRight
         var isFirst = true
         for(var i = lineTrack.firstSpanIdx;i < paragraph.spans.length;i++){
@@ -182,8 +184,8 @@
         lineTrack.lastSpanIdx = lineInfo.lastSpanIdx
         lineTrack.lastTextIdx = lineInfo.lastTextIdx
         lineTrack.lineHeight = lineInfo.lineHeight
-        var indentationLeft = paragraph.paragraphAttrs.indentationLeft
-        var indentationRight = paragraph.paragraphAttrs.indentationRight
+        var indentationLeft = paragraph.paragraphAttrs.indentationLeft||0
+        var indentationRight = paragraph.paragraphAttrs.indentationRight||0
         var curTotalWidth = lineInfo.totalWidth
         var startXInLine 
         switch(paragraph.paragraphAttrs.align){
@@ -278,6 +280,8 @@
             return 0
         }
         var laterType = this.getCharacterType(laterCharacter)
+        fullWidthSpacing = fullWidthSpacing || 0
+        halfWidthSpacing = halfWidthSpacing || 0
         if(formerType == 0){
             if(laterType == 0){
                 return halfWidthSpacing
@@ -347,6 +351,11 @@
             ctx.restore()
         }
         ctx.stroke()
+    }
+
+
+    FontLayoutEngine.fixData = function(){
+
     }
 
     //test
