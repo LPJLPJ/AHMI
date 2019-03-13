@@ -255,7 +255,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     var validation=true;
     //保存旧值
     $scope.store=function(th){
-        console.log("store",th);
+        // console.log("store",th);
         restoreValue=th.file.name;
 
     };
