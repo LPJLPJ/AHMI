@@ -132,6 +132,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterMaxCoverAngle: enterMaxCoverAngle
                 },
                 textArea: {
+                    modes:['单行','多行'],
                     enterText: enterText,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,

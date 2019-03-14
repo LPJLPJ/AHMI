@@ -2665,22 +2665,32 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
-                            <!--<div class="attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">方向</span>-->
+                           <div class="attr-item__cell-wrap">
+                               <p class="attr-item__cell-title">模式</p>
+                               <select class="attr-item__cell-input form-control"
+                                        ng-options="idx as mode for (idx, mode) in component.textArea.modes"
+                                        ng-model="component.object.level.info.mode"
+                                        ng-change="component.textArea.enterMode()"
+                                        >
+                                </select>
+                           </div>
 
-                            <!--<select class="attr-item__cell-input form-control" ng-model="component.textArea.arrangeModel"-->
-                            <!--ng-change="component.textArea.enterArrange($event)">-->
-                            <!--<option value="horizontal">水平</option>-->
-                            <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
-                            <!--</div>-->
-                            <div class="attr-item__cell-wrap lg">
+                            <div class="attr-item__cell-wrap lg" ng-show="component.object.level.info.mode!=1">
                                 <p class="attr-item__cell-title">文本</p>
                                 <input type="text"
                                        class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.text"
                                        ng-blur="component.restore()"
                                        ng-keypress="component.textArea.enterText($event)"/>
+                            </div>
+                            <div class="attr-item__cell-wrap lg" ng-show="component.object.level.info.mode==1">
+                                <p class="attr-item__cell-title">多行文本</p>
+                                <textarea class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.textContent"
+                                       ng-blur="component.restore()"
+                                >
+
+                                </textarea>
                             </div>
 
                         </div>
