@@ -134,6 +134,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 $scope.component.top.currentIndex --;
             }
         }
+
+        updateFileIndex();
     }
     /**
      * 删除文件
