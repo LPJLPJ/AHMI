@@ -2685,10 +2685,11 @@
                             </div>
                             <div class="attr-item__cell-wrap lg" ng-show="component.object.level.info.mode==1">
                                 <p class="attr-item__cell-title">多行文本</p>
-                                <textarea class="attr-item__cell-input form-control"
+                                <textarea class="attr-item__cell-input attr-item__cell-textarea form-control"
                                        ng-model="component.object.level.info.textContent"
                                        ng-blur="component.restore()"
                                        ng-keypress="component.textArea.enterTextContent($event)"
+                                       ng-trim="false"
                                 >
 
                                 </textarea>

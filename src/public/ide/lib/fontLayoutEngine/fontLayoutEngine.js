@@ -327,14 +327,14 @@
     }
 
     */
-   FontLayoutEngine.showArticleLayout = function(article,canvas){
+   FontLayoutEngine.showArticleLayout = function(article,ctx,options){
        article.paragraphs.forEach(function(p){
-           this.showParagraphLayout(p,canvas)
+           this.showParagraphLayout(p,ctx,options)
        }.bind(this))
    }
 
-    FontLayoutEngine.showParagraphLayout = function(paragraph,canvas){
-        var ctx = canvas.getContext('2d')
+    FontLayoutEngine.showParagraphLayout = function(paragraph,ctx,options){
+        ctx.beginPath()
         for(var i=0;i<paragraph.spans.length;i++){
             var span = paragraph.spans[i]
             var fontAttrs = span.fontAttrs
@@ -345,12 +345,17 @@
             ctx.font = (fontAttrs['fontStyle'] || '') + ' ' + (fontAttrs['fontVariant'] || '') + ' ' + (fontAttrs['fontWeight'] || '') + ' ' + (fontAttrs['fontSize'] || 24) + 'px' + ' ' + ('"' + fontAttrs['fontFamily'] + '"' || 'arial');
             for(var j=0;j<span.text.length;j++){
                 // ctx.drawText(span.text[j],)
-                ctx.rect(span.characterLayouts[j].x,span.characterLayouts[j].y,fontSize,fontSize)
+                if(options&&options.debug){
+                    ctx.rect(span.characterLayouts[j].x,span.characterLayouts[j].y,fontSize,fontSize)
+                }
                 ctx.fillText(span.text[j],span.characterLayouts[j].x+fontSize/2,span.characterLayouts[j].y+fontSize/2)
             }
             ctx.restore()
         }
-        ctx.stroke()
+        if(options&&options.debug){
+            ctx.stroke()
+        }
+        
     }
 
 
@@ -440,7 +445,7 @@
         // console.log(testParagraph)
         // this.showLayout(testParagraph,canvas)
         this.layoutArticle(testArticle,box)
-        this.showArticleLayout(testArticle,canvas)
+        this.showArticleLayout(testArticle,ctx)
     }
 
     return FontLayoutEngine

@@ -3777,6 +3777,11 @@ ideServices
                         OnWidgetSelected(currentWidget,_successCallback);
                     }
                 };
+                if(_option.mode){
+                    var mode=_option.mode;
+                    selectObj.level.info.mode=mode;
+                    arg.mode=mode;
+                }
 
                 if(_option.text){
                     var tempText=_option.text;

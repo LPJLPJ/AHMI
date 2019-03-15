@@ -133,6 +133,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 textArea: {
                     modes:['单行','多行'],
+                    enterMode:enterTextAreaMode,
                     enterText: enterText,
                     enterTextContent: enterTextContent,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
@@ -2615,6 +2616,24 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
         }
 
+
+        function enterTextAreaMode(e) {
+            if ($scope.component.object.level.info.mode == initObject.level.info.mode) {
+                return;
+            }
+
+            var option = {
+                mode: $scope.component.object.level.info.mode
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeTextContent(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+        }
+
         function enterText(e) {
             if (e.keyCode == 13) {
                 if ($scope.component.object.level.info.text == initObject.level.info.text) {
@@ -2635,13 +2654,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterTextContent(e) {
-            if (e.keyCode == 13 && e.ctrl) {
+            if (e.keyCode == 13 && e.ctrlKey) {
                 if ($scope.component.object.level.info.textContent == initObject.level.info.textContent) {
                     return;
                 }
 
                 var option = {
-                    text: $scope.component.object.level.info.textContent
+                    textContent: $scope.component.object.level.info.textContent
                 };
 
                 var oldOperate = ProjectService.SaveCurrentOperate();
