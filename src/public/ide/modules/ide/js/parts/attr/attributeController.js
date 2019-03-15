@@ -560,7 +560,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         //     $scope.component.dashboard.enableAnimationModeId = '1'
                         // } else
 
-                        if ($scope.component.object.level.info.enableAnimation === false) {
+                        if ($scope.component.object.level.info.enableAnimation === false ||$scope.component.object.level.info.enableAnimation === undefined) {
                             $scope.component.dashboard.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation === true) {
                             $scope.component.dashboard.enableAnimationModeId = '0'
