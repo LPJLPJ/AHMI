@@ -1482,10 +1482,52 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
                 renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
             }
-            if (info.text&&info.text!==''){
-                //draw text
-                renderingX.renderText(ctx,new Size(width,height),new Pos(),info.text,style,true,new Pos(0.5*width,0.5*height),this.customFonts);
+            if(info.mode!=1){
+                if (info.text&&info.text!==''){
+                    //draw text
+                    renderingX.renderText(ctx,new Size(width,height),new Pos(),info.text,style,true,new Pos(0.5*width,0.5*height),this.customFonts);
+                }
+            }else{
+                if(info.textContent&&info.textContent!==''){
+                    var fontAttrs = {
+                        fontSize:info.fontSize,
+                        fontFamily:info.fontFamily,
+                        fontBold:info.fontBold,
+                        fontItalic:info.fontItalic,
+                        fontColor:info.fontColor,
+                        // fontSpacing:0,
+                        // fontHalfSpacing:0,
+                        // fontVerticalOffset:0
+                    }
+
+                    var paragraphAttrs = {
+                        align:'left',
+                            // indentationLeft:0,
+                            // indentationRight:0,
+                            // firstLineIndentation:0,
+                            spacingBetweenLines:info.fontSize,
+                            // spacingBeforeParagraph:(this.height-this.fontSize)/2,
+                            spacingAfterParagraph:info.fontSize
+                    }
+                    var article = {
+                        paragraphs:info.textContent.split('\n').map(function(p){
+                            return {
+                                paragraphAttrs:paragraphAttrs,
+                                spans:[
+                                    {
+                                        fontAttrs:fontAttrs,
+                                        text:p
+                                    }
+                                ]
+                            }
+                        })
+                    }
+                    FontLayoutEngine.layoutArticle(article,new FontLayoutEngine.LayoutBox(0,0,info.width,info.height))
+                    
+                    FontLayoutEngine.showArticleLayout(article,ctx)
+                }
             }
+            
             //output
             // var imgName = widget.id.split('.').join('-');
             // var outputFilename = imgName +'-'+ 1+'.png';

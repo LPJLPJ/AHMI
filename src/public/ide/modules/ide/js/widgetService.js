@@ -3451,6 +3451,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('OnRelease',function(arg){
+                var _callback=arg.callback;
+                // self.scaleX = 1
+                // self.scaleY = 1
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
