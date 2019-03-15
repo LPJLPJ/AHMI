@@ -130,6 +130,12 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         if(selectedObj.type == Type.MyLayer && selectedObj.level.animations && selectedObj.level.animations.length){
             //show
             $scope.component.ui.show = true
+
+            if(lastSelectedObj && selectedObj != lastSelectedObj){
+                pauseAnimation()
+                //turn off layer animation
+                ProjectService.turnOffLayerAnimation(lastSelectedObj)
+            }
             
             //update animation
             $scope.component.animations = selectedObj.level.animations.map(function(a){
@@ -142,6 +148,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
 
         }else{
             $scope.component.ui.show = false
+            pauseAnimation()
             //turn off layer animation
             if(lastSelectedObj){
                 ProjectService.turnOffLayerAnimation(lastSelectedObj)
