@@ -134,6 +134,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 textArea: {
                     modes:['单行','多行'],
                     enterText: enterText,
+                    enterTextContent: enterTextContent,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,
                     addCharacterSet: addCharacterSet,
@@ -2622,6 +2623,25 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                 var option = {
                     text: $scope.component.object.level.info.text
+                };
+
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                ProjectService.ChangeAttributeTextContent(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                })
+            }
+        }
+
+        function enterTextContent(e) {
+            if (e.keyCode == 13 && e.ctrl) {
+                if ($scope.component.object.level.info.textContent == initObject.level.info.textContent) {
+                    return;
+                }
+
+                var option = {
+                    text: $scope.component.object.level.info.textContent
                 };
 
                 var oldOperate = ProjectService.SaveCurrentOperate();

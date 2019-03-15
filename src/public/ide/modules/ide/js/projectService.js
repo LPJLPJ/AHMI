@@ -3783,6 +3783,10 @@ ideServices
                     selectObj.level.info.text=tempText;
                     arg.text=tempText;
                 }
+                if(_option.textContent){
+                    selectObj.level.info.textContent = _option.textContent
+                    arg.textContent=_option.textContent
+                }
                 if(_option.fontFamily){
                     var tempFontFamily=_option.fontFamily;
                     selectObj.level.info.fontFamily=tempFontFamily;

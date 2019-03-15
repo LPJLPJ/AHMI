@@ -2688,9 +2688,11 @@
                                 <textarea class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.textContent"
                                        ng-blur="component.restore()"
+                                       ng-keypress="component.textArea.enterTextContent($event)"
                                 >
 
                                 </textarea>
+                                <!-- <button class="btn btn-default attr-default-btn" ng-click="component.textArea.enterTextContent()">完成</button> -->
                             </div>
 
                         </div>

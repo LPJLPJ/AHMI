@@ -3619,6 +3619,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.text){
                     self.text=arg.text;
                 }
+                if(arg.textContent){
+                    self.textContent=arg.textContent;
+                }
                 if(arg.fontFamily){
                     self.fontFamily=arg.fontFamily;
                 }
@@ -3660,6 +3663,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var subLayerNode = CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 arg.callback && arg.callback();
+            })
+
+            this.on('changeMode',function(arg){
+                var _callback=arg.callback;
+                self.mode=arg.mode;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
             })
 
             this.on('changeArrange',function(arg){
