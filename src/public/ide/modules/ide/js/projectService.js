@@ -662,15 +662,19 @@ ideServices
                                 _self.OnPageSelected(oldPageIndex,intoNewPage,true);
                             }else{
                                 //从page a 进入 page b
-                                _self.OnPageSelected(_pageIndex,function(){
-                                    _successCallback&&_successCallback();
-                                });
+                                _self.OnPageSelected(_pageIndex,intoNewPage,true);
                             }
                         }else{
-                            //进入同一个页面，从sublayer状态进入
-                            _self.OnPageSelected(_pageIndex,function(){
+                            if (oldPage.mode==1){
+                                //进入同一个页面，从sublayer状态进入
+                                _self.OnPageSelected(_pageIndex,function(){
+                                    _successCallback&&_successCallback();
+                                },isInit);
+                            }else{
+                                //same page
                                 _successCallback&&_successCallback();
-                            },isInit);
+                            }
+                            
                         }
                     }else {
                         console.log('异常情况');
@@ -2456,6 +2460,7 @@ ideServices
                                 pageNode.deactivateAll();
                                 pageNode.renderAll();
                                 // currentPage.proJsonStr=pageNode.toJSON();
+                                currentPage.url=pageNode.toDataURL({format:'jpeg',quality:'0.2'});
                                 currentPage.mode=0;
 
                                 _self.ScaleCanvas('page');
@@ -4646,7 +4651,6 @@ ideServices
                 var image;
                 switch (selectObj.type){
                     case 'MySlide':
-                    case 'MyDashboard':
                     case 'MyRotateImg':
                     case 'MyTextArea':
                     case 'MyButton':
@@ -4662,6 +4666,10 @@ ideServices
                     case 'MyProgress':
                         image = ResourceService.getResourceFromCache(selectObj.level.texList[1].slices[0].imgSrc);
                         break;
+                    case 'MyDashboard':
+                        image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
+                        selectObj.level.info.posRotatePointX = Math.round(image.width/2);
+                        selectObj.level.info.posRotatePointY = Math.round(image.height/2);
                     default :
                         break;
                 }

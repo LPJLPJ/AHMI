@@ -59,7 +59,7 @@ body {
     -khtml-user-select: none;
     user-select: none;
     border: none;
-    font-family: SOURCEHANSANSCN-NORMAL;
+    font-family: SOURCEHANSANSCN-NORMAL, Arial, sans-serif;
 }
 
 /*清除浮动影响*/
@@ -959,7 +959,7 @@ body {
     height: 26px;
     border: 1px solid #a9a9a9;
     line-height: 26px !important;
-    padding: 0 14px;
+    padding: 0 10px;
     color: #666666;
 }
 
@@ -1734,7 +1734,7 @@ body {
 }
 
 .upload-progressbar {
-    margin-top: 10px;
+    margin: 5px 0;
 }
 
 .mask-upload {
@@ -2607,6 +2607,15 @@ div.wrapper-custom {
     text-align: center;
     line-height: 80px;
     padding: 0;
+    position: relative;
+}
+
+.file-index {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    color: #005599;
+    font-size: 12px;
 }
 
 .rl_item-operate {

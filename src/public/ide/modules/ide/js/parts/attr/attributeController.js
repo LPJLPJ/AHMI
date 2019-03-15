@@ -2026,7 +2026,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
         function enterPointerOffset(type,e) {
             if (e.keyCode == 13) {
-                console.log(e,type)
+                //console.log(e,type)
                 var posRotatePointX = $scope.component.object.level.info.posRotatePointX||0;
                 var posRotatePointY = $scope.component.object.level.info.posRotatePointY||0;
                 var width = $scope.component.object.level.info.width;

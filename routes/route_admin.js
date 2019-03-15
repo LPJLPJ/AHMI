@@ -348,15 +348,9 @@ Route_admin.releaseUpdate = function(req,res){
                         if(file.type==='views'){
                             //修改psersonalProject.html文件 删除ejs语句
                             var targetHtmlPath = path.join(tempViewsFolderPath,'login','personalProject.html');
-                            var localHtml = path.join(tempViewsFolderPath,'login','personalProject_local.html');
-                            var finalHtml;
-                            if(localHtml){
-                                finalHtml = editPersonalProjectHtml(localHtml);
-                            }else{
-                                finalHtml = editPersonalProjectHtml(targetHtmlPath);
-                            }
-
-                            fse.writeFile(targetHtmlPath,finalHtml,function(err){
+                            var localHtmlPath = path.join(tempViewsFolderPath,'login','personalProject_local.html');
+                            var editHtmlStr = editPersonalProjectHtml(localHtmlPath);
+                            fse.writeFile(targetHtmlPath,editHtmlStr,function(err){
                                 if(err){
                                     console.log('err',err);
                                     errHandler(res,500,'edit personalProject.html err');

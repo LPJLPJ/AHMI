@@ -1978,14 +1978,16 @@ module.exports = React.createClass({
             for (var i = 0; i < text.length; i++) {
                 tempctx.fillText(text[i], xCoordinate, yCoordinate);
                 if(i+1 < text.length){
-                    lastLetterType = this.getLetterType(text[i])
+                    /*lastLetterType = this.getLetterType(text[i])
                     curLetterType = this.getLetterType(text[i+1])
+
                     if(lastLetterType === 0){
                         curSpacing = curLetterType ? (spacing + halfSpacing)/2 : halfSpacing
                     }else{
                         curSpacing = curLetterType ? spacing : (spacing + halfSpacing)/2
-                    }
-                    xCoordinate += curSpacing;
+                    }*/
+
+                    xCoordinate += spacing || 0;
                     xCoordinate += maxFontWidth;
                 }
                 
@@ -4034,7 +4036,7 @@ module.exports = React.createClass({
                     }
                     //draw light strip
                     var lightStripTex = widget.texList[2].slices[0];
-                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
                     //draw pointer
 
                     this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY,pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
@@ -4044,7 +4046,7 @@ module.exports = React.createClass({
                     // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
                 } else if (widget.dashboardModeId == '2') {
                     var lightStripTex = widget.texList[0].slices[0];
-                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
                 }
             } else {
                 if (widget.dashboardModeId == '0') {
@@ -4071,7 +4073,7 @@ module.exports = React.createClass({
                         }
                         //draw light strip
                         var lightStripTex = widget.texList[2].slices[0];
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
                         //draw pointer
 
                         this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
@@ -4083,7 +4085,7 @@ module.exports = React.createClass({
                         }
                         //draw light strip
                         var lightStripTex = widget.texList[2].slices[0];
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc,this.pixelRatio);
                         //draw pointer
 
                         this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
@@ -4092,9 +4094,9 @@ module.exports = React.createClass({
                 } else if (widget.dashboardModeId == '2') {
                     var lightStripTex = widget.texList[0].slices[0];
                     if (curArc >= 0) {
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
                     } else if (curArc < 0) {
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc,this.pixelRatio);
                     }
                 }
             }
@@ -4399,7 +4401,7 @@ module.exports = React.createClass({
         offctx.stroke();
         offctx.restore();
     },
-    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc) {
+    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc,verticalPixelScale) {
         //clip a fan shape
         // console.log(minArc, curArc);
         var wise = false;
@@ -4418,19 +4420,26 @@ module.exports = React.createClass({
             var offcanvas = this.refs.offcanvas;
             var offctx = this.offctx;
             offctx.save();
+            offctx.translate(curX+0.5*width,curY + 0.5 * height)
+            if(verticalPixelScale){
+                offctx.scale(1,1.0/verticalPixelScale)
+            }
             offctx.beginPath();
             if (dashboardModeId == '1') {
-                offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
-                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
+                offctx.moveTo(0,0);
+                offctx.arc(0,0, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
 
             } else if (dashboardModeId == '2') {
-                offctx.moveTo(curX + 0.5 * width, curY + 0.5 * height);
-                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
-                offctx.arc(curX + 0.5 * width, curY + 0.5 * height, radius * 3 / 4, Math.PI * curArc / 180, Math.PI * minArc / 180, !wise);
+                offctx.moveTo(0,0);
+                offctx.arc(0,0, radius, Math.PI * minArc / 180, Math.PI * curArc / 180, wise);
+                offctx.arc(0,0, radius * 3 / 4, Math.PI * curArc / 180, Math.PI * minArc / 180, !wise);
             }
             offctx.closePath();
             offctx.clip();
-            this.drawBg(curX, curY, width, height, image, null);
+            if(verticalPixelScale){
+                offctx.scale(1,verticalPixelScale)
+            }
+            this.drawBg(-0.5*width, -0.5*height, width, height, image, null);
             offctx.restore();
         }
     },

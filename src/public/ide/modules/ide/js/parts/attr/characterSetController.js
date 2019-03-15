@@ -64,7 +64,7 @@ ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
         syncFontFamilies();
 
         $scope.$on('ResourceChanged',function (e) {
-            console.log('Fonts changed!!')
+            //console.log('Fonts changed!!')
             syncFontFamilies();
         })
     }
@@ -86,7 +86,7 @@ ide.controller('characterSetCtrl',['$scope','characterSetService','$timeout',
     }
 
     function selectCharacterByIndex(index){
-        console.log('hh');
+        //console.log('hh');
         $scope.componentOfChar.character=characterSetService.selectCharacterByIndex(index);
     }
 

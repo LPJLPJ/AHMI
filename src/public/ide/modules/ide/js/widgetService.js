@@ -119,7 +119,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.on('updateAnimation',function(arg){
                 self.animation = arg.animation
-                console.log(self.animation)
+                //console.log(self.animation)
                 // this.refresh(self,arg.cb);
                 var pageNode = CanvasService.getPageNode();
                 pageNode.renderAll();
@@ -1306,6 +1306,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var _callback=arg.callback;
                 var widgetWidth=arg.widgetWidth;
                 var widgetHeight=arg.WidgetHeight;
+                self.posRotatePointX = Math.round(widgetWidth/2);
+                self.posRotatePointY = Math.round(widgetHeight/2);
                 self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
