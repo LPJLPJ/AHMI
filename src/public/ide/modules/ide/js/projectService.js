@@ -3777,11 +3777,20 @@ ideServices
                         OnWidgetSelected(currentWidget,_successCallback);
                     }
                 };
+                if(_option.mode){
+                    var mode=_option.mode;
+                    selectObj.level.info.mode=mode;
+                    arg.mode=mode;
+                }
 
                 if(_option.text){
                     var tempText=_option.text;
                     selectObj.level.info.text=tempText;
                     arg.text=tempText;
+                }
+                if(_option.textContent){
+                    selectObj.level.info.textContent = _option.textContent
+                    arg.textContent=_option.textContent
                 }
                 if(_option.fontFamily){
                     var tempFontFamily=_option.fontFamily;

@@ -1146,6 +1146,11 @@ body {
     width: 100%;
 }
 
+
+.attr-item__cell-textarea{
+    white-space: pre;
+}
+
 .background-image {
     width: 100% !important;
     overflow: hidden !important;

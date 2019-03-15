@@ -1870,16 +1870,68 @@ module.exports = React.createClass({
         var arrange = info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
         //draw text
-        if (info.text) {
-            //
-            var font = {};
-            font['font-style'] = info.fontItalic;
-            font['font-weight'] = info.fontBold;
-            font['font-size'] = info.fontSize;
-            font['font-family'] = info.fontFamily;
-            font['font-color'] = info.fontColor;
-            this.drawTextByTempCanvas(curX, curY, width, height, info.text, font, arrange);
+        if(info.mode != 1){
+            if (info.text) {
+                //
+                var font = {};
+                font['font-style'] = info.fontItalic;
+                font['font-weight'] = info.fontBold;
+                font['font-size'] = info.fontSize;
+                font['font-family'] = info.fontFamily;
+                font['font-color'] = info.fontColor;
+                this.drawTextByTempCanvas(curX, curY, width, height, info.text, font, arrange);
+            }
+        }else{
+            if(info.textContent&&info.textContent!==''){
+                var fontAttrs = {
+                    fontSize:info.fontSize,
+                    fontFamily:info.fontFamily,
+                    fontBold:info.fontBold,
+                    fontItalic:info.fontItalic,
+                    fontColor:info.fontColor,
+                    // fontSpacing:0,
+                    // fontHalfSpacing:0,
+                    // fontVerticalOffset:0
+                }
+
+                var paragraphAttrs = {
+                    align:'left',
+                        // indentationLeft:0,
+                        // indentationRight:0,
+                        // firstLineIndentation:0,
+                        spacingBetweenLines:info.fontSize,
+                        // spacingBeforeParagraph:(this.height-this.fontSize)/2,
+                        spacingAfterParagraph:info.fontSize
+                }
+                var article = {
+                    paragraphs:info.textContent.split('\n').map(function(p){
+                        return {
+                            paragraphAttrs:paragraphAttrs,
+                            spans:[
+                                {
+                                    fontAttrs:fontAttrs,
+                                    text:p
+                                }
+                            ]
+                        }
+                    })
+                }
+                var offctx = this.offctx
+                offctx.save()
+                var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                //console.log(fontString);
+                // offctx.scale(1/this.scaleX,1/this.scaleY);
+                offctx.font=fontString;
+                offctx.textAlign='center';
+                offctx.textBaseline='middle';//使文本垂直居中
+
+                FontLayoutEngine.layoutArticle(article,new FontLayoutEngine.LayoutBox(0,0,info.width,info.height))
+                
+                FontLayoutEngine.showArticleLayout(article,offctx)
+                offctx.restore()
+            }
         }
+        
         cb && cb();
     },
     drawTextInput: function (curX, curY, widget, options, cb) {

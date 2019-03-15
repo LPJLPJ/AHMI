@@ -3345,7 +3345,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.backgroundColor=level.texList[0].slices[0].color;
             this.arrange=level.info.arrange;
 
+            this.mode = level.info.mode
             this.text=level.info.text;
+            this.textContent = level.info.textContent
             this.fontFamily=level.info.fontFamily;
             this.fontSize=level.info.fontSize;
             this.fontColor=level.info.fontColor;
@@ -3377,30 +3379,45 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.on('changeTextContent', function (arg) {
                 //console.log('enter on changeTextContent');
-                if(arg.text){
-                    self.text=arg.text;
-                }
-                if(arg.fontFamily){
-                    self.fontFamily=arg.fontFamily;
-                }
-                if(arg.fontSize){
-                    self.fontSize=arg.fontSize;
-                }
-                if(arg.fontColor){
-                    self.fontColor=arg.fontColor;
-                }
-                if(arg.fontBold){
-                    self.fontBold=arg.fontBold;
-                }
-                if(arg.hasOwnProperty('fontItalic')){
-                    self.fontItalic=arg.fontItalic;
-                }
+                // if(arg.mode){
+                //     self.mode = arg.mode
+                // }
+                // if(arg.text){
+                //     self.text=arg.text;
+                // }
+                // if(arg.textContent){
+                //     self.textContent=arg.textContent;
+                // }
+                // if(arg.fontFamily){
+                //     self.fontFamily=arg.fontFamily;
+                // }
+                // if(arg.fontSize){
+                //     self.fontSize=arg.fontSize;
+                // }
+                // if(arg.fontColor){
+                //     self.fontColor=arg.fontColor;
+                // }
+                // if(arg.fontBold){
+                //     self.fontBold=arg.fontBold;
+                // }
+                // if(arg.hasOwnProperty('fontItalic')){
+                //     self.fontItalic=arg.fontItalic;
+                // }
+                var attrs = ['mode','text','textContent','fontFamily','fontSize','fontColor','fontBold','fontItalic']
+                attrs.forEach(function(attr){
+                    if(arg[attr]!==undefined){
+                        self[attr] = arg[attr]
+                    }
+                })
 
-                //重新设置canvas的宽高
-                if(self.fontSize&&self.text){
-                    self.setWidth(self.fontSize*(self.text.length+1));
-                    self.setHeight(self.fontSize*2);
+                //single line重新设置canvas的宽高
+                if(self.mode!=1){
+                    if(self.fontSize&&self.text){
+                        self.setWidth(self.fontSize*(self.text.length+1));
+                        self.setHeight(self.fontSize*2);
+                    }
                 }
+                
 
                 var _callback=arg.callback;
                 var subLayerNode = CanvasService.getSubLayerNode();
@@ -3436,6 +3453,15 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('OnRelease',function(arg){
+                var _callback=arg.callback;
+                // self.scaleX = 1
+                // self.scaleY = 1
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));
@@ -3458,15 +3484,100 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.restore();
                 //var subLayerNode=CanvasService.getSubLayerNode();
 
-                if(this.text){
-                    var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
-                    //console.log(fontString);
-                    ctx.scale(1/this.scaleX,1/this.scaleY);
-                    ctx.font=fontString;
-                    ctx.textAlign='center';
-                    ctx.textBaseline='middle';//使文本垂直居中
-                    ctx.fillText(this.text,0,0);
+                if(this.mode!=1){
+                    if(this.text){
+                        var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                        //console.log(fontString);
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign='center';
+                        ctx.textBaseline='middle';//使文本垂直居中
+                        ctx.fillText(this.text,0,0);
+                    }
+                }else{
+                    if(this.textContent){
+                        ctx.save()
+                        ctx.translate(-this.width/2,-this.height/2)
+                        var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                        //console.log(fontString);
+                        ctx.scale(1/this.scaleX,1/this.scaleY);
+                        ctx.font=fontString;
+                        ctx.textAlign='center';
+                        ctx.textBaseline='middle';//使文本垂直居中
+                        
+                        var fontAttrs = {
+                            fontSize:this.fontSize,
+                            fontFamily:this.fontFamily,
+                            fontBold:true,
+                            fontItalic:false,
+                            fontColor:null,
+                            // fontSpacing:0,
+                            // fontHalfSpacing:0,
+                            // fontVerticalOffset:0
+                        }
+
+                        var paragraphAttrs = {
+                            align:'left',
+                                // indentationLeft:0,
+                                // indentationRight:0,
+                                // firstLineIndentation:0,
+                                spacingBetweenLines:this.fontSize,
+                                // spacingBeforeParagraph:(this.height-this.fontSize)/2,
+                                spacingAfterParagraph:this.fontSize
+                        }
+                        var paragraph = {
+                            paragraphAttrs:paragraphAttrs,
+                            spans:[
+                                {
+                                    fontAttrs:fontAttrs,
+                                    text:this.textContent
+                                }
+                            ]
+                        }
+
+                        var article = {
+                            paragraphs:this.textContent.split('\n').map(function(p){
+                                return {
+                                    paragraphAttrs:paragraphAttrs,
+                                    spans:[
+                                        {
+                                            fontAttrs:fontAttrs,
+                                            text:p
+                                        }
+                                    ]
+                                }
+                            })
+                        }
+                        // FontLayoutEngine.layoutParagraph(paragraph,new FontLayoutEngine.LayoutBox(0,0,this.width,this.height))
+                        FontLayoutEngine.layoutArticle(article,new FontLayoutEngine.LayoutBox(0,0,this.width,this.height))
+                        // console.log(paragraph)
+                        // ctx.fillText(this.text,0,0);
+                        // var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                        //     //console.log(fontString);
+                        //     ctx.scale(1/this.scaleX,1/this.scaleY);
+                        //     ctx.font=fontString;
+                        //     ctx.textAlign='center';
+                        //     ctx.textBaseline='middle';//使文本垂直居中
+                        // for(var i=0;i<article.paragraphs.length;i++){
+                        //     var paragraph = article.paragraphs[i]
+                        //     var span = paragraph.spans[0]
+                        //     var fontSize = this.fontSize
+                        //     for(var j=0;j<span.text.length;j++){
+                        //         // ctx.drawText(span.text[j],)
+                        //         ctx.rect(span.characterLayouts[j].x,span.characterLayouts[j].y,fontSize,fontSize)
+                        //         ctx.fillText(span.text[j],span.characterLayouts[j].x+fontSize/2,span.characterLayouts[j].y+fontSize/2)
+                        //     }
+                        // }
+                        FontLayoutEngine.showArticleLayout(article,ctx)
+                        
+                        ctx.stroke()
+                        ctx.restore()
+    
+                   }
                 }
+                
+                
+               
                 //将图片超出canvas的部分裁剪
                 this.clipTo=function(ctx){
                     ctx.save();
@@ -3563,6 +3674,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.text){
                     self.text=arg.text;
                 }
+                if(arg.textContent){
+                    self.textContent=arg.textContent;
+                }
                 if(arg.fontFamily){
                     self.fontFamily=arg.fontFamily;
                 }
@@ -3604,6 +3718,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var subLayerNode = CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
                 arg.callback && arg.callback();
+            })
+
+            this.on('changeMode',function(arg){
+                var _callback=arg.callback;
+                self.mode=arg.mode;
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
             })
 
             this.on('changeArrange',function(arg){

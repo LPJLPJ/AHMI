@@ -74,20 +74,22 @@
 
     //the box to layout text
     function LayoutBox(x,y,w,h){
-        this.x = x
-        this.y = y
-        this.w = w
-        this.h = h
+        this.x = x||0
+        this.y = y||0
+        this.w = w||0
+        this.h = h||0
     }
 
     LayoutBox.prototype.deleteVertical = function(box){
-        this.y += box.h
-        this.h -= box.h
+        this.y += box.h||0
+        this.h -= box.h||0
     }
 
     LayoutBox.prototype.clone = function(){
         return new LayoutBox(this.x,this.y,this.w,this.h)
     }
+
+    FontLayoutEngine.LayoutBox = LayoutBox
 
     //layout the total article
     FontLayoutEngine.layoutArticle = function(article, box, options){
@@ -126,8 +128,8 @@
         var curTotalWidth = 0
         var nextTotalWidth = 0
         var lineHeight = 0
-        var indentationLeft = paragraph.paragraphAttrs.indentationLeft
-        var indentationRight = paragraph.paragraphAttrs.indentationRight
+        var indentationLeft = paragraph.paragraphAttrs.indentationLeft||0
+        var indentationRight = paragraph.paragraphAttrs.indentationRight||0
         var singleLineWidth = box.w - indentationLeft - indentationRight
         var isFirst = true
         for(var i = lineTrack.firstSpanIdx;i < paragraph.spans.length;i++){
@@ -182,8 +184,8 @@
         lineTrack.lastSpanIdx = lineInfo.lastSpanIdx
         lineTrack.lastTextIdx = lineInfo.lastTextIdx
         lineTrack.lineHeight = lineInfo.lineHeight
-        var indentationLeft = paragraph.paragraphAttrs.indentationLeft
-        var indentationRight = paragraph.paragraphAttrs.indentationRight
+        var indentationLeft = paragraph.paragraphAttrs.indentationLeft||0
+        var indentationRight = paragraph.paragraphAttrs.indentationRight||0
         var curTotalWidth = lineInfo.totalWidth
         var startXInLine 
         switch(paragraph.paragraphAttrs.align){
@@ -257,7 +259,7 @@
             lineTrack.firstSpanIdx = nextSpanIdx
             lineTrack.firstTextIdx = nextTextIdx
             lineTrack.lineIdx+=1
-            box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight+paragraph.paragraphAttrs.spacingBetweenLines))
+            box.deleteVertical(new LayoutBox(box.x,box.y,box.w,lineTrack.lineHeight+(paragraph.paragraphAttrs.spacingBetweenLines||0)))
             lineTrack.lineHeight = 0
             this.layoutLine(paragraph,box,lineTrack,options)
         }else{
@@ -278,6 +280,8 @@
             return 0
         }
         var laterType = this.getCharacterType(laterCharacter)
+        fullWidthSpacing = fullWidthSpacing || 0
+        halfWidthSpacing = halfWidthSpacing || 0
         if(formerType == 0){
             if(laterType == 0){
                 return halfWidthSpacing
@@ -323,14 +327,14 @@
     }
 
     */
-   FontLayoutEngine.showArticleLayout = function(article,canvas){
+   FontLayoutEngine.showArticleLayout = function(article,ctx,options){
        article.paragraphs.forEach(function(p){
-           this.showParagraphLayout(p,canvas)
+           this.showParagraphLayout(p,ctx,options)
        }.bind(this))
    }
 
-    FontLayoutEngine.showParagraphLayout = function(paragraph,canvas){
-        var ctx = canvas.getContext('2d')
+    FontLayoutEngine.showParagraphLayout = function(paragraph,ctx,options){
+        ctx.beginPath()
         for(var i=0;i<paragraph.spans.length;i++){
             var span = paragraph.spans[i]
             var fontAttrs = span.fontAttrs
@@ -341,12 +345,22 @@
             ctx.font = (fontAttrs['fontStyle'] || '') + ' ' + (fontAttrs['fontVariant'] || '') + ' ' + (fontAttrs['fontWeight'] || '') + ' ' + (fontAttrs['fontSize'] || 24) + 'px' + ' ' + ('"' + fontAttrs['fontFamily'] + '"' || 'arial');
             for(var j=0;j<span.text.length;j++){
                 // ctx.drawText(span.text[j],)
-                ctx.rect(span.characterLayouts[j].x,span.characterLayouts[j].y,fontSize,fontSize)
+                if(options&&options.debug){
+                    ctx.rect(span.characterLayouts[j].x,span.characterLayouts[j].y,fontSize,fontSize)
+                }
                 ctx.fillText(span.text[j],span.characterLayouts[j].x+fontSize/2,span.characterLayouts[j].y+fontSize/2)
             }
             ctx.restore()
         }
-        ctx.stroke()
+        if(options&&options.debug){
+            ctx.stroke()
+        }
+        
+    }
+
+
+    FontLayoutEngine.fixData = function(){
+
     }
 
     //test
@@ -431,7 +445,7 @@
         // console.log(testParagraph)
         // this.showLayout(testParagraph,canvas)
         this.layoutArticle(testArticle,box)
-        this.showArticleLayout(testArticle,canvas)
+        this.showArticleLayout(testArticle,ctx)
     }
 
     return FontLayoutEngine
