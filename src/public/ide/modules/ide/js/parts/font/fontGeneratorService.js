@@ -263,6 +263,91 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         }
     }
 
+
+    function generateSingleFontAsync(font,options,cb) {
+        var fontSize = font['font-size']||24;
+        options = options||{};
+        //add padding
+        var paddingRatio = options.paddingRatio||1.0;
+        var paddingFontSize= Math.ceil(paddingRatio*fontSize);
+        var totalChars 
+        var charRanges = []
+        var limitOfEachPNG = 1024;
+        var pngDataUrls = [];
+        var ASCII_RANGE = [1,127,'ascii']
+        if(options.full){
+            switch (options.encoding){
+                case 'utf-8':
+                    charRanges = [
+                        [0x4e00,0x9fa5,options.encoding]
+                    ]
+                    
+                break;
+                case 'gb2312':
+                    for(var i= 1;i<=94;i++){
+                        charRanges.push([((0xa0+i)<<8) + (0xa0+1),((0xa0+i)<<8) + (0xa0+94),options.encoding])
+                    }
+                    // charRanges = [
+                    //     [0xa1a1,0xfefe,options.encoding]
+                    // ]
+                break;
+                default:
+                    //ascii
+                    charRanges = [
+                    ]
+    
+            }
+        }else{
+            charRanges = []
+        }
+
+        totalChars = getTotalCharsByRangs(charRanges) + getTotalCharsByRangs([ASCII_RANGE])
+
+        charRanges = [ASCII_RANGE].concat(charRanges)
+        
+        if (totalChars) {
+            var fontLibPartsNum = Math.ceil(totalChars/limitOfEachPNG)
+            var curChars = 0
+            var splitedRanges
+            var curCharRanges
+            var fontStr = (font['font-italic'] || '') + ' ' + (font['font-variant'] || '') + ' ' + (font['font-bold'] || '') + ' ' + (fontSize) + 'px' + ' ' + ('"' + font['font-family'] + '"');
+    
+            var drawOneRange = function(){
+                splitedRanges = offsetRanges(limitOfEachPNG,charRanges)
+                curCharRanges = splitedRanges.before
+                charRanges = splitedRanges.after
+                curChars = getTotalCharsByRangs(curCharRanges)
+                gridSize = calCanvasSize(paddingFontSize,curChars);
+                initCanvas(gridSize.w*paddingFontSize, gridSize.h*paddingFontSize);
+                
+    
+                drawCharsWithRangesFrom(0,curCharRanges,paddingFontSize,fontStr,options)
+                pngDataUrls.push(fontCanvas.toDataURL())
+
+            }
+
+            i = 0
+            var tickDraw = function(){
+                setTimeout(function(){
+                    drawOneRange()
+                    i++
+                    if(i==fontLibPartsNum){
+                        //finish
+                        cb && cb(null,pngDataUrls)
+                    }else{
+                        //not finish
+                        tickDraw()
+                    }
+                },0)
+            }
+            tickDraw()
+        }else{
+            //
+            cb && cb(new Error('invalid num of totalchars'))
+        }
+
+    }
+
     /**
      * 返回所有字符集
      * @param widgets
@@ -312,7 +397,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             var added = false
             for(var i=0;i<fonts.length;i++){
                 var item = fonts[i]
-                if ((item.fontFamily===info.fontFamily)&&(item.fontSize===info.fontSize)&&(item.fontBold===info.fontBold)&&(item.fontItalic===info.fontItalic)&&(item.fullFont === info.fullFont)){
+                if ((item['font-family']===info.fontFamily)&&(item['font-size']===info.fontSize)&&(item['font-bold']===info.fontBold)&&(item['font-italic']===info.fontItalic)&&(item.fullFont === info.fullFont)){
                     //same infomation
                     //fullFont overlap not full font
                     // if(!curFont.fullFont&&info.fullFont){
@@ -351,6 +436,7 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
     }
 
     this.generateSingleFont = generateSingleFont;
+    this.generateSingleFontAsync = generateSingleFontAsync;
     this.getFontCollections = getFontCollections;
     this.pngStream = pngStream;
 }]);

@@ -1658,7 +1658,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         //options.paddingRatio = 1.2;
         // options.showGrid = true;
         //upload multi font lib file
+        // var startTime = Date.now()
         var pngDataUrls = FontGeneratorService.generateSingleFont(font,options);
+        // var stopTime = Date.now()
+        // console.log("render single font png: ",imgNamePrefix,stopTime - startTime)
         var count = pngDataUrls.length
         var lastErr = null
         var coutDownCB = function(err){
@@ -1751,6 +1754,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             curWidget = null,
             curFont = null,
             curRenderPage = null;
+        // console.log(fontList)
         if (totalNum>0){
             var okFlag = true;
             var cb = function (err) {
