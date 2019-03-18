@@ -1889,8 +1889,8 @@ module.exports = React.createClass({
                     fontBold:info.fontBold,
                     fontItalic:info.fontItalic,
                     fontColor:info.fontColor,
-                    // fontSpacing:0,
-                    // fontHalfSpacing:0,
+                    fontSpacing:Number(info.fontSpacing)||0,
+                    fontHalfSpacing:Number(info.halfFontSpacing)||0,
                     // fontVerticalOffset:0
                 }
 
@@ -1918,7 +1918,8 @@ module.exports = React.createClass({
                 }
                 var offctx = this.offctx
                 offctx.save()
-                var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                offctx.fillStyle = info.fontColor
+                var fontString=info.fontItalic+" "+info.fontBold+" "+info.fontSize+"px"+" "+info.fontFamily;
                 //console.log(fontString);
                 // offctx.scale(1/this.scaleX,1/this.scaleY);
                 offctx.font=fontString;

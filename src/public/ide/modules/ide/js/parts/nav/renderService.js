@@ -1495,8 +1495,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                         fontBold:info.fontBold,
                         fontItalic:info.fontItalic,
                         fontColor:info.fontColor,
-                        // fontSpacing:0,
-                        // fontHalfSpacing:0,
+                        fontSpacing:Number(info.fontSpacing)||0,
+                        fontHalfSpacing:Number(info.halfFontSpacing)||0,
                         // fontVerticalOffset:0
                     }
 
@@ -1523,8 +1523,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                         })
                     }
                     FontLayoutEngine.layoutArticle(article,new FontLayoutEngine.LayoutBox(0,0,info.width,info.height))
-                    
+                    ctx.save()
+                    ctx.fillStyle = info.fontColor
                     FontLayoutEngine.showArticleLayout(article,ctx)
+                    ctx.restore()
                 }
             }
             

@@ -3771,55 +3771,64 @@ ideServices
             this.ChangeAttributeTextContent = function (_option,_successCallback) {
                 var selectObj=_self.getCurrentSelectObject();
                 var arg={
-                    level:selectObj.level,
+                    //level:selectObj.level,
                     callback:function () {
                         var currentWidget=selectObj.level;
                         OnWidgetSelected(currentWidget,_successCallback);
                     }
                 };
-                if(_option.mode){
-                    var mode=_option.mode;
-                    selectObj.level.info.mode=mode;
-                    arg.mode=mode;
+                // if(_option.mode){
+                //     var mode=_option.mode;
+                //     selectObj.level.info.mode=mode;
+                //     arg.mode=mode;
+                // }
+
+                // if(_option.text){
+                //     var tempText=_option.text;
+                //     selectObj.level.info.text=tempText;
+                //     arg.text=tempText;
+                // }
+                // if(_option.textContent){
+                //     selectObj.level.info.textContent = _option.textContent
+                //     arg.textContent=_option.textContent
+                // }
+                // if(_option.fontFamily){
+                //     var tempFontFamily=_option.fontFamily;
+                //     selectObj.level.info.fontFamily=tempFontFamily;
+                //     arg.fontFamily=tempFontFamily;
+                // }
+                // if(_option.fontSize){
+                //     var tempFontSize=_option.fontSize;
+                //     selectObj.level.info.fontSize=tempFontSize;
+                //     arg.fontSize=tempFontSize;
+                // }
+                // if(_option.fontColor){
+                //     var tempFontColor=_option.fontColor;
+                //     selectObj.level.info.fontColor=tempFontColor;
+                //     arg.fontColor=tempFontColor;
+                // }
+                // if(_option.fontBold){
+                //     var tempFontBold=_option.fontBold;
+                //     selectObj.level.info.fontBold=tempFontBold;
+                //     arg.fontBold=tempFontBold;
+                // }
+                // if(_option.hasOwnProperty('fontItalic')){
+                //     var tempFontItalic=_option.fontItalic;
+                //     selectObj.level.info.fontItalic=tempFontItalic;
+                //     arg.fontItalic=tempFontItalic;
+                // }
+                // if(_option.fontName){
+                //     selectObj.level.info.fontName=_option.fontName;
+                // }
+
+                for(var key in _option){
+                    if(_option.hasOwnProperty(key)){
+                        selectObj.level.info[key] = _option[key]
+                        arg[key] = _option[key]
+                    }
                 }
 
-                if(_option.text){
-                    var tempText=_option.text;
-                    selectObj.level.info.text=tempText;
-                    arg.text=tempText;
-                }
-                if(_option.textContent){
-                    selectObj.level.info.textContent = _option.textContent
-                    arg.textContent=_option.textContent
-                }
-                if(_option.fontFamily){
-                    var tempFontFamily=_option.fontFamily;
-                    selectObj.level.info.fontFamily=tempFontFamily;
-                    arg.fontFamily=tempFontFamily;
-                }
-                if(_option.fontSize){
-                    var tempFontSize=_option.fontSize;
-                    selectObj.level.info.fontSize=tempFontSize;
-                    arg.fontSize=tempFontSize;
-                }
-                if(_option.fontColor){
-                    var tempFontColor=_option.fontColor;
-                    selectObj.level.info.fontColor=tempFontColor;
-                    arg.fontColor=tempFontColor;
-                }
-                if(_option.fontBold){
-                    var tempFontBold=_option.fontBold;
-                    selectObj.level.info.fontBold=tempFontBold;
-                    arg.fontBold=tempFontBold;
-                }
-                if(_option.hasOwnProperty('fontItalic')){
-                    var tempFontItalic=_option.fontItalic;
-                    selectObj.level.info.fontItalic=tempFontItalic;
-                    arg.fontItalic=tempFontItalic;
-                }
-                if(_option.fontName){
-                    selectObj.level.info.fontName=_option.fontName;
-                }
+
 
                 selectObj.target.fire('changeTextContent',arg);
             };

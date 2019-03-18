@@ -2693,6 +2693,18 @@
                                 >
 
                                 </textarea>
+                                <p class="attr-item__cell-title">字符间距</p>
+                                <input type="text"
+                                       class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.fontSpacing"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.textArea.enterAttr($event,'fontSpacing')"/>
+                                <p class="attr-item__cell-title">字符间距（半角）</p>
+                                <input type="text"
+                                       class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.halfFontSpacing"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.textArea.enterAttr($event,'halfFontSpacing')"/>
                                 <!-- <button class="btn btn-default attr-default-btn" ng-click="component.textArea.enterTextContent()">完成</button> -->
                             </div>
 
