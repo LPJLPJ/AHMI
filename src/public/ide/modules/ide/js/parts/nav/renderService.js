@@ -1659,33 +1659,67 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         // options.showGrid = true;
         //upload multi font lib file
         // var startTime = Date.now()
-        var pngDataUrls = FontGeneratorService.generateSingleFont(font,options);
+        // var pngDataUrls = FontGeneratorService.generateSingleFont(font,options);
         // var stopTime = Date.now()
         // console.log("render single font png: ",imgNamePrefix,stopTime - startTime)
-        var count = pngDataUrls.length
-        var lastErr = null
-        var coutDownCB = function(err){
-            if(err){
-                lastErr = err
-            }
-            count--
-            if(count == 0){
-                cb && cb(lastErr)
-            }
+        // var count = pngDataUrls.length
+        // var lastErr = null
+        // var coutDownCB = function(err){
+        //     if(err){
+        //         lastErr = err
+        //     }
+        //     count--
+        //     if(count == 0){
+        //         cb && cb(lastErr)
+        //     }
             
-        }
-        pngDataUrls.forEach(function(stream,idx){
-            stream = FontGeneratorService.pngStream(stream,local);
-            var curStreamName = imgNamePrefix+(idx>0?'-'+idx:'')+imagePostfix
-            if(local){
-                try {
-                    fs.writeFileSync(path.join(dstDir,curStreamName),stream);
-                    coutDownCB()
-                }catch (e) {
-                    coutDownCB(e)
-                }
+        // }
+        // pngDataUrls.forEach(function(stream,idx){
+        //     stream = FontGeneratorService.pngStream(stream,local);
+        //     var curStreamName = imgNamePrefix+(idx>0?'-'+idx:'')+imagePostfix
+        //     if(local){
+        //         try {
+        //             fs.writeFileSync(path.join(dstDir,curStreamName),stream);
+        //             coutDownCB()
+        //         }catch (e) {
+        //             coutDownCB(e)
+        //         }
+        //     }else{
+        //         uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
+        //     }
+        // })
+
+        //async version
+        FontGeneratorService.generateSingleFontAsync(font,options,function(error,pngDataUrls){
+            if(error){
+                cb && cb(error)
             }else{
-                uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
+                var count = pngDataUrls.length
+                var lastErr = null
+                var coutDownCB = function(err){
+                    if(err){
+                        lastErr = err
+                    }
+                    count--
+                    if(count == 0){
+                        cb && cb(lastErr)
+                    }
+                    
+                }
+                pngDataUrls.forEach(function(stream,idx){
+                    stream = FontGeneratorService.pngStream(stream,local);
+                    var curStreamName = imgNamePrefix+(idx>0?'-'+idx:'')+imagePostfix
+                    if(local){
+                        try {
+                            fs.writeFileSync(path.join(dstDir,curStreamName),stream);
+                            coutDownCB()
+                        }catch (e) {
+                            coutDownCB(e)
+                        }
+                    }else{
+                        uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
+                    }
+                })
             }
         })
         
