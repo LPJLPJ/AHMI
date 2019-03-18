@@ -2145,10 +2145,10 @@ module.exports = React.createClass({
         if(widget.galleryOffset!==undefined){
             if(enableAnimation){
 
-                // if(widget.animateTimerId!==undefined && widget.animateTimerId !== 0){
-                //     clearInterval(widget.animateTimerId)
-                //     widget.animateTimerId = 0
-                // }
+                if(widget.animateTimerId!==undefined && widget.animateTimerId !== 0){
+                    clearInterval(widget.animateTimerId)
+                    widget.animateTimerId = 0
+                }
                 if(widget.animateTimerId===undefined || widget.animateTimerId === 0){
 
                     var fps = 30
@@ -2156,7 +2156,8 @@ module.exports = React.createClass({
                     var easing = this.getEasingFunc(widget)
                     widget.animateTimerId = AnimationManager.stepValue(widget.galleryOffset, galleryOffset, duration, fps, easing, function (obj) {
                         widget.galleryOffset = obj.curX
-                        this.draw()
+                        // console.log(widget.galleryOffset)
+                        // this.draw()
                     }.bind(this), function () {
                         widget.galleryOffset = galleryOffset
                         widget.animateTimerId = 0
