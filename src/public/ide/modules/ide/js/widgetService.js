@@ -594,6 +594,17 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeGeneralAttrs',function(arg){
+                for(var key in arg.attrs){
+                    if(arg.attrs.hasOwnProperty(key)){
+                        self[key] = arg.attrs[key]
+                    }
+                }
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                arg.callback && arg.callback();
+            })
+
         },
         toObject: function () {
             return fabric.util.object.extend(this.callSuper('toObject'));

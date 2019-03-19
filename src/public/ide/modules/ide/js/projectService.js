@@ -3312,6 +3312,27 @@ ideServices
                 getCurrentLayer().url = subLayerNode.toDataURL({format:'png'});
             };
 
+            this.enterGenerateAttrs = function(_option, _successCallback){
+            
+                var selectObj=_self.getCurrentSelectObject();
+
+                var arg={
+                    attrs:{
+                        
+                    },
+                    callback:_successCallback
+                }
+
+                for(var key in _option){
+                    if(_option.hasOwnProperty(key)){
+                        arg.attrs[key] = _option[key]
+                        selectObj.level.info[key] = _option[key]
+                    }
+                }
+
+                selectObj.target.fire('changeGeneralAttrs',arg);
+            }
+
             this.ChangeAttributeName= function (_option, _successCallback) {
                 var currentOperate=SaveCurrentOperate();
                 var object=getCurrentSelectObject();
@@ -4688,6 +4709,7 @@ ideServices
                         image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
                         selectObj.level.info.posRotatePointX = Math.round(image.width/2);
                         selectObj.level.info.posRotatePointY = Math.round(image.height/2);
+                        break;
                     default :
                         break;
                 }
