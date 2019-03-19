@@ -82,5 +82,5 @@ ideServices.
             }
         }
         return false
-    };
+    }.bind(this)
 }]);

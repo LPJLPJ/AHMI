@@ -36,6 +36,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 transitionName: null,
                 timingFun: '',
                 timingFuns: ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'],
+                isWidget:isWidget,
                 page: {
                     enterImage: enterBackgroundImage,
                     selectImage: 'demo20.png',
@@ -411,7 +412,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterHighlightMode: enterHighlightMode,
                 enterEnableAnimationMode: enterEnableAnimationMode,
                 enterSpacing: enterSpacing,
-                enterHalfSpacing:enterHalfSpacing
+                enterHalfSpacing:enterHalfSpacing,
+                enterGenerateAttrs:enterGenerateAttrs
             };
             $scope.animationsDisabled = UserTypeService.getAnimationAuthor()
         }
@@ -467,6 +469,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 $scope.component.images = ResourceService.getAllImages();
                 $scope.component.images.unshift(blankImage);
             })
+        }
+
+        function isWidget(){
+            if($scope.component.object && $scope.component.object.type){
+                return Type.isWidget($scope.component.object.type)
+            }
+            return false
+            
         }
 
         /**
@@ -3432,6 +3442,25 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 return false;
             }
         };
+
+        function enterGenerateAttrs(key){
+            if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                return;
+            }
+
+            console.log($scope.component.isWidget())
+
+            var option = {
+                [key]: $scope.component.object.level.info[key]
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.enterGenerateAttrs(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+        }
 
         /**
          * 蒙板

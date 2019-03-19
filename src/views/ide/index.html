@@ -2339,23 +2339,6 @@
                                     </option>
                                 </select>
                             </div>
-                            <!--<div class="attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">方向</span>-->
-
-                            <!--<select class="attr-item__cell-input form-control" ng-model="component.num.arrangeModel"-->
-                            <!--ng-change="component.num.enterArrange($event)">-->
-                            <!--<option value="horizontal">水平</option>-->
-                            <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
-                            <!--</div>-->
-                            <!--<div class="attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">数字值</span>-->
-                            <!--<input class="attr-item__cell-input form-control"-->
-                            <!--type="number"-->
-                            <!--ng-model="component.object.level.info.numValue"-->
-                            <!--ng-blur="component.restore()"-->
-                            <!--ng-keypress="component.num.enterNumValue($event)">-->
-                            <!--</div>-->
                         </div>
 
                         <div ng-show="component.object.type=='MyTexNum'&&!myMask">
@@ -2523,16 +2506,6 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div>
-                            <!--<div class="attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">开启动画</span>-->
-                            <!--<select class="attr-item__cell-input form-control"-->
-                            <!--ng-model="component.texNum.enableAnimationModeId"-->
-                            <!--ng-change="component.enterEnableAnimationMode($event)">-->
-                            <!--<option ng-repeat="mode in component.enableAnimationModes" value="{{mode.id}}">-->
-                            <!--{{mode.name}}-->
-                            <!--</option>-->
-                            <!--</select>-->
-                            <!--</div>-->
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">开启动画</p>
                                 <select class="attr-item__cell-input form-control"
@@ -2705,7 +2678,6 @@
                                        ng-model="component.object.level.info.halfFontSpacing"
                                        ng-blur="component.restore()"
                                        ng-keypress="component.textArea.enterAttr($event,'halfFontSpacing')"/>
-                                <!-- <button class="btn btn-default attr-default-btn" ng-click="component.textArea.enterTextContent()">完成</button> -->
                             </div>
 
                         </div>
@@ -2783,15 +2755,6 @@
                                    ng-keypress="component.enterHalfSpacing($event)"
                                    type="number">
                         </div>
-                            <!--<div class="attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">方向</span>-->
-
-                            <!--<select class="attr-item__cell-input form-control" ng-model="component.textArea.arrangeModel"-->
-                            <!--ng-change="component.textArea.enterArrange($event)">-->
-                            <!--<option value="horizontal">水平</option>-->
-                            <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
-                            <!--</div>-->
                              <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">文本</p>
                                 <input type="text"
@@ -3343,23 +3306,7 @@
                                        ng-model="component.object.level.info.spacing"
                                        ng-keypress="component.enterSpacing($event)">
                             </div>
-                            <!--<div class="attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">方向</span>-->
-
-                            <!--<select class="attr-item__cell-input form-control" ng-model="component.dateTime.arrangeModel"-->
-                            <!--ng-change="component.dateTime.enterArrange($event)">-->
-                            <!--<option value="horizontal">水平</option>-->
-                            <!--<option value="vertical">竖直</option>-->
-                            <!--</select>-->
-                            <!--</div>-->
-                            <!--<div class="attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">初始值</span>-->
-                            <!--<input type="number"-->
-                            <!--class="attr-item__cell-input form-control"-->
-                            <!--ng-model="component.object.level.info.initValue"-->
-                            <!--ng-blur="component.restore()"-->
-                            <!--ng-keypress=""/>-->
-                            <!--</div>-->
+                           
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">显示模式</p>
                                 <select class="attr-item__cell-input form-control"
@@ -3563,14 +3510,6 @@
                                 </select>
                             </div>
 
-                            <!--<div class = "attr-item__cell-wrap lg">-->
-                            <!--<span class="attr-item__cell-title">比例</span>-->
-                            <!--<select class="form-control attr-item__cell-input form-control" -->
-                            <!--ng-model="component.video.scaleId"-->
-                            <!--ng-change="component.video.changeVideoScale($event)">-->
-                            <!--<option ng-repeat="mode in component.video.scale" value="{{mode.id}}">{{mode.name}}</option>-->
-                            <!--</select>-->
-                            <!--</div>-->
                         </div>
 
                         <div ng-show="component.object.type=='MyScriptTrigger'&&!myMask">
@@ -3887,6 +3826,17 @@
                         </div>
                         </div>
 
+                        <!-- general attrs -->
+                        <div class="attr-item__cell-wrap" ng-show="component.isWidget()&&!myMask">
+                            <p class="attr-item__cell-title">纹理压缩模式</p>
+                            <select class="attr-item__cell-input form-control"
+                                        ng-model="component.object.level.info.compressMode"
+                                        ng-change="component.enterGenerateAttrs('compressMode')">
+                                    <option value="0">跟随系统</option>
+                                    <option value="1">强制压缩</option>
+                                    <option value="2">强制不压缩</option>
+                                </select>
+                        </div>
 
                     </div>
 
