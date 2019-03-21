@@ -45,6 +45,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
             return srcA+path.sep+srcB
         }
+        
     }
 
     function dataURItoBlob(dataURI) {
@@ -91,6 +92,27 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             errHandler
 
         )
+    }
+
+    function uploadDataURIToMemory(dataURI,name,scb,fcb) {
+        var blob = dataURItoBlob(dataURI);
+
+        var successHandler = function () {
+            // console.log('save tex ok')
+            scb && scb()
+        }
+
+        var errHandler = function (err) {
+            console.log(err)
+            fcb && fcb()
+        }
+
+        window.renderedTex = window.renderedTex||{}
+
+        window.renderedTex[name] = blob
+
+        successHandler()
+       
     }
 
 
@@ -214,7 +236,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 cb && cb(e);
             }
         }else{
-            uploadDataURI(stream,fileName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
+            // uploadDataURI(stream,fileName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
+            uploadDataURIToMemory(stream,fileName,cb,cb)
         }
 
     };
@@ -1717,7 +1740,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                             coutDownCB(e)
                         }
                     }else{
-                        uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
+                        // uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
+                        uploadDataURIToMemory(stream,curStreamName,coutDownCB,coutDownCB)
                     }
                 })
             }
@@ -1761,6 +1785,121 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
                 }
             }.bind(this));
+        }
+
+        function downloadZipData(dataStructure,sCb,fCb){
+            $http({
+                method:'POST',
+                url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
+                data:{
+                    dataStructure:dataStructure
+                }
+            })
+                .success(function (data) {
+                    if (data == 'ok'){
+                        //download
+                        window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download?hash=true'
+    
+                    }else{
+                        console.log(data);
+                        toastr.info('生成失败')
+                    }
+                    sCb && sCb()
+                })
+                .error(function (err) {
+                    errHandler(err);
+                    fCb && fCb()
+                })
+        }
+    
+        
+    
+        function downloadZipDataFromMemory(dataStructure,sCb,fCb){
+            var zip = new JSZip();
+            zip.file("data.json", JSON.stringify(dataStructure,null,4));
+            for(var key in window.renderedTex){
+                if(window.renderedTex.hasOwnProperty(key)){
+                    zip.file(key,window.renderedTex[key])
+                }
+            }
+            
+            var resourcesRemainToBeRendered = getImageUrlsNotRendered(dataStructure)
+            console.log(resourcesRemainToBeRendered)
+            var count = resourcesRemainToBeRendered.length
+            var lastErr = null
+            var cb = function(err){
+                if(err){
+                    lastErr = err
+                }
+                count--
+                if(count == 0){
+                    //finish
+                    if(lastErr){
+                        fcb(lastErr)
+                    }else{
+                        zip.generateAsync({type:"blob"})
+                        .then(function (blob) {
+                            console.log(blob)
+                            var reader = new FileReader()
+                            reader.onload = function(e){
+                                var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
+                                console.log('md5',md5)
+                                saveAs(blob, "file_"+md5+".zip");
+                                sCb && sCb()
+                            }
+                            reader.onerror = function(e){
+                                fCb && fCb(e)
+                            }
+                            reader.readAsBinaryString(blob)
+                        }, function (err) {
+                            errHandler(err);
+                            fCb && fCb()
+                        })
+                    }
+                }
+            }
+            if(count > 0){
+                resourcesRemainToBeRendered.forEach(function(url){
+                    $http({
+                        url:url,
+                        responseType: "arraybuffer"
+                    }).success(function(data){
+                        //blob
+                        zip.file(url.split('resources/')[1],data)
+                        cb()
+                    }).error(function(err){
+                        cb(err)
+                    })
+                })
+            }else{
+                zip.generateAsync({type:"blob"})
+                .then(function (blob) {
+                    var reader = new FileReader()
+                    reader.onload = function(e){
+                        var md5 = CryptoJS.MD5(CryptoJS.lib.WordArray.create(e.target.result)).toString();
+                        console.log('md5',md5)
+                        saveAs(blob, "file_"+md5+".zip");
+                        sCb && sCb()
+                    }
+                    reader.onerror = function(e){
+                        fCb && fCb(e)
+                    }
+                    reader.readAsBinaryString(blob)
+                }, function (err) {
+                    errHandler(err);
+                    fCb && fCb()
+                })
+            }
+            
+            
+            // zip.generateAsync({type:"blob"})
+            // .then(function (blob) {
+            //     saveAs(blob, "hello.zip");
+            // })
+            
+    
+    
+            
         }
 
         var encoding = dataStructure.encoding||'ascii'
@@ -1809,7 +1948,6 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                                         errHandler(err);
                                     }else{
                                         //write ok
-                                        console.log('write ok');
                                         // successHandler();
                                         var SrcUrl = path.join(ProjectBaseUrl,'resources');
                                         var DistUrl = path.join(ProjectBaseUrl,'file.zip');
@@ -1818,28 +1956,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                                 })
                             }else{
                                 //browser
-                                $http({
-                                    method:'POST',
-                                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
-                                    data:{
-                                        dataStructure:dataStructure
-                                    }
-                                })
-                                    .success(function (data) {
-                                        if (data == 'ok'){
-                                            //download
-                                            window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download?hash=true'
-
-                                        }else{
-                                            console.log(data);
-                                            toastr.info('生成失败')
-                                        }
-                                        sCb && sCb()
-                                    })
-                                    .error(function (err) {
-                                        errHandler(err);
-                                        fCb && fCb()
-                                    })
+                                // downloadZipData(dataStructure,sCb,fCb)
+                                downloadZipDataFromMemory(dataStructure,sCb,fCb)
                             }
 
                         }else{
@@ -1902,32 +2020,42 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     }
                 })
             }else{
-                $http({
-                    method:'POST',
-                    url:'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/savedatacompress',
-                    data:{
-                        dataStructure:dataStructure
-                    }
-                })
-                    .success(function (data) {
-                        if (data == 'ok'){
-                            //download
-                            window.location.href = '/project/'+ResourceService.getResourceUrl().split('/')[2]+'/download'
-
-                        }else{
-                            console.log(data);
-                            toastr.info('生成失败')
-                        }
-                        sCb && sCb()
-                    })
-                    .error(function (err) {
-                        errHandler(err);
-                        fCb && fCb()
-                    })
+                // downloadZipData(dataStructure,sCb,fCb)
+                downloadZipDataFromMemory(dataStructure,sCb,fCb)
             }
 
         }
     };
+
+    function getImageUrlsNotRendered(dataStructure){
+        var regx = /r(-\d+)+/
+        var urls = []
+        for(var i=0;i<dataStructure.pageList.length;i++){
+            var page = dataStructure.pageList[i]
+            for(var j=0;j<page.canvasList.length;j++){
+                var canvas = page.canvasList[j]
+                for(var k=0;k<canvas.subCanvasList.length;k++){
+                    var subCanvas = canvas.subCanvasList[k]
+                    for(var l=0;l<subCanvas.widgetList.length;l++){
+                        var widget = subCanvas.widgetList[l]
+                        for(var m=0;m<widget.texList.length;m++){
+                            var tex = widget.texList[m]
+                            tex.slices.forEach(function(s){
+                                if(s.imgSrc!=''){
+                                    if(s.imgSrc.search(regx)==-1){
+                                        //not rendered
+                                        urls.push(s.imgSrc)
+                                    }
+                                }
+                                
+                            })
+                        }
+                    }
+                }
+            }
+        }
+        return urls
+    }
 
 
     /**
@@ -1990,7 +2118,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 slices.push((texList[count].slices[0]));
                 totalSlices++;
             }
-            slices.map(function (slice,i) {
+            slices.forEach(function (slice,i) {
                 this.addSize(width,height)
             }.bind(this));
 

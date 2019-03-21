@@ -125,11 +125,7 @@ ideServices
         this.getAllImages = function(){
 
             var images = _.filter(files, function (file) {
-                if (file.type && file.type.split('/')[0]=='image'&&file.id!='blank.png'){
-                    return true;
-                }else{
-                    return false;
-                }
+                return file.type && file.type.split('/')[0]=='image'&&file.id!='blank.png'
             });
             // console.log(files);
             // console.log(images);
@@ -138,11 +134,7 @@ ideServices
 
         this.getAllImagesAndTemplates = function(){
             var images = _.filter(files, function (file) {
-                if (file.type && file.type.split('/')[0]=='image'&&file.id!='blank.png'){
-                    return true;
-                }else{
-                    return false;
-                }
+                return file.type && file.type.split('/')[0]=='image'&&file.id!='blank.png'
             });
             return images = images.concat(templateFiles);
         };
@@ -151,11 +143,7 @@ ideServices
             // console.log(files)
             return _.filter(files,function (file) {
                 var ext = this.getExt(file.id);
-                if (ext==='ttf'||ext==='woff'){
-                    return true;
-                }else{
-                    return false;
-                }
+                return ext==='ttf'||ext==='woff'
             }.bind(this))
         }
 
