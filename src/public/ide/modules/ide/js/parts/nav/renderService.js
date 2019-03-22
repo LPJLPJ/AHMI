@@ -1596,6 +1596,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 break;
             case 'MySlide':
             case 'MyAlphaSlide':
+            case 'MyAlphaImg':
                 this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             case 'MyAnimation':
@@ -1824,7 +1825,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }
             
             var resourcesRemainToBeRendered = getImageUrlsNotRendered(dataStructure)
-            console.log(resourcesRemainToBeRendered)
+            // console.log(resourcesRemainToBeRendered)
             var count = resourcesRemainToBeRendered.length
             var lastErr = null
             var cb = function(err){
@@ -2041,6 +2042,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                                 if(s.imgSrc!=''){
                                     if(s.imgSrc.search(regx)==-1){
                                         //not rendered
+                                        for(var u = 0;u<urls.length;u++){
+                                            if(urls[u]==s.imgSrc){
+                                                return
+                                            }
+                                        }
                                         urls.push(s.imgSrc)
                                     }
                                 }
