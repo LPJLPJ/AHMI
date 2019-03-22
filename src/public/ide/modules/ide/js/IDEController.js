@@ -1292,7 +1292,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 console.log('you have connect');
 
                 socketIOService.on('serverRoom:enter',function(user){
-                    console.log('new user',user)
+                    // console.log('new user',user)
                 })
 
                 socketIOService.on('serverRoom:newMsg',function(msg){
