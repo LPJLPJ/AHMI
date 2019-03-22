@@ -1839,11 +1839,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     }else{
                         zip.generateAsync({type:"blob"})
                         .then(function (blob) {
-                            console.log(blob)
                             var reader = new FileReader()
                             reader.onload = function(e){
                                 var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
-                                console.log('md5',md5)
                                 saveAs(blob, "file_"+md5+".zip");
                                 sCb && sCb()
                             }
@@ -1876,8 +1874,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 .then(function (blob) {
                     var reader = new FileReader()
                     reader.onload = function(e){
-                        var md5 = CryptoJS.MD5(CryptoJS.lib.WordArray.create(e.target.result)).toString();
-                        console.log('md5',md5)
+                        var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
                         saveAs(blob, "file_"+md5+".zip");
                         sCb && sCb()
                     }

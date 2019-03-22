@@ -1781,7 +1781,7 @@ ide.controller('validateModalCtl', ['$rootScope', '$scope', '$uibModalInstance',
 
                 reader.onload = function(event) {
                     var binary = event.target.result;
-                    console.log(event)
+
                     var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(binary)).toString();
 
                     $scope.$apply(function () {
