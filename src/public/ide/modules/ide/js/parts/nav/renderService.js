@@ -2036,23 +2036,26 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     var subCanvas = canvas.subCanvasList[k]
                     for(var l=0;l<subCanvas.widgetList.length;l++){
                         var widget = subCanvas.widgetList[l]
-                        for(var m=0;m<widget.texList.length;m++){
-                            var tex = widget.texList[m]
-                            tex.slices.forEach(function(s){
-                                if(s.imgSrc!=''){
-                                    if(s.imgSrc.search(regx)==-1){
-                                        //not rendered
-                                        for(var u = 0;u<urls.length;u++){
-                                            if(urls[u]==s.imgSrc){
-                                                return
+                        if(widget.texList){
+                            for(var m=0;m<widget.texList.length;m++){
+                                var tex = widget.texList[m]
+                                tex.slices.forEach(function(s){
+                                    if(s.imgSrc!=''){
+                                        if(s.imgSrc.search(regx)==-1){
+                                            //not rendered
+                                            for(var u = 0;u<urls.length;u++){
+                                                if(urls[u]==s.imgSrc){
+                                                    return
+                                                }
                                             }
+                                            urls.push(s.imgSrc)
                                         }
-                                        urls.push(s.imgSrc)
                                     }
-                                }
-                                
-                            })
+                                    
+                                })
+                            }
                         }
+                        
                     }
                 }
             }
