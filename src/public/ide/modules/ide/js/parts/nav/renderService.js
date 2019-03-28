@@ -756,6 +756,97 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     };
 
 
+    renderer.prototype.renderAlphaSlide = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            //font
+            var text = '';
+            var style = {};
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            style.color = font['font-color'];
+            style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+            style.textAlign = 'center';
+            style.textBaseline = 'middle';
+
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var slideTex = widget.texList[0];
+            var totalSlices = slideTex.slices.length;
+            slideTex.slices.map(function (slice,i) {
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                var curSlice = slideTex.slices[i];
+                var curText = curSlice.text;
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                //renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+
+                //render font --20170705
+                text = curSlice.text;
+                if(!!text){
+                    renderingX.renderText(ctx,new Size(info.width,info.height),new Pos(),text,style,true,null,this.customFonts);
+                }
+
+                //output
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,new TextInfo(curText,style),outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
+
     renderer.prototype.renderGallery = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
         if (!!info){
@@ -1595,7 +1686,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 this.renderGallery(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             case 'MySlide':
-            case 'MyAlphaSlide':
+            // case 'MyAlphaSlide':
             case 'MyAlphaImg':
                 this.renderSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
@@ -1631,6 +1722,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 break;
             case 'MyButtonSwitch':
                 this.renderButtonSwitch(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyAlphaSlide':
+                this.renderAlphaSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
                 cb&&cb();
