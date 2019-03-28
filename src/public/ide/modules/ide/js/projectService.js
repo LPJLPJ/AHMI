@@ -4700,6 +4700,7 @@ ideServices
                     case 'MyAlphaSlide':
                     case 'MyTextInput':
                     case 'MyButtonSwitch':
+                    case 'MyAlphaImg':
                         image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
                         break;
                     case 'MyProgress':
