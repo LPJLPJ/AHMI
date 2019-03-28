@@ -143,8 +143,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
                 TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
                     readTagsInfo();
+                    readTagClassesInfo();
                 }.bind(this));
-                editTagInTagClass(tagName, newTag, $scope.component.curTagClass);
 
 
             } else if ($scope.selectedType == 'timer') {
@@ -700,10 +700,10 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     }
 
     //更新某个tagclass中的某个tag
-    function editTagInTagClass(tagName, newTag, tagClass) {
-        var index = IndexInTagClass(tagName, tagClass);
-        tagClass.tagArray[index] = newTag;
-    }
+    // function editTagInTagClass(tagName, newTag, tagClass) {
+    //     var index = IndexInTagClass(tagName, tagClass);
+    //     tagClass.tagArray[index] = newTag;
+    // }
 
     //同步标签的tagArray
     function syncTagClassTagArray(tagClass) {
@@ -718,12 +718,19 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     //regCheckboxClick
     function regCheckboxClick(tag) {
-        /*if ($scope.component.curTagClassName !== $scope.component.tagClasses[0].name) {
-            var index = IndexInTagClass(tag.name, $scope.component.tagClasses[0]);
-            TagService.editTagByIndex(index, tag, function () {
-                readTagsInfo();
-            });
-        }*/
+        if ($scope.component.curTagClassName !== $scope.component.tagClasses[0].name) {
+            if (tag.type === 'timer') {
+                var index = IndexInTagClass(tag.name, $scope.component.tagClasses[1]);
+                TagService.editTimerTagByIndex(index, tag, function () {
+                    readTagsInfo();
+                });
+            }else {
+                var index = IndexInTagClass(tag.name, $scope.component.tagClasses[0]);
+                TagService.editTagByIndex(index, tag, function () {
+                    readTagsInfo();
+                });
+            }
+        }
     }
 
     /**
