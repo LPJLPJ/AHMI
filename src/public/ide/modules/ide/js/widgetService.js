@@ -3334,6 +3334,83 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     fabric.MyButtonSwitch.async = true;
 
 
+    //keyboard
+    fabric.MyKeyboard = fabric.util.createClass(fabric.Object, {
+        type: Type.MyKeyboard,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+
+            this.backgroundColor = level.texList[0].slices[0].color;
+
+
+            this.on('changeTex', function (arg) {
+
+            });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+
+                ctx.fillStyle = this.backgroundColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2),
+                    this.width,
+                    this.height);
+
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染按钮出错');
+            }
+        }
+    });
+    fabric.MyKeyboard.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyKeyboard(level, option));
+    };
+    fabric.MyKeyboard.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                normalImageElement:this.normalImageElement,
+                normalColor:this.normalColor
+            });
+        }
+    })(fabric.MyButtonSwitch.prototype.toObject);
+    fabric.MyKeyboard.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyButtonSwitch(level, object));
+    };
+    fabric.MyKeyboard.async = true;
+
+
     //Text area
     fabric.MyTextArea = fabric.util.createClass(fabric.Object,{
         type: Type.MyTextArea,

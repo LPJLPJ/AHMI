@@ -1261,7 +1261,7 @@ ideServices
             return templateId;
         };
 
-        //matteTemplate  add by tang
+        //matteTemplate
         this.getDefaultMatte=function(){
             var pageNode=CanvasService.getPageNode();
             var info={
@@ -1350,6 +1350,56 @@ ideServices
                     break;
             }
             return tex
+        };
+
+        //数字键盘
+        this.getDefaultKeyboard = function (){
+            var info = {
+                width:210,
+                height:270,
+                keyWidth:50,
+                keyHeight:50,
+                top:0,
+                left:0,
+                originX: 'center',
+                originY: 'center',
+                enableAnimation:false
+            };
+
+            var slices=[],
+                keyTex = [1,2,3,4,5,6,7,8,9,'ok',0,'del'];
+
+            for(var i=0;i<keyTex.length;i++){
+                slices[i] = {};
+                slices[i].imgSrc = '';
+                slices[i].color = 'rgba(220,87,74,1)';
+                slices[i].name = keyTex[i];
+            }
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                subSlides: [],
+                name: 'NewKeyboard',
+                type:Type.MyKeyboard,
+                expand:true,
+                zIndex:0,
+                url:'',
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'键盘背景',
+                    slices:[{
+                        color:'rgba(100,100,100,1)',
+                        imgSrc:'',
+                        name:'键盘背景'
+                    }]
+                },{
+                    name:'按键纹理',
+                    currentSliceIdx:0,
+                    slices:slices
+                }],
+                transition:_.cloneDeep(defaultTransition)
+            }
         }
 
     }]);

@@ -849,7 +849,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultAlphaImg();
             }else if(_index === 21) {
                 newWidget = TemplateProvider.getDefaultButtonSwitch();
-            } else {
+            } else if(_index === 22) {
+                newWidget = TemplateProvider.getDefaultKeyboard();
+            }else {
                 return;
             }
             if (newWidget.name == $scope.oldWidget.name) {

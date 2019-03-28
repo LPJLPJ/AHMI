@@ -3089,8 +3089,7 @@
                             </div>
                         </div>
 
-
-                    <div ng-show="component.object.type=='MyTouchTrack'&&!myMask">
+                        <div ng-show="component.object.type=='MyTouchTrack'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
                                 <input class="attr-item__cell-input form-control"
@@ -3158,7 +3157,7 @@
                             </div>
                         </div>
 
-                    <div ng-show="component.object.type=='MyAlphaImg'&&!myMask">
+                        <div ng-show="component.object.type=='MyAlphaImg'&&!myMask">
                         <div class="attr-item__cell-wrap lg">
                             <p class="attr-item__cell-title">名称</p>
                             <input class="attr-item__cell-input form-control"
@@ -3825,8 +3824,111 @@
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">按键宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">按键高度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                            </div>
                         </div>
+
+                        <!--keyboard-->
+                        <div ng-show="component.object.type=='MyKeyboard'&&!myMask">
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">名称</p>
+                                <input class="attr-item__cell-input form-control"
+                                       type="text"
+                                       ng-model="component.object.level.name"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterName($event)">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.left"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.top"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterY($event)"
+                                   type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="position.absoluteX"
+                                       ng-blur="position.absoluteX=position.initAbsoluteX"
+                                       ng-keypress="component.enterAbsoluteX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">绝对坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="position.absoluteY"
+                                   ng-blur="position.absoluteY=position.initAbsoluteY"
+                                   ng-keypress="component.enterAbsoluteY($event)"
+                                   type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">高度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">内边距</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.padding"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">横向间距</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.marginX"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">纵向间距</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.marginY"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
                         </div>
+
+                        </div>
+
 
                         <!-- general attrs -->
                         <div class="attr-item__cell-wrap" ng-show="component.isWidget()&&!myMask">

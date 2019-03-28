@@ -68,6 +68,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 buttonSwitch: {
                     enableAnimationModeId: '0'
                 },
+                keyboard:{
+
+                },
                 buttonGroup: {
                     enterInterval: enterInterval,
                     enterButtonCount: enterButtonCount,

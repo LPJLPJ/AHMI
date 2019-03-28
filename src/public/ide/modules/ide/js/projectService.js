@@ -1304,6 +1304,18 @@ ideServices
 
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MyKeyboard){
+                    fabric.MyKeyboard.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else{
                     fabric[_newWidget.type].fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
