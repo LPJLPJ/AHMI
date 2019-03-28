@@ -2757,6 +2757,14 @@
                                    ng-keypress="component.enterHalfSpacing($event)"
                                    type="number">
                         </div>
+                        <div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">行距距</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.lineSpacing"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterLineSpacing($event)"
+                                   type="number">
+                        </div>
                              <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">文本</p>
                                 <input type="text"

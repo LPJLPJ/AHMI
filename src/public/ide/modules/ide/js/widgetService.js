@@ -3617,6 +3617,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             this.spacing = level.info.spacing||0
             this.halfSpacing = level.info.halfSpacing||0
+            this.lineSpacing = level.info.lineSpacing||0
 
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
@@ -3665,10 +3666,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
 
                 //重新设置canvas的宽高
-                if(self.fontSize&&self.text){
-                    // self.setWidth(self.fontSize*(self.text.length+1));
-                    self.setHeight(self.fontSize*2);
-                }
+                // if(self.fontSize&&self.text){
+                //     // self.setWidth(self.fontSize*(self.text.length+1));
+                //     self.setHeight(self.fontSize*2);
+                // }
 
                 var _callback=arg.callback;
                 var subLayerNode = CanvasService.getSubLayerNode();
@@ -3684,6 +3685,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 if(arg.halfSpacing!==undefined){
                     self.halfSpacing =  arg.halfSpacing
+                }
+
+                if(arg.lineSpacing!==undefined){
+                    self.lineSpacing =  arg.lineSpacing
                 }
 
                 var subLayerNode = CanvasService.getSubLayerNode();
@@ -3750,37 +3755,99 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.restore();
                 //var subLayerNode=CanvasService.getSubLayerNode();
 
+                // if(this.text){
+                //     var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                //     //console.log(fontString);
+                //     ctx.scale(1/this.scaleX,1/this.scaleY);
+                //     ctx.font=fontString;
+                //     ctx.textAlign='center';
+                //     ctx.textBasel,,ine='middle';//使文本垂直居中
+                //     //ctx.fillText(this.text,-(this.width/2),0);
+                //     //draw with byte mode
+                //     var maxWidth = this.fontSize;
+                //     var centerX = 0
+                //     centerX = 0.5*maxWidth  - (this.width/2)
+                //     for(var i=0;i<this.text.length;i++){
+                //         curLetterType = getLetterType(this.text[i])
+                //         if(lastLetterType === undefined){
+                //             curSpacing = 0
+                //         }else if(lastLetterType === 0){
+                //             curSpacing = curLetterType ? (this.spacing + this.halfSpacing)/2 : this.halfSpacing
+                //             curSpacing += maxWidth
+                //         }else{
+                //             curSpacing = curLetterType ? this.spacing : (this.spacing + this.halfSpacing)/2
+                //             curSpacing += maxWidth
+                //         }
+                //         centerX += curSpacing
+                //         ctx.fillText(this.text[i],centerX, 0)
+                //         lastLetterType = curLetterType
+                        
+                        
+
+                //     }
+                // }
                 if(this.text){
+                    ctx.save()
+                    ctx.translate(-this.width/2,-this.height/2)
                     var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
                     //console.log(fontString);
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     ctx.font=fontString;
                     ctx.textAlign='center';
                     ctx.textBaseline='middle';//使文本垂直居中
-                    //ctx.fillText(this.text,-(this.width/2),0);
-                    //draw with byte mode
-                    var maxWidth = this.fontSize;
-                    var centerX = 0
-                    centerX = 0.5*maxWidth  - (this.width/2)
-                    for(var i=0;i<this.text.length;i++){
-                        curLetterType = getLetterType(this.text[i])
-                        if(lastLetterType === undefined){
-                            curSpacing = 0
-                        }else if(lastLetterType === 0){
-                            curSpacing = curLetterType ? (this.spacing + this.halfSpacing)/2 : this.halfSpacing
-                            curSpacing += maxWidth
-                        }else{
-                            curSpacing = curLetterType ? this.spacing : (this.spacing + this.halfSpacing)/2
-                            curSpacing += maxWidth
-                        }
-                        centerX += curSpacing
-                        ctx.fillText(this.text[i],centerX, 0)
-                        lastLetterType = curLetterType
-                        
-                        
-
+                    
+                    var fontAttrs = {
+                        fontSize:this.fontSize,
+                        fontFamily:this.fontFamily,
+                        fontBold:this.fontBold,
+                        fontItalic:this.fontItalic,
+                        fontColor:this.fontColor,
+                        fontSpacing:Number(this.spacing)||0,
+                        fontHalfSpacing:Number(this.halfSpacing)||0,
+                        // fontVerticalOffset:0
                     }
-                }
+
+                    var paragraphAttrs = {
+                        align:'left',
+                            // indentationLeft:0,
+                            // indentationRight:0,
+                            // firstLineIndentation:0,
+                            spacingBetweenLines:Number(this.lineSpacing)||0,
+                            // spacingBeforeParagraph:Number(this.lineSpacing)||0,
+                            spacingAfterParagraph:this.fontSize
+                    }
+                    var paragraph = {
+                        paragraphAttrs:paragraphAttrs,
+                        spans:[
+                            {
+                                fontAttrs:fontAttrs,
+                                text:this.textContent
+                            }
+                        ]
+                    }
+
+                    var article = {
+                        paragraphs:this.text.split('\n').map(function(p){
+                            return {
+                                paragraphAttrs:paragraphAttrs,
+                                spans:[
+                                    {
+                                        fontAttrs:fontAttrs,
+                                        text:p
+                                    }
+                                ]
+                            }
+                        })
+                    }
+                    // FontLayoutEngine.layoutParagraph(paragraph,new FontLayoutEngine.LayoutBox(0,0,this.width,this.height))
+                    FontLayoutEngine.layoutArticle(article,new FontLayoutEngine.LayoutBox(0,0,this.width,this.height))
+                    
+                    FontLayoutEngine.showArticleLayout(article,ctx)
+                    
+                    ctx.stroke()
+                    ctx.restore()
+
+               }
                 //将图片超出canvas的部分裁剪
                 this.clipTo=function(ctx){
                     ctx.save();

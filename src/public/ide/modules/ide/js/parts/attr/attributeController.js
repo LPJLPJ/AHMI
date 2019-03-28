@@ -413,6 +413,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterEnableAnimationMode: enterEnableAnimationMode,
                 enterSpacing: enterSpacing,
                 enterHalfSpacing:enterHalfSpacing,
+                enterLineSpacing:enterLineSpacing,
                 enterGenerateAttrs:enterGenerateAttrs
             };
             $scope.animationsDisabled = UserTypeService.getAnimationAuthor()
@@ -2571,6 +2572,46 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                 var option = {
                     halfSpacing: halfSpacing
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                // console.log("$scope.component.object",$scope.component.object)
+                // if ($scope.component.object.type === "MyNum") {
+
+                // }
+                switch ($scope.component.object.type) {
+                    
+                    case "MyTextInput":
+                        ProjectService.ChangeAttributeOfTextInput(option, function () {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                        })
+                        break;
+                    default:
+                        console.log("error!");
+                }
+            }
+        }
+
+
+        function enterLineSpacing(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                var lineSpacing = $scope.component.object.level.info.lineSpacing
+                    
+                if (!_.isInteger(lineSpacing)) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+
+                if (lineSpacing === initObject.level.info.lineSpacing) {
+                    return;
+                }
+
+                
+
+                var option = {
+                    lineSpacing: lineSpacing
                 };
                 var oldOperate = ProjectService.SaveCurrentOperate();
                 // console.log("$scope.component.object",$scope.component.object)
