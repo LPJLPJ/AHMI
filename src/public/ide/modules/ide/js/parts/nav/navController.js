@@ -849,6 +849,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultAlphaImg();
             }else if(_index === 21) {
                 newWidget = TemplateProvider.getDefaultButtonSwitch();
+            }else if(_index === 22) {
+                newWidget = TemplateProvider.getDefaultChart();
             } else {
                 return;
             }

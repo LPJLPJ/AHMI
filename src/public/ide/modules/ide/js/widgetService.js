@@ -5631,7 +5631,102 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             }
         }
     }
+
+    //MyChart Prototype
+    
+    var MyChart = {
+        widgetType:Type.MyChart,
+        info:{
+            xCount:1,
+            yCount:1,
+            minValue:0,
+            maxValue:1,
+            values:[],
+            curValue:0
+        },
+        funcAttrs:{
+            
+            bgTex:function(level){
+                return {
+                    image:ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc),
+                    color:level.texList[0].slices[0].color
+                }
+            },
+            dotTex:function(level){
+                return {
+                    image:ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc),
+                    color:level.texList[1].slices[0].color
+                }
+            },
+        },
+        triggers:{
+            
+            changeTex:function(arg){
+                this.bgTex = {
+                    image:ResourceService.getResourceFromCache(arg.level.texList[0].slices[0].imgSrc),
+                    color:arg.level.texList[0].slices[0].color
+                }
+                this.dotTex = {
+                    image:ResourceService.getResourceFromCache(arg.level.texList[1].slices[0].imgSrc),
+                    color:arg.level.texList[1].slices[0].color
+                }
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeCurValue:function(arg){
+                this.curValue = arg.curValue
+                this.values.push(this.curValue)
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeMinValue:function(arg){
+                this.minValue = arg.minValue
+                reRender()
+                arg.callback && arg.callback()
+            },
+            // OnRelease:function(){
+            //     // console.log('rerender gallery')
+            //     this.scaleX = 1
+            //     this.scaleY = 1
+            //     // reRender()
+            // },
+        },
+        render:function(ctx){
+            try{
+                
+            
+                // ctx.fillRect(0,0,this.width,this.height)
+                ctx.fillStyle = this.bgTex.color
+                ctx.fillRect(-this.width/2,-this.height/2,this.width,this.height)
+                if(this.bgTex.image){
+                    ctx.drawImage(this.bgTex.image,-this.width/2,-this.height/2,this.width,this.height)
+                } 
+
+                var values = this.values
+                var dotLen = this.width/20
+                var x=0
+                var y=0
+                var xCount = this.xCount||1
+                for(var i=0;i<xCount;i++){
+                    x = this.width/xCount * (i + 0.5)
+                    y = this.height - this.height/(this.maxValue - this.minValue) * values[i]
+                    ctx.fillStyle = this.dotTex.color
+                    ctx.fillRect(x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
+                    if(this.dotTex.image){
+                        ctx.drawImage(this.dotTex.image,x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
+                    }
+                }
+                
+                ctx.restore();
+            }catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染'+this.type+'出错');
+            }
+        }
+    }
+
     widgetPrototypes.push(MyGallery)
+    widgetPrototypes.push(MyChart)
     for(var i=0;i<widgetPrototypes.length;i++){
         generateFabricWidget(widgetPrototypes[i])
     }
