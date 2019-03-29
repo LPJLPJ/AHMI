@@ -116,6 +116,8 @@ ideServices
                     minValue:0,maxValue:100,
                     xCount:5,
                     yCount:5,
+                    xPadding:0,
+                    yPadding:0,
                     values:[],
                     lowAlarmValue:0,highAlarmValue:100,
                     curValue:0
@@ -131,6 +133,14 @@ ideServices
                  },{
                     currentSliceIdx:0,
                     name:'点',
+                    slices:[{
+                        color:'rgba(70,70,70,1)',
+                        imgSrc:'',
+                        name:'点'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'线',
                     slices:[{
                         color:'rgba(70,70,70,1)',
                         imgSrc:'',

@@ -5658,6 +5658,20 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     color:level.texList[1].slices[0].color
                 }
             },
+            lineTex:function(level){
+                if(level.texList[2]){
+                    return {
+                        image:ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc),
+                        color:level.texList[2].slices[0].color
+                    }
+                }else{
+                    return {
+                        image:null,
+                        color:null
+                    }
+                }
+                
+            },
         },
         triggers:{
             
@@ -5670,14 +5684,32 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     image:ResourceService.getResourceFromCache(arg.level.texList[1].slices[0].imgSrc),
                     color:arg.level.texList[1].slices[0].color
                 }
+                this.lineTex = {
+                    image:ResourceService.getResourceFromCache(arg.level.texList[2].slices[0].imgSrc),
+                    color:arg.level.texList[2].slices[0].color
+                }
                 reRender()
                 arg.callback && arg.callback()
             },
-            changeCurValue:function(arg){
-                this.curValue = arg.curValue
-                this.values.push(this.curValue)
+            // changeCurValue:function(arg){
+            //     this.curValue = arg.curValue
+            //     this.values.push(this.curValue)
+            //     reRender()
+            //     arg.callback && arg.callback()
+            // },
+            changeGeneralAttrs:function(arg){
+                for(var key in arg.attrs){
+                    this[key] = arg.attrs[key]
+                    if(key == 'curValue'){
+                        this.values.push(this[key])
+                        if(this.values.length>this.xCount){
+                            this.values.shift()
+                        }
+                    }
+                }
                 reRender()
                 arg.callback && arg.callback()
+
             },
             changeMinValue:function(arg){
                 this.minValue = arg.minValue
@@ -5696,6 +5728,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 
             
                 // ctx.fillRect(0,0,this.width,this.height)
+                // ctx.clearRect(-this.width/2,-this.height/2,this.width,this.height)
                 ctx.fillStyle = this.bgTex.color
                 ctx.fillRect(-this.width/2,-this.height/2,this.width,this.height)
                 if(this.bgTex.image){
@@ -5707,15 +5740,27 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var x=0
                 var y=0
                 var xCount = this.xCount||1
+                var xPadding = this.xPadding||0
+                var yPadding = this.yPadding||0
                 for(var i=0;i<xCount;i++){
-                    x = this.width/xCount * (i + 0.5)
-                    y = this.height - this.height/(this.maxValue - this.minValue) * values[i]
+                    x = (this.width-2*xPadding)/xCount * (i + 0.5)+xPadding
+                    y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * values[i]
                     ctx.fillStyle = this.dotTex.color
                     ctx.fillRect(x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
                     if(this.dotTex.image){
                         ctx.drawImage(this.dotTex.image,x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
                     }
+                    if(i!==0){
+                        if(this.lineTex.color){
+                            ctx.fillStyle = this.lineTex.color
+                            ctx.lineTo(x - this.width/2 , y- this.height/2 )
+                        }
+                    }else{
+                        ctx.beginPath()
+                        ctx.moveTo(x - this.width/2 , y- this.height/2 )
+                    }
                 }
+                ctx.stroke()
                 
                 ctx.restore();
             }catch(err){

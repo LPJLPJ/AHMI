@@ -3894,7 +3894,7 @@
                                 <input class="attr-item__cell-input form-control"
                                     ng-model="component.object.level.info.minValue"
                                     ng-blur="component.restore()"
-                                    ng-keypress="component.enterMinValue($event)"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'minValue')"
                                     type="number">
                              </div>
                              <div class="attr-item__cell-wrap">
@@ -3902,7 +3902,7 @@
                                 <input class="attr-item__cell-input form-control"
                                     ng-model="component.object.level.info.maxValue"
                                     ng-blur="component.restore()"
-                                    ng-keypress="component.enterMaxValue($event)"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'maxValue')"
                                     type="number">
                              </div>
                              <div class="attr-item__cell-wrap">
@@ -3910,7 +3910,7 @@
                                 <input class="attr-item__cell-input form-control"
                                     ng-model="component.object.level.info.xCount"
                                     ng-blur="component.restore()"
-                                    ng-keypress="component.enterGenerateAttrs('xCount','number')"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'xCount')"
                                     type="number">
                              </div>
                              <div class="attr-item__cell-wrap">
@@ -3918,7 +3918,31 @@
                                 <input class="attr-item__cell-input form-control"
                                     ng-model="component.object.level.info.yCount"
                                     ng-blur="component.restore()"
-                                    ng-keypress="component.enterGenerateAttrs('yCount','number')"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'yCount')"
+                                    type="number">
+                             </div>
+                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">左右边距</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.xPadding"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'xPadding')"
+                                    type="number">
+                             </div>
+                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">上下边距</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.yPadding"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'yPadding')"
+                                    type="number">
+                             </div>
+                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">当前值</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.curValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'curValue')"
                                     type="number">
                              </div>
                         </div>
