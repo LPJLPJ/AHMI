@@ -4281,6 +4281,104 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+    drawChart: function (curX, curY, widget, options, cb) {
+        var lowAlarm = widget.info.lowAlarmValue;
+        var highAlarm = widget.info.highAlarmValue;
+        var minValue = widget.info.minValue;
+        var maxValue = widget.info.maxValue;
+        var curValue = this.getValueByTagName(widget.tag, 0) ;
+        var xCount = widget.info.xCount||1
+        widget.values = widget.values||[]
+        if (curValue > maxValue) {
+            curValue = maxValue
+        } else if (curValue < minValue) {
+            curValue = minValue;
+        }
+        widget.curValue = curValue;
+        if(options.updatedTagName && options.updatedTagName == widget.tag){
+            var values = widget.values
+            values.push(curValue)
+            while(values.length>xCount){
+                values.shift()
+            }
+            widget.values = values
+        }
+       
+        
+        this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
+        widget.oldValue = curValue;
+    },
+    paintChart: function (curX, curY, widget, options, cb) {
+        var offctx = this.offctx
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var minValue = widget.info.minValue;
+        var maxValue = widget.info.maxValue;
+        var xCount = widget.info.xCount||1
+        var yCount = widget.info.yCount||1
+        var xPadding = widget.info.xPadding||0
+        var yPadding = widget.info.yPadding||0
+        
+        if (widget.texList) {
+
+            //pointer
+
+            //var initValue = widget.info.initValue;
+            // var curArc = widget.info.value;
+           
+            
+            
+            // ctx.fillStyle = this.bgTex.color
+            // ctx.fillRect(-this.width/2,-this.height/2,this.width,this.height)
+            // if(this.bgTex.image){
+            //     ctx.drawImage(this.bgTex.image,-this.width/2,-this.height/2,this.width,this.height)
+            // } 
+            offctx.save()
+            var bgTex = widget.texList[0].slices[0]
+            var dotTex = widget.texList[1].slices[0]
+            var lineTex = widget.texList[2].slices[0]
+            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+
+            var values = widget.values
+            var dotLen = width/20
+            var x=0
+            var y=0
+            
+            for(var i=0;i<xCount;i++){
+                x = (width-2*xPadding)/xCount * (i + 0.5)+xPadding
+                y = height - yPadding - (height-2*yPadding)/(maxValue - minValue) * values[i]
+                
+                if(i!==0){
+                    if(lineTex.color){
+                        offctx.strokeStyle = lineTex.color
+                        offctx.lineTo(curX+ x ,curY + y)
+                    }
+                }else{
+                    offctx.beginPath()
+                    offctx.moveTo(curX + x  ,curY + y )
+                }
+
+            }
+            offctx.stroke()
+
+
+            for(i=0;i<xCount;i++){
+                x = (width-2*xPadding)/xCount * (i + 0.5)+xPadding
+                y = height - yPadding - (height-2*yPadding)/(maxValue - minValue) * values[i]
+            
+
+                if(dotTex){
+                    this.drawBg(curX+x-dotLen/2,curY+y-dotLen/2,dotLen,dotLen,dotTex.imgSrc,dotTex.color)
+                }
+                
+            }
+            
+            offctx.restore()
+        }
+
+        cb && cb();
+
+    },
     drawOscilloscope: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;

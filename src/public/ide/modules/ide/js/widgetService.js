@@ -5760,7 +5760,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.stroke()
 
 
-                for(var i=0;i<xCount;i++){
+                for(i=0;i<xCount;i++){
                     x = (this.width-2*xPadding)/xCount * (i + 0.5)+xPadding
                     y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * values[i]
                 
@@ -5772,7 +5772,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     }
                 }
                 
-                ctx.restore();
+                // ctx.restore();
             }catch(err){
                 console.log('错误描述',err);
                 toastr.warning('渲染'+this.type+'出错');
