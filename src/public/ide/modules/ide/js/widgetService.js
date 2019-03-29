@@ -5745,22 +5745,32 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 for(var i=0;i<xCount;i++){
                     x = (this.width-2*xPadding)/xCount * (i + 0.5)+xPadding
                     y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * values[i]
-                    ctx.fillStyle = this.dotTex.color
-                    ctx.fillRect(x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
-                    if(this.dotTex.image){
-                        ctx.drawImage(this.dotTex.image,x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
-                    }
+                    
                     if(i!==0){
                         if(this.lineTex.color){
-                            ctx.fillStyle = this.lineTex.color
+                            ctx.strokeStyle = this.lineTex.color
                             ctx.lineTo(x - this.width/2 , y- this.height/2 )
                         }
                     }else{
                         ctx.beginPath()
                         ctx.moveTo(x - this.width/2 , y- this.height/2 )
                     }
+
                 }
                 ctx.stroke()
+
+
+                for(var i=0;i<xCount;i++){
+                    x = (this.width-2*xPadding)/xCount * (i + 0.5)+xPadding
+                    y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * values[i]
+                
+
+                    ctx.fillStyle = this.dotTex.color
+                    ctx.fillRect(x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
+                    if(this.dotTex.image){
+                        ctx.drawImage(this.dotTex.image,x - this.width/2 - dotLen/2, y- this.height/2 - dotLen/2,dotLen,dotLen)
+                    }
+                }
                 
                 ctx.restore();
             }catch(err){
