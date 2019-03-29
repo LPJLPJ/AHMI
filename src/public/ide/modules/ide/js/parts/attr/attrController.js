@@ -58,7 +58,8 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyTextInput:"text-input",
             MyGallery:"gallery",
             MyAlphaImg:"alpha-img",
-            MyButtonSwitch:'button-switch'
+            MyButtonSwitch:'button-switch',
+            MyClock:'clock'
         };
     }
 

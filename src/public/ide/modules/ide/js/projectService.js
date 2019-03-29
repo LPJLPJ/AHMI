@@ -951,6 +951,7 @@ ideServices
              * @constructor
              */
             this.AddNewWidgetInCurrentSubLayer = function (_newWidget, _successCallback) {
+                console.log(_newWidget);
                 var subLayerNode = CanvasService.getSubLayerNode();
                 var currentSubLayer=getCurrentSubLayer();
                 //init zindex
@@ -1294,6 +1295,18 @@ ideServices
                     },initiator);
                 }else if(_newWidget.type===Type.MyButtonSwitch){
                     fabric.MyButtonSwitch.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
+                }else if(_newWidget.type===Type.MyClock){
+                    fabric.MyClock.fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
                         fabWidget.urls=_newWidget.subSlides;
                         subLayerNode.add(fabWidget);
@@ -2936,7 +2949,6 @@ ideServices
                     //         height:currentLayer.info.height
                     //     })
                     // })
-
                     //+
                     _drawCanvasNode(currentLayer.showSubLayer,subLayerNode,function(){
                         _self.ScaleCanvas('subCanvas',currentLayer);
@@ -4669,6 +4681,29 @@ ideServices
                             var img = ResourceService.getResourceFromCache(texList[1].slices[0].imgSrc);
                             info.pointerImgWidth = img.width;
                             info.pointerImgHeight = img.height;
+                        }
+                        break;
+                    case Type.MyClock:
+                        var info = level.info;
+                        var texList = level.texList;
+
+                        var hourImg = ResourceService.getResourceFromCache(texList[1].slices[0].imgSrc);
+                        var minuteImg = ResourceService.getResourceFromCache(texList[2].slices[0].imgSrc);
+                        var secondImg = ResourceService.getResourceFromCache(texList[3].slices[0].imgSrc);
+
+                        if (hourImg){
+                            info.hourImgWidth = hourImg.width;
+                            info.hourImgHeight = hourImg.height;
+                        }
+
+                        if (minuteImg){
+                            info.minuteImgWidth = minuteImg.width;
+                            info.minuteImgHeight = minuteImg.height;
+                        }
+
+                        if (secondImg){
+                            info.secondImgWidth = secondImg.width;
+                            info.secondImgHeight = secondImg.height;
                         }
                         break;
                     default:
