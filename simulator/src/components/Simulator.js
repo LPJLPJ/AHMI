@@ -1901,22 +1901,20 @@ module.exports = React.createClass({
         }
 
         function getTimeDeg (type){
-            var nowTime = new Date(),
-                sec = nowTime.getSeconds(),
-                min  = nowTime.getMinutes() + sec / 60,
-                hour12 = nowTime.getHours() >= 12 ? nowTime.getHours() - 12 : nowTime.getHours(),
-                hour = hour12 + min / 60;
+            var now = new Date();   //定义时间
+            var second = now.getSeconds();  //获取秒
+            var minute = now.getMinutes();  //获取分钟
+            var hour = now.getHours();   //获取小时
+            hour=hour>12?hour-12:hour;
 
-            // 实时时间转换成角度，一圈是360度，也就是2PI，一圈有60小格，一小格就是（2 * Math.PI / 60）
-            var angle = 2 * Math.PI / 60,
-                secHandAngle = sec * angle,
-                minHandAngle = min * angle,
-                hourHandAngle = hour * 5 * angle;
+            var hour_deg = (hour*30) + (Math.floor(minute / 12) * 6);
+            var minute_deg = minute*6;
+            var second_deg = second*6;
 
             var deg = {
-                second:parseInt(secHandAngle*180/Math.PI),
-                minute:parseInt(minHandAngle*180/Math.PI),
-                hour:parseInt(hourHandAngle*180/Math.PI)
+                second:second_deg,
+                minute:minute_deg,
+                hour:hour_deg
             };
             //console.log(deg);
             return deg[type];

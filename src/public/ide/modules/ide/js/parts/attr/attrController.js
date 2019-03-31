@@ -59,7 +59,7 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyGallery:"gallery",
             MyAlphaImg:"alpha-img",
             MyButtonSwitch:'button-switch',
-            MyClock:'clock'
+            MyClock:'time'
         };
     }
 

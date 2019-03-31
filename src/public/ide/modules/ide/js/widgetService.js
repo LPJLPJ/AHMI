@@ -3391,6 +3391,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     -(this.height / 2),
                     this.width,
                     this.height);
+
                 if (this.normalImageElement){
                     ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
@@ -3452,7 +3453,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     function drawTimePointer (ctx,img,deg,timeDeg,width,height,scaleX,scaleY) {
         ctx.save();
         ctx.rotate(deg);
-        ctx.rotate(timeDeg);
+        ctx.rotate(timeDeg*Math.PI/180);
         ctx.fillRect(
             0,
             0,
@@ -3469,14 +3470,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         var hour = now.getHours();   //获取小时
         hour=hour>12?hour-12:hour;
 
-        var rad = (Math.PI/6*hour) + (Math.PI/360*minute) + (Math.PI/2160*second);
-        var mrad = (Math.PI/30*minute) + (Math.PI/1800*second);
-        var secMarad = (Math.PI / 30 * second);
+        var hour_deg = (hour*30) + (Math.floor(minute / 12) * 6);
+        var minute_deg = minute*6;
+        var second_deg = second*6;
 
         var deg = {
-            second:secMarad,
-            minute:mrad,
-            hour:rad
+            second:second_deg,
+            minute:minute_deg,
+            hour:hour_deg
         };
         //console.log(deg);
         return deg[type];

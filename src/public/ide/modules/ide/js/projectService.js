@@ -951,7 +951,7 @@ ideServices
              * @constructor
              */
             this.AddNewWidgetInCurrentSubLayer = function (_newWidget, _successCallback) {
-                console.log(_newWidget);
+                //console.log(_newWidget);
                 var subLayerNode = CanvasService.getSubLayerNode();
                 var currentSubLayer=getCurrentSubLayer();
                 //init zindex
@@ -4735,6 +4735,7 @@ ideServices
                     case 'MyAlphaSlide':
                     case 'MyTextInput':
                     case 'MyButtonSwitch':
+                    case 'MyClock':
                         image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
                         break;
                     case 'MyProgress':
