@@ -107,6 +107,47 @@ ideServices
                     }]
                 }]
             },
+            defaultChart={
+                info:{
+                    width: 250,
+                    height: 250,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    minValue:0,maxValue:100,
+                    xCount:5,
+                    yCount:5,
+                    xPadding:0,
+                    yPadding:0,
+                    values:[],
+                    lowAlarmValue:0,highAlarmValue:100,
+                    curValue:0
+                    },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'背景',
+                    slices:[{
+                        color:'rgba(60,60,60,1)',
+                        imgSrc:'',
+                        name:'背景'
+                    }]
+                 },{
+                    currentSliceIdx:0,
+                    name:'点',
+                    slices:[{
+                        color:'rgba(70,70,70,1)',
+                        imgSrc:'',
+                        name:'点'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'线',
+                    slices:[{
+                        color:'rgba(70,70,70,1)',
+                        imgSrc:'',
+                        name:'点'
+                    }]
+                }]
+            },
             defaultDashboard={
                 info:{
                     width:250,
@@ -737,6 +778,23 @@ ideServices
                 progressImg:'',
                 name: 'NewProgress',
                 type: Type.MyProgress,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList,
+                transition:_.cloneDeep(defaultTransition)
+            }
+        };
+
+        this.getDefaultChart= function () {
+            var info = _.cloneDeep(defaultChart.info);
+            var texList = _.cloneDeep(defaultChart.texList);
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewChart',
+                type: Type.MyChart,
                 expand:true,
                 url:'',
                 zIndex:0,

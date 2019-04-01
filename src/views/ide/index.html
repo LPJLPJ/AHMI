@@ -3886,6 +3886,119 @@
                         </div>
                         </div>
 
+
+                        <!-- mychart -->
+
+                        <div ng-show="component.object.type=='MyChart'&&!myMask">
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">名称</p>
+                                <input class="attr-item__cell-input form-control"
+                                       type="text"
+                                       ng-model="component.object.level.name"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterName($event)">
+                            </div>
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.left"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标Y</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.top"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterY($event)"
+                                    type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="position.absoluteX"
+                                       ng-blur="position.absoluteX=position.initAbsoluteX"
+                                       ng-keypress="component.enterAbsoluteX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标Y</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="position.absoluteY"
+                                    ng-blur="position.absoluteY=position.initAbsoluteY"
+                                    ng-keypress="component.enterAbsoluteY($event)"
+                                    type="number">
+                            </div>
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">高度</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.height"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterHeight($event)"
+                                    type="number">
+                             </div>
+                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">最小值</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.minValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'minValue')"
+                                    type="number">
+                             </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">最大值</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.maxValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'maxValue')"
+                                    type="number">
+                             </div>
+                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">X数量</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.xCount"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'xCount')"
+                                    type="number">
+                             </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">Y数量</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.yCount"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'yCount')"
+                                    type="number">
+                             </div>
+                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">左右边距</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.xPadding"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'xPadding')"
+                                    type="number">
+                             </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">上下边距</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.yPadding"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'yPadding')"
+                                    type="number">
+                             </div>
+                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">当前值</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.curValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterGeneralAttrsWithInput($event,'curValue')"
+                                    type="number">
+                             </div>
+                        </div>
+
                         <!-- general attrs -->
                         <div class="attr-item__cell-wrap" ng-show="component.isWidget()&&!myMask">
                             <p class="attr-item__cell-title">纹理压缩模式</p>

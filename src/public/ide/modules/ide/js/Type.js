@@ -3,41 +3,42 @@
  */
 ideServices.
     service('Type', [function () {
-        var MyPage = this.MyPage = 'MyPage';
-        var MyLayer = this.MyLayer = 'MyLayer';
-        var MyLayerGroup = this.MyLayerGroup = 'group';
-        var MySubLayer = this.MySubLayer = 'MySubLayer';
-        var MyWidgetGroup = this.MyWidgetGroup = 'group';
-        var MySlide = this.MySlide = 'MySlide';
-        var MyButton = this.MyButton = 'MyButton';
-        var MyButtonGroup = this.MyButtonGroup = "MyButtonGroup";
-        var MyNumber = this.MyNumber = 'MyNumber';
-        var MyProgress = this.MyProgress = 'MyProgress';
-        var MyDashboard = this.MyDashboard = 'MyDashboard';
-        var MyGroup = this.MyGroup = 'group';
-        var MyLayerArray = this.MyLayerArray = 'MyLayerArray';
-        var MyWidgetArray = this.MyWidgetArray = 'MyWidgetArray';
-        var MyKnob = this.MyKnob = 'MyKnob';
-        var MyTextArea = this.MyTextArea = 'MyTextArea';
-        var MyNum = this.MyNum = 'MyNum';
-        var MyOscilloscope=this.MyOscilloscope='MyOscilloscope';
-        var MyImage=this.MyImage='MyImage';
-        var MySwitch=this.MySwitch='MySwitch';
-        var MyRotateImg=this.MyRotateImg='MyRotateImg';
-        var MyDateTime=this.MyDateTime='MyDateTime';
-        var MyScriptTrigger=this.MyScriptTrigger='MyScriptTrigger';
-        var MySlideBlock=this.MySlideBlock="MySlideBlock";
-        var MyVideo=this.MyVideo="MyVideo";
-        var MyAnimation=this.MyAnimation="MyAnimation";
-        var MyTexNum=this.MyTexNum="MyTexNum";
-        var MyTexTime = this.MyTexTime = 'MyTexTime';
-        var MyAlphaImg = this.MyAlphaImg = 'MyAlphaImg';
-        var MyTouchTrack = this.MyTouchTrack = 'MyTouchTrack';
-        var MyButtonSwitch = this.MyButtonSwitch = 'MyButtonSwitch';
+        this.MyPage = 'MyPage';
+        this.MyLayer = 'MyLayer';
+        this.MyLayerGroup = 'group';
+        this.MySubLayer = 'MySubLayer';
+        this.MyWidgetGroup = 'group';
+        this.MySlide = 'MySlide';
+        this.MyButton = 'MyButton';
+        this.MyButtonGroup = "MyButtonGroup";
+        this.MyNumber = 'MyNumber';
+        this.MyProgress = 'MyProgress';
+        this.MyDashboard = 'MyDashboard';
+        this.MyGroup = 'group';
+        this.MyLayerArray = 'MyLayerArray';
+        this.MyWidgetArray = 'MyWidgetArray';
+        this.MyKnob = 'MyKnob';
+        this.MyTextArea = 'MyTextArea';
+        this.MyNum = 'MyNum';
+        this.MyOscilloscope='MyOscilloscope';
+        this.MyImage='MyImage';
+        this.MySwitch='MySwitch';
+        this.MyRotateImg='MyRotateImg';
+        this.MyDateTime='MyDateTime';
+        this.MyScriptTrigger='MyScriptTrigger';
+        this.MySlideBlock="MySlideBlock";
+        this.MyVideo="MyVideo";
+        this.MyAnimation="MyAnimation";
+        this.MyTexNum="MyTexNum";
+        this.MyTexTime = 'MyTexTime';
+        this.MyAlphaImg = 'MyAlphaImg';
+        this.MyTouchTrack = 'MyTouchTrack';
+        this.MyButtonSwitch = 'MyButtonSwitch';
         this.MyAlphaSlide = 'MyAlphaSlide';
         this.MyTextInput = 'MyTextInput';
         this.MyGallery = 'MyGallery';
         this.MyClock = 'MyClock';
+        this.MyChart = 'MyChart';
 
 
     this.getFabWidgetByName= function (_typeStr) {
@@ -76,7 +77,8 @@ ideServices.
             this.MyTextInput,
             this.MyGallery,
             this.MyButtonSwitch,
-            this.MyClock
+            this.MyClock,
+            this.MyChart
         ];
         for(var i=0;i<widgets.length;i++){
             if(widgets[i]==_typeStr){

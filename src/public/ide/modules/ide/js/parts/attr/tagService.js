@@ -249,7 +249,7 @@ ideServices.service('TagService', [function () {
         var tagList;
         for (var j = 0; j < tagClasses.length; j++) {
             tagList = tagClasses[j].tagArray;
-            for (i = 0; i < tagList.length; i++) {
+            for (var i = 0; i < tagList.length; i++) {
                 if (tagList[i].name === name) {
                     tagList.splice(i, 1);
                 }
