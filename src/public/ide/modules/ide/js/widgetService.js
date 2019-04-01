@@ -5789,6 +5789,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         info:{
             xCount:1,
             yCount:1,
+            xPadding:0,
+            yPadding:0,
             minValue:0,
             maxValue:1,
             values:[],
@@ -5892,6 +5894,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var xCount = this.xCount||1
                 var xPadding = this.xPadding||0
                 var yPadding = this.yPadding||0
+                ctx.fillStyle = 'rgba(212,212,212,0.2)'
+                ctx.fillRect(xPadding-this.width/2,yPadding-this.height/2,this.width-2*xPadding,this.height-2*yPadding)
                 for(var i=0;i<xCount;i++){
                     x = (this.width-2*xPadding)/xCount * (i + 0.5)+xPadding
                     y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * values[i]
