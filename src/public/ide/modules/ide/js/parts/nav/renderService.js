@@ -1830,11 +1830,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             case 'MyButtonSwitch':
                 this.renderButtonSwitch(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
-            case 'MyClock':
-                this.renderClock(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
-                break;
             case 'MyAlphaSlide':
                 this.renderAlphaSlide(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyClock':
+                this.renderClock(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
                 cb&&cb();

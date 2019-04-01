@@ -1824,46 +1824,7 @@ module.exports = React.createClass({
     },
 
     drawClock: function (curX, curY, widget, options, cb) {
-        /*var slideImg = this.getImage(widget.texList[1].slices[0].imgSrc);
-        slideImg = (slideImg && slideImg.content) || null;
-        widget.imgWidth = slideImg.width;
-        widget.imgHeight = slideImg.height;
-        widget.imgPosY = curY - (slideImg.height - widget.info.height) * 0.5;
-        console.log(widget.imgPosY);*/
-        /*var buttonSwitchState = this.getValueByTagName(widget.tag, 0)||0;
-        var oldPosX = widget.oldPosX||0,curPosX;
-        if(buttonSwitchState == 0){
-            curPosX = 0;
-        }else{
-            //curPosX = slideImg?widget.info.width-slideImg.width:widget.info.width/2;
-            curPosX = widget.info.width/2;
-        }
-        if(curPosX != oldPosX){
-            var oldValue;
-            if(widget.info.enableAnimation){
-                var duration = (widget.transition && widget.transition.duration) || 0;
-                if (widget.animationKey != -1 && widget.animationKey != undefined) {
-                    oldValue = widget.currentPosX || 0;
-                    AnimationManager.clearAnimationKey(widget.animationKey);
-                    widget.animationKey = -1;
-                } else {
-                    oldValue = widget.oldPosX || 0;
-                }
-                widget.oldPosX = curPosX;
-                widget.animationKey = AnimationManager.stepValue(oldPosX, curPosX, duration, 30, null, function (obj) {
-                    widget.currentPosX = obj.curX;
-                    this.draw()
-                }.bind(this), function () {
-                    widget.currentPosX = curPosX;
-                }.bind(this));
-                //initial
-                widget.currentPosX = oldValue;
-            }else{
-                widget.oldPosX = curPosX;
-                widget.currentPosX = curPosX;
-            }
-        }else{
-        }*/
+
     },
     paintClock: function (curX, curY, widget, options, cb) {
         var tex = widget.texList;
@@ -4148,8 +4109,6 @@ module.exports = React.createClass({
             pointerWidth = widget.info.pointerImgWidth;
             pointerHeight = widget.info.pointerImgHeight;
 
-            console.log(pointerWidth,pointerHeight);
-
 
             //console.log('curDashboardTagValue',curDashboardTagValue,'curArc',curArc);
             //if (curArc > maxArc) {
@@ -4656,7 +4615,6 @@ module.exports = React.createClass({
         return alarms
     },
     drawRotateElem: function (x, y, w, h, pointerOffsetX,pointerOffsetY,elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle,keepSize,verticalPixelScale) {
-        console.log(pointerOffsetX,pointerOffsetY,arc,transXratio,transYratio);
         var transXratio = transXratio || 0;
         var transYratio = transYratio || 0;
         var offcanvas = this.refs.offcanvas;
