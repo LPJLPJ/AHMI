@@ -851,7 +851,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultButtonSwitch();
             }else if(_index === 22) {
                 newWidget = TemplateProvider.getDefaultClock();
-            }else {
+            }else if(_index === 23) {
+                newWidget = TemplateProvider.getDefaultChart();
+            } else {
                 return;
             }
             if (newWidget.name == $scope.oldWidget.name) {

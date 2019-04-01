@@ -413,7 +413,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterEnableAnimationMode: enterEnableAnimationMode,
                 enterSpacing: enterSpacing,
                 enterHalfSpacing:enterHalfSpacing,
-                enterGenerateAttrs:enterGenerateAttrs
+                enterGenerateAttrs:enterGenerateAttrs,
+                enterGeneralAttrsWithInput:enterGeneralAttrsWithInput,
             };
             $scope.animationsDisabled = UserTypeService.getAnimationAuthor()
         }
@@ -3460,6 +3461,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 $scope.$emit('ChangeCurrentPage', oldOperate);
 
             })
+        }
+
+        function enterGeneralAttrsWithInput(e,key){
+            if (e.keyCode == 13) {
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+    
+                })
+            }
         }
 
         /**
