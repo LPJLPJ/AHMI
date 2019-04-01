@@ -37,6 +37,7 @@ ideServices.
         this.MyAlphaSlide = 'MyAlphaSlide';
         this.MyTextInput = 'MyTextInput';
         this.MyGallery = 'MyGallery';
+        this.MyClock = 'MyClock';
 
 
     this.getFabWidgetByName= function (_typeStr) {
@@ -74,7 +75,8 @@ ideServices.
             this.MyAlphaSlide,
             this.MyTextInput,
             this.MyGallery,
-            this.MyButtonSwitch
+            this.MyButtonSwitch,
+            this.MyClock
         ];
         for(var i=0;i<widgets.length;i++){
             if(widgets[i]==_typeStr){

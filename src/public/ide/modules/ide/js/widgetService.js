@@ -3333,6 +3333,156 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     };
     fabric.MyButtonSwitch.async = true;
 
+    //clock
+    fabric.MyClock = fabric.util.createClass(fabric.Object, {
+        type: Type.MyClock,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+
+            this.normalColor=level.texList[0].slices[0].color;
+            this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            this.hourColor = level.texList[1].slices[0].color;
+            this.hourImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+            this.minutesColor = level.texList[2].slices[0].color;
+            this.minutesImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+            this.secondColor = level.texList[3].slices[0].color;
+            this.secondImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                self.normalColor=level.texList[0].slices[0].color;
+                self.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                self.hourColor = level.texList[1].slices[0].color;
+                self.hourImageElement = ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc);
+                self.minutesColor = level.texList[2].slices[0].color;
+                self.minutesImageElement = ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc);
+                self.secondColor = level.texList[3].slices[0].color;
+                self.secondImageElement = ResourceService.getResourceFromCache(level.texList[3].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                ctx.fillStyle=this.normalColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2),
+                    this.width,
+                    this.height);
+
+                if (this.normalImageElement){
+                    ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+                var rotateRad,rotateAngle;
+                //小时
+                if (this.hourImageElement) {
+                    rotateRad = Math.atan(this.hourImageElement.width/this.hourImageElement.height);
+                    rotateAngle = (rotateRad*180/Math.PI + 180)*Math.PI/180;
+                    drawTimePointer(ctx,this.hourImageElement,rotateAngle,getTimeDeg('hour'),this.width,this.height,this.scaleX,this.scaleY)
+                }
+                //分钟
+                if (this.minutesImageElement) {
+                    rotateRad = Math.atan(this.minutesImageElement.width/this.minutesImageElement.height);
+                    rotateAngle = (rotateRad*180/Math.PI + 180)*Math.PI/180;
+                    drawTimePointer(ctx,this.minutesImageElement,rotateAngle,getTimeDeg('minute'),this.width,this.height,this.scaleX,this.scaleY)
+                }
+                //秒钟
+                if (this.secondImageElement) {
+                    rotateRad = Math.atan(this.secondImageElement.width/this.secondImageElement.height);
+                    rotateAngle = (rotateRad*180/Math.PI + 180)*Math.PI/180;
+                    drawTimePointer(ctx,this.secondImageElement,rotateAngle,getTimeDeg('second'),this.width,this.height,this.scaleX,this.scaleY)
+                }
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染按钮出错');
+            }
+        }
+    });
+    fabric.MyClock.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyClock(level, option));
+    };
+    fabric.MyClock.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                normalImageElement:this.normalImageElement,
+                normalColor:this.normalColor
+            });
+        }
+    })(fabric.MyClock.prototype.toObject);
+    fabric.MyClock.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyClock(level, object));
+    };
+    fabric.MyClock.async = true;
+    function drawTimePointer (ctx,img,deg,timeDeg,width,height,scaleX,scaleY) {
+        ctx.save();
+        ctx.rotate(deg);
+        ctx.rotate(timeDeg*Math.PI/180);
+        ctx.fillRect(
+            0,
+            0,
+            width/2,
+            height/2
+        );
+        ctx.drawImage(img, 0, 0, img.width/scaleX, img.height/scaleY);
+        ctx.restore();
+    }
+    function getTimeDeg (type){
+        var now = new Date();   //定义时间
+        var second = now.getSeconds();  //获取秒
+        var minute = now.getMinutes();  //获取分钟
+        var hour = now.getHours();   //获取小时
+        hour=hour>12?hour-12:hour;
+
+        var hour_deg = (hour*30) + (Math.floor(minute / 12) * 6);
+        var minute_deg = minute*6;
+        var second_deg = second*6;
+
+        var deg = {
+            second:second_deg,
+            minute:minute_deg,
+            hour:hour_deg
+        };
+        //console.log(deg);
+        return deg[type];
+    }
+
 
     //Text area
     fabric.MyTextArea = fabric.util.createClass(fabric.Object,{

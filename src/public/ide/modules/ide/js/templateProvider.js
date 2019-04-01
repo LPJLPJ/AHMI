@@ -1351,5 +1351,72 @@ ideServices
             }
             return tex
         }
+        
+        //时钟控件
+        this.getDefaultClock = function () {
+            var info = {
+                width:250,
+                height:250,
+                left:0,
+                top:0,
+                hourImgWidth:0,
+                hourImgHeight:0,
+                minuteImgWidth:0,
+                minuteImgHeight:0,
+                secondImgWidth:0,
+                secondImgHeight:0,
+                originX: 'center',
+                originY: 'center',
+                enableAnimation:false
+            };
+
+            var texList = [{
+                currentSliceIdx:0,
+                name:'钟盘背景',
+                slices:[{
+                    color:'rgba(100,100,100,1)',
+                    imgSrc:'',
+                    name:'仪表盘背景'
+                }]
+            },{
+                currentSliceIdx:0,
+                name:'时针指针',
+                slices:[{
+                    color:'rgba(120,120,120,1)',
+                    imgSrc:'',
+                    name:'时针指针'
+                }]
+            },{
+                currentSliceIdx:0,
+                name:'分针指针',
+                slices:[{
+                    color:'rgba(120,120,120,1)',
+                    imgSrc:'',
+                    name:'分针指针'
+                }]
+            },{
+                currentSliceIdx:0,
+                name:'秒针指针',
+                slices:[{
+                    color:'rgba(120,120,120,1)',
+                    imgSrc:'',
+                    name:'秒针指针'
+                }]
+            }];
+
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                subSlides: [],
+                name: 'NewClock',
+                type:Type.MyClock,
+                expand:true,
+                zIndex:0,
+                url:'',
+                texList:texList,
+                transition:_.cloneDeep(defaultTransition)
+            }
+        }
 
     }]);

@@ -23,7 +23,8 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"文本输入",icon:"text-input"},
         {name:"照片栏",icon:"gallery"},
         {name:"动态透明图",icon:"alpha-img"},
-        {name:"按钮开关",icon:"button-switch"}
+        {name:"按钮开关",icon:"button-switch"},
+        {name:"时钟",icon:"time"}
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;

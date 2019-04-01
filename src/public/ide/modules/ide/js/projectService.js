@@ -1304,6 +1304,18 @@ ideServices
 
                         syncSublayer(fabWidget);
                     },initiator);
+                }else if(_newWidget.type===Type.MyClock){
+                    fabric.MyClock.fromLevel(_newWidget,function(fabWidget){
+                        _self.currentFabWidgetIdList=[fabWidget.id];
+                        fabWidget.urls=_newWidget.subSlides;
+                        subLayerNode.add(fabWidget);
+                        subLayerNode.renderAll.bind(subLayerNode)();
+
+                        _newWidget.info.width=fabWidget.getWidth();
+                        _newWidget.info.height=fabWidget.getHeight();
+
+                        syncSublayer(fabWidget);
+                    },initiator);
                 }else{
                     fabric[_newWidget.type].fromLevel(_newWidget,function(fabWidget){
                         _self.currentFabWidgetIdList=[fabWidget.id];
@@ -4671,6 +4683,29 @@ ideServices
                             info.pointerImgHeight = img.height;
                         }
                         break;
+                    case Type.MyClock:
+                        var info = level.info;
+                        var texList = level.texList;
+
+                        var hourImg = ResourceService.getResourceFromCache(texList[1].slices[0].imgSrc);
+                        var minuteImg = ResourceService.getResourceFromCache(texList[2].slices[0].imgSrc);
+                        var secondImg = ResourceService.getResourceFromCache(texList[3].slices[0].imgSrc);
+
+                        if (hourImg){
+                            info.hourImgWidth = hourImg.width;
+                            info.hourImgHeight = hourImg.height;
+                        }
+
+                        if (minuteImg){
+                            info.minuteImgWidth = minuteImg.width;
+                            info.minuteImgHeight = minuteImg.height;
+                        }
+
+                        if (secondImg){
+                            info.secondImgWidth = secondImg.width;
+                            info.secondImgHeight = secondImg.height;
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -4700,7 +4735,7 @@ ideServices
                     case 'MyAlphaSlide':
                     case 'MyTextInput':
                     case 'MyButtonSwitch':
-                    case 'MyAlphaImg':
+                    case 'MyClock':
                         image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
                         break;
                     case 'MyProgress':
