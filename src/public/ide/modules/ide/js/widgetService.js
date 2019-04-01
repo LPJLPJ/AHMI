@@ -3454,12 +3454,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         ctx.save();
         ctx.rotate(deg);
         ctx.rotate(timeDeg*Math.PI/180);
-        ctx.fillRect(
-            0,
-            0,
-            width/2,
-            height/2
-        );
+        // ctx.fillRect(
+        //     0,
+        //     0,
+        //     width/2,
+        //     height/2
+        // );
         ctx.drawImage(img, 0, 0, img.width/scaleX, img.height/scaleY);
         ctx.restore();
     }
