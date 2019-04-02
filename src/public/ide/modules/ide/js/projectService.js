@@ -493,28 +493,45 @@ ideServices
             var getRequiredTagNames=this.getRequiredTagNames=function(){
                 var names=[];
                 _.forEach(project.pages,function(page){
+                    //page tag
                     if(page.tag){
                         names.push(page.tag);
                     }
+                    //page actions
+                    if (page.actions) {
+                        var pageActions = page.actions;
+                        _.forEach(pageActions,function (pageAction) {
+                            _.forEach(pageAction.commands,function(action){
+                                names.push(action[1].tag)
+                            });
+                        });
+                    }
+
                     _.forEach(page.layers,function(layer){
+                        //layer tag
                         if(layer.tag){
                             names.push(layer.tag);
                         }
                         _.forEach(layer.subLayers,function(subLayer){
                             _.forEach(subLayer.widgets,function(widget){
+                                //widget tag
                                 if(widget.tag){
                                     names.push(widget.tag);
                                 }
+                                //widget actions
+                                if (widget.actions) {
+                                    var widgetActions = widget.actions;
+                                    _.forEach(widgetActions,function (widgetAction) {
+                                        _.forEach(widgetAction.commands,function(action){
+                                            names.push(action[1].tag)
+                                        });
+                                    });
+                                }
+
                             })
                         })
                     })
                 });
-                var actions = getCurrentSelectObject().level.actions;
-                if(actions){
-                    _.forEach(actions[0].commands,function(action){
-                        names.push(action[1].tag)
-                    });
-                }
                 return names
             };
 
