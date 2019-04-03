@@ -1770,14 +1770,10 @@ module.exports = React.createClass({
 
         cb && cb();
     },
-    drawButtonSwitch: function (curX, curY, widget, options, cb) {
-        /*var slideImg = this.getImage(widget.texList[1].slices[0].imgSrc);
-        slideImg = (slideImg && slideImg.content) || null;
-        widget.imgWidth = slideImg.width;
-        widget.imgHeight = slideImg.height;
-        widget.imgPosY = curY - (slideImg.height - widget.info.height) * 0.5;
-        console.log(widget.imgPosY);*/
-        var buttonSwitchState = this.getValueByTagName(widget.tag, 0)||0;
+
+    //keyboard
+    drawKeyboard: function (curX, curY, widget, options, cb) {
+        /*var buttonSwitchState = this.getValueByTagName(widget.tag, 0)||0;
         var oldPosX = widget.oldPosX||0,curPosX;
         if(buttonSwitchState == 0){
             curPosX = 0;
@@ -1810,18 +1806,41 @@ module.exports = React.createClass({
                 widget.currentPosX = curPosX;
             }
         }else{
-        }
+        }*/
     },
-    paintButtonSwitch: function (curX, curY, widget, options, cb) {
-        var tex = widget.texList;
-        var width = widget.info.width;
-        var height = widget.info.height;
-        var currentPosX = widget.currentPosX||curX;
+    paintKeyboard: function (curX, curY, widget, options, cb) {
+        var info = widget.info;
+        var tex = widget.texList,
+            width = info.width,
+            height = info.height,
+            padding = info.innerPadding,
+            marginX = info.marginX,
+            marginY = info.marginY,
+            keyWidth = info.keyWidth,
+            keyHeight = info.keyHeight;
+        var initX = curX + padding,
+            initY = curY + padding;
+
         this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color);
-        this.drawBg(currentPosX, curY, width/2, height, tex[1].slices[0].imgSrc, tex[1].slices[0].color);
+
+        var keySlices = tex[1].slices;
+        for (var i=0;i<keySlices.length;i++) {
+            if (i !== 0) {
+                if (i%3 === 0) {
+                    initY += (marginY + keyHeight);
+                    initX = curX + padding;
+                }else {
+                    initX += keyWidth + marginX;
+                }
+            }
+            this.drawBg(initX, initY, keyWidth, keyHeight, keySlices[i].imgSrc, keySlices[i].color);
+        }
+
+
         cb && cb();
 
     },
+
     drawSwitch: function (curX, curY, widget, options, cb) {
         var bindTagValue = this.getValueByTagName(widget.tag, 0);
         var switchState;
@@ -2614,6 +2633,58 @@ module.exports = React.createClass({
 
         cb && cb();
     },
+    drawButtonSwitch: function (curX, curY, widget, options, cb) {
+        /*var slideImg = this.getImage(widget.texList[1].slices[0].imgSrc);
+        slideImg = (slideImg && slideImg.content) || null;
+        widget.imgWidth = slideImg.width;
+        widget.imgHeight = slideImg.height;
+        widget.imgPosY = curY - (slideImg.height - widget.info.height) * 0.5;
+        console.log(widget.imgPosY);*/
+        var buttonSwitchState = this.getValueByTagName(widget.tag, 0)||0;
+        var oldPosX = widget.oldPosX||0,curPosX;
+        if(buttonSwitchState == 0){
+            curPosX = 0;
+        }else{
+            //curPosX = slideImg?widget.info.width-slideImg.width:widget.info.width/2;
+            curPosX = widget.info.width/2;
+        }
+        if(curPosX != oldPosX){
+            var oldValue;
+            if(widget.info.enableAnimation){
+                var duration = (widget.transition && widget.transition.duration) || 0;
+                if (widget.animationKey != -1 && widget.animationKey != undefined) {
+                    oldValue = widget.currentPosX || 0;
+                    AnimationManager.clearAnimationKey(widget.animationKey);
+                    widget.animationKey = -1;
+                } else {
+                    oldValue = widget.oldPosX || 0;
+                }
+                widget.oldPosX = curPosX;
+                widget.animationKey = AnimationManager.stepValue(oldPosX, curPosX, duration, 30, null, function (obj) {
+                    widget.currentPosX = obj.curX;
+                    this.draw()
+                }.bind(this), function () {
+                    widget.currentPosX = curPosX;
+                }.bind(this));
+                //initial
+                widget.currentPosX = oldValue;
+            }else{
+                widget.oldPosX = curPosX;
+                widget.currentPosX = curPosX;
+            }
+        }else{
+        }
+    },
+    paintButtonSwitch: function (curX, curY, widget, options, cb) {
+        var tex = widget.texList;
+        var width = widget.info.width;
+        var height = widget.info.height;
+        var currentPosX = widget.currentPosX||curX;
+        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color);
+        this.drawBg(currentPosX, curY, width/2, height, tex[1].slices[0].imgSrc, tex[1].slices[0].color);
+        cb && cb();
+
+    },
     drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
 
         var cursorImg = this.getImage(img);
@@ -2927,7 +2998,6 @@ module.exports = React.createClass({
         }
         return dateString
     },
-
     drawTexTime: function (curX, curY, widget, options, cb) {
         var curDate;
         if (widget.info.RTCModeId == '0') {
@@ -3062,7 +3132,6 @@ module.exports = React.createClass({
         }
         offctx.restore()
     },
-
     drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
@@ -4175,7 +4244,6 @@ module.exports = React.createClass({
         this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
         widget.oldValue = curArc;
     },
-
     paintRotateImg: function (curX, curY, widget, options, cb) {
 
         var width = widget.info.width;
@@ -5450,7 +5518,7 @@ module.exports = React.createClass({
         this.mouseState.position.y = y;
 
         var pressedTargets = this.state.currentPressedTargets;
-
+        console.log(pressedTargets);
         for (var i = 0; i < pressedTargets.length; i++) {
             this.handleElementRelease(pressedTargets[i], _.cloneDeep(this.mouseState));
             this.handleTargetAction(pressedTargets[i], 'Release');
