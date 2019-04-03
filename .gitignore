@@ -5,7 +5,11 @@ nwjs-sdk-v0.15.4-osx-x64/
 project/
 resources/
 temp/
-release/
+release/complete
+release/legacy
+release/tempFolder
+release/update
+release/editLogs.js
 log/
 .idea/
 .db/
