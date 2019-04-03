@@ -6094,4 +6094,48 @@ ideServices
             function changeMatteAttr(){
                 _self.attrScope.$emit('ChangeMatte');
             }
+
+
+            /**
+             * keyboard修改尺寸
+             */
+
+            this.ChangeAttributeKeyboardSize = function (option,callback) {
+                var selectObj=_self.getCurrentSelectObject();
+                var arg={
+                    level:selectObj.level,
+                    callback:function () {
+                        var currentWidget=selectObj.level;
+                        OnWidgetSelected(currentWidget,callback);
+                    }
+                };
+
+                if(option.innerPadding){
+                    selectObj.level.info.innerPadding=option.innerPadding;
+                    arg.innerPadding=option.innerPadding;
+                }
+
+                if(option.marginX){
+                    selectObj.level.info.marginX=option.marginX;
+                    arg.marginX=option.marginX;
+                }
+
+                if(option.marginY){
+                    selectObj.level.info.marginY=option.marginY;
+                    arg.marginY=option.marginY;
+                }
+
+                if(option.keyWidth){
+                    selectObj.level.info.keyWidth=option.keyWidth;
+                    arg.keyWidth=option.keyWidth;
+                }
+
+                if(option.keyHeight){
+                    selectObj.level.info.keyHeight=option.keyHeight;
+                    arg.keyHeight=option.keyHeight;
+                }
+
+                selectObj.target.fire('changeKeyboardSize',arg);
+            }
+
         }]);

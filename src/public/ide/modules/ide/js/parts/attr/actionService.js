@@ -68,7 +68,6 @@ ideServices.service('ActionService',['ProjectService','Type',function (ProjectSe
             case Type.MyScriptTrigger:
             case Type.MyProgress:
             case Type.MyDashboard:
-            case Type.MyNum:
             case Type.MyTexNum:
                 triggers = [tEnterLowAlarm,tLeaveLowAlarm,tEnterHighAlarm,tLeaveHighAlarm,tTagChange];
                 break;

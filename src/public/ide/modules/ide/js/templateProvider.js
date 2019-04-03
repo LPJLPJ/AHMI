@@ -1355,10 +1355,13 @@ ideServices
         //数字键盘
         this.getDefaultKeyboard = function (){
             var info = {
-                width:210,
+                width:360,
                 height:270,
-                keyWidth:50,
+                keyWidth:100,
                 keyHeight:50,
+                innerPadding:20,
+                marginX:10,
+                marginY:10,
                 top:0,
                 left:0,
                 originX: 'center',

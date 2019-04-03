@@ -69,7 +69,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enableAnimationModeId: '0'
                 },
                 keyboard:{
-
+                    changeKeyboardSize:changeKeyboardSize
                 },
                 buttonGroup: {
                     enterInterval: enterInterval,
@@ -776,6 +776,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         break;
                     case Type.MyRotateImg:
                         $scope.component.rotateImg.clockwise = $scope.component.object.level.info.clockwise;
+                        break;
+                    case Type.MyKeyboard:
+                        console.log($scope.component.object.level.info);
                         break;
                 }
 
@@ -3495,5 +3498,70 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         function enterMatteBgi() {
             var selectImg = $scope.component.matte.matteBgi;
             ProjectService.changeMatteBgi(selectImg);
+        }
+
+        /**
+         * 修改数字键盘尺寸
+         *
+         */
+        function changeKeyboardSize(e,type) {
+            var option = {};
+            if (e.keyCode === 13) {
+                switch (type) {
+                    case 'keyWidth':
+                        var keyWidth = $scope.component.object.level.info.keyWidth;
+                        if (!_.isInteger(keyWidth) || keyWidth <=0) {
+                            toastr.warning('输入不合法');
+                            restore();
+                            return;
+                        }
+                        option.keyWidth = keyWidth;
+                        break;
+                    case 'keyHeight':
+                        var keyHeight = $scope.component.object.level.info.keyHeight;
+                        if (!_.isInteger(keyHeight) || keyHeight <=0) {
+                            toastr.warning('输入不合法');
+                            restore();
+                            return;
+                        }
+                        option.keyHeight = keyHeight;
+                        break;
+                    case 'innerPadding':
+                        var innerPadding = $scope.component.object.level.info.innerPadding;
+                        if (!_.isInteger(innerPadding) || innerPadding <=0) {
+                            toastr.warning('输入不合法');
+                            restore();
+                            return;
+                        }
+                        option.innerPadding = innerPadding;
+                        break;
+                    case 'marginX':
+                        var marginX = $scope.component.object.level.info.marginX;
+                        if (!_.isInteger(marginX) || marginX <=0) {
+                            toastr.warning('输入不合法');
+                            restore();
+                            return;
+                        }
+                        option.marginX = marginX;
+                        break;
+                    case 'marginY':
+                        var marginY = $scope.component.object.level.info.marginY;
+                        if (!_.isInteger(marginY) || marginY <=0) {
+                            toastr.warning('输入不合法');
+                            restore();
+                            return;
+                        }
+                        option.marginY = marginY;
+                        break;
+                    default:
+                        break;
+                }
+
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                ProjectService.ChangeAttributeKeyboardSize(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
         }
     }]);

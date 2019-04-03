@@ -3342,12 +3342,40 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.callSuper('initialize',options);
             this.lockRotation=true;
             this.hasRotatingPoint=false;
+            var ctrlOptions={
+                bl:false,
+                br:false,
+                mb:false,
+                ml:false,
+                mr:false,
+                mt:false,
+                tl:false,
+                tr:false
+            };
+            this.setControlsVisibility(ctrlOptions);
+
+            var info = level.info;
+            this.innerPadding = info.innerPadding;
+            this.marginX = info.marginX;
+            this.marginY = info.marginY;
+            this.keyWidth = info.keyWidth;
+            this.keyHeight = info.keyHeight;
 
             this.backgroundColor = level.texList[0].slices[0].color;
-
+            this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+            this.keySlices = level.texList[1].slices;
 
             this.on('changeTex', function (arg) {
+                var level = arg.level;
+                var _callback=arg.callback;
 
+                self.backgroundColor = level.texList[0].slices[0].color;
+                self.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+                self.keySlices = level.texList[1].slices;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
             });
 
             this.on('changeWidgetSize',function(arg){
@@ -3359,6 +3387,29 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 subLayerNode.renderAll();
                 _callback&&_callback();
             });
+
+            this.on('changeKeyboardSize',function(arg){
+                var _callback=arg.callback;
+                if (arg.innerPadding) {
+                    self.innerPadding = arg.innerPadding
+                }
+                if (arg.marginX) {
+                    self.marginX = arg.marginX;
+                }
+                if (arg.marginY) {
+                    self.marginY = arg.marginY;
+                }
+                if (arg.keyWidth) {
+                    self.keyWidth = arg.keyWidth;
+                }
+                if (arg.keyHeight) {
+                    self.keyHeight = arg.keyHeight;
+                }
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            })
 
         },
         toObject: function () {
@@ -3373,6 +3424,16 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     -(this.height / 2),
                     this.width,
                     this.height);
+
+                if (this.normalImageElement) {
+                    ctx.drawImage(this.normalImageElement,
+                        -(this.width / 2),
+                        -(this.height / 2),
+                        this.width,
+                        this.height);
+                }
+
+                drawKey(ctx,this.keySlices,-(this.width / 2),-(this.height / 2),this.innerPadding,this.marginX,this.marginY,this.keyWidth,this.keyHeight);
 
 
                 //将图片超出canvas的部分裁剪
@@ -3409,6 +3470,51 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyButtonSwitch(level, object));
     };
     fabric.MyKeyboard.async = true;
+
+    function drawKey(ctx,keySlices,x,y,padding,marginX,marginY,keyWidth,keyHeight) {
+        var initX = x + padding,
+            initY = y + padding;
+
+        for (var i=0;i<keySlices.length;i++) {
+            if (i !== 0) {
+                if (i%3 === 0) {
+                    initY += (marginY + keyHeight);
+                    initX = x+padding;
+                }else {
+                    initX += keyWidth + marginX;
+                }
+            }
+
+            paintKey(ctx,keySlices[i],keyWidth,keyHeight,initX,initY);
+        }
+    }
+
+    function paintKey(ctx,key,width,height,xCoordinate,yCoordinate){
+        try{
+            ctx.beginPath();
+            //设置背景色
+            ctx.fillStyle = key.color;
+            ctx.fillRect(
+                xCoordinate,
+                yCoordinate,
+                width,
+                height);
+            //绘制背景
+            var keyImage = ResourceService.getResourceFromCache(key.imgSrc);
+            if (keyImage) {
+                ctx.drawImage(
+                    keyImage,
+                    xCoordinate,
+                    yCoordinate,
+                    width,
+                    height);
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }catch(err){
+            console.log(err);
+        }
+    }
 
 
     //Text area

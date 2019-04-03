@@ -3902,28 +3902,44 @@
                                    type="number">
                             </div>
 
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">按键宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.keyWidth"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.keyboard.changeKeyboardSize($event,'keyWidth')"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">按键高度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.keyHeight"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.keyboard.changeKeyboardSize($event,'keyHeight')"
+                                   type="number">
+                        </div>
+
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">内边距</p>
                                 <input class="attr-item__cell-input form-control"
-                                       ng-model="component.object.level.info.padding"
+                                       ng-model="component.object.level.info.innerPadding"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.enterWidth($event)"
+                                       ng-keypress="component.keyboard.changeKeyboardSize($event,'innerPadding')"
                                        type="number">
                             </div>
 
                             <div class="attr-item__cell-wrap">
-                                <p class="attr-item__cell-title">横向间距</p>
+                                <p class="attr-item__cell-title">按键横向间距</p>
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.marginX"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.enterWidth($event)"
+                                       ng-keypress="component.keyboard.changeKeyboardSize($event,'marginX')"
                                        type="number">
                             </div><div class="attr-item__cell-wrap">
-                            <p class="attr-item__cell-title">纵向间距</p>
+                            <p class="attr-item__cell-title">按键纵向间距</p>
                             <input class="attr-item__cell-input form-control"
                                    ng-model="component.object.level.info.marginY"
                                    ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
+                                   ng-keypress="component.keyboard.changeKeyboardSize($event,'marginY')"
                                    type="number">
                         </div>
 
