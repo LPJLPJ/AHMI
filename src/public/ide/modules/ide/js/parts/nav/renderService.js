@@ -1406,6 +1406,88 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     }
 
 
+    renderer.prototype.renderChart = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            //trans each slide
+
+
+            var texList = widget.texList;
+            var totalSlices = texList.length;
+            texList.map(function (tex,i) {
+                var width = info.width;
+                var height = info.height;
+                var curSlice = texList[i].slices[0];
+                var imgSrc = curSlice.imgSrc;
+                if (i===1){
+                    //tracker
+                    width = Math.min(width,height)/20
+                    height = width
+                }else if(i==2){
+                    height = 1
+                }
+                var canvas = new Canvas(width,height);
+                var ctx = canvas.getContext('2d');
+                ctx.clearRect(0,0,width,height);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                //render image;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(width,height),new Pos(),targetImageObj,new Pos(),new Size(width,height));
+                }
+                //output
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb(err);
+                        }
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,width,height,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        curSlice.originSrc = curSlice.imgSrc;
+
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        totalSlices-=1;
+                        if (totalSlices<=0){
+                            cb && cb();
+                        }
+                    }
+
+                }.bind(this));
+
+
+
+                ctx.restore();
+            }.bind(this));
+
+
+
+        }else{
+            cb&&cb();
+        }
+    }
+
+
     renderer.prototype.renderButtonSwitch = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         //progressModeId
         var info = widget.info;
@@ -1835,6 +1917,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 break;
             case 'MyClock':
                 this.renderClock(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyChart':
+                this.renderChart(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
                 cb&&cb();
