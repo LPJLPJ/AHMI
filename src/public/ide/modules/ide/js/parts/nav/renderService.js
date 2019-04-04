@@ -167,10 +167,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     if(!(this[curKey]['text']==nextResTrack[curKey]['text']) || !compareStyle(this[curKey]['style'],nextResTrack[curKey]['style'])){
                         return false
                     }else{
-                        return true
+                        
                     }
                 }else if(!this[curKey]&&!nextResTrack[curKey]){
-                    return true
+                    
                 }else{
                     return false
                 }
