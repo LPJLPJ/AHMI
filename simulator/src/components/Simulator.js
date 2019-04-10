@@ -2532,7 +2532,7 @@ module.exports = React.createClass({
         var arrange = info.arrange === 'vertical' ? 'vertical' : 'horizontal';
         this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color,ctx);
         //draw text
-        if (info.text) {
+        if (widget.curValue) {
             //
             
             if(info.mode != 1){
@@ -2543,7 +2543,7 @@ module.exports = React.createClass({
                 font['font-family'] = info.fontFamily;
                 font['font-color'] = info.fontColor;
                 font['text-align'] = 'left';
-                this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,{
+                this.drawTextByTempCanvas(ctx,curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,{
                     spacing:info.spacing||0,
                     halfSpacing:info.halfSpacing||0
                 });
@@ -3480,7 +3480,7 @@ module.exports = React.createClass({
         //draw
         //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         //逐字渲染字符串
-        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio,ctx);
+        this.drawTextByTempCanvas(ctx,curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio,ctx);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
