@@ -11,7 +11,8 @@
         "start:webpack": "cd simulator && webpack",
         "start:actionV": "cd actionVisualization && webpack",
         "start:build": "cross-env NODE_ENV=development  gulp build",
-        "start:dev": "cross-env NODE_ENV=development gulp dev"
+        "start:dev": "cross-env NODE_ENV=development gulp dev",
+        "simulator:dev": "cd simulator && webpack --watch"
     },
     "author": "",
     "license": "ISC",

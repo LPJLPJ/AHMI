@@ -9,6 +9,7 @@ var Utils = require('../utils/utils');
 var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
+var AnimationAPI = require('../utils/animationAPI')
 var math = require('mathjs');
 var StringConverter = require('./StringConverter')
 var WaveFilterManager = require('./WaveFilterManager')
@@ -423,9 +424,23 @@ module.exports = React.createClass({
             offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
             var project = _.cloneDeep(this.currentDrawedProject);
 
-            var page = project.pageList[(project && project.curPageIdx) || 0];
-            if (page) {
-                this.paintPage(page);
+            var page = project.pageList[(project&&project.curPageIdx)||0];
+            if (page){
+                if(page.animating){
+                    if(page.transition&&page.transition.name==='SWIPE_H'||page.transition&&page.transition.name==='SWIPE_V'){
+                        for(var i=0;i<project.pageList.length;i++){
+                            this.paintPage(project.pageList[i])
+                        }
+                    }else{
+                        if (project.pageList[project.pageUnloadIdx]){
+                            this.paintPage(project.pageList[project.pageUnloadIdx])
+                        }
+                        this.paintPage(page)
+                    }
+                }else{
+                    this.paintPage(page);
+                }
+
             }
             ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
 
@@ -505,7 +520,8 @@ module.exports = React.createClass({
                 }
             }
 
-            if (pageUnloadIdx !== null) {
+            if (pageUnloadIdx !== null){
+                project.pageList[pageUnloadIdx].curPageImg = this.generatePageCopy(project.pageList[pageUnloadIdx],offcanvas.width,offcanvas.height)
                 this.handleTargetAction(project.pageList[pageUnloadIdx], 'UnLoad')
                 //reset pageUnloadIdx translate
                 project.pageList[pageUnloadIdx].translate = null
@@ -518,14 +534,13 @@ module.exports = React.createClass({
                     })
                 }
             }
-            
-
+            project.pageUnloadIdx = pageUnloadIdx
             project.curPageIdx = curPageIdx;
             var page = project.pageList[curPageIdx];
             this.state.curPageIdx = curPageIdx
 
-            
-            this.drawPage(page, options);
+
+            this.drawPage(project,page, options);
             //update
             // ctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
             // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
@@ -548,7 +563,7 @@ module.exports = React.createClass({
             return null;
         }
     },
-    //get num value
+    //获取tag值
     getValueByTagName: function (name, defaultValue) {
         var curTag = this.findTagByName(name);
         if (curTag) {
@@ -566,7 +581,12 @@ module.exports = React.createClass({
     getEasingFunc:function(elem){
         return (elem.transition && elem.transition.timingFun )||'easeInOutCubic';
     },
-    drawPage: function (page, options) {
+
+    //page 绘制页面
+    drawPage: function (project,page, options) {
+        //console.log(1);
+
+
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var canvas = this.refs.canvas;
@@ -582,203 +602,673 @@ module.exports = React.createClass({
         if (!options) {
             options = {};
         }
+        var flag = false;
+
+        //目标页面的 前一个页面
+        var unloadPage = project.pageList[project.pageUnloadIdx];
+
         if (!page.state || page.state == LoadState.notLoad) {
             page.state = LoadState.willLoad
             //generate load trigger
-
             options.reLinkWidgets = true;
+            //页面动画
+            switch (method){
+                case 'PUSH_LR':
+                    page.translate = {
+                        x:-offcanvas.width,
+                        y:0
+                    };
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.animating = true
+                        unloadPage.translate = {
+                            x:0,
+                            y:0
+                        }
+                    }
+                    options.pageAnimate = true
 
-
-            switch (method) {
-                case 'MOVE_LR':
-                    AnimationManager.step(-offcanvas.width, 0, 0, 0, duration, frames, easing, function (deltas) {
+                    AnimationManager.step(-offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
-                        page.translate = {
-                            x: deltas.curX,
-                            y: deltas.curY
+                        if (!flag){
+                            page.animating = false
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
                         }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
+
+                        if (unloadPage){
+                            unloadPage.translate = {
+                                x:deltas.curX+offcanvas.width,
+                                y:deltas.curY
+                            }
+                            unloadPage.animating = true
+                        }
+
                         options.pageAnimate = true
-                        this.draw(null, options);
+                        // this.draw(null,options);
 
 
-                    }.bind(this), function () {
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded
+                        options.pageAnimate = false
+                        if (unloadPage){
+                            unloadPage.translate = null
+                            unloadPage.animating = false
+                        }
+                        page.animating = false
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+
+                    break;
+                case 'MOVE_LR':
+                    //移动距离
+                    page.translate = {
+                        x:-offcanvas.width,
+                        y:0
+                    };
+
+                    page.animating = true
+                    //前一个页面动画设置
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+
+                    options.pageAnimate = true
+
+                    AnimationManager.step(-offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+
+                        if (!flag){
+                            page.animating = false
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
+
+                        options.pageAnimate = true
+                        //this.draw(null,options);
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded
+                        options.pageAnimate = false
+                        page.animating = false
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+
+                    break;
+                case 'PUSH_RL':
+                    page.translate = {
+                        x:offcanvas.width,
+                        y:0
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = {
+                            x:0,
+                            y:0
+                        }
+                        unloadPage.animating = true
+                    }
+                    options.pageAnimate = true
+                    AnimationManager.step(offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
+                        if (unloadPage){
+                            unloadPage.translate = {
+                                x:deltas.curX - offcanvas.width,
+                                y:deltas.curY
+                            }
+                            unloadPage.animating = true
+                        }
+                        options.pageAnimate = true;
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
+                        page.animating = false
+                        if (unloadPage){
+                            unloadPage.translate = null
+                            unloadPage.animating = false
+                        }
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
                     }.bind(this))
                     break;
                 case 'MOVE_RL':
-                    AnimationManager.step(offcanvas.width, 0, 0, 0, duration, frames, easing, function (deltas) {
+                    page.translate = {
+                        x:offcanvas.width,
+                        y:0
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+                    options.pageAnimate = true
+                    AnimationManager.step(offcanvas.width,0,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
-                        page.translate = {
-                            x: deltas.curX,
-                            y: deltas.curY
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
                         }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
                         options.pageAnimate = true;
-                        this.draw(null, options);
+                        // this.draw(null,options);
 
 
-                    }.bind(this), function () {
+                    }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+                    break;
+                case 'PUSH_TB':
+                    page.translate = {
+                        x:0,
+                        y:-offcanvas.height
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = {
+                            x:0,
+                            y:0
+                        }
+                        unloadPage.animating = true
+                    }
+                    options.pageAnimate = true
+                    AnimationManager.step(0,-offcanvas.height,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
+
+                        if (unloadPage){
+                            unloadPage.translate = {
+                                x:deltas.curX ,
+                                y:deltas.curY+offcanvas.height
+                            }
+                            unloadPage.animating = true
+                        }
+                        options.pageAnimate = true;
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        options.pageAnimate = false
+                        page.animating = false
+                        if (unloadPage){
+                            unloadPage.translate = null
+                            unloadPage.animating = false
+                        }
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
                     }.bind(this))
                     break;
                 case 'MOVE_TB':
-                    AnimationManager.step(-offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
+                    page.translate = {
+                        x:0,
+                        y:-offcanvas.height
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+                    options.pageAnimate = true
+                    AnimationManager.step(0,-offcanvas.height,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
-                        page.translate = {
-                            x: deltas.curX,
-                            y: deltas.curY
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
                         }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        page.animating = true
                         options.pageAnimate = true;
-                        this.draw(null, options);
+                        // this.draw(null,options);
 
 
-                    }.bind(this), function () {
+                    }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
+                    }.bind(this))
+                    break;
+                case 'PUSH_BT':
+                    page.translate = {
+                        x:0,
+                        y:offcanvas.height
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = {
+                            x:0,
+                            y:0
+                        }
+                        unloadPage.animating = true
+                    }
+                    AnimationManager.step(0,offcanvas.height,0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+                        page.translate = {
+                            x:deltas.curX,
+                            y:deltas.curY
+                        }
+                        options.pageAnimate = true;
+                        page.animating = true
+                        if (unloadPage){
+                            unloadPage.translate = {
+                                x:deltas.curX ,
+                                y:deltas.curY-offcanvas.height
+                            }
+                            unloadPage.animating = true
+                        }
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        options.pageAnimate = false;
+                        page.animating = false
+                        if (unloadPage){
+                            unloadPage.translate = null
+                            unloadPage.animating = false
+                        }
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
                     }.bind(this))
                     break;
                 case 'MOVE_BT':
-                    AnimationManager.step(offcanvas.height, 0, 0, 0, duration, frames, easing, function (deltas) {
+                    page.translate = {
+                        x:0,
+                        y:offcanvas.height
+                    }
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.translate = null
+                        unloadPage.animating = false
+                    }
+                    AnimationManager.step(0,offcanvas.height,0,0,duration,frames,easing,function (deltas) {
 
                         // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
                         page.translate = {
-                            x: deltas.curX,
-                            y: deltas.curY
+                            x:deltas.curX,
+                            y:deltas.curY
                         }
                         options.pageAnimate = true;
-                        this.draw(null, options);
+                        page.animating = true
+                        // this.draw(null,options);
 
 
-                    }.bind(this), function () {
+                    }.bind(this),function () {
                         page.translate = null;
                         options.pageAnimate = false;
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
                     }.bind(this))
                     break;
                 case 'SCALE':
                     var beforeTranslateMatrix = [
-                        [1, 0, -hWidth],
-                        [0, 1, -hHeight],
-                        [0, 0, 1]
+                        [1,0,-hWidth],
+                        [0,1,-hHeight],
+                        [0,0,1]
                     ];
                     var afterTranslateMatrix = [
-                        [1, 0, hWidth],
-                        [0, 1, hHeight],
-                        [0, 0, 1]
+                        [1,0,hWidth],
+                        [0,1,hHeight],
+                        [0,0,1]
                     ];
                     var beforeScaleMatrix = [
-                        [0.1, 0, 0],
-                        [0, 0.1, 0],
-                        [0, 0, 1]
+                        [0.1,0,0],
+                        [0,0.1,0],
+                        [0,0,1]
                     ];
                     var afterScaleMatrix = [
-                        [1, 0, 0],
-                        [0, 1, 0],
-                        [0, 0, 1]
+                        [1,0,0],
+                        [0,1,0],
+                        [0,0,1]
                     ];
-                    AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
+                    page.transform = math.multiply(math.multiply(afterTranslateMatrix,beforeScaleMatrix),beforeTranslateMatrix)
+                    options.pageAnimate = true
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.transform = [
+                            [1,0,0],
+                            [0,1,0],
+                            [0,0,1]
+                        ]
+                        unloadPage.animating = true
+                    }
+                    AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
+
+                        if (!flag){
+                            page.animating = false
+
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+
+                        }
+
                         var curScaleMatrix = [
-                            [deltas.a.curValue, deltas.c.curValue, deltas.e.curValue],
-                            [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue],
-                            [0, 0, 1]
+                            [deltas.a.curValue,deltas.c.curValue,deltas.e.curValue],
+                            [deltas.b.curValue,deltas.d.curValue,deltas.f.curValue],
+                            [0,0,1]
                         ];
                         // console.log(curScaleMatrix)
-                        var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix)
-                        combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
+                        var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
+                        combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
                         page.transform = combinedMatrix;
                         options.pageAnimate = true;
-                        this.draw(null, options);
-                    }.bind(this), function () {
+                        page.animating = true
+                        // this.draw(null,options);
+                    }.bind(this),function () {
                         page.transform = null
                         options.pageAnimate = false;
+                        page.animating = false
                         this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
                     }.bind(this))
 
 
+
+                    break;
+                case 'FADE-IN_FADE-OUT':
+                    options.pageAnimate = true
+                    page.alpha = 0
+                    page.animating = true
+                    if (unloadPage){
+                        unloadPage.animating = true
+                        unloadPage.alpha = 1.0
+                    }
+                    AnimationManager.step(0,0,1.0,0,duration,frames,easing,function (deltas) {
+
+                        // offctx.translate(deltas.curX,deltas.curY);
+                        if (!flag){
+                            page.animating = false
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height)
+                            flag = true
+                        }
+                        page.alpha = deltas.curX
+                        page.animating = true
+                        if (unloadPage){
+                            unloadPage.alpha = 1.0- page.alpha
+                            unloadPage.animating = true
+                        }
+                        options.pageAnimate = true
+                        // this.draw(null,options);
+
+
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded
+                        options.pageAnimate = false
+                        page.animating = false
+                        if (unloadPage){
+                            unloadPage.alpha = 1.0
+                            unloadPage.animating = false
+                        }
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options)
+                    }.bind(this))
+                    break;
+                case 'SWIPE_H':
+                    var pageNum=project.pageList.length;
+                    var xTranslate=(project.curPageIdx-project.pageUnloadIdx)*offcanvas.width;
+                    var pagesList=[];
+                    var startX=-project.pageUnloadIdx*offcanvas.width;
+
+                    for(var i=0;i<pageNum;i++){
+                        pagesList[i]=project.pageList[i];
+                        pagesList[i].animating = false;
+                        pagesList[i].curPageImg = this.generatePageCopy(pagesList[i],offcanvas.width,offcanvas.height);
+                        pagesList[i].animating = true;
+                        pagesList[i].translate = {
+                            x:startX+i*offcanvas.width,
+                            y:0
+                        }
+                    }
+                    page.animating = true;
+                    options.pageAnimate = true;
+                    AnimationManager.step(xTranslate,0,0,0,duration,frames,easing,function (deltas) {
+                        if (!flag){
+                            page.animating = false;
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height);
+                            flag = true;
+                        }
+                        page.animating = true;
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = true;
+                            pagesList[j].translate = {
+                                x:deltas.curX-offcanvas.width*(project.curPageIdx-j),
+                                y:deltas.curY
+                            }
+                        }
+
+                        options.pageAnimate = true;
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded;
+                        options.pageAnimate = false;
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = false;
+                            pagesList[j].translate = null;
+                        }
+                        page.animating = false;
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
+                    }.bind(this));
+                    break;
+                case 'SWIPE_V':
+                    var pageNum=project.pageList.length;
+                    var yTranslate=(project.curPageIdx-project.pageUnloadIdx)*offcanvas.height;
+                    var pagesList=[];
+                    var startY=-project.pageUnloadIdx*offcanvas.height;
+
+                    for(var i=0;i<pageNum;i++){
+                        pagesList[i]=project.pageList[i];
+                        pagesList[i].animating = false;
+                        pagesList[i].curPageImg = this.generatePageCopy(pagesList[i],offcanvas.width,offcanvas.height)
+                        pagesList[i].animating = true;
+                        pagesList[i].translate = {
+                            x:0,
+                            y:startY+i*offcanvas.height
+                        }
+                    }
+                    page.animating = true;
+                    options.pageAnimate = true;
+                    AnimationManager.step(0,yTranslate,0,0,duration,frames,easing,function (deltas) {
+                        if (!flag){
+                            page.animating = false;
+                            page.curPageImg = this.generatePageCopy(page,offcanvas.width,offcanvas.height);
+                            flag = true;
+                        }
+                        page.animating = true;
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = true;
+                            pagesList[j].translate = {
+                                x:deltas.curX,
+                                y:deltas.curY-offcanvas.height*(project.curPageIdx-j)
+                            }
+                        }
+
+                        options.pageAnimate = true;
+                    }.bind(this),function () {
+                        page.translate = null;
+                        page.state = LoadState.loaded;
+                        options.pageAnimate = false;
+                        for(var j=0;pagesList[j];j++){
+                            pagesList[j].animating = false;
+                            pagesList[j].translate = null;
+                        }
+                        page.animating = false;
+                        this.handleTargetAction(page, 'Load');
+                        this.draw(null,options);
+                    }.bind(this));
                     break;
                 default:
                     this.handleTargetAction(page, 'Load');
-                    this.draw(null, options);
+                    this.draw(null,options);
             }
-
-
-        } else {
-            // offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-            // ctx.clearRect(0,0,canvas.width,canvas.height);
-            // this.paintPage(page,options)
-            // // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-            //
-            // ctx.drawImage(offcanvas, 0, 0, offcanvas.width, offcanvas.height);
-
+        }
+        if(page.state === LoadState.willLoad || page.state === LoadState.loaded){
             page.state = LoadState.loading
-
-
             //drawCanvas
             page.canvasList = page.canvasList || []
             var canvasList = page.canvasList;
             if (canvasList.length) {
                 canvasList.sort(this.compareZIndex);
-                // console.log(canvasList);
+                 //console.log('canvaslist',canvasList);
                 for (var i = 0; i < canvasList.length; i++) {
                     this.drawCanvas(canvasList[i], options);
                 }
             }
             page.state = LoadState.loaded;
 
-
             if (options && options.reLinkWidgets) {
                 Utils.linkPageWidgets(page);
                 // console.log('page', page);
             }
-
         }
-
-
     },
-    paintPage: function (page, options) {
-
-        var offcanvas = this.refs.offcanvas;
+    //获取page缩略图
+    generatePageCopy:function (page,width,height) {
+        //console.log('generate',page);
+        var curPageImg = document.createElement('canvas')
+        curPageImg.width = width
+        curPageImg.height = height
+        var ctx = curPageImg.getContext('2d')
+        ctx.clearRect(0,0,width,height)
+        this.paintPage(page,{resetTransform:true},curPageImg)
+        return curPageImg
+    },
+    paintPage: function (page, options,offcanvas) {
+        //console.log(page,options,offcanvas,this.refs.offcanvas);
+        offcanvas = offcanvas|| this.refs.offcanvas;
         var offctx = offcanvas.getContext('2d');
-
-
         //drawPage
         offctx.save();
+        if (options&&options.resetTransform){
+            // console.log('resetTransform')
+            // offctx.fillRect(0,0,100,100)
+        }else{
+            if (page.transform){
+                var m = page.transform;
+                offctx.transform(m[0][0],m[1][0],m[0][1],m[1][1],m[0][2],m[1][2]);
+            }else{
+                if (page.translate){
+                    offctx.translate(page.translate.x,page.translate.y);
+                }
 
-        if (page.transform) {
-            var m = page.transform;
-            offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
-        } else {
-            if (page.translate) {
-                offctx.translate(page.translate.x, page.translate.y);
-            }
-
-            if (page.scale) {
-                offctx.scale(page.scale.w, page.scale.h);
-            }
-        }
-        offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
-        this.drawBgColor(0, 0, offcanvas.width, offcanvas.height, page.backgroundColor);
-        this.drawBgImg(0, 0, offcanvas.width, offcanvas.height, page.backgroundImage);
-        //drawCanvas
-        var canvasList = page.canvasList
-        if (canvasList.length) {
-            // console.log(canvasList);
-            for (var i = 0; i < canvasList.length; i++) {
-                this.paintCanvas(canvasList[i], options);
+                if (page.scale){
+                    offctx.scale(page.scale.w,page.scale.h);
+                }
             }
         }
+        // offctx.clearRect(0, 0, offcanvas.width, offcanvas.height);
+        //console.log(page.animating);
 
+        //page动画 ，动画阶段获取page缩略图curPageImg
+        if (page.animating){
+            // console.log('page animating',page.curPageImg)
+            if (page.alpha!==undefined){
+                offctx.globalAlpha = page.alpha
+            }
+            //console.log(page.curPageImg);
+            if (page.curPageImg){
+                offctx.drawImage(page.curPageImg, 0,0,offcanvas.width, offcanvas.height);
+            }
+
+
+        }else{
+            this.drawBgColor(0, 0, offcanvas.width, offcanvas.height, page.backgroundColor,offctx);
+            this.drawBgImg(0, 0, offcanvas.width, offcanvas.height, page.backgroundImage,offctx);
+            //drawCanvas
+            var canvasList = page.canvasList
+            if (canvasList.length) {
+                for (var i = 0; i < canvasList.length; i++) {
+                    this.paintCanvas(canvasList[i],options,offctx);
+                }
+            }
+        }
         offctx.restore();
-
-
     },
+
     handleTimers: function (num, postfix, value) {
 
         var timerList = this.state.timerList;
@@ -1138,6 +1628,8 @@ module.exports = React.createClass({
                 break;
         }
     },
+
+    //canvas 绘制画布
     drawCanvas: function (canvasData, options) {
         var willExecuteAnimation = false;
         if (options && options.animation) {
@@ -1210,6 +1702,7 @@ module.exports = React.createClass({
             //     this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition,firstSubCanvas);
             //
             // }
+
             var transition = canvasData.transition;
             for (var i = 0; i < subCanvasList.length; i++) {
                 this.drawSubCanvas(subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, (i != nextSubCanvasIdx));
@@ -1218,11 +1711,11 @@ module.exports = React.createClass({
 
 
     },
-    paintCanvas: function (canvasData, options) {
+    paintCanvas: function (canvasData, options,ctx) {
         //draw
-
+        //console.log('canvas',ctx);
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx;
+        var offctx = ctx||this.offctx;
         var subCanvasList = canvasData.subCanvasList || [];
 
         var subCanvas = subCanvasList[canvasData.curSubCanvasIdx];
@@ -1241,12 +1734,10 @@ module.exports = React.createClass({
                 var t = canvasData.transform;
                 offctx.transform(t.a, t.b, t.c, t.d, t.e, t.f);
             }
-
-
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
             var transition = canvasData.transition;
 
-            this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition);
+            this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
             offctx.restore();
         } else {
 
@@ -1261,6 +1752,8 @@ module.exports = React.createClass({
         ctx.closePath();
         ctx.clip();
     },
+
+    //subcanvas 绘制子画布
     drawSubCanvas: function (subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
@@ -1392,14 +1885,15 @@ module.exports = React.createClass({
         }
 
     },
-    paintSubCanvas: function (subCanvas, x, y, w, h, options) {
+    paintSubCanvas: function (subCanvas, x, y, w, h, options,ctx) {
+        //console.log('subcanvas',subCanvas);
         // x = subCanvas.info.x;
         // y = subCanvas.info.y;
         // w = subCanvas.info.w;
         // h = subCanvas.info.h;
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx;
-        offctx.save()
+        var offctx = ctx||this.offctx;
+        offctx.save();
         if (subCanvas.transform) {
             var m = subCanvas.transform;
             offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
@@ -1418,7 +1912,7 @@ module.exports = React.createClass({
         var widgetList = subCanvas.widgetList;
         if (widgetList.length) {
             for (var i = 0; i < widgetList.length; i++) {
-                this.paintWidget(widgetList[i], x, y, options);
+                this.paintWidget(widgetList[i], x, y, options,offctx);
             }
 
         }
@@ -1448,6 +1942,8 @@ module.exports = React.createClass({
 
 
     },
+
+    //widget 绘制控件
     drawWidget: function (widget, sx, sy, options, updateOnly) {
         var willExecuteAnimation = false;
         if (updateOnly) {
@@ -1513,10 +2009,9 @@ module.exports = React.createClass({
         }
 
     },
-    paintWidget: function (widget, sx, sy, options) {
-        // console.log('drawing widget',widget);
+    paintWidget: function (widget, sx, sy, options,ctx) {
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx;
+        var offctx = ctx||this.offctx;
         var curX = widget.info.left + sx;
         var curY = widget.info.top + sy;
         //this.drawBgColor(curX,curY,widget.w,widget.h,widget.bgColor);
@@ -1550,19 +2045,27 @@ module.exports = React.createClass({
 
         var paintFunc = 'paint'+subType.slice(2)
         if(this[paintFunc]){
-            this[paintFunc](curX,curY,widget,options,cb)
+            this[paintFunc](curX,curY,widget,options,cb,offctx)
         }else{
             cb && cb()
         }
 
 
     },
+
+    /**
+     * 控件
+     * draw  --> 初始化参数
+     * paint --> 绘制canvas
+     * paint阶段的 ctx参数 是用于生成page缩略图的canvas对象
+     */
+    //inputKeyboard page最后一页
     drawInputKeyboard: function (curX, curY, widget, options, cb) {
 
     },
-    paintInputKeyboard: function (curX, curY, widget, options, cb) {
+    paintInputKeyboard: function (curX, curY, widget, options, cb ,ctx) {
         var offcanvas = this.refs.offcanvas;
-        var offCtx = this.offctx;
+        var offCtx = ctx||this.offctx;
         var tempcanvas = this.refs.tempcanvas;
 
         var tempCtx = tempcanvas.getContext('2d');
@@ -1637,17 +2140,14 @@ module.exports = React.createClass({
         cb && cb()
 
     },
+
+    //slide
     drawSlide: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag);
         var slideIdx = (tag && tag.value) || 0;
         widget.curSlideIdx = slideIdx;
     },
-    drawAlphaSlide:function(curX,curY,widget,options,cb){
-        var tag = this.findTagByName(widget.tag);
-        var slideIdx = (tag && tag.value) || 0;
-        widget.curSlideIdx = slideIdx;
-    },
-    paintSlide: function (curX, curY, widget, options, cb) {
+    paintSlide: function (curX, curY, widget, options, cb ,ctx) {
         var slideSlices = widget.texList[0].slices;
         var slideIdx = widget.curSlideIdx;
         var text = '';
@@ -1662,15 +2162,22 @@ module.exports = React.createClass({
             var curSlice = slideSlices[slideIdx];
             var width = widget.info.width;
             var height = widget.info.height;
-            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color,ctx);
             text = curSlice.text;
             if (!!text) {
-                this.drawTextByTempCanvas(curX, curY, width, height, text, font, 'horizontal');
+                this.drawTextByTempCanvas(ctx,curX, curY, width, height, text, font, 'horizontal');
             }
         }
         cb && cb();
     },
-    paintAlphaSlide: function (curX, curY, widget, options, cb) {
+
+    //alphaSlide
+    drawAlphaSlide:function(curX,curY,widget,options,cb){
+        var tag = this.findTagByName(widget.tag);
+        var slideIdx = (tag && tag.value) || 0;
+        widget.curSlideIdx = slideIdx;
+    },
+    paintAlphaSlide: function (curX, curY, widget, options, cb,ctx) {
         var slideSlices = widget.texList[0].slices;
         var slideIdx = widget.curSlideIdx;
         var text = '';
@@ -1699,31 +2206,35 @@ module.exports = React.createClass({
             this.offctx.drawImage(tempcanvas, curX, curY, width, height);
             text = curSlice.text;
             if (!!text) {
-                this.drawTextByTempCanvas(curX, curY, width, height, text, font, 'horizontal');
+                this.drawTextByTempCanvas(ctx,curX, curY, width, height, text, font, 'horizontal');
             }
         }
         cb && cb();
     },
+
+    //animation
     drawAnimation: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag);
         var slideIdx = (tag && tag.value) || 0;
         widget.curSlideIdx = slideIdx;
     },
-    paintAnimation: function (curX, curY, widget, options, cb) {
+    paintAnimation: function (curX, curY, widget, options, cb,ctx) {
         var slideSlices = widget.texList[0].slices;
         var slideIdx = widget.curSlideIdx;
         if (slideIdx >= 0 && slideIdx < slideSlices.length) {
             var curSlice = slideSlices[slideIdx];
             var width = widget.info.width;
             var height = widget.info.height;
-            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color);
+            this.drawBg(curX, curY, width, height, curSlice.imgSrc, curSlice.color,ctx);
         }
         cb && cb();
     },
+
+    //button
     drawButton: function (curX, curY, widget, options, cb) {
 
     },
-    paintButton: function (curX, curY, widget, options, cb) {
+    paintButton: function (curX, curY, widget, options, cb,ctx) {
         // console.log(widget);
         var tex = widget.texList[0];
         var width = widget.info.width;
@@ -1740,36 +2251,38 @@ module.exports = React.createClass({
                 //normal
                 if (widget.mouseState && widget.mouseState.state && (widget.mouseState.state == 'press' || widget.mouseState.state == 'hold')) {
                     //pressed slice
-                    this.drawBg(curX, curY, width, height, tex.slices[1].imgSrc, tex.slices[1].color);
+                    this.drawBg(curX, curY, width, height, tex.slices[1].imgSrc, tex.slices[1].color,ctx);
                 } else {
                     //normal slice
-                    this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+                    this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color,ctx);
                 }
                 break;
             case '1':
                 //switch mode
                 var switchState = this.getValueByTagName(widget.tag, 0);
                 if (switchState == 0) {
-                    this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+                    this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color,ctx);
                 } else {
-                    this.drawBg(curX, curY, width, height, tex.slices[1].imgSrc, tex.slices[1].color);
+                    this.drawBg(curX, curY, width, height, tex.slices[1].imgSrc, tex.slices[1].color,ctx);
                 }
                 break
         }
 
         //draw tint
         // lg('arrange',widget.info.arrange);
-        this.drawTextByTempCanvas(curX, curY, width, height, text, font, widget.info.arrange);
+        this.drawTextByTempCanvas(ctx,curX, curY, width, height, text, font, widget.info.arrange);
 
         //draw highlight
         // lg('highlight',widget.highlight)
         // console.log('highlight',widget.highlight);
         if (widget.highlight) {
-            this.drawHighLight(curX, curY, width, height, tex.slices[2]);
+            this.drawHighLight(curX, curY, width, height, tex.slices[2],ctx);
         }
 
         cb && cb();
     },
+
+    //buttonSwitch
     drawButtonSwitch: function (curX, curY, widget, options, cb) {
         /*var slideImg = this.getImage(widget.texList[1].slices[0].imgSrc);
         slideImg = (slideImg && slideImg.content) || null;
@@ -1812,21 +2325,22 @@ module.exports = React.createClass({
         }else{
         }
     },
-    paintButtonSwitch: function (curX, curY, widget, options, cb) {
+    paintButtonSwitch: function (curX, curY, widget, options, cb,ctx) {
         var tex = widget.texList;
         var width = widget.info.width;
         var height = widget.info.height;
         var currentPosX = widget.currentPosX||curX;
-        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color);
-        this.drawBg(currentPosX, curY, width/2, height, tex[1].slices[0].imgSrc, tex[1].slices[0].color);
+        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color,ctx);
+        this.drawBg(currentPosX, curY, width/2, height, tex[1].slices[0].imgSrc, tex[1].slices[0].color,ctx);
         cb && cb();
 
     },
 
+    //clcok
     drawClock: function (curX, curY, widget, options, cb) {
 
     },
-    paintClock: function (curX, curY, widget, options, cb) {
+    paintClock: function (curX, curY, widget, options, cb,ctx) {
         var tex = widget.texList;
         var width = widget.info.width;
         var height = widget.info.height;
@@ -1841,24 +2355,24 @@ module.exports = React.createClass({
 
         var rotateRad,rotateAngle;
 
-        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color);
+        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color,ctx);
         //时
         if (widget.texList[1].slices[0]) {
             rotateRad = Math.atan(hourImgWidth/hourImgHeight);
             rotateAngle = (rotateRad*180/Math.PI + 180) + getTimeDeg('hour');
-            this.drawRotateElem(curX, curY, width, height, width/2,height/2,hourImgWidth, hourImgHeight, rotateAngle, widget.texList[1].slices[0], 0, 0, null, 0, 0,true,this.pixelRatio);
+            this.drawRotateElem(curX, curY, width, height, width/2,height/2,hourImgWidth, hourImgHeight, rotateAngle, widget.texList[1].slices[0], 0, 0, null, 0, 0,true,this.pixelRatio,ctx);
         }
         //分
         if (widget.texList[2].slices[0]) {
             rotateRad = Math.atan(minuteImgWidth/minuteImgHeight);
             rotateAngle = (rotateRad*180/Math.PI + 180) + getTimeDeg('minute');
-            this.drawRotateElem(curX, curY, width, height, width/2,height/2,minuteImgWidth, minuteImgHeight, rotateAngle, widget.texList[2].slices[0], 0, 0, null, 0, 0,true,this.pixelRatio);
+            this.drawRotateElem(curX, curY, width, height, width/2,height/2,minuteImgWidth, minuteImgHeight, rotateAngle, widget.texList[2].slices[0], 0, 0, null, 0, 0,true,this.pixelRatio,ctx);
         }
         //秒
         if (widget.texList[3].slices[0]) {
             rotateRad = Math.atan(secondImgWidth/secondImgHeight);
             rotateAngle = (rotateRad*180/Math.PI + 180) + getTimeDeg('second');
-            this.drawRotateElem(curX, curY, width, height, width/2,height/2,secondImgWidth, secondImgHeight, rotateAngle, widget.texList[3].slices[0], 0, 0, null, 0, 0,true,this.pixelRatio);
+            this.drawRotateElem(curX, curY, width, height, width/2,height/2,secondImgWidth, secondImgHeight, rotateAngle, widget.texList[3].slices[0], 0, 0, null, 0, 0,true,this.pixelRatio,ctx);
         }
 
         function getTimeDeg (type){
@@ -1884,6 +2398,7 @@ module.exports = React.createClass({
         cb && cb();
     },
 
+    //switch
     drawSwitch: function (curX, curY, widget, options, cb) {
         var bindTagValue = this.getValueByTagName(widget.tag, 0);
         var switchState;
@@ -1895,7 +2410,7 @@ module.exports = React.createClass({
         }
         widget.curSwitchState = switchState;
     },
-    paintSwitch: function (curX, curY, widget, options, cb) {
+    paintSwitch: function (curX, curY, widget, options, cb,ctx) {
         // console.log(widget);
         var tex = widget.texList[0];
         var width = widget.info.width;
@@ -1915,22 +2430,24 @@ module.exports = React.createClass({
             // this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
         } else {
             // console.log(tex);
-            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color);
+            this.drawBg(curX, curY, width, height, tex.slices[0].imgSrc, tex.slices[0].color,ctx);
             if (!!text) {
-                this.drawTextByTempCanvas(curX, curY, width, height, text, font, 'horizontal');
+                this.drawTextByTempCanvas(ctx,curX, curY, width, height, text, font, 'horizontal');
             }
         }
         cb && cb();
     },
+
+    //textArea
     drawTextArea: function (curX, curY, widget, options, cb) {
     },
-    paintTextArea: function (curX, curY, widget, options, cb) {
+    paintTextArea: function (curX, curY, widget, options, cb,ctx) {
         var info = widget.info;
         var width = info.width;
         var height = info.height;
         var bgSlice = widget.texList[0].slices[0];
         var arrange = info.arrange === 'vertical' ? 'vertical' : 'horizontal';
-        this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
+        this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color,ctx);
         //draw text
         if(info.mode != 1){
             if (info.text) {
@@ -1941,7 +2458,7 @@ module.exports = React.createClass({
                 font['font-size'] = info.fontSize;
                 font['font-family'] = info.fontFamily;
                 font['font-color'] = info.fontColor;
-                this.drawTextByTempCanvas(curX, curY, width, height, info.text, font, arrange);
+                this.drawTextByTempCanvas(ctx,curX, curY, width, height, info.text, font, arrange);
             }
         }else{
             if(info.textContent&&info.textContent!==''){
@@ -1978,7 +2495,7 @@ module.exports = React.createClass({
                         }
                     })
                 }
-                var offctx = this.offctx
+                var offctx =ctx|| this.offctx
                 offctx.save()
                 offctx.fillStyle = info.fontColor
                 var fontString=info.fontItalic+" "+info.fontBold+" "+info.fontSize+"px"+" "+info.fontFamily;
@@ -1997,6 +2514,8 @@ module.exports = React.createClass({
         
         cb && cb();
     },
+
+    //textInput
     drawTextInput: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag)
         if(tag){
@@ -2005,13 +2524,13 @@ module.exports = React.createClass({
 
         }
     },
-    paintTextInput: function (curX, curY, widget, options, cb) {
+    paintTextInput: function (curX, curY, widget, options, cb,ctx) {
         var info = widget.info;
         var width = info.width;
         var height = info.height;
         var bgSlice = widget.texList[0].slices[0];
         var arrange = info.arrange === 'vertical' ? 'vertical' : 'horizontal';
-        this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
+        this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color,ctx);
         //draw text
         if (info.text) {
             //
@@ -2022,14 +2541,14 @@ module.exports = React.createClass({
             font['font-family'] = info.fontFamily;
             font['font-color'] = info.fontColor;
             font['text-align'] = 'left';
-            this.drawTextByTempCanvas(curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,{
+            this.drawTextByTempCanvas(ctx,curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,{
                 spacing:info.spacing||0,
                 halfSpacing:info.halfSpacing||0
             });
         }
         cb && cb();
     },
-    drawTextByTempCanvas: function (curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth, spacing, paddingRatio) {
+    drawTextByTempCanvas: function (ctx,curX, curY, width, height, text, font, arrange, byteMode, maxFontWidth, spacing, paddingRatio) {
 
         var text = text || '';
         var font = font || {};
@@ -2038,7 +2557,7 @@ module.exports = React.createClass({
         var halfSpacing = 0
         var curSpacing = 0
         var lastLetterType, curLetterType
-        var offctx = this.offctx;
+        var offctx = ctx || this.offctx;
         var tempcanvas = this.refs.tempcanvas;
         tempcanvas.width = width;
         tempcanvas.height = height;
@@ -2135,12 +2654,14 @@ module.exports = React.createClass({
             return 1
         }
     },
+
+    //buttonGroup
     drawButtonGroup: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag);
         var curButtonIdx = (tag && tag.value) || 0;
         widget.curButtonIdx = curButtonIdx;
     },
-    paintButtonGroup: function (curX, curY, widget, options, cb) {
+    paintButtonGroup: function (curX, curY, widget, options, cb,ctx) {
         var width = widget.info.width;
         var height = widget.info.height;
         var interval = widget.info.interval;
@@ -2156,15 +2677,15 @@ module.exports = React.createClass({
                 var curButtonTex = texList[i];
                 if (i == curButtonIdx - 1) {
                     //pressed tex
-                    this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[1].imgSrc, curButtonTex.slices[1].color);
+                    this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[1].imgSrc, curButtonTex.slices[1].color,ctx);
 
                 } else {
                     //normal tex
-                    this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
+                    this.drawBg(curX + i * (singleWidth + interval), curY, singleWidth, height, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color,ctx);
                 }
                 //draw highlight
                 if (widget.highlight) {
-                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height, highlightTex.slices[0]);
+                    this.drawHighLight(curX + widget.highlightValue * (singleWidth + interval), curY, singleWidth, height, highlightTex.slices[0],ctx);
                 }
             }
         } else {
@@ -2174,20 +2695,22 @@ module.exports = React.createClass({
                 var curButtonTex = texList[i];
                 if (i == curButtonIdx - 1) {
                     //pressed tex
-                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[1].imgSrc, curButtonTex.slices[1].color);
+                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[1].imgSrc, curButtonTex.slices[1].color,ctx);
 
                 } else {
                     //normal tex
-                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color);
+                    this.drawBg(curX, curY + i * (singleHeight + interval), width, singleHeight, curButtonTex.slices[0].imgSrc, curButtonTex.slices[0].color,ctx);
                 }
                 if (widget.highlight) {
-                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight, highlightTex.slices[0]);
+                    this.drawHighLight(curX, curY + widget.highlightValue * (singleHeight + interval), width, singleHeight, highlightTex.slices[0],ctx);
                 }
             }
         }
 
         cb && cb();
     },
+
+    //gallery
     drawGallery: function (curX, curY, widget, options, cb) {
         var tag = this.findTagByName(widget.tag);
         var count = widget.info.count;
@@ -2237,7 +2760,7 @@ module.exports = React.createClass({
         }
         
     },
-    paintGallery:function(curX, curY, widget, options, cb){
+    paintGallery:function(curX, curY, widget, options, cb,ctx){
         var curPosXList = []
         
         var ctx = this.offctx
@@ -2378,6 +2901,8 @@ module.exports = React.createClass({
 
         cb && cb()
     },
+
+    //progress
     drawProgress: function (curX, curY, widget, options, cb) {
 
         // widget.currentValue = curProgress
@@ -2448,7 +2973,7 @@ module.exports = React.createClass({
             // this.paintProgress(curX,curY,widget,options,cb)
         }
     },
-    paintProgress: function (curX, curY, widget, options, cb) {
+    paintProgress: function (curX, curY, widget, options, cb,ctx) {
         var width = widget.info.width;
         var height = widget.info.height;
         var cursor = (widget.info.cursor == '1');
@@ -2470,17 +2995,17 @@ module.exports = React.createClass({
             // console.log('drawing color progress',widget.info.progressModeId);
             switch (widget.info.progressModeId) {
                 case '0':
-                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color,ctx);
 
                     switch (widget.info.arrange) {
 
                         case 'vertical':
                             // console.log(curScale);
                             // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
-                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color,ctx);
                             if (cursor) {
                                 var cursorSlice = widget.texList[2].slices[0];
-                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY);
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY,ctx);
                                 //this.drawCursor(curX,curY+ height * (1.0 - curScale),width,height,false,height*(1.0-curScale),cursorSlice.imgSrc,cursorSlice.color);
                             }
                             break;
@@ -2488,17 +3013,17 @@ module.exports = React.createClass({
                         default:
                             //default horizontal
                             // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color,ctx);
                             if (cursor) {
                                 var cursorSlice = widget.texList[2].slices[0];
-                                this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+                                this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color,ctx);
                             }
                             break;
                     }
                     break;
                 case '1':
 
-                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color,ctx);
                     var lastSlice = widget.texList[2].slices[0];
                     var mixedColor = this.addTwoColor(lastSlice.color, progressSlice.color, curScale);
 
@@ -2508,20 +3033,20 @@ module.exports = React.createClass({
                         case 'vertical':
                             // console.log(curScale);
                             // this.drawBg(curX,curY+height-height*curScale,width,height*curScale,progressSlice.imgSrc,progressSlice.color);
-                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, '', mixedColor,ctx);
                             if (cursor) {
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY);
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color,curY,ctx);
                             }
                             break;
                         case 'horizontal':
                         default:
                             //default horizontal
                             // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', mixedColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', mixedColo,ctxr);
                             if (cursor) {
                                 var cursorSlice = widget.texList[3].slices[0];
-                                this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+                                this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color,ctx);
                             }
                             break;
                     }
@@ -2530,23 +3055,23 @@ module.exports = React.createClass({
                 case '2':
                     break;
                 case '3':
-                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+                    this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color,ctx);
                     var drawColor = this.confirmOneColor(widget, curProgress);
                     var drawImg = this.confirmOneImage(widget,curProgress)
                     switch (widget.info.arrange) {
                         case 'vertical':
-                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, drawImg, drawColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, drawImg, drawColor,ctx);
                             if (cursor) {
                                 var cursorSlice = widget.texList[widget.texList.length - 1].slices[0];
-                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY);
+                                this.drawVerCursor(curX, curY + height * (1.0 - curScale), width, height, false, height * (1.0 - curScale), cursorSlice.imgSrc, cursorSlice.color, curY,ctx);
                             }
                             break;
                         case 'horizontal':
                         default:
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, drawImg, drawColor);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, drawImg, drawColor,ctx);
                             if (cursor) {
                                 var cursorSlice = widget.texList[widget.texList.length - 1].slices[0];
-                                this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color);
+                                this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color,ctx);
                             }
                             break;
                     }
@@ -2562,6 +3087,8 @@ module.exports = React.createClass({
         //handle action
 
     },
+
+    //slideBlock
     drawSlideBlock: function (curX, curY, widget, options, cb) {
         var width = widget.info.width;
         var height = widget.info.height;
@@ -2581,7 +3108,7 @@ module.exports = React.createClass({
         widget.oldValue = curSlide;
 
     },
-    paintSlideBlock: function (curX, curY, widget, options, cb) {
+    paintSlideBlock: function (curX, curY, widget, options, cb,ctx) {
         var width = widget.info.width;
         var height = widget.info.height;
 
@@ -2612,18 +3139,18 @@ module.exports = React.createClass({
                 switch (widget.info.arrange) {
                     case 'vertical':
                         if(progressImg){
-                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color);
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color,ctx);
                         }
                         //this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
-                        this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height)-slideImg.height,width,height,false, slideSlice.imgSrc, slideSlice.color)
+                        this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height)-slideImg.height,width,height,false, slideSlice.imgSrc, slideSlice.color,ctx)
                         break;
                     case 'horizontal':
                     default:
                         if(progressImg){
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color,ctx);
                         }
                         //this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
-                        this.drawCursorWithoutLimit(curScale * (width - slideImg.width) + curX, curY ,width,height,true, slideSlice.imgSrc, slideSlice.color)
+                        this.drawCursorWithoutLimit(curScale * (width - slideImg.width) + curX, curY ,width,height,true, slideSlice.imgSrc, slideSlice.color,ctx)
                         break
                 }
             }
@@ -2631,7 +3158,9 @@ module.exports = React.createClass({
         }
         cb && cb();
     },
-    paintScriptTrigger: function (curX, curY, widget, options, cb) {
+
+    //scriptTrigger
+    paintScriptTrigger: function (curX, curY, widget, options, cb,ctx) {
         cb && cb()
     },
     drawScriptTrigger: function (curX, curY, widget, options, cb) {
@@ -2645,6 +3174,8 @@ module.exports = React.createClass({
         this.handleAlarmAction(curScriptTrigger, widget, widget.info.lowAlarmValue, widget.info.highAlarmValue);
         widget.oldValue = curScriptTrigger;
     },
+
+    //video
     drawVideo: function (curX, curY, widget, options, cb) {
         var videoSrc = this.getRawValueByTagName(widget.tag) || '';
         // var videoSrc = 'http://blog.zzen1ss.me/media/video/saraba.mp4';
@@ -2662,11 +3193,11 @@ module.exports = React.createClass({
         //     this.setState({innerTimerList:innerTimerList});
         // }
     },
-    paintVideo: function (curX, curY, widget, options, cb) {
+    paintVideo: function (curX, curY, widget, options, cb,ctx) {
         var width = widget.info.width;
         var height = widget.info.height;
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx;
+        var offctx = ctx||this.offctx;
         offctx.fillStyle = widget.texList[0].slices[0].color;
         offctx.fillRect(curX, curY, width, height);
         //draw video
@@ -2676,7 +3207,8 @@ module.exports = React.createClass({
 
         cb && cb();
     },
-    drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color, limitY) {
+
+    drawVerCursor: function (beginX, beginY, width, height, align, alignLimit, img, color, limitY,ctx) {
 
         var cursorImg = this.getImage(img);
         cursorImg = cursorImg && cursorImg.content || null;
@@ -2685,17 +3217,17 @@ module.exports = React.createClass({
             var imgH = cursorImg.height;
             if (align) {
                 //horizontal
-                this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
+                this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color,ctx);
             } else {
                 //vertical
                 var Ymin = beginY - imgH;
                 if (Ymin < limitY)
                     Ymin = limitY;
-                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, Ymin, width, Math.min(imgH, alignLimit), img, color);
+                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, Ymin, width, Math.min(imgH, alignLimit), img, color,ctx);
             }
         }
     },
-    drawCursor: function (beginX, beginY, width, height, align, alignLimit, img, color) {
+    drawCursor: function (beginX, beginY, width, height, align, alignLimit, img, color,ctx) {
 
         var cursorImg = this.getImage(img);
         cursorImg = (cursorImg && cursorImg.content) || null;
@@ -2704,16 +3236,16 @@ module.exports = React.createClass({
             var imgH = cursorImg.height;
             if (align) {
                 //horizontal
-                this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
+                this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color,ctx);
             } else {
                 //vertical
-                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
+                this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color,ctx);
             }
         }
 
 
     },
-    drawCursorWithoutLimit: function (beginX, beginY, width,height,align, img, color) {
+    drawCursorWithoutLimit: function (beginX, beginY, width,height,align, img, color,ctx) {
 
         var cursorImg = this.getImage(img);
         cursorImg = (cursorImg && cursorImg.content) || null;
@@ -2723,11 +3255,11 @@ module.exports = React.createClass({
             if (align) {
                 //horizontal
                 //this.drawBgClip(beginX, beginY - (imgH - height) * 0.5, imgW, imgH, beginX, beginY, Math.min(imgW, alignLimit), height, img, color);
-                this.drawBg(beginX,beginY - (imgH - height) * 0.5,imgW,imgH,img,color);
+                this.drawBg(beginX,beginY - (imgH - height) * 0.5,imgW,imgH,img,color,ctx);
             } else {
                 //vertical
                 //this.drawBgClip(beginX - (imgW - width) * 0.5, beginY - imgH, imgW, imgH, beginX, beginY - imgH, width, Math.min(imgH, alignLimit), img, color);
-                this.drawBg(beginX - (imgW - width) * 0.5,beginY,imgW,imgH,img,color);
+                this.drawBg(beginX - (imgW - width) * 0.5,beginY,imgW,imgH,img,color,ctx);
             }
         }
 
@@ -2839,6 +3371,8 @@ module.exports = React.createClass({
 
         return curDate;
     },
+
+    //dateTime
     drawDateTime: function (curX, curY, widget, options, cb) {
         var curDate;
         if (widget.info.RTCModeId == '0') {
@@ -2857,7 +3391,7 @@ module.exports = React.createClass({
             this.setState({innerTimerList: innerTimerList});
         }
     },
-    paintDateTime: function (curX, curY, widget, options, cb) {
+    paintDateTime: function (curX, curY, widget, options, cb,ctx) {
         var width = widget.info.width;
         var height = widget.info.height;
         var dateTimeModeId = widget.info.dateTimeModeId;
@@ -2892,7 +3426,7 @@ module.exports = React.createClass({
         //draw
         //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         //逐字渲染字符串
-        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio);
+        this.drawTextByTempCanvas(curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio,ctx);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
@@ -2925,16 +3459,16 @@ module.exports = React.createClass({
                 delimiterHeight = widget.delimiterWidth;
                 if (dateTimeModeId == '0') {
                     eachHeight = (widget.info.height - 2 * delimiterHeight) / 3;
-                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, tex.slices[0]);
+                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, tex.slices[0],ctx);
                 } else if (dateTimeModeId == '1') {
                     eachHeight = (widget.info.height - delimiterHeight) / 2;
-                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, tex.slices[0]);
+                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, tex.slices[0],ctx);
                 } else {
                     eachHeight = (widget.info.height - 2 * delimiterHeight) / 4;
                     if (widget.highlightValue == 0) {
-                        this.drawHighLight(curX, curY, width, eachHeight * 2, tex.slices[0]);
+                        this.drawHighLight(curX, curY, width, eachHeight * 2, tex.slices[0],ctx);
                     } else {
-                        this.drawHighLight(curX, curY + (eachHeight + delimiterHeight) * widget.highlightValue + eachHeight, width, eachHeight, tex.slices[0]);
+                        this.drawHighLight(curX, curY + (eachHeight + delimiterHeight) * widget.highlightValue + eachHeight, width, eachHeight, tex.slices[0],ctx);
                     }
 
                 }
@@ -2942,16 +3476,16 @@ module.exports = React.createClass({
                 delimiterWidth = widget.delimiterWidth;
                 if (dateTimeModeId == '0') {
                     eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
-                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
+                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0],ctx);
                 } else if (dateTimeModeId == '1') {
                     eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
-                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0]);
+                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, tex.slices[0],ctx);
                 } else {
                     eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
                     if (widget.highlightValue == 0) {
-                        this.drawHighLight(curX, curY, eachWidth * 2, height, tex.slices[0]);
+                        this.drawHighLight(curX, curY, eachWidth * 2, height, tex.slices[0],ctx);
                     } else {
-                        this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, tex.slices[0]);
+                        this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, tex.slices[0],ctx);
                     }
 
                 }
@@ -2990,6 +3524,7 @@ module.exports = React.createClass({
         return dateString
     },
 
+    //texTime
     drawTexTime: function (curX, curY, widget, options, cb) {
         var curDate;
         if (widget.info.RTCModeId == '0') {
@@ -3008,7 +3543,7 @@ module.exports = React.createClass({
             this.setState({innerTimerList: innerTimerList});
         }
     },
-    paintTexTime: function (curX, curY, widget, options, cb) {
+    paintTexTime: function (curX, curY, widget, options, cb,ctx) {
         var width = widget.info.width;
         var height = widget.info.height;
         var dateTimeModeId = widget.info.dateTimeModeId;
@@ -3029,7 +3564,7 @@ module.exports = React.createClass({
         }
 
         //逐字渲染字符串
-        this.paintStyledTexTime(widget, dateTimeString, curX, curY, width, height);
+        this.paintStyledTexTime(widget, dateTimeString, curX, curY, width, height,ctx);
 
         //hightlight
         var eachWidth = 0;
@@ -3043,16 +3578,16 @@ module.exports = React.createClass({
                 delimiterHeight = widget.delimiterWidth;
                 if (dateTimeModeId == '0') {
                     eachHeight = (widget.info.height - 2 * delimiterHeight) / 3;
-                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0]);
+                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0],ctx);
                 } else if (dateTimeModeId == '1') {
                     eachHeight = (widget.info.height - delimiterHeight) / 2;
-                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0]);
+                    this.drawHighLight(curX, (eachHeight + delimiterHeight) * widget.highlightValue + curY, width, eachHeight, highlightTex.slices[0],ctx);
                 } else {
                     eachHeight = (widget.info.height - 2 * delimiterHeight) / 4;
                     if (widget.highlightValue == 0) {
-                        this.drawHighLight(curX, curY, width, eachHeight * 2, highlightTex.slices[0]);
+                        this.drawHighLight(curX, curY, width, eachHeight * 2, highlightTex.slices[0],ctx);
                     } else {
-                        this.drawHighLight(curX, curY + (eachHeight + delimiterHeight) * widget.highlightValue + eachHeight, width, eachHeight, highlightTex.slices[0]);
+                        this.drawHighLight(curX, curY + (eachHeight + delimiterHeight) * widget.highlightValue + eachHeight, width, eachHeight, highlightTex.slices[0],ctx);
                     }
 
                 }
@@ -3060,16 +3595,16 @@ module.exports = React.createClass({
                 delimiterWidth = widget.delimiterWidth;
                 if (dateTimeModeId == '0') {
                     eachWidth = (widget.info.width - 2 * delimiterWidth) / 3;
-                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0]);
+                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0],ctx);
                 } else if (dateTimeModeId == '1') {
                     eachWidth = (widget.info.width - widget.delimiterWidth) / 2;
-                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0]);
+                    this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue, curY, eachWidth, height, highlightTex.slices[0],ctx);
                 } else {
                     eachWidth = (widget.info.width - 2 * widget.delimiterWidth) / 4;
                     if (widget.highlightValue == 0) {
-                        this.drawHighLight(curX, curY, eachWidth * 2, height, highlightTex.slices[0]);
+                        this.drawHighLight(curX, curY, eachWidth * 2, height, highlightTex.slices[0],ctx);
                     } else {
-                        this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, highlightTex.slices[0]);
+                        this.drawHighLight(curX + (eachWidth + delimiterWidth) * widget.highlightValue + eachWidth, curY, eachWidth, height, highlightTex.slices[0],ctx);
                     }
 
                 }
@@ -3081,8 +3616,8 @@ module.exports = React.createClass({
 
 
     },
-    paintStyledTexTime: function (widget, numElems, clipX, clipY, clipW, clipH) {
-        var offctx = this.offctx
+    paintStyledTexTime: function (widget, numElems, clipX, clipY, clipW, clipH,ctx) {
+        var offctx = ctx||this.offctx
         var charW = widget.info.characterW;
         var charH = widget.info.characterH;
 
@@ -3125,9 +3660,9 @@ module.exports = React.createClass({
         offctx.restore()
     },
 
-    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color) {
+    drawBgClip: function (curX, curY, parentWidth, parentHeight, childX, childY, childWidth, childHeight, imageName, color,ctx) {
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx;
+        var offctx = ctx||this.offctx;
 
         offctx.save();
 
@@ -3153,11 +3688,11 @@ module.exports = React.createClass({
         offctx.restore();
 
     },
-    drawHighLight: function (curX, curY, width, height, slice) {
+    drawHighLight: function (curX, curY, width, height, slice,ctx) {
         if (slice) {
-            this.drawBg(curX, curY, width, height, slice.imgSrc, slice.color);
+            this.drawBg(curX, curY, width, height, slice.imgSrc, slice.color,ctx);
         } else {
-            this.drawBgColor(curX, curY, width, height, 'rgba(244,244,244,0.3)');
+            this.drawBgColor(curX, curY, width, height, 'rgba(244,244,244,0.3)',ctx);
         }
 
     },
@@ -3206,6 +3741,8 @@ module.exports = React.createClass({
         }
         return resultNum
     },
+
+    //number
     drawNumber: function (curX, curY, widget, options, cb) {
         var maxOverflow = false;
         var minOverflow = false;
@@ -3266,7 +3803,7 @@ module.exports = React.createClass({
         }
 
     },
-    paintNumber: function (curX, curY, widget, options, cb) {
+    paintNumber: function (curX, curY, widget, options, cb,ctx) {
         // console.log(widget);
         var maxDigits = parseInt(widget.info.initValue) / 10 + 1;
         var singleNumberWidth = widget.info.width / maxDigits;
@@ -3276,13 +3813,15 @@ module.exports = React.createClass({
             return parseInt(digit);
         });
         for (var i = 0; i < currentDigits.length; i++) {
-            this.drawDigit(currentDigits[i], widget, curX + i * singleNumberWidth, curY, singleNumberWidth, singleNumberHeight);
+            this.drawDigit(currentDigits[i], widget, curX + i * singleNumberWidth, curY, singleNumberWidth, singleNumberHeight,ctx);
         }
 
         cb && cb();
 
 
     },
+
+    //num
     drawNum: function (curX, curY, widget, options, cb) {
 
         var overFlowStyle = widget.info.overFlowStyle;
@@ -3372,9 +3911,9 @@ module.exports = React.createClass({
 
 
     },
-    paintNum: function (curX, curY, widget, options, cb) {
+    paintNum: function (curX, curY, widget, options, cb,ctx) {
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx
+        var offctx = ctx||this.offctx
         //get current value
         var curValue = widget.curValue
         // console.log(curValue)
@@ -3517,6 +4056,8 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+
+    //texNum
     drawTexNum: function (curX, curY, widget, options, cb) {
 
         var overFlowStyle = widget.info.overFlowStyle;
@@ -3602,7 +4143,7 @@ module.exports = React.createClass({
 
 
     },
-    paintTexNum: function (curX, curY, widget, options, cb) {
+    paintTexNum: function (curX, curY, widget, options, cb,ctx) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx
         //get current value
@@ -3990,14 +4531,16 @@ module.exports = React.createClass({
 
         return tempNumValue
     },
-    drawDigit: function (digit, widget, originX, originY, width, height) {
+    drawDigit: function (digit, widget, originX, originY, width, height,ctx) {
 
         if (widget.texList && widget.texList[digit]) {
             var slice = widget.texList[digit].slices[0];
-            this.drawBg(originX, originY, width, height, slice.imgSrc || (digit + '.png'), slice.color);
+            this.drawBg(originX, originY, width, height, slice.imgSrc || (digit + '.png'), slice.color,ctx);
         }
 
     },
+
+    //dashboard
     drawDashboard: function (curX, curY, widget, options, cb) {
 
         var lowAlarm = widget.info.lowAlarmValue;
@@ -4073,7 +4616,7 @@ module.exports = React.createClass({
 
 
     },
-    paintDashboard: function (curX, curY, widget, options, cb) {
+    paintDashboard: function (curX, curY, widget, options, cb,ctx) {
         var offctx = this.offctx
         var width = widget.info.width;
         var height = widget.info.height;
@@ -4134,11 +4677,11 @@ module.exports = React.createClass({
                     //background
                     var bgTex = widget.texList[0].slices[0];
                     if (widget.backgroundModeId === '0') {
-                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color,ctx);
                     }
                     //draw pointer
 
-                    this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
+                    this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio,ctx);
 
                     //draw circle
                     // var circleTex = widget.texList[2].slices[0]
@@ -4148,21 +4691,21 @@ module.exports = React.createClass({
                     //background
                     var bgTex = widget.texList[0].slices[0];
                     if (widget.backgroundModeId === '0') {
-                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                        this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color,ctx);
                     }
                     //draw light strip
                     var lightStripTex = widget.texList[2].slices[0];
-                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset + minArc) + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio,ctx);
                     //draw pointer
 
-                    this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY,pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
+                    this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY,pointerWidth, pointerHeight, clockwise * (curArc + offset + minArc) + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio,ctx);
 
                     //draw circle
                     // var circleTex = widget.texList[3].slices[0]
                     // this.drawBg(curX,curY,width,height,circleTex.imgSrc,circleTex.color)
                 } else if (widget.dashboardModeId == '2') {
                     var lightStripTex = widget.texList[0].slices[0];
-                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
+                    this.drawLightStrip(curX, curY, width, height, clockwise * (minArc + offset) + 90, clockwise * (curArc + offset) + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio,ctx);
                 }
             } else {
                 if (widget.dashboardModeId == '0') {
@@ -4174,7 +4717,7 @@ module.exports = React.createClass({
                     }
                     //draw pointer
 
-                    this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY,pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
+                    this.drawRotateElem(curX, curY, width, height, pointerOffsetX,pointerOffsetY,pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio,ctx);
 
                     //draw circle
                     // var circleTex = widget.texList[2].slices[0]
@@ -4185,34 +4728,34 @@ module.exports = React.createClass({
                     if (curArc >= 0) {
                         var bgTex = widget.texList[0].slices[0];
                         if (widget.backgroundModeId === '0') {
-                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color,ctx);
                         }
                         //draw light strip
                         var lightStripTex = widget.texList[2].slices[0];
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio,ctx);
                         //draw pointer
 
-                        this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
+                        this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio,ctx);
 
                     } else if (curArc < 0) {
                         var bgTex = widget.texList[0].slices[0];
                         if (widget.backgroundModeId === '0') {
-                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+                            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color,ctx);
                         }
                         //draw light strip
                         var lightStripTex = widget.texList[2].slices[0];
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc,this.pixelRatio);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[2].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc,this.pixelRatio,ctx);
                         //draw pointer
 
-                        this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio);
+                        this.drawRotateElem(curX, curY, width, height,pointerOffsetX,pointerOffsetY, pointerWidth, pointerHeight, curArc + offset + arcPhase, widget.texList[1].slices[0], innerW/pointerWidth, innerH/pointerHeight, null, minCoverAngle, maxCoverAngle,true,this.pixelRatio,ctx);
 
                     }
                 } else if (widget.dashboardModeId == '2') {
                     var lightStripTex = widget.texList[0].slices[0];
                     if (curArc >= 0) {
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId,null,this.pixelRatio,ctx);
                     } else if (curArc < 0) {
-                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc,this.pixelRatio);
+                        this.drawLightStrip(curX, curY, width, height, offset + 90, curArc + offset + 90, widget.texList[0].slices[0].imgSrc, clockwise, widget.dashboardModeId, curArc,this.pixelRatio,ctx);
                     }
                 }
             }
@@ -4222,6 +4765,8 @@ module.exports = React.createClass({
 
         }
     },
+
+    //rotateImg
     drawRotateImg: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
@@ -4237,8 +4782,7 @@ module.exports = React.createClass({
         this.handleAlarmAction(curArc, widget, lowAlarm, highAlarm);
         widget.oldValue = curArc;
     },
-
-    paintRotateImg: function (curX, curY, widget, options, cb) {
+    paintRotateImg: function (curX, curY, widget, options, cb,ctx) {
 
         var width = widget.info.width;
         var height = widget.info.height;
@@ -4254,12 +4798,14 @@ module.exports = React.createClass({
             if(clockwise==0){
                 arc = -arc;
             }
-            this.drawRotateElem(curX, curY, width, height,posRotatePointX,posRotatePointY, width, height, arc, widget.texList[0].slices[0], -posRotatePointX/width, -posRotatePointY/height, widget.subType,null,null,false,this.pixelRatio);
+            this.drawRotateElem(curX, curY, width, height,posRotatePointX,posRotatePointY, width, height, arc, widget.texList[0].slices[0], -posRotatePointX/width, -posRotatePointY/height, widget.subType,null,null,false,this.pixelRatio,ctx);
         }
 
         cb && cb();
 
     },
+
+    //touchTrack
     drawTouchTrack: function (curX, curY, widget, options, cb) {
         // var lowAlarm = widget.info.lowAlarmValue;
         // var highAlarm = widget.info.highAlarmValue;
@@ -4275,8 +4821,8 @@ module.exports = React.createClass({
         // this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
         widget.oldValue = curValue;
     },
-    paintTouchTrack: function (curX, curY, widget, options, cb) {
-        var offctx = this.offctx
+    paintTouchTrack: function (curX, curY, widget, options, cb,ctx) {
+        var offctx = ctx||this.offctx
         var width = widget.info.width;
         var height = widget.info.height;
         if (widget.texList) {
@@ -4301,6 +4847,8 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+
+    //alphaImg
     drawAlphaImg: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
@@ -4316,8 +4864,8 @@ module.exports = React.createClass({
         this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
         widget.oldValue = curValue;
     },
-    paintAlphaImg: function (curX, curY, widget, options, cb) {
-        var offctx = this.offctx
+    paintAlphaImg: function (curX, curY, widget, options, cb,ctx) {
+        var offctx = ctx||this.offctx
         var width = widget.info.width;
         var height = widget.info.height;
         if (widget.texList) {
@@ -4343,6 +4891,8 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+
+    //chart
     drawChart: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
@@ -4370,8 +4920,8 @@ module.exports = React.createClass({
         this.handleAlarmAction(curValue, widget, lowAlarm, highAlarm);
         widget.oldValue = curValue;
     },
-    paintChart: function (curX, curY, widget, options, cb) {
-        var offctx = this.offctx
+    paintChart: function (curX, curY, widget, options, cb,ctx) {
+        var offctx = ctx||this.offctx
         var width = widget.info.width;
         var height = widget.info.height;
         var minValue = widget.info.minValue;
@@ -4399,7 +4949,7 @@ module.exports = React.createClass({
             var bgTex = widget.texList[0].slices[0]
             var dotTex = widget.texList[1].slices[0]
             var lineTex = widget.texList[2].slices[0]
-            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color);
+            this.drawBg(curX, curY, width, height, bgTex.imgSrc, bgTex.color,offctx);
 
             var values = widget.values
             var dotLen = width/20
@@ -4430,7 +4980,7 @@ module.exports = React.createClass({
             
 
                 if(dotTex){
-                    this.drawBg(curX+x-dotLen/2,curY+y-dotLen/2,dotLen,dotLen,dotTex.imgSrc,dotTex.color)
+                    this.drawBg(curX+x-dotLen/2,curY+y-dotLen/2,dotLen,dotLen,dotTex.imgSrc,dotTex.color,offctx)
                 }
                 
             }
@@ -4441,6 +4991,8 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+
+    //oscilloscope
     drawOscilloscope: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
         var highAlarm = widget.info.highAlarmValue;
@@ -4474,7 +5026,7 @@ module.exports = React.createClass({
             widget.oldValue = curValue;
         }
     },
-    paintOscilloscope: function (curX, curY, widget, options, cb) {
+    paintOscilloscope: function (curX, curY, widget, options, cb,ctx) {
         if (widget.texList) {
             var width = widget.info.width;
             var height = widget.info.height;
@@ -4495,7 +5047,7 @@ module.exports = React.createClass({
 
             //draw bg
             var bgSlice = widget.texList[0].slices[0];
-            this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color);
+            this.drawBg(curX, curY, width, height, bgSlice.imgSrc, bgSlice.color,ctx);
 
             //draw grid
             if (grid != '0') {
@@ -4506,12 +5058,12 @@ module.exports = React.createClass({
                     gridUnitX: gridUnitX,
                     gridUnitY: gridUnitY
                 }
-                this.drawGrid(curX, curY, width, height, blankX, blankY, spacing, spacing, gridStyle, minValue);
+                this.drawGrid(curX, curY, width, height, blankX, blankY, spacing, spacing, gridStyle, minValue,ctx);
             }
             //draw points lines
 
             var coverSlice = widget.texList[1].slices[0];
-            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice, blankX, blankY, lineColor);
+            this.drawPointsLine(curX, curY, width, height, spacing, widget.curPoints, minValue, maxValue, coverSlice, blankX, blankY, lineColor,ctx);
 
 
         }
@@ -4519,12 +5071,13 @@ module.exports = React.createClass({
         cb && cb();
 
     },
-    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor) {
+
+    drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor,ctx) {
         var tranedPoints = points.map(function (point) {
             return 1.0 * (point - minValue) / (maxValue - minValue) * (height - blankY);
         });
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx
+        var offctx = ctx||this.offctx
         offctx.save();
         offctx.translate(curX, curY);
         //draw bg
@@ -4559,9 +5112,9 @@ module.exports = React.createClass({
         offctx.stroke();
         offctx.restore();
     },
-    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue) {
+    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue,ctx) {
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx
+        var offctx = ctx||this.offctx
         var _offsetX = offsetX % (2 * gridWidth);
         var _offsetY = offsetY % (2 * gridHeight);
         var _gridWidth = gridWidth;
@@ -4615,7 +5168,7 @@ module.exports = React.createClass({
         offctx.stroke();
         offctx.restore();
     },
-    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc,verticalPixelScale) {
+    drawLightStrip: function (curX, curY, width, height, minArc, curArc, image, clockWise, dashboardModeId, nowArc,verticalPixelScale,ctx) {
         //clip a fan shape
         // console.log(minArc, curArc);
         var wise = false;
@@ -4629,10 +5182,10 @@ module.exports = React.createClass({
         var radius = (dashboardModeId == '1' ? Math.sqrt(width * width + height * height) / 2 : Math.max(width, height) / 2);
         if (Math.abs(curArc - minArc) > 360) {
             //no need to clip
-            this.drawBg(curX, curY, width, height, image, null)
+            this.drawBg(curX, curY, width, height, image, null,ctx)
         } else {
             var offcanvas = this.refs.offcanvas;
-            var offctx = this.offctx;
+            var offctx = ctx||this.offctx;
             offctx.save();
             offctx.translate(curX+0.5*width,curY + 0.5 * height)
             if(verticalPixelScale){
@@ -4712,11 +5265,11 @@ module.exports = React.createClass({
         }
         return alarms
     },
-    drawRotateElem: function (x, y, w, h, pointerOffsetX,pointerOffsetY,elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle,keepSize,verticalPixelScale) {
+    drawRotateElem: function (x, y, w, h, pointerOffsetX,pointerOffsetY,elemWidth, elemHeight, arc, texSlice, transXratio, transYratio, type, minCoverAngle, maxCoverAngle,keepSize,verticalPixelScale,ctx) {
         var transXratio = transXratio || 0;
         var transYratio = transYratio || 0;
         var offcanvas = this.refs.offcanvas;
-        var offctx = this.offctx
+        var offctx = ctx||this.offctx;
         offctx.save();
         if ((typeof minCoverAngle != 'undefined') && (typeof maxCoverAngle != 'undefined') && (minCoverAngle != maxCoverAngle)) {
             var radius = Math.max(w, h) / 2;
