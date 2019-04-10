@@ -27,12 +27,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             $scope.component = {
                 type: '',
                 onAttributeChanged: onAttributeChanged,
-                transitionMode: [
-                    {name: 'NO_TRANSITION', show: '无动画'},
-                    {name: 'MOVE_LR', show: '从左进入'},
-                    {name: 'MOVE_RL', show: '从右进入'},
-                    {name: 'SCALE', show: '缩放'}
-                ],
+                transitionMode: AnimationService.getAllTransititon(),
                 transitionName: null,
                 timingFun: '',
                 timingFuns: ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'],
