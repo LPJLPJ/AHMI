@@ -582,6 +582,18 @@ module.exports = React.createClass({
         return (elem.transition && elem.transition.timingFun )||'easeInOutCubic';
     },
 
+    /**
+     *  切换动画：page页面 和 subcanvas子画布
+     *
+     *  load    目标加载页面
+     *  unload  目标加载页面之前的页面
+     *
+     *  1.获取 unload 缩略图  @param page.curPageImg  @function generatePageCopy();
+     *  2.设定 load 页面和 unload页面动画位置;
+     *  3.调用动画函数 AnimationManager.step() 绘制;
+     *
+     *  子画布动画  显示区域根据所在画布大小显示,使用clipToRect()截取;
+     */
     //page 绘制页面
     drawPage: function (project,page, options) {
         //console.log(1);
@@ -1206,7 +1218,6 @@ module.exports = React.createClass({
             }
         }
     },
-    //获取page缩略图
     generatePageCopy:function (page,width,height) {
         //console.log('generate',page);
         var curPageImg = document.createElement('canvas')
@@ -1690,22 +1701,32 @@ module.exports = React.createClass({
                 }
             }
 
-            if (subCanvasUnloadIdx !== null) {
+            canvasData.subCanvasUnloadIdx = subCanvasUnloadIdx
+
+            if (subCanvasUnloadIdx !== null){
                 // console.log('handle unload sc')
+                subCanvasList[subCanvasUnloadIdx].curSubCanvasImg = this.generateSubCanvasCopy(subCanvasList[subCanvasUnloadIdx],canvasData.w, canvasData.h)
                 this.handleTargetAction(subCanvasList[subCanvasUnloadIdx], 'UnLoad');
             }
             var subCanvas = subCanvasList[nextSubCanvasIdx];
-            // if (subCanvas) {
-            //     // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
-            //     var transition = canvasData.transition;
-            //
-            //     this.drawSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition,firstSubCanvas);
-            //
-            // }
-
             var transition = canvasData.transition;
-            for (var i = 0; i < subCanvasList.length; i++) {
-                this.drawSubCanvas(subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options, transition, firstSubCanvas, (i != nextSubCanvasIdx));
+            var method = transition && transition.name
+            // method = 'SWIPE_H'
+            if (method == 'SWIPE_H'){
+                if (!subCanvas.translate){
+                    //init
+                    this.syncSubCanvasOffsetForSwipe(canvasData,canvasData.curSubCanvasIdx,true)
+                }
+            }else if(method == 'SWIPE_V'){
+                if (!subCanvas.translate){
+                    //init
+                    this.syncSubCanvasOffsetForSwipe(canvasData,canvasData.curSubCanvasIdx,false,true)
+                }
+            }
+
+
+            for (var i=0;i<subCanvasList.length;i++){
+                this.drawSubCanvas(canvasData,subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,transition,firstSubCanvas,(i!=nextSubCanvasIdx));
             }
         }
 
@@ -1713,7 +1734,7 @@ module.exports = React.createClass({
     },
     paintCanvas: function (canvasData, options,ctx) {
         //draw
-        //console.log('canvas',ctx);
+
         var offcanvas = this.refs.offcanvas;
         var offctx = ctx||this.offctx;
         var subCanvasList = canvasData.subCanvasList || [];
@@ -1734,10 +1755,57 @@ module.exports = React.createClass({
                 var t = canvasData.transform;
                 offctx.transform(t.a, t.b, t.c, t.d, t.e, t.f);
             }
+
+
+            // this.showBorder(offctx,canvasData.x,canvasData.y,canvasData.w,canvasData.h)
+
+            this.clipToRect(offctx,canvasData.x,canvasData.y,canvasData.w,canvasData.h)
+
+            //this.showScrollBar(offctx,canvasData,subCanvas,subCanvas.shouldShowScrollBarH,subCanvas.shouldShowScrollBarV)
+
+            // offctx.translate(canvasData.contentOffsetX,canvasData.contentOffsetY)
+
             // this.clipToRect(offctx,canvasData.x, canvasData.y, canvasData.w, canvasData.h);
             var transition = canvasData.transition;
+            if (canvasData.animating&&subCanvas.curSubCanvasImg){
+                // console.log('animating canvas',subCanvas.curSubCanvasImg)
+                offctx.drawImage(subCanvas.curSubCanvasImg,canvasData.x, canvasData.y, canvasData.w, canvasData.h)
+            }else{
+                if (subCanvas.animating){
+                    var transitionMethod = canvasData.transition && canvasData.transition.name
+                    // transitionMethod = 'SWIPE_H'
+                    switch (transitionMethod){
+                        case 'SWIPE_H':
+                            for (var i=0;i<canvasData.subCanvasList.length;i++){
+                                this.paintSubCanvas(canvasData.subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+                            }
+                            break
+                        case 'SWIPE_V':
+                            for (var i=0;i<canvasData.subCanvasList.length;i++){
+                                this.paintSubCanvas(canvasData.subCanvasList[i], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+                            }
+                            break
+                        default:
+                            //MOVE_LR, MOVE_RL,...
+                            if (canvasData.subCanvasUnloadIdx!==null){
+                                canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = true
+                                this.paintSubCanvas(canvasData.subCanvasList[canvasData.subCanvasUnloadIdx], canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+                            }
+                            this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+                    }
 
-            this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+                }else{
+                    if (canvasData.subCanvasUnloadIdx!==null&&canvasData.subCanvasUnloadIdx!==undefined){
+                        console.log(canvasData.subCanvasUnloadIdx)
+                        canvasData.subCanvasList[canvasData.subCanvasUnloadIdx].animating = false
+
+                    }
+                    this.paintSubCanvas(subCanvas, canvasData.x, canvasData.y, canvasData.w, canvasData.h, options,offctx);
+                }
+
+            }
+
+
             offctx.restore();
         } else {
 
@@ -1754,11 +1822,14 @@ module.exports = React.createClass({
     },
 
     //subcanvas 绘制子画布
-    drawSubCanvas: function (subCanvas, x, y, w, h, options, transition, firstSubCanvas, updateOnly) {
+    drawSubCanvas:function (canvas,subCanvas, x, y, w, h, options,transition,firstSubCanvas,updateOnly) {
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
-        if (updateOnly) {
-            return this.drawSingleSubCanvas(subCanvas, x, y, w, h, options, updateOnly)
+        var method = transition && transition.name;
+
+        // method = 'SWIPE_H'
+        if (updateOnly){
+            return this.drawSingleSubCanvas(subCanvas, x, y, w, h, options,updateOnly)
         }
         if (!subCanvas.state || subCanvas.state == LoadState.notLoad) {
             subCanvas.state = LoadState.willLoad;
@@ -1773,59 +1844,97 @@ module.exports = React.createClass({
             //transition animation
             var moveX = w;
             var moveY = 0;
-            var method = transition && transition.name;
             var duration = (transition && transition.duration ) || 1000;
             var frames = 30;
             var easing = this.getEasingFunc(subCanvas)
-            var hWidth = w / 2 + x
-            var hHeight = h / 2 + y
-            if (!options || (options && !options.pageAnimate)) {
-                switch (method) {
+            var hWidth = w/2+x
+            var hHeight = h/2+y
+            var newCopyFlag = false
+            if (!firstSubCanvas&&(!options||(options&&!options.pageAnimate))){
+                //has animation
+                var unloadSC = null
+                if (canvas.subCanvasUnloadIdx!==null){
+                    unloadSC = canvas.subCanvasList[canvas.subCanvasUnloadIdx]
+                }
+                //console.log("method",method)
+                switch (method){
                     case 'MOVE_LR':
-                        subCanvas.translate = {
-                            x: -w,
-                            y: 0
-                        }
-                        AnimationManager.step(-w, 0, 0, 0, duration, frames, easing, function (deltas) {
-                            // offctx.save();
-                            // offctx.translate(deltas.curX,deltas.curY);
-                            subCanvas.translate = {
-                                x: deltas.curX,
-                                y: deltas.curY
-                            }
-                            // subCanvas.info.x += deltas.deltaX;
-                            // subCanvas.info.y += deltas.deltaY;
-                            this.draw();
-                            // offctx.restore();
-                        }.bind(this), function () {
-                            // offctx.restore()
-                            subCanvas.translate = null;
-                            this.handleTargetAction(subCanvas, 'Load')
-                        }.bind(this))
-                        this.dropCurrentDraw()
-                        break;
                     case 'MOVE_RL':
+                        var fromLeft = (method == 'MOVE_LR'?-1:1)
                         subCanvas.translate = {
-                            x: w,
-                            y: 0
+                            x:w*fromLeft,
+                            y:0
                         }
-                        AnimationManager.step(w, 0, 0, 0, duration, frames, easing, function (deltas) {
+
+                        subCanvas.animating = true
+                        AnimationManager.step(w*fromLeft,0,0,0,duration,frames,easing,function (deltas) {
                             // offctx.save();
                             // offctx.translate(deltas.curX,deltas.curY);
+                            if (!newCopyFlag){
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+                            subCanvas.animating = true
                             subCanvas.translate = {
                                 x: deltas.curX,
                                 y: deltas.curY
                             }
+                            // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
                             // subCanvas.info.x += deltas.deltaX;
                             // subCanvas.info.y += deltas.deltaY;
-                            this.draw();
+                            // this.draw();
                             // offctx.restore();
                         }.bind(this), function () {
                             // offctx.restore()
                             subCanvas.translate = null;
+                            // unloadSC.translate = null;
+                            subCanvas.animating = false
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg
+                            subCanvas.curSubCanvasImg = null
                             this.handleTargetAction(subCanvas, 'Load')
+                            this.draw()
                         }.bind(this))
-                        this.dropCurrentDraw()
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'MOVE_BT':
+                    case 'MOVE_TB':
+                        var fromTop = (method == 'MOVE_TB'?-1:1)
+                        subCanvas.translate = {
+                            x:0,
+                            y:h*fromTop
+                        }
+
+                        subCanvas.animating = true
+                        AnimationManager.step(0,h*fromTop,0,0,duration,frames,easing,function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+                            if (!newCopyFlag){
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+                            subCanvas.animating = true
+                            subCanvas.translate = {
+                                x: deltas.curX,
+                                y: deltas.curY
+                            }
+                            // unloadSC && (unloadSC.translate = {x:deltas.curX+w,y:deltas.curY })
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            // this.draw();
+                            // offctx.restore();
+                        }.bind(this), function () {
+                            // offctx.restore()
+                            subCanvas.translate = null;
+                            // unloadSC.translate = null;
+                            subCanvas.animating = false
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg
+                            subCanvas.curSubCanvasImg = null
+                            this.handleTargetAction(subCanvas, 'Load')
+                            this.draw()
+                        }.bind(this))
+                        // this.dropCurrentDraw()
                         break;
                     case 'SCALE':
                         var beforeTranslateMatrix = [
@@ -1848,35 +1957,278 @@ module.exports = React.createClass({
                             [0, 1, 0],
                             [0, 0, 1]
                         ];
-                        subCanvas.transform = math.multiply(math.multiply(afterTranslateMatrix, beforeScaleMatrix), beforeTranslateMatrix);
-                        AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix), this.matrixToObj(afterScaleMatrix), duration, frames, easing, function (deltas) {
+                        subCanvas.transform = math.multiply(math.multiply(afterTranslateMatrix,beforeScaleMatrix),beforeTranslateMatrix)
+                        subCanvas.animating = true
+                        AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
+
+                            // console.log(curScaleMatrix)
+                            if (!newCopyFlag){
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
                             var curScaleMatrix = [
                                 [deltas.a.curValue, deltas.c.curValue, deltas.e.curValue],
                                 [deltas.b.curValue, deltas.d.curValue, deltas.f.curValue],
                                 [0, 0, 1]
                             ];
-                            // console.log(curScaleMatrix)
-                            var combinedMatrix = math.multiply(afterTranslateMatrix, curScaleMatrix)
-                            combinedMatrix = math.multiply(combinedMatrix, beforeTranslateMatrix);
+
+                            subCanvas.animating = true
+                            var combinedMatrix = math.multiply(afterTranslateMatrix,curScaleMatrix)
+                            combinedMatrix = math.multiply(combinedMatrix,beforeTranslateMatrix);
                             subCanvas.transform = combinedMatrix;
-                            this.draw(null, options);
-                        }.bind(this), function () {
+                            // this.draw(null,options);
+                        }.bind(this),function () {
                             subCanvas.transform = null
                             this.handleTargetAction(subCanvas, 'Load')
+                            subCanvas.animating = false
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg
+                            subCanvas.curSubCanvasImg = null
+                            this.draw()
                         }.bind(this))
 
-                        this.dropCurrentDraw()
+                        // this.dropCurrentDraw()
+
 
 
                         break;
+                    case 'PUSH_LR':
+                    case 'PUSH_RL':
+                        var fromLeft = (method == 'PUSH_LR'?-1:1)
+                        subCanvas.translate = {
+                            x:w*fromLeft,
+                            y:0
+                        }
+                        subCanvas.animating = true
+                        AnimationManager.step(w*fromLeft,0,0,0,duration,frames,easing,function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+                            if (!newCopyFlag){
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+                            subCanvas.animating = true
+                            subCanvas.translate = {
+                                x:deltas.curX,
+                                y:deltas.curY
+                            }
+                            unloadSC && (unloadSC.translate = {x:deltas.curX-w*fromLeft,y:deltas.curY })
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            // this.draw();
+                            // offctx.restore();
+                        }.bind(this),function () {
+                            // offctx.restore()
+                            subCanvas.translate = null;
+                            unloadSC.translate = null;
+                            subCanvas.animating = false
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg
+                            subCanvas.curSubCanvasImg = null
+                            this.handleTargetAction(subCanvas, 'Load')
+                            this.draw()
+                        }.bind(this))
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'PUSH_BT':
+                    case 'PUSH_TB':
+                        var fromTop = (method == 'PUSH_TB'?-1:1)
+                        subCanvas.translate = {
+                            x:0,
+                            y:h*fromTop
+                        }
+                        subCanvas.animating = true
+                        AnimationManager.step(0,h*fromTop,0,0,duration,frames,easing,function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+                            if (!newCopyFlag){
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+                            subCanvas.animating = true
+                            subCanvas.translate = {
+                                x:deltas.curX,
+                                y:deltas.curY
+                            }
+                            unloadSC && (unloadSC.translate = {x:deltas.curX,y:deltas.curY-h*fromTop })
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            // this.draw();
+                            // offctx.restore();
+                        }.bind(this),function () {
+                            // offctx.restore()
+                            subCanvas.translate = null;
+                            unloadSC.translate = null;
+                            subCanvas.animating = false
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg
+                            subCanvas.curSubCanvasImg = null
+                            this.handleTargetAction(subCanvas, 'Load')
+                            this.draw()
+                        }.bind(this))
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'FADE-IN_FADE-OUT':
+                        subCanvas.alpha = 0
+
+                        subCanvas.animating = true
+                        AnimationManager.step(0,0,1.0,0,duration,frames,easing,function (deltas) {
+                            // offctx.save();
+                            // offctx.translate(deltas.curX,deltas.curY);
+
+
+                            if (!newCopyFlag){
+
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = this.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+
+                            subCanvas.animating = true
+
+                            subCanvas.alpha = deltas.curX
+                            unloadSC && (unloadSC.alpha = 1.0 - subCanvas.alpha)
+                            // subCanvas.info.x += deltas.deltaX;
+                            // subCanvas.info.y += deltas.deltaY;
+                            // this.draw();
+                            // offctx.restore();
+                        }.bind(this),function () {
+                            // offctx.restore()
+                            subCanvas.alpha = 1.0;
+                            unloadSC.alpha = 1.0;
+                            subCanvas.animating = false
+                            subCanvas.lastSubCanvasImg = subCanvas.curSubCanvasImg
+                            subCanvas.curSubCanvasImg = null
+                            this.handleTargetAction(subCanvas, 'Load')
+                            this.draw()
+                        }.bind(this))
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'SWIPE_H':
+
+                        var startX = subCanvas.translate && subCanvas.translate.x || 0
+
+                        subCanvas.animating = true
+
+                        var self = this
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{x:-100},{x:0},duration,(startX+100)/100)
+                        swipeAnime.onFrameCB = function () {
+
+
+                            if (!newCopyFlag){
+
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = self.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+
+                            subCanvas.animating = true
+
+                            subCanvas.translate = {
+                                x:this.state.curValue.x,
+                                y:0
+                            }
+                            // console.log(this.state.curValue.x)
+
+                            self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true,false)
+                        }
+                        swipeAnime.didStopCB = function () {
+                            for(var i=0;i<canvas.subCanvasList.length;i++){
+                                var curSC = canvas.subCanvasList[i]
+                                // curSC.translate = null
+                                curSC.animating = false
+                            }
+                            // self.draw()
+                            self.handleTargetAction(subCanvas, 'Load')
+                            self.draw()
+                        }
+                        if (subCanvas.swipeAnimation){
+                            subCanvas.swipeAnimation.stop()
+                        }
+                        subCanvas.swipeAnimation = swipeAnime
+                        swipeAnime.start()
+                        // this.startSwipeAnimation(canvas,subCanvas)
+                        // this.dropCurrentDraw()
+                        break;
+                    case 'SWIPE_V':
+
+                        var startY = subCanvas.translate && subCanvas.translate.y || 0
+
+                        subCanvas.animating = true
+
+                        var self = this
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{y:-100},{y:0},duration,(startY+100)/100)
+                        swipeAnime.onFrameCB = function () {
+
+
+                            if (!newCopyFlag){
+
+                                subCanvas.animating = false
+                                subCanvas.curSubCanvasImg = self.generateSubCanvasCopy(subCanvas,w,h,options)
+                                newCopyFlag = true
+                            }
+
+                            subCanvas.animating = true
+
+                            subCanvas.translate = {
+                                x:0,
+                                y:this.state.curValue.y
+                            }
+                            // console.log(this.state.curValue.x)
+
+                            self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,false,true)
+                        }
+                        swipeAnime.didStopCB = function () {
+                            for(var i=0;i<canvas.subCanvasList.length;i++){
+                                var curSC = canvas.subCanvasList[i]
+                                // curSC.translate = null
+                                curSC.animating = false
+                            }
+                            // self.draw()
+                            self.handleTargetAction(subCanvas, 'Load')
+                            self.draw()
+                        }
+                        if (subCanvas.swipeAnimation){
+                            subCanvas.swipeAnimation.stop()
+                        }
+                        subCanvas.swipeAnimation = swipeAnime
+                        swipeAnime.start()
+                        // this.startSwipeAnimation(canvas,subCanvas)
+                        // this.dropCurrentDraw()
+                        break;
                     default:
                         this.handleTargetAction(subCanvas, 'Load')
-                        this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
+                        // this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
 
                 }
-            } else {
-                this.handleTargetAction(subCanvas, 'Load')
                 this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
+            }else {
+                var unloadSC = null
+                if (canvas.subCanvasUnloadIdx!==null){
+                    unloadSC = canvas.subCanvasList[canvas.subCanvasUnloadIdx]
+                }
+                if (unloadSC){
+                    //sync
+                    switch (method){
+                        case 'SWIPE_H':
+                            subCanvas.translate = {
+                                x:0,
+                                y:0
+                            }
+                            this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true)
+                            break
+                        case 'SWIPE_V':
+                            subCanvas.translate = {
+                                x:0,
+                                y:0
+                            }
+                            this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,false,true)
+                            break
+                    }
+
+                }
+                this.drawSingleSubCanvas(subCanvas, x, y, w, h, options)
+
             }
 
 
@@ -1885,36 +2237,94 @@ module.exports = React.createClass({
         }
 
     },
-    paintSubCanvas: function (subCanvas, x, y, w, h, options,ctx) {
-        //console.log('subcanvas',subCanvas);
+    syncSubCanvasOffsetForSwipe:function (canvas,base,xEnable,yEnable) {
+        var subCanvas = canvas.subCanvasList[base||0]
+        subCanvas.translate = subCanvas.translate || {x:0,y:0}
+        for(var i=0;i<canvas.subCanvasList.length;i++){
+            if (base == i){
+                continue
+            }else{
+                var curSC = canvas.subCanvasList[i]
+                curSC.translate = curSC.translate||{x:0,y:0}
+                if (xEnable){
+                    curSC.translate.x = subCanvas.translate.x + (i-base)*canvas.w
+                }
+
+                if (yEnable){
+                    curSC.translate.y = subCanvas.translate.y + (i-base)*canvas.h
+                }
+
+            }
+        }
+    },
+    generateSubCanvasCopy:function (subcanvas, w, h, options) {
+        options = options||{}
+        options.resetTransform = true
+        var ratio = options.ratio||1
+        w = w*ratio
+        h = h*ratio
+        var subcanvasCopy = document.createElement('canvas')
+        // var subcanvasCopy = this.refs.pagecanvas
+        subcanvasCopy.width = w
+        subcanvasCopy.height = h
+        // subcanvasCopy.style.width = ratio*w
+        // subcanvasCopy.style.height = ratio*h
+        var scCtx = subcanvasCopy.getContext('2d')
+        scCtx.save()
+        scCtx.scale(ratio,ratio)
+        this.paintSubCanvas(subcanvas,0,0,w,h,options,scCtx)
+
+        scCtx.restore()
+        return subcanvasCopy
+    },
+    paintSubCanvas:function (subCanvas, x, y, w, h, options,ctx) {
         // x = subCanvas.info.x;
         // y = subCanvas.info.y;
         // w = subCanvas.info.w;
         // h = subCanvas.info.h;
         var offcanvas = this.refs.offcanvas;
         var offctx = ctx||this.offctx;
-        offctx.save();
-        if (subCanvas.transform) {
-            var m = subCanvas.transform;
-            offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
-        } else {
-            if (subCanvas.translate) {
+        offctx.save()
+        //scroll sublayer
+        //offctx.translate(subCanvas.contentOffsetX,subCanvas.contentOffsetY)
+        if (options && options.resetTransform){
 
-                offctx.translate(subCanvas.translate.x, subCanvas.translate.y);
-            }
-            if (subCanvas.scale) {
-                offctx.scale(subCanvas.scale.w, subCanvas.scale.h);
+        }else{
+
+            if (subCanvas.transform) {
+                var m = subCanvas.transform;
+                offctx.transform(m[0][0], m[1][0], m[0][1], m[1][1], m[0][2], m[1][2]);
+            }else{
+                if (subCanvas.translate){
+
+                    offctx.translate(subCanvas.translate.x,subCanvas.translate.y);
+                }
+                if (subCanvas.scale){
+                    offctx.scale(subCanvas.scale.w,subCanvas.scale.h);
+                }
             }
         }
-        //paint
-        this.drawBgColor(x, y, w, h, subCanvas.backgroundColor);
-        this.drawBgImg(x, y, w, h, subCanvas.backgroundImage);
-        var widgetList = subCanvas.widgetList;
-        if (widgetList.length) {
-            for (var i = 0; i < widgetList.length; i++) {
-                this.paintWidget(widgetList[i], x, y, options,offctx);
+
+        if (subCanvas.animating){
+            // console.log('sc animating')
+            if (subCanvas.alpha!==undefined){
+                offctx.globalAlpha = subCanvas.alpha
+            }
+            if (subCanvas.curSubCanvasImg){
+                offctx.drawImage(subCanvas.curSubCanvasImg, x,y,w, h);
             }
 
+        }else{
+            //paint
+            this.drawBgColor(x, y, w, h, subCanvas.backgroundColor,offctx);
+            this.drawBgImg(x, y, w, h, subCanvas.backgroundImage,offctx);
+            var widgetList = subCanvas.widgetList;
+            if (widgetList.length) {
+                for (var i = 0; i < widgetList.length; i++) {
+                    this.paintWidget(widgetList[i], x, y, options,offctx);
+                }
+
+            }
         }
 
         offctx.restore();
