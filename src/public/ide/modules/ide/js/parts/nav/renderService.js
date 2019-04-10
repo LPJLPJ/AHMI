@@ -602,7 +602,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 ctx.clearRect(0,0,width,height);
                 ctx.save();
                 //render color
-                renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                if(i===1){
+                    renderingX.renderColor(ctx,new Size(width,height),new Pos(),'rgba(0,0,0,0)');
+                }else{
+                    renderingX.renderColor(ctx,new Size(width,height),new Pos(),curSlice.color);
+                }
+                
                 //render image;
                 if (imgSrc!==''){
                     var imgUrl = path.join(srcRootDir,imgSrc);

@@ -145,6 +145,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterArrange: enterArrange
                 },
                 textInput: {
+                    modes:['单行','多行'],
+                    enterMode:enterTextInputMode,
                     enterText: enterText,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,
@@ -413,6 +415,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 enterEnableAnimationMode: enterEnableAnimationMode,
                 enterSpacing: enterSpacing,
                 enterHalfSpacing:enterHalfSpacing,
+                enterLineSpacing:enterLineSpacing,
                 enterGenerateAttrs:enterGenerateAttrs,
                 enterGeneralAttrsWithInput:enterGeneralAttrsWithInput,
             };
@@ -2592,6 +2595,46 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             }
         }
 
+
+        function enterLineSpacing(e) {
+            if (e.keyCode == 13) {
+                //判断输入是否合法
+                var lineSpacing = $scope.component.object.level.info.lineSpacing
+                    
+                if (!_.isInteger(lineSpacing)) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+
+                if (lineSpacing === initObject.level.info.lineSpacing) {
+                    return;
+                }
+
+                
+
+                var option = {
+                    lineSpacing: lineSpacing
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                // console.log("$scope.component.object",$scope.component.object)
+                // if ($scope.component.object.type === "MyNum") {
+
+                // }
+                switch ($scope.component.object.type) {
+                    
+                    case "MyTextInput":
+                        ProjectService.ChangeAttributeOfTextInput(option, function () {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                        })
+                        break;
+                    default:
+                        console.log("error!");
+                }
+            }
+        }
+
         function enterButtonMode(e) {
             var selectObj = ProjectService.getCurrentSelectObject();
             var selectButtonMode = null;
@@ -2630,6 +2673,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
 
         function enterTextAreaMode(e) {
+            if ($scope.component.object.level.info.mode == initObject.level.info.mode) {
+                return;
+            }
+
+            var option = {
+                mode: $scope.component.object.level.info.mode
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeTextContent(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+        }
+
+        function enterTextInputMode(e) {
             if ($scope.component.object.level.info.mode == initObject.level.info.mode) {
                 return;
             }

@@ -2757,6 +2757,22 @@
                                    ng-keypress="component.enterHalfSpacing($event)"
                                    type="number">
                         </div>
+                        <div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">行距</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.lineSpacing"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterLineSpacing($event)"
+                                   type="number">
+                        </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">模式</p>
+                            <select class="attr-item__cell-input form-control"
+                                     ng-options="idx as mode for (idx, mode) in component.textInput.modes"
+                                     ng-model="component.object.level.info.mode"
+                                     ng-change="component.textInput.enterMode()"
+                                     >
+                             </select>
+                        </div>
                              <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">文本</p>
                                 <input type="text"
@@ -4017,7 +4033,7 @@
 
                     <!--纹理-->
                     <div ng-controller="TexCtl" class="tex-wrap attr-item__cell-wrap lg" ng-show="showTexPanel&&!myMask">
-                        <p class="attr-item__cell-title">纹理设置</p>
+                        <p class="attr-item__cell-title">纹理设置{{info}}</p>
                         <ul class="tex-list">
                             <li ng-repeat="tex in texList">
                                 <div>{{tex.name}}</div>

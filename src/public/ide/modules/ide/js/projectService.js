@@ -4222,6 +4222,10 @@ ideServices
                     selectObj.level.info.halfSpacing=_option.halfSpacing;
                     arg.halfSpacing=_option.halfSpacing;
                 }
+                if(_option.hasOwnProperty('lineSpacing')){
+                    selectObj.level.info.lineSpacing=_option.lineSpacing;
+                    arg.lineSpacing=_option.lineSpacing;
+                }
                 selectObj.target.fire('changeTextInputAttr',arg);
             };
 

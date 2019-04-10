@@ -150,6 +150,12 @@ ide.controller('TexCtl',['$scope','$uibModal','ProjectService','Type','TexServic
             });
         }
 
+        if(currentSelectedObject.type == "MyAnimation"){
+            $scope.info = "(禁止使用带透明区域的图片)"
+        }else{
+            $scope.info = ""
+        }
+
         return currentSelectedObject;
 
     }
