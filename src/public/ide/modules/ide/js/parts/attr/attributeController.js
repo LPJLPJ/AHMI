@@ -145,6 +145,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterArrange: enterArrange
                 },
                 textInput: {
+                    modes:['单行','多行'],
+                    enterMode:enterTextInputMode,
                     enterText: enterText,
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,
@@ -2670,6 +2672,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
 
         function enterTextAreaMode(e) {
+            if ($scope.component.object.level.info.mode == initObject.level.info.mode) {
+                return;
+            }
+
+            var option = {
+                mode: $scope.component.object.level.info.mode
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeTextContent(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+        }
+
+        function enterTextInputMode(e) {
             if ($scope.component.object.level.info.mode == initObject.level.info.mode) {
                 return;
             }
