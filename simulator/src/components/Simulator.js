@@ -1513,6 +1513,7 @@ module.exports = React.createClass({
         }
 
     },
+
     paintWidget: function (widget, sx, sy, options) {
         // console.log('drawing widget',widget);
         var offcanvas = this.refs.offcanvas;
@@ -1773,40 +1774,38 @@ module.exports = React.createClass({
 
     //keyboard
     drawKeyboard: function (curX, curY, widget, options, cb) {
-        /*var buttonSwitchState = this.getValueByTagName(widget.tag, 0)||0;
-        var oldPosX = widget.oldPosX||0,curPosX;
-        if(buttonSwitchState == 0){
-            curPosX = 0;
-        }else{
-            //curPosX = slideImg?widget.info.width-slideImg.width:widget.info.width/2;
-            curPosX = widget.info.width/2;
-        }
-        if(curPosX != oldPosX){
-            var oldValue;
-            if(widget.info.enableAnimation){
-                var duration = (widget.transition && widget.transition.duration) || 0;
-                if (widget.animationKey != -1 && widget.animationKey != undefined) {
-                    oldValue = widget.currentPosX || 0;
-                    AnimationManager.clearAnimationKey(widget.animationKey);
-                    widget.animationKey = -1;
-                } else {
-                    oldValue = widget.oldPosX || 0;
+        var info = widget.info;
+        var tex = widget.texList,
+            width = info.width,
+            height = info.height,
+            padding = info.innerPadding,
+            marginX = info.marginX,
+            marginY = info.marginY,
+            keyWidth = info.keyWidth,
+            keyHeight = info.keyHeight;
+
+        widget.keys = [];
+        var initX = padding,
+            initY = padding;
+        var normalSlices = tex[1].slices;
+        for (var i=0;i<normalSlices.length;i++) {
+            if (i !== 0) {
+                if (i%3 === 0) {
+                    initY += (marginY + keyHeight);
+                    initX = padding;
+                }else {
+                    initX += keyWidth + marginX;
                 }
-                widget.oldPosX = curPosX;
-                widget.animationKey = AnimationManager.stepValue(oldPosX, curPosX, duration, 30, null, function (obj) {
-                    widget.currentPosX = obj.curX;
-                    this.draw()
-                }.bind(this), function () {
-                    widget.currentPosX = curPosX;
-                }.bind(this));
-                //initial
-                widget.currentPosX = oldValue;
-            }else{
-                widget.oldPosX = curPosX;
-                widget.currentPosX = curPosX;
             }
-        }else{
-        }*/
+
+            widget.keys[i] = {
+                value:normalSlices[i].name,
+                x:initX,
+                y:initY,
+                w:keyWidth,
+                h:keyHeight
+            };
+        }
     },
     paintKeyboard: function (curX, curY, widget, options, cb) {
         var info = widget.info;
@@ -1817,28 +1816,26 @@ module.exports = React.createClass({
             marginX = info.marginX,
             marginY = info.marginY,
             keyWidth = info.keyWidth,
-            keyHeight = info.keyHeight;
-        var initX = curX + padding,
-            initY = curY + padding;
+            keyHeight = info.keyHeight,
+            curKey = widget.curKey,
+            keys = widget.keys,
+            mouseState = widget.mouseState?widget.mouseState.state:null;
+        var normalSlices = tex[1].slices,
+            pressSlices = tex[2].slices;
 
+        //键盘背景
         this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color);
 
-        var keySlices = tex[1].slices;
-        for (var i=0;i<keySlices.length;i++) {
-            if (i !== 0) {
-                if (i%3 === 0) {
-                    initY += (marginY + keyHeight);
-                    initX = curX + padding;
-                }else {
-                    initX += keyWidth + marginX;
-                }
+        //键盘背景
+        for (var i=0;i<keys.length;i++) {
+            var key = keys[i];
+            if (mouseState == 'press' && key.value == curKey) {
+                this.drawBg(key.x, key.y, key.w, key.h, pressSlices[i].imgSrc, pressSlices[i].color);
+            }else {
+                this.drawBg(key.x, key.y, key.w, key.h, normalSlices[i].imgSrc, normalSlices[i].color);
             }
-            this.drawBg(initX, initY, keyWidth, keyHeight, keySlices[i].imgSrc, keySlices[i].color);
         }
-
-
         cb && cb();
-
     },
 
     drawSwitch: function (curX, curY, widget, options, cb) {
@@ -4923,6 +4920,8 @@ module.exports = React.createClass({
 
 
     },
+
+    //控件内部点击位置
     handleInnerClickedElement: function (widget, x, y) {
         var left = widget.info.left;
         var top = widget.info.top;
@@ -4983,7 +4982,27 @@ module.exports = React.createClass({
                 x = x - left;
                 y = y - top;
                 break;
+            case 'MyKeyboard':
+                x = x - left;
+                y = y - top;
+                var keys = widget.keys;
+                for (var i = 0;i<keys.length;i++){
+                    curKey = keys[i];
+
+                    if (this.inRawRect(x, y, curKey.x, curKey.y, curKey.w, curKey.h)) {
+                        //hit
+                        widget.curKey = curKey.value;
+                        //this.handleInputKeyboardKeyPressed(curKey, widget);
+                        break;
+                    }
+                }
+                this.handleTouchTrackInnerPress(widget, x, y);
+                break;
+
         }
+    },
+    handleKeyboardPressed:function(curKey,widget){
+        widget.curKey = curKey;
     },
     handleInputKeyboardKeyPressed: function (curKey, widget) {
         var project = this.state.project;
@@ -5518,7 +5537,6 @@ module.exports = React.createClass({
         this.mouseState.position.y = y;
 
         var pressedTargets = this.state.currentPressedTargets;
-        console.log(pressedTargets);
         for (var i = 0; i < pressedTargets.length; i++) {
             this.handleElementRelease(pressedTargets[i], _.cloneDeep(this.mouseState));
             this.handleTargetAction(pressedTargets[i], 'Release');
@@ -5544,6 +5562,12 @@ module.exports = React.createClass({
                     case 'MySlideBlock':
                         elem.mouseState = mouseState;
                         needRedraw = true;
+                        break;
+                    case 'MyKeyboard':
+                        elem.mouseState = mouseState;
+                        needRedraw = true;
+                        break;
+                    default:
                         break;
                 }
                 break;

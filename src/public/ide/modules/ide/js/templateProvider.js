@@ -1354,6 +1354,8 @@ ideServices
 
         //数字键盘
         this.getDefaultKeyboard = function (){
+            var keyTex = [1,2,3,4,5,6,7,8,9,'ok',0,'del'];
+
             var info = {
                 width:360,
                 height:270,
@@ -1366,17 +1368,23 @@ ideServices
                 left:0,
                 originX: 'center',
                 originY: 'center',
-                enableAnimation:false
+                enableAnimation:false,
+                keysNum:keyTex
             };
 
-            var slices=[],
-                keyTex = [1,2,3,4,5,6,7,8,9,'ok',0,'del'];
+            var normalSlices=[],
+                pressSlices=[];
 
             for(var i=0;i<keyTex.length;i++){
-                slices[i] = {};
-                slices[i].imgSrc = '';
-                slices[i].color = 'rgba(220,87,74,1)';
-                slices[i].name = keyTex[i];
+                normalSlices[i] = {};
+                normalSlices[i].imgSrc = '';
+                normalSlices[i].color = 'rgba(220,87,74,1)';
+                normalSlices[i].name = keyTex[i];
+
+                pressSlices[i] = {};
+                pressSlices[i].imgSrc = '';
+                pressSlices[i].color = 'rgba(254,205,82,1)';
+                pressSlices[i].name = keyTex[i];
             }
 
             return {
@@ -1397,9 +1405,13 @@ ideServices
                         name:'键盘背景'
                     }]
                 },{
-                    name:'按键纹理',
+                    name:'按键纹理(按下前)',
                     currentSliceIdx:0,
-                    slices:slices
+                    slices:normalSlices
+                },{
+                    name:'按键纹理(按下后)',
+                    currentSliceIdx:0,
+                    slices:pressSlices
                 }],
                 transition:_.cloneDeep(defaultTransition)
             }
