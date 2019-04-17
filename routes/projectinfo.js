@@ -1284,7 +1284,7 @@ projectRoute.generateLocalProject = function (req, res) {
                     });
                     archive.on('error', function (err) {
                         console.log('error', err);
-                        throw err;
+                        // throw err;
                     });
                     archive.pipe(output);
                     archive.directory(srcResourcesFolderUrl, '/resources');
