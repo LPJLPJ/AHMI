@@ -11,10 +11,12 @@ var folder_space = require('./folder_space');
 var route_admin = require('./route_admin');
 var routeValidate = require('./routeValidate');
 var UserModel = require('../db/models/UserModel');
+var ProjectModel = require('../db/models/ProjectModel')
 var DownloadRouter = require('./routeDownload');
 var VersionManager = require('../utils/versionManager');
 var route_tag = require('./route_tags');
 var templateRoute = require('./templateRoute')
+var fse = require('fs-extra')
 
 //admin
 var UserControl = require('../middlewares/UserControl');
@@ -100,6 +102,82 @@ router.route('/admin/manage/users')
     .get(route_admin.getUsers);
 router.route('/admin/manage/changeusertype')
     .post(route_admin.changeUserType);
+
+router.route('/admin/manage/delete-user')
+    .post(function(req, res){
+    UserModel.findByName(req.body.username,function(err , user){
+        if (err) {
+            res.status(500).end('error, no such user')
+        }
+        if (user) {
+            var deleteUserCB = function(deleteProjectErr){
+                if(deleteProjectErr){
+                    res.status(500).end(JSON.stringify(deleteProjectErr))
+                }else{
+                    user.remove(function(err){
+                        if (err) {
+                            res.status(500).end('error'+err)
+                        }else{
+                            res.end('ok')
+                        }
+    
+                    })
+                }
+                
+            }
+            //remove user projects
+            ProjectModel.findProjectInfosByUser(user,function(err,projects){
+                if(err){
+                    res.end('error'+err)
+                }else{
+                    if(projects && projects.length){
+                        var count = projects.length
+                        var lastErr = null
+                        var deleteProjectCB = function(err){
+                            if(err){
+                                lastErr = err
+                            }
+                            count--
+                            if(count == 0){
+                                //finish
+                                deleteUserCB(lastErr)
+                            }
+                        }
+                        projects.forEach(function(p){
+                            ProjectModel.deleteById(p._id,function(err){
+                                if(err){
+                                    deleteProjectCB(err)
+                                }else{
+                                    //delete project data ok
+                                    var targetDir = path.join(__dirname, '../project/', String(p._id)||'undefined');
+                                    fse.remove(targetDir,function(err){
+                                        if(err){
+                                            deleteProjectCB(err)
+                                        }else{
+                                            //delete ok
+                                            deleteProjectCB()
+                                        }
+                                    })
+                                }
+                            })
+                        })
+                    }else{
+                        //no need to delete
+                        deleteUserCB()
+                    }
+                    
+
+                }
+            })
+            
+
+        }else{
+            res.status(500).end('error, no such user')
+        }
+
+
+    })
+});
 //release and update
 router.route('/admin/manage/releaseVersion')
     .get(route_admin.getReleaseVerSpace);
@@ -385,36 +463,6 @@ router.route('/user/forgetpassword')
 router.route('/user/findpassword')
     .get(findPassword.getResetPasswordPage)
     .post(findPassword.resetPassword);
-
-router.route('/delete-user')
-    .post(function(req, res){
-    UserModel.findByName(req.body.username,function(err , user){
-        if (err) {
-            console.log(err);
-            res.end('error')
-        }
-        if (user) {
-            //duplicated name
-            user.remove(function(err,user){
-                if (err) {
-                    console.log(err);
-                    res.end('error')
-                }
-
-            })
-
-        }
-        UserModel.fetch(function(err, users){
-            if (err) {
-                console.log(err);
-                res.end('error')
-            }
-            res.end(JSON.stringify(users))
-        })
-
-
-    })
-});
 
 
 //blog
