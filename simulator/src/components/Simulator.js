@@ -3507,7 +3507,7 @@ module.exports = React.createClass({
                         default:
                             //default horizontal
                             // this.drawBg(curX,curY,width*curScale,height,progressSlice.imgSrc,progressSlice.color);
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', mixedColo,ctxr);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, '', mixedColor,ctx);
                             if (cursor) {
                                 var cursorSlice = widget.texList[3].slices[0];
                                 this.drawCursor(width * curScale + curX, curY, width, height, true, width * (1 - curScale), cursorSlice.imgSrc, cursorSlice.color,ctx);
