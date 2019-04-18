@@ -47,7 +47,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
         
     }
-
+    if(!local){
+            document.getElementById("ACF").style.visibility="hidden";
+        }
     function dataURItoBlob(dataURI) {
         // convert base64/URLEncoded data component to raw binary data held in a string
         var byteString;
@@ -2074,6 +2076,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                             errHandler(err)
                         }else{
                             fs.rename(dst,path.join(ProjectBaseUrl,'file_'+hash+'.zip'))
+                            window.zipfilename = 'file_'+hash+'.zip';
                             successHandler();
                         }
                     })
@@ -2138,6 +2141,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                             reader.onload = function(e){
                                 var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
                                 saveAs(blob, "file_"+md5+".zip");
+                                window.zipfilename = "file_"+md5+".zip"
+                                console.log(window.zipfilename)
                                 sCb && sCb()
                             }
                             reader.onerror = function(e){
