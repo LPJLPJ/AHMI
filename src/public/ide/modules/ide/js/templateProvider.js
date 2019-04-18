@@ -346,6 +346,7 @@ ideServices
 
         };
 
+        // 画布
         this.getDefaultLayer = function () {
             //var pageNode=CanvasService.getPageNode();
             var info = {
@@ -373,6 +374,7 @@ ideServices
             }
         };
 
+        // 子画布
         this.getDefaultSubLayer = function () {
             // var jsonStr = '{"objects":[],"background":"rgba(' + 255 + ',' + 255 + ',' + 255 + ',0.0)"}';
             return {
@@ -413,6 +415,7 @@ ideServices
             return this.getDefaultSlide();
         };
 
+        // 图层控件
         this.getDefaultSlide = function () {
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
@@ -448,6 +451,7 @@ ideServices
             }
         };
 
+        // 透明图层
         this.getDefaultAlphaSlide = function () {
             var info = {
                 width:200, height: 150,
@@ -497,6 +501,7 @@ ideServices
             }
         };
 
+        // 按钮控件
         this.getDefaultButton= function () {
             var info = _.cloneDeep(defaultButton.info);
             var texList = _.cloneDeep(defaultButton.texList);
@@ -541,6 +546,7 @@ ideServices
             }
         };
 
+        // 文本控件
         this.getDefaultTextArea = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -583,6 +589,7 @@ ideServices
             }
         };
 
+        // 文本输入
         this.getDefaultTextInput = function(){
             
             var text='文本输入';
@@ -624,6 +631,7 @@ ideServices
             }
         };
 
+        // 按钮组
         this.getDefaultButtonGroup= function () {
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -684,6 +692,7 @@ ideServices
             }
         };
 
+        // 照片栏
         this.getDefaultGallery= function () {
             var subLayerNode=CanvasService.getSubLayerNode();
             var defaultWidth = (subLayerNode.getWidth()/subLayerNode.getZoom()) / 4
@@ -767,6 +776,7 @@ ideServices
             }
         };
 
+        // 进度条
         this.getDefaultProgress= function () {
             var info = _.cloneDeep(defaultProgress.info);
             var texList = _.cloneDeep(defaultProgress.texList);
@@ -786,6 +796,7 @@ ideServices
             }
         };
 
+        // 图表
         this.getDefaultChart= function () {
             var info = _.cloneDeep(defaultChart.info);
             var texList = _.cloneDeep(defaultChart.texList);
@@ -803,6 +814,7 @@ ideServices
             }
         };
 
+        // 仪表盘
         this.getDefaultDashboard= function () {
             var info = _.cloneDeep(defaultDashboard.info);
             var texList = _.cloneDeep(defaultDashboard.texList);
@@ -821,6 +833,7 @@ ideServices
             }
         };
 
+        // 数字
         this.getDefaultNum = function(){
             var font = "30px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789.',font)); //-
@@ -887,6 +900,7 @@ ideServices
             }
         };
 
+        // 图层数字
         this.getDefaultTexNum = function () {
             var info={
                 width:90, height: 30,
@@ -1004,6 +1018,7 @@ ideServices
             }
         };
 
+        // 开关控件
         this.getDefaultSwitch=function(){
             var info=_.cloneDeep(defaultSwitch.info);
             var texList=_.cloneDeep(defaultSwitch.texList);
@@ -1019,6 +1034,7 @@ ideServices
             }
         };
 
+        // 旋转图
         this.getDefaultRotateImg=function(){
             var info = _.cloneDeep(defaultRotateImage.info);
             var texList=_.cloneDeep(defaultRotateImage.texList);
@@ -1034,6 +1050,7 @@ ideServices
             }
         };
 
+        // 触摸追踪
         this.getDefaultTouchTrack=function(){
             var info = _.cloneDeep(defaultTouchTrack.info);
             var texList=_.cloneDeep(defaultTouchTrack.texList);
@@ -1049,6 +1066,7 @@ ideServices
             }
         };
 
+        // 透明图
         this.getDefaultAlphaImg=function(){
             var info = _.cloneDeep(defaultAlphaImage.info);
             var texList=_.cloneDeep(defaultAlphaImage.texList);
@@ -1064,6 +1082,7 @@ ideServices
             }
         };
 
+        // 时间
         this.getDefaultDateTime=function(){
             var font = "20px"+" "+"宋体";
             // var maxFontWidth = Math.ceil(FontMesureService.getMaxWidth('0123456789:/-',font));
@@ -1116,6 +1135,7 @@ ideServices
             }
         };
 
+        // 图层时间
         this.getDefaultTexTime=function(){
             var info={
                 characterW:30,
@@ -1172,6 +1192,7 @@ ideServices
             }
         };
 
+        // 触发器
         this.getDefaultScriptTrigger = function(){
             var subLayerNode=CanvasService.getSubLayerNode();
 
@@ -1192,6 +1213,7 @@ ideServices
             }
         };
 
+        // 滑块
         this.getDefaultSlideBlock = function(){
             var info = _.cloneDeep(defaultSlideBlock.info);
             var texList = _.cloneDeep(defaultSlideBlock.texList);
@@ -1207,6 +1229,7 @@ ideServices
             }
         };
 
+        // 视频控件
         this.getDefaultVideo = function(){
             var info = {
                 width:215,height:110,
@@ -1235,6 +1258,7 @@ ideServices
             }
         };
 
+        // 开机动画
         this.getDefaultAnimation = function(){
             var subLayerNode = CanvasService.getSubLayerNode();
             var info = {
@@ -1264,6 +1288,7 @@ ideServices
             }
         };
 
+        // 按钮开关
         this.getDefaultButtonSwitch = function(){
             var info = {
                 width:100,
@@ -1310,7 +1335,6 @@ ideServices
             var b = _.random(64, 255);
             return 'rgba(' + r + ',' + g + ',' + b + ',1.0)';
         }
-
         var templateId=null;
         this.setTemplateId = function(id){
             templateId=id;
@@ -1319,7 +1343,7 @@ ideServices
             return templateId;
         };
 
-        //matteTemplate  add by tang
+        // 蒙板
         this.getDefaultMatte=function(){
             var pageNode=CanvasService.getPageNode();
             var info={
@@ -1342,8 +1366,7 @@ ideServices
             }
         };
 
-
-        //获取仪表盘的背景纹理
+        // 获取仪表盘的背景纹理
         this.getBackgroundSlice = function(){
             return defaultDashboard.texList[0];
         };
@@ -1381,7 +1404,7 @@ ideServices
             return tex
         };
 
-        //切换滑块模式纹理
+        // 切换滑块模式纹理
         this.getSlideBlockTex = function(mode){
             var background = _.cloneDeep(defaultSlideBlock.texList[0]);
             var slideblock = _.cloneDeep(defaultSlideBlock.texList[1]);
@@ -1410,7 +1433,7 @@ ideServices
             return tex
         }
         
-        //时钟控件
+        // 时钟控件
         this.getDefaultClock = function () {
             var info = {
                 width:250,
@@ -1474,6 +1497,54 @@ ideServices
                 url:'',
                 texList:texList,
                 transition:_.cloneDeep(defaultTransition)
+            }
+        }
+
+        // 表格控件
+        this.getDefaultGrid = function () {
+            var info = {
+                width:300,
+                height:300,
+                left:0,
+                top:0,
+                row:2,
+                col:2,
+                color:'rgba(100,100,100,1)',
+                line:2,
+                originX: 'center',
+                originY: 'center',
+                enableAnimation:false
+            };
+
+            info.cellWidth = [];
+            for (var i = 0;i<info.row;i++){
+                info.cellWidth.push({width:150})
+            }
+
+            info.cellHeight = [];
+            for (var j = 0;j<info.cell;j++){
+                info.cellWidth.push({height:150})
+            }
+
+            var texList=[{
+                currentSliceIdx:0,
+                name:'表格背景',
+                slices:[{
+                    color:'rgba(100,100,100,1)',
+                    imgSrc:'',
+                    name:'表格背景'
+                }]
+            }];
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: 'NewAlphaImage',
+                type: Type.MyGrid,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList
             }
         }
 

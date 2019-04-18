@@ -797,7 +797,10 @@
                 </ul>
                 <!--属性面板-->
                 <div class="attr-panel-item" ng-show="component.top.currentNav==0">
+
+                    <!--控件属性-->
                     <div ng-controller="AttributeCtrl">
+                        <!--模具框-->
                         <div ng-show="myMask" id="myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">模具框名称</p>
@@ -845,7 +848,7 @@
                                 </a>
                             </div>
                         </div>
-
+                        <!--页面-->
                         <div ng-show="component.object.type=='MyPage'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">页面名称</p>
@@ -906,7 +909,7 @@
                                 </select>
                             </div>
 
-                            <!--蒙板 tang-->
+                            <!--蒙板-->
                             <div class="attr-item__cell-wrap lg">
                                 <div class="attr-item__cell-title">
                                     <span class="matte-title">蒙板</span>
@@ -939,7 +942,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        <!--画布-->
                         <div ng-show="component.object.type=='MyLayer'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1053,7 +1056,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <!--子画布-->
                         <div ng-show="component.object.type=='MySubLayer'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1080,7 +1083,7 @@
                             <!--</select>-->
                             <!--</div>-->
                         </div>
-
+                        <!--图层-->
                         <div ng-show="component.object.type=='MySlide'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1148,7 +1151,7 @@
                             <!--</p>-->
                             <!--</div>-->
                         </div>
-
+                        <!--按钮-->
                         <div ng-show="component.object.type=='MyButton'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1244,7 +1247,7 @@
                             </div>
 
                         </div>
-
+                        <!--按钮开关-->
                         <div ng-show="component.object.type=='MyButtonSwitch'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1324,7 +1327,7 @@
                             </div>
 
                         </div>
-
+                        <!--按钮组-->
                         <div ng-show="component.object.type=='MyButtonGroup'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1418,8 +1421,7 @@
                                 </select>
                             </div>
                         </div>
-
-                        <!-- gallery -->
+                        <!--照片栏-->
                         <div ng-show="component.object.type=='MyGallery'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1535,7 +1537,7 @@
 
                             
                         </div>
-
+                        <!--进度条-->
                         <div ng-show="component.object.type=='MyProgress'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -1876,7 +1878,7 @@
                                    ng-keypress="component.oscilloscope.changeOscGridUnitY($event)"/>
                         </div>
                         </div>
-
+                        <!--仪表盘-->
                         <div ng-show="component.object.type=='MyDashboard'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -2110,7 +2112,7 @@
                                        ng-disabled="animationsDisabled">
                             </div>
                         </div>
-
+                        <!--数字-->
                         <div ng-show="component.object.type=='MyNum'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -2342,7 +2344,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <!--图层数字-->
                         <div ng-show="component.object.type=='MyTexNum'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -2582,7 +2584,7 @@
                                        ng-keypress="component.texNum.enterNumValue($event)">
                             </div>
                         </div>
-
+                        <!--文本-->
                         <div ng-show="component.object.type=='MyTextArea'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -2683,7 +2685,7 @@
                             </div>
 
                         </div>
-
+                        <!--文本输入-->
                         <div ng-show="component.object.type=='MyTextInput'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -2919,7 +2921,7 @@
                         </div>
 
                         </div>
-
+                        <!--开关-->
                         <div ng-show="component.object.type=='MySwitch'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -2996,7 +2998,7 @@
                                        ng-keypress="component.switchWidget.enterBindBit($event)"/>
                             </div>
                         </div>
-
+                        <!--旋转图-->
                         <div ng-show="component.object.type=='MyRotateImg'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3104,9 +3106,8 @@
                                 </select>
                             </div>
                         </div>
-
-
-                    <div ng-show="component.object.type=='MyTouchTrack'&&!myMask">
+                        <!--触摸追踪-->
+                        <div ng-show="component.object.type=='MyTouchTrack'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
                                 <input class="attr-item__cell-input form-control"
@@ -3173,8 +3174,8 @@
                                        ng-keypress="component.alphaImg.enterInitValue($event)"/>
                             </div>
                         </div>
-
-                    <div ng-show="component.object.type=='MyAlphaImg'&&!myMask">
+                        <!--动态透明图-->
+                        <div ng-show="component.object.type=='MyAlphaImg'&&!myMask">
                         <div class="attr-item__cell-wrap lg">
                             <p class="attr-item__cell-title">名称</p>
                             <input class="attr-item__cell-input form-control"
@@ -3256,7 +3257,7 @@
                                        ng-keypress="component.alphaImg.enterInitValue($event)"/>
                             </div>
                         </div>
-
+                        <!--时间-->
                         <div ng-show="component.object.type=='MyDateTime'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3354,7 +3355,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <!--图层时间-->
                         <div ng-show="component.object.type=='MyTexTime'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3460,7 +3461,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <!--影像-->
                         <div ng-show="component.object.type=='MyVideo'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3529,7 +3530,7 @@
                             </div>
 
                         </div>
-
+                        <!--触发器-->
                         <div ng-show="component.object.type=='MyScriptTrigger'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3605,7 +3606,7 @@
                         </div>
 
                         </div>
-
+                        <!--滑块-->
                         <div ng-show="component.object.type=='MySlideBlock'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3726,7 +3727,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <!--开机动画-->
                         <div ng-show="component.object.type=='MyAnimation'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3785,7 +3786,7 @@
                                    type="number">
                         </div>
                         </div>
-
+                        <!--透明度图层-->
                         <div ng-show="component.object.type=='MyAlphaSlide'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3843,7 +3844,7 @@
                                    type="number">
                         </div>
                         </div>
-                        <!--clock-->
+                        <!--时钟-->
                         <div ng-show="component.object.type=='MyClock'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -3901,10 +3902,7 @@
                                    type="number">
                         </div>
                         </div>
-
-
-                        <!-- mychart -->
-
+                        <!-- 图表 -->
                         <div ng-show="component.object.type=='MyChart'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -4014,7 +4012,88 @@
                                     type="number">
                              </div>
                         </div>
+                        <!--表格-->
+                        <div ng-show="component.object.type=='MyGrid'&&!myMask">
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">名称</p>
+                                <input class="attr-item__cell-input form-control"
+                                       type="text"
+                                       ng-model="component.object.level.name"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterName($event)">
+                            </div>
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.left"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.top"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterY($event)"
+                                   type="number">
+                            </div>
 
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="position.absoluteX"
+                                       ng-blur="position.absoluteX=position.initAbsoluteX"
+                                       ng-keypress="component.enterAbsoluteX($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">绝对坐标Y</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="position.absoluteY"
+                                   ng-blur="position.absoluteY=position.initAbsoluteY"
+                                   ng-keypress="component.enterAbsoluteY($event)"
+                                   type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">高度</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.height"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">线条颜色</p>
+                                <input class="attr-item__cell-input form-control ng-pristine ng-untouched ng-valid ng-not-empty"
+                                       colorpicker="rgb" style="text-align: center;" type="text"
+                                       ng-model="component.object.level.info.color">
+                            </div>
+
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">行数</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.row"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
+                            <p class="attr-item__cell-title">列数</p>
+                            <input class="attr-item__cell-input form-control"
+                                   ng-model="component.object.level.info.col"
+                                   ng-blur="component.restore()"
+                                   ng-keypress="component.enterHeight($event)"
+                                   type="number">
+                            </div>
+
+                        </div>
                         <!-- general attrs -->
                         <div class="attr-item__cell-wrap" ng-show="component.isWidget()&&!myMask">
                             <p class="attr-item__cell-title">纹理压缩模式</p>
@@ -4028,8 +4107,6 @@
                         </div>
 
                     </div>
-
-                
 
                     <!--纹理-->
                     <div ng-controller="TexCtl" class="tex-wrap attr-item__cell-wrap lg" ng-show="showTexPanel&&!myMask">

@@ -853,6 +853,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultClock();
             }else if(_index === 23) {
                 newWidget = TemplateProvider.getDefaultChart();
+            }else if(_index === 24) {
+                newWidget = TemplateProvider.getDefaultGrid();
             } else {
                 return;
             }

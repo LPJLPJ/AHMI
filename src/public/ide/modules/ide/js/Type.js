@@ -39,6 +39,7 @@ ideServices.
         this.MyGallery = 'MyGallery';
         this.MyClock = 'MyClock';
         this.MyChart = 'MyChart';
+        this.MyGrid = 'MyGrid';
 
 
     this.getFabWidgetByName= function (_typeStr) {
@@ -78,7 +79,8 @@ ideServices.
             this.MyGallery,
             this.MyButtonSwitch,
             this.MyClock,
-            this.MyChart
+            this.MyChart,
+            this.MyGrid
         ];
         for(var i=0;i<widgets.length;i++){
             if(widgets[i]==_typeStr){
