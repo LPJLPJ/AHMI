@@ -114,6 +114,7 @@ localIDEService.uploadProjectZip = function(req,res){
         form.on('end',function () {
             //解压文件
             unZipFolderPath = path.join(tempFilesPath,fileName.split('.')[0]);
+            console.log(unZipFolderPath)
             unZipFile(reDir,unZipFolderPath,function(err){
                 if(err){
                     errHandler(res,500,'unzip err',err);

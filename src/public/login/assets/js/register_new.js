@@ -288,7 +288,7 @@ $(function () {
                 formVerify.password = false
                 passwordVerify.innerHTML = ErrMessages.password.empty
             } else {
-                if (_password.match(/^\w{6,17}$/)) {
+                if (_password.match(/^\w{6,16}$/)) {
                     //
                     formVerify.password = true
                     passwordVerify.innerHTML = ''

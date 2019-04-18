@@ -42,7 +42,7 @@ $(function () {
         var passwordVal = $(this).val()
         if (passwordVal==""){
             $('#password-verify').html(errMessages.password.empty)
-        }else if (passwordVal.length<6||passwordVal.length>16){
+        }else if (!passwordVal.match(/^\w{6,16}$/)){
             $('#password-verify').html(errMessages.password.wrong)
         }else{
             $('#password-verify').html('')
@@ -102,7 +102,12 @@ $(function () {
                 },
                 error: function (err, status, xhr) {
                     //error
-                    console.log(err.responseText)
+                    var errMsg
+                    try{
+                        errMsg = JSON.parse(err.responseText).errMsg
+                    }catch{
+                        errMsg = err.responseText
+                    }
                     switch (err.responseText){
                         case 'captcha error':
                             $('#captcha-verify').html(errMessages.captcha.error)
