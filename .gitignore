@@ -16,6 +16,8 @@ log/
 .scannerwork
 .sonarlint
 
+nwjs-sdk-v0.37.4-osx-x64
+
 src/views/learn/
 src/public/learn/
 
