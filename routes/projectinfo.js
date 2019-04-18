@@ -1544,7 +1544,7 @@ projectRoute.downloadFile = function (req,res) {
 
 //分类操作
 projectRoute.createFolder = function (req, res) {
-    var data = _.cloneDeep(req.body);
+    var data = req.body
     data.userId = req.session.user.id;
     if (req.session.user) {
         var newFolder = new ClassModel(data);
