@@ -1507,10 +1507,10 @@ ideServices
                 height:300,
                 left:0,
                 top:0,
-                row:2,
+                row:3,
                 col:2,
                 color:'rgba(100,100,100,1)',
-                line:2,
+                border:2,
                 originX: 'center',
                 originY: 'center',
                 enableAnimation:false
@@ -1522,15 +1522,15 @@ ideServices
             }
 
             info.cellHeight = [];
-            for (var j = 0;j<info.cell;j++){
-                info.cellWidth.push({height:150})
+            for (var j = 0;j<info.col;j++){
+                info.cellHeight.push({height:150})
             }
 
             var texList=[{
                 currentSliceIdx:0,
                 name:'表格背景',
                 slices:[{
-                    color:'rgba(100,100,100,1)',
+                    color:'rgba(100,100,100,0)',
                     imgSrc:'',
                     name:'表格背景'
                 }]
@@ -1539,7 +1539,7 @@ ideServices
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,
-                name: 'NewAlphaImage',
+                name: 'NewGrid',
                 type: Type.MyGrid,
                 expand:true,
                 url:'',

@@ -4071,10 +4071,19 @@
                             </div>
 
                             <div class="attr-item__cell-wrap lg">
-                                <p class="attr-item__cell-title">线条颜色</p>
+                                <p class="attr-item__cell-title">边框颜色</p>
                                 <input class="attr-item__cell-input form-control ng-pristine ng-untouched ng-valid ng-not-empty"
                                        colorpicker="rgb" style="text-align: center;" type="text"
                                        ng-model="component.object.level.info.color">
+                            </div>
+
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">边框宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.border"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterWidth($event)"
+                                       type="number">
                             </div>
 
                             <div class="attr-item__cell-wrap">
@@ -4093,9 +4102,29 @@
                                    type="number">
                             </div>
 
+                            <div class="attr-item__cell-wrap" ng-repeat="cellWidth in component.object.level.info.cellWidth">
+                                <p class="attr-item__cell-title" style="color:#666">列{{$index+1}}宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="cellWidth.width"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterHeight($event)"
+                                       type="number">
+                            </div>
+
+                            <div class="attr-item__cell-wrap" ng-repeat="cellHeight in component.object.level.info.cellHeight">
+                                <p class="attr-item__cell-title" style="color: #666">行{{$index+1}}高度</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="cellHeight.height"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.enterHeight($event)"
+                                       type="number">
+                            </div>
+
                         </div>
-                        <!-- general attrs -->
-                        <div class="attr-item__cell-wrap" ng-show="component.isWidget()&&!myMask">
+
+
+                        <!-- 纹理压缩 -->
+                        <div class="attr-item__cell-wrap lg" ng-show="component.isWidget()&&!myMask">
                             <p class="attr-item__cell-title">纹理压缩模式</p>
                             <select class="attr-item__cell-input form-control"
                                         ng-model="component.object.level.info.compressMode"
