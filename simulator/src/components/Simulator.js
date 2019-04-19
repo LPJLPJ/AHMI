@@ -3585,7 +3585,7 @@ module.exports = React.createClass({
             //has tex
             //draw background
             var texSlice = widget.texList[0].slices[0];
-            this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color);
+            this.drawBg(curX, curY, width, height, texSlice.imgSrc, texSlice.color,ctx);
 
             var curScale = widget.curScale;
 
