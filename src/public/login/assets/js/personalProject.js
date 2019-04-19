@@ -106,6 +106,9 @@ $(function(){
             $(elem).remove();
         });
 
+        //remove recyle and module center
+        $('.project-operate__view').remove()
+
         //load folders
 
         try{
