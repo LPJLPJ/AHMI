@@ -3483,6 +3483,91 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         return deg[type];
     }
 
+    //grid
+    fabric.MyGrid = fabric.util.createClass(fabric.Object, {
+        type: Type.MyGrid,
+        initialize: function (level, options) {
+            var self=this;
+            this.callSuper('initialize',options);
+            this.lockRotation=true;
+            this.hasRotatingPoint=false;
+
+            this.normalColor=level.texList[0].slices[0].color;
+            this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+            this.on('changeTex', function (arg) {
+                var level=arg.level;
+                var _callback=arg.callback;
+
+                self.normalColor=level.texList[0].slices[0].color;
+                self.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeWidgetSize',function(arg){
+                var _callback=arg.callback;
+                var widgetWidth=arg.widgetWidth;
+                var widgetHeight=arg.WidgetHeight;
+                self.set({scaleX:1,scaleY:1,width:widgetWidth,height:widgetHeight});
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+        },
+        toObject: function () {
+            return fabric.util.object.extend(this.callSuper('toObject'));
+        },
+        _render: function (ctx) {
+            try{
+                ctx.fillStyle=this.normalColor;
+                ctx.fillRect(
+                    -(this.width / 2),
+                    -(this.height / 2),
+                    this.width,
+                    this.height);
+
+                if (this.normalImageElement){
+                    ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
+                }
+
+                //将图片超出canvas的部分裁剪
+                this.clipTo=function(ctx){
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.rect(-this.width / 2,
+                        -this.height / 2,
+                        this.width,
+                        this.height);
+                    ctx.closePath();
+                    ctx.restore();
+                };
+            }
+            catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染按钮出错');
+            }
+        }
+    });
+    fabric.MyGrid.fromLevel= function (level, callback,option) {
+        callback && callback(new fabric.MyGrid(level, option));
+    };
+    fabric.MyGrid.prototype.toObject = (function (toObject) {
+        return function () {
+            return fabric.util.object.extend(toObject.call(this), {
+                normalImageElement:this.normalImageElement,
+                normalColor:this.normalColor
+            });
+        }
+    })(fabric.MyGrid.prototype.toObject);
+    fabric.MyGrid.fromObject = function (object, callback) {
+        var level=ProjectService.getLevelById(object.id);
+        callback && callback(new fabric.MyGrid(level, object));
+    };
+    fabric.MyGrid.async = true;
 
     //Text area
     fabric.MyTextArea = fabric.util.createClass(fabric.Object,{
