@@ -554,8 +554,14 @@ $(function(){
                     "sep1":"---------",
                     "showInfo": {name: "修改工程信息"},
                     "sep2": "---------",
+                    "moveToClass":{name:"移动至项目",items:loadClass(project)},
+                    "sep3": "---------",
                     "showProjectVersion": {name: "打开较早保存的工程"},
-                    "sep3":"---------",
+                    "sep4":"---------",
+                    "visualization":{name:"结构可视化"},
+                    "sep5":"---------",
+                    "data-analysis":{name:"数据分析"},
+                    "sep6":"---------",
                     "deletePro": {name: "删除工程"}
                 };
                 items.showProjectVersion.items=localLoadItems(project._id);
@@ -1471,31 +1477,44 @@ $(function(){
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();
-        $.ajax({
-            type:'GET',
-            url:"/folder/getFolderList",
-            success:function(result){
-                var classList=JSON.parse(result);
-                folderList=classList;
-                var items={};
-                if(project.classId=='space'){
-                    items.space={name:'个人中心',disabled:true};
-                }else{
-                    items.space={name:'个人中心'};
+        if(local){
+            processClassList(folders.map(function(f){
+                return {
+                    classInfo:f
                 }
+            }))
+        }else{
+            $.ajax({
+                type:'GET',
+                url:"/folder/getFolderList",
+                success:function(result){
+                    var classList=JSON.parse(result);
+                    processClassList(classList)
+                }
+            });
+        }
 
-                if(classList&&classList.length>0){
-                    for(var i=0;i<classList.length;i++){
-                        if(classList[i].classInfo.id==project.classId){
-                            items["class"+(i+1)]={name:classList[i].classInfo.name,disabled:true}
-                        }else{
-                            items["class"+(i+1)]={name:classList[i].classInfo.name};
-                        }
+        function processClassList(classList){
+            folderList=classList;
+            var items={};
+            if(project.classId=='space'){
+                items.space={name:'个人中心',disabled:true};
+            }else{
+                items.space={name:'个人中心'};
+            }
+
+            if(classList&&classList.length>0){
+                for(var i=0;i<classList.length;i++){
+                    if(classList[i].classInfo.id==project.classId){
+                        items["class"+(i+1)]={name:classList[i].classInfo.name,disabled:true}
+                    }else{
+                        items["class"+(i+1)]={name:classList[i].classInfo.name};
                     }
                 }
-                dfd.resolve(items);
             }
-        });
+            dfd.resolve(items);
+        }
+        
         return dfd.promise();
     }
     function moveToClass(_project,_class){
