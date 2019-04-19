@@ -106,7 +106,7 @@ $(function(){
             $(elem).remove();
         });
 
-        //remove recyle and module center
+        //remove recyle and template center
         $('.project-operate__view').remove()
 
         //load folders
@@ -1323,7 +1323,7 @@ $(function(){
                 
                 var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:projects,folder:folder,local:local});
                 folderWrap.find('.folder-space-list').replaceWith(html);
-                $('#add-project').attr('folder-id',folder.id);
+                $('#add-project').attr('folder-id',folder._id);
             }catch (e){
                 console.log(e)
                 toastr.error('获取工程失败')
