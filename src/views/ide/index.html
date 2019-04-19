@@ -4107,7 +4107,7 @@
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="cellWidth.width"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.grid.enterGridCellSize($event,0,$index)"
+                                       ng-keypress="component.grid.enterGridCellSize($event,0,cellWidth.width)"
                                        type="number">
                             </div>
 
@@ -4116,7 +4116,7 @@
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="cellHeight.height"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.grid.enterGridCellSize($event,1,$index)"
+                                       ng-keypress="component.grid.enterGridCellSize($event,1,cellHeight.height)"
                                        type="number">
                             </div>
 

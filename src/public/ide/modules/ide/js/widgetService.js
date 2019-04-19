@@ -3540,6 +3540,20 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 _callback&&_callback();
             });
 
+            this.on('changeCellSize',function (arg) {
+                var level = arg.level;
+                var _callback=arg.callback;
+
+                self.width = level.info.width;
+                self.height = level.info.height;
+                self.cellWidth = level.info.cellWidth;
+                self.cellHeight = level.info.cellHeight;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
             this.on('changeWidgetSize',function(arg){
                 var _callback=arg.callback;
                 var widgetWidth=arg.widgetWidth;

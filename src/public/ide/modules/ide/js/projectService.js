@@ -6217,6 +6217,6 @@ ideServices
                     level:level,
                     callback:_successCallback
                 };
-                selectObj.target.fire('changeCellNum',arg);
+                selectObj.target.fire('changeCellSize',arg);
             };
         }]);

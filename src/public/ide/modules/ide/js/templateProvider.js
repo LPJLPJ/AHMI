@@ -1505,8 +1505,8 @@ ideServices
             var info = {
                 left:0,
                 top:0,
-                row:3,
-                col:3,
+                row:4,
+                col:4,
                 borderColor:'rgba(60,60,60,1)',
                 border:1,
                 originX: 'center',
@@ -1542,11 +1542,12 @@ ideServices
                 texList:texList
             }
         };
-
+        //计算表格尺寸
         this.calcGridCell = function(row,col,border){
             var info = {};
             var initWidth,initHeight;
-            initWidth = initHeight = 100;
+            initWidth = 50;
+            initHeight = 50;
 
             info.cellWidth = [];
             for (var i = 0;i<col;i++){
