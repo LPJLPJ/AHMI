@@ -1,5 +1,6 @@
 $(function(){
     var local = false
+    var projectData
     var fs,path,__dirname
     try {
         var os = require('os');
@@ -90,7 +91,7 @@ $(function(){
     if(local){
         var projectUrl = path.join(__dirname,'localproject',projectId,'project.json')
         var projectRaw = readSingleFile(projectUrl,true)
-        var projectData = JSON.parse(projectRaw)
+        projectData = JSON.parse(projectRaw)
         project = JSON.parse(projectData.content)
         project.name = projectData.name
         loadDataToTree(project)
@@ -440,28 +441,52 @@ $(function(){
         if(confirm('确定保存?')){
             // console.log(project);
             var btn = $(this).text('保存中..').attr('disabled',true);
-            $.ajax({
-                type:'put',
-                url:'/project/'+projectId+'/save',
-                contentType:'application/json;charset=UTF-8',
-                processData:false,
-                data:JSON.stringify({
-                    project: project
-                }),
-                success:function(data){
-                    btn.text('保存修改').attr('disabled',false);
-                    if(data==='ok'){
-                        alert('保存成功')
-                    }else{
-                        console.log(data);
+            if(local){
+                
+                projectData.lastModifiedTime = new Date().toLocaleString();
+        
+                projectData.content = JSON.stringify(project);
+                if (projectData.backups && projectData.backups instanceof Array) {
+
+                } else {
+                    projectData.backups = []
+                }
+                if (projectData.backups.length >= 5) {
+                    projectData.backups.shift()
+                }
+                projectData.backups.push({
+                    time: new Date(),
+                    content: projectData.content
+                });
+                var filePath = path.join(__dirname,'localproject',projectId,'project.json')
+                fs.writeFileSync(filePath,JSON.stringify(projectData));
+                btn.text('保存修改').attr('disabled',false);
+                alert('保存成功')
+            }else{
+                $.ajax({
+                    type:'put',
+                    url:'/project/'+projectId+'/save',
+                    contentType:'application/json;charset=UTF-8',
+                    processData:false,
+                    data:JSON.stringify({
+                        project: project
+                    }),
+                    success:function(data){
+                        btn.text('保存修改').attr('disabled',false);
+                        if(data==='ok'){
+                            alert('保存成功')
+                        }else{
+                            console.log(data);
+                            alert('保存出错');
+                        }
+                    },
+                    error:function(err){
+                        btn.text('保存修改').attr('disabled',false);
                         alert('保存出错');
                     }
-                },
-                error:function(err){
-                    btn.text('保存修改').attr('disabled',false);
-                    alert('保存出错');
-                }
-            })
+                })
+            }
+            
         }
     })
 });
