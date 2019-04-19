@@ -6152,4 +6152,71 @@ ideServices
             function changeMatteAttr(){
                 _self.attrScope.$emit('ChangeMatte');
             }
+
+
+            /**
+             * 表格空控件相关方法
+             */
+
+            this.changeGridBorderColor = function (color,_successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+                var level = selectObj.level;
+                level.info.borderColor = color;
+                var arg={
+                    level:level,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeBorderColor',arg);
+            };
+
+            this.changeGridCellNum = function(option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var level = selectObj.level;
+                var cellInfo = TemplateProvider.calcGridCell(option.row,option.col,option.border);
+                //console.log(cellInfo);
+
+                level.info.border = option.border;
+                level.info.row = option.row;
+                level.info.col = option.col;
+                level.info.width = cellInfo.width;
+                level.info.height = cellInfo.height;
+                level.info.cellWidth = cellInfo.cellWidth;
+                level.info.cellHeight = cellInfo.cellHeight;
+                console.log(level);
+
+                var arg={
+                    level:level,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeCellNum',arg);
+            };
+
+            this.changeGridCellSize = function(option,_successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var level = selectObj.level;
+
+                var calWidth = level.info.border;
+                if (option.cellWidth) {
+                    for (var i = 0; i < option.cellWidth.length;i++){
+                        calWidth += option.cellWidth[i].width;
+                    }
+                    level.info.width = calWidth;
+                    level.info.cellWidth = option.cellWidth;
+                }
+
+                var calHeight = level.info.border;
+                if (option.cellHeight) {
+                    for (var i = 0; i < option.cellHeight.length;i++){
+                        calHeight += option.cellHeight[i].height;
+                    }
+                    level.info.height = calHeight;
+                    level.info.cellHeight = option.cellHeight;
+                }
+
+                var arg={
+                    level:level,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeCellNum',arg);
+            };
         }]);

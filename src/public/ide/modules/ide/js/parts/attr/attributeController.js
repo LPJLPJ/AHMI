@@ -354,6 +354,11 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     changeVideoSource: changeVideoSource,
                     changeVideoScale: changeVideoScale
                 },
+                // 表格
+                grid:{
+                    enterGridCellNum:enterGridCellNum,
+                    enterGridCellSize:enterGridCellSize
+                },
                 group: {
                     align: [
                         {id: 'top', name: '上对齐'},
@@ -1185,6 +1190,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             if (op.name == 'component.matte.matteColor') {
                 var matteColor = op.value;
                 ProjectService.changeMatteBgc(matteColor);
+            }
+            //表格线条颜色
+            if (op.name == 'component.object.level.info.borderColor'){
+                var borderColor = op.value;
+                oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.changeGridBorderColor(borderColor, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                });
             }
         }
 
@@ -3504,7 +3517,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 return;
             }
 
-            console.log($scope.component.isWidget())
+            //console.log($scope.component.isWidget())
 
             var option = {
                 [key]: $scope.component.object.level.info[key]
@@ -3530,7 +3543,6 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 var oldOperate = ProjectService.SaveCurrentOperate();
                 ProjectService.enterGenerateAttrs(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
-    
                 })
             }
         }
@@ -3565,5 +3577,74 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         function enterMatteBgi() {
             var selectImg = $scope.component.matte.matteBgi;
             ProjectService.changeMatteBgi(selectImg);
+        }
+
+        /**
+         * 表格控件相关
+         */
+
+        function enterGridCellNum(e){
+            if (e.keyCode === 13){
+                var col = $scope.component.object.level.info.col,
+                    row = $scope.component.object.level.info.row,
+                    border = $scope.component.object.level.info.border;
+
+                if (!_.isInteger(col)||!_.isInteger(row)||!_.isInteger(border)) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if (col < 1 || col > 20 || row < 1 || row > 20) {
+                    toastr.warning('超出范围(1-20)');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    row:row,
+                    col:col,
+                    border:border
+                };
+
+                console.log(option);
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.changeGridCellNum(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+        }
+
+        function enterGridCellSize(e,type,n){
+            if (e.keyCode === 13) {
+
+                if (!_.isInteger(n)) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+
+                if (n < 1 || n > 20) {
+                    toastr.warning('超出范围');
+                    restore();
+                    return;
+                }
+
+                //判断输入是否合法
+                if (type === 0) {
+                    var cellWidth = $scope.component.object.level.info.cellWidth;
+
+                }else {
+                    var cellHeight = $scope.component.object.level.info.cellHeight;
+                }
+
+                var option = {
+                    cellWidth: cellWidth,
+                    cellHeight: cellHeight
+                };
+
+                ProjectService.changeGridCellSize(option, function (oldOperate) {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
         }
     }]);

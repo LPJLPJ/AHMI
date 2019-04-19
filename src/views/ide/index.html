@@ -1027,7 +1027,7 @@
                                 </select>
                             </div>
                         </div>
-
+                        <!--多选操作-->
                         <div ng-show="component.object.type=='group'&&!myMask">
                             <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">坐标X</p>
@@ -1717,7 +1717,7 @@
                             </div>
                             </div>
                         </div>
-
+                        <!--示波器-->
                         <div ng-show="component.object.type=='MyOscilloscope'&&!myMask">
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">名称</p>
@@ -4073,8 +4073,8 @@
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">边框颜色</p>
                                 <input class="attr-item__cell-input form-control ng-pristine ng-untouched ng-valid ng-not-empty"
-                                       colorpicker="rgb" style="text-align: center;" type="text"
-                                       ng-model="component.object.level.info.color">
+                                       colorpicker="rgba" style="text-align: center;" type="text"
+                                       ng-model="component.object.level.info.borderColor">
                             </div>
 
                             <div class="attr-item__cell-wrap lg">
@@ -4082,7 +4082,7 @@
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.border"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.enterWidth($event)"
+                                       ng-keypress="component.grid.enterGridCellNum($event)"
                                        type="number">
                             </div>
 
@@ -4091,14 +4091,14 @@
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.row"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.enterWidth($event)"
+                                       ng-keypress="component.grid.enterGridCellNum($event)"
                                        type="number">
                             </div><div class="attr-item__cell-wrap">
                             <p class="attr-item__cell-title">列数</p>
                             <input class="attr-item__cell-input form-control"
                                    ng-model="component.object.level.info.col"
                                    ng-blur="component.restore()"
-                                   ng-keypress="component.enterHeight($event)"
+                                   ng-keypress="component.grid.enterGridCellNum($event)"
                                    type="number">
                             </div>
 
@@ -4107,7 +4107,7 @@
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="cellWidth.width"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.enterHeight($event)"
+                                       ng-keypress="component.grid.enterGridCellSize($event,0,$index)"
                                        type="number">
                             </div>
 
@@ -4116,7 +4116,7 @@
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="cellHeight.height"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.enterHeight($event)"
+                                       ng-keypress="component.grid.enterGridCellSize($event,1,$index)"
                                        type="number">
                             </div>
 
