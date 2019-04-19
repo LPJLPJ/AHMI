@@ -122,8 +122,18 @@ $(function(){
 
         //load projects
         var projects = readLocalProjects('normal').map(function (raw) {
-            return JSON.parse(raw);
-        });
+            var data =  JSON.parse(raw);
+            delete data.content
+            return data
+        }).filter(function(p){
+            if(p.classId == 'space'){
+                return true
+            }else if(!p.classId){
+                return true
+            }else{
+                return false
+            }
+        })
         projects.sort(function(p1,p2){
             var s1 = parseInt(String(p1._id).slice(0,String(p1._id).length-4));
             var s2 = parseInt(String(p2._id).slice(0,String(p2._id).length-4));
@@ -146,7 +156,7 @@ $(function(){
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
             delete newProject.backups;
-            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
+            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail,local:local});
             $('#project-list').prepend(html);
         }
 
@@ -224,7 +234,7 @@ $(function(){
                                     if(err){
                                         updateAlert.html('更新版本出错')
                                     }else{
-                                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail,local:local});
                                         curPanel.replaceWith(html)
                                         updateModal.modal('hide')
                                         targetUrl = '/project/'+curProject._id+'/editor'
@@ -244,7 +254,7 @@ $(function(){
                             if(err){
                                 updateAlert.html('更新版本出错')
                             }else{
-                                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail,local:local});
                                 curPanel.replaceWith(html)
                                 updateModal.modal('hide')
                                 targetUrl = '/project/'+curProject._id+'/editor'
@@ -1004,7 +1014,7 @@ $(function(){
                 }
                 fs.writeFileSync(projectPath,JSON.stringify(oldProject));
                 updateSuccess = true;
-                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail,local:local});
                 curPanel.replaceWith(html)
             }else{
                 $.ajax({
@@ -1014,7 +1024,7 @@ $(function(){
                     success: function (data, status, xhr) {
                         //update success
                         updateSuccess = true;
-                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail,local:local});
                         curPanel.replaceWith(html);
 
                     },
@@ -1032,12 +1042,12 @@ $(function(){
     window.generateNewProjectView = generateNewProjectView;
 
     function generateNewProjectView(project,thumbnail){
-        return new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+        return new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail,local:local});
     }
 
 
     function addNewProject(newProject){
-        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
+        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null,local:local});
         if (location.hash === '') {
             $('#project-list').prepend(html);
             if($('#project-list').find('.project-list__item').length){
@@ -1308,7 +1318,7 @@ $(function(){
                 folderWrap.show();
                 projectWrap.hide();
                 
-                var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:projects,folder:folder});
+                var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:projects,folder:folder,local:local});
                 folderWrap.find('.folder-space-list').replaceWith(html);
                 $('#add-project').attr('folder-id',folder.id);
             }catch (e){
@@ -1325,7 +1335,7 @@ $(function(){
                         folderWrap.show();
                         projectWrap.hide();
                         data = JSON.parse(data);
-                        var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder});
+                        var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder,local:local});
                         folderWrap.find('.folder-space-list').replaceWith(html);
                         $('#add-project').attr('folder-id',data.folder.id);
                     }
