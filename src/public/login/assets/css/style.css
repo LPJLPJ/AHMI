@@ -32,7 +32,7 @@ body {
 
 .logo-custom {
     max-height: 50px;
-    position: absolute;
+    /* position: absolute; */
     top:50%;
     left:0;
 

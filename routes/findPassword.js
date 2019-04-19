@@ -59,7 +59,7 @@ findPassword.getResetPasswordPage = function (req, res) {
             title:'重置密码'
         })
     }else{
-        res.end('链接超时, 请重新获取')
+        errHandler(res,500,'链接超时, 请重新获取')
     }
 }
 

@@ -8,9 +8,12 @@ $(function(){
     var deleteProjectButton = $('#delete-project-confirm');
     var localProjectDir='';
     var localCANProjectDir='';
+    var localFolderPath = '';
     var curIDEVersion = window.ideVersion.split('_')[0].trim();
     var userType = localStorage.getItem('userType');
     var listWrap = $('#list-wrap');
+
+    var folders = []
 
     deleteProjectButton.on('click',function (e) {
         if(curProject.resolution){
@@ -64,6 +67,7 @@ $(function(){
         __dirname = global.__dirname;
         localProjectDir = path.join(__dirname,'localproject');
         localCANProjectDir = path.join(__dirname,'localproject','localCANProject');
+        localFolderPath = path.join(localProjectDir,"folder.json");
         //console.log('localCANProjectDir',localCANProjectDir);
         function getResourceRelativePath(resourceFilePath) {
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
@@ -95,12 +99,26 @@ $(function(){
     //render projects
     if (local){
 
-        $('#add-project').siblings().each(function (index,elem) {
-            $(elem).remove();
-        });
+        // $('#add-project').siblings().each(function (index,elem) {
+        //     $(elem).remove();
+        // });
         $('#addCANproject').siblings().each(function(index,elem){
             $(elem).remove();
         });
+
+        //load folders
+
+        try{
+            var folderJson = fs.readFileSync(localFolderPath)
+            folders = JSON.parse(folderJson)
+        }catch{
+            folders = []
+        }
+
+        folders.forEach(function(f){
+            var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:f});
+            $('#project-list').prepend(html);
+        })
 
         //load projects
         var projects = readLocalProjects('normal').map(function (raw) {
@@ -122,8 +140,8 @@ $(function(){
 
         for(var i=projects.length-1;i>=0;i--){
             var newProject = projects[i];
-            console.log('newProject.createTime',newProject.createTime);
-            console.log(new Date(newProject.createTime));
+            // console.log('newProject.createTime',newProject.createTime);
+            // console.log(new Date(newProject.createTime));
             //console.log('newProject'+i,newProject);
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
@@ -536,8 +554,14 @@ $(function(){
                     "sep1":"---------",
                     "showInfo": {name: "修改工程信息"},
                     "sep2": "---------",
+                    "moveToClass":{name:"移动至项目",items:loadClass(project)},
+                    "sep3": "---------",
                     "showProjectVersion": {name: "打开较早保存的工程"},
-                    "sep3":"---------",
+                    "sep4":"---------",
+                    "visualization":{name:"结构可视化"},
+                    "sep5":"---------",
+                    "data-analysis":{name:"数据分析"},
+                    "sep6":"---------",
                     "deletePro": {name: "删除工程"}
                 };
                 items.showProjectVersion.items=localLoadItems(project._id);
@@ -1262,30 +1286,54 @@ $(function(){
         var fol = curFolder.attr('data-folder');
         fol = JSON.parse(fol);
         folder=fol;
-        $.ajax({
-            url:'/folder/space',
-            type:'post',
-            data: {folderId:folder._id},
-            success: function (data) {
-                if (data) {
-                    folderWrap.show();
-                    projectWrap.hide();
-                    data = JSON.parse(data);
-                    var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder});
-                    folderWrap.find('.folder-space-list').replaceWith(html);
-                    $('#add-project').attr('folder-id',data.folder.id);
-                }
-            },
-            error:function (err) {
-                console.log(err);
+        if(local){
+            //filter projects with classId = folterID
+            try {
+                
+                var projects = readLocalProjects('normal').map(function (raw) {
+                    return JSON.parse(raw);
+                });
+                projects = projects.filter(function(p){
+                    return p.classId == folder._id
+                })
+                folderWrap.show();
+                projectWrap.hide();
+                
+                var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:projects,folder:folder});
+                folderWrap.find('.folder-space-list').replaceWith(html);
+                $('#add-project').attr('folder-id',folder.id);
+            }catch (e){
+                console.log(e)
+                toastr.error('获取工程失败')
             }
-
-        })
+        }else{
+            $.ajax({
+                url:'/folder/space',
+                type:'post',
+                data: {folderId:folder._id},
+                success: function (data) {
+                    if (data) {
+                        folderWrap.show();
+                        projectWrap.hide();
+                        data = JSON.parse(data);
+                        var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder});
+                        folderWrap.find('.folder-space-list').replaceWith(html);
+                        $('#add-project').attr('folder-id',data.folder.id);
+                    }
+                },
+                error:function (err) {
+                    console.log(err);
+                }
+    
+            })
+        }
+        
     });
 
     var addFolder = $('#add-folder');
 
     window.addEventListener('hashchange',function () {
+        console.log('hashchange',location.hash)
         if (location.hash === '') {
             folderWrap.hide();
             addFolder.show();
@@ -1348,20 +1396,40 @@ $(function(){
             return;
         }
 
-        $.ajax({
-            type:'POST',
-            url:'/folder/create',
-            data:folder,
-            success: function (data, status, xhr) {
-                var newFolder = JSON.parse(data);
-                var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:newFolder});
+        if(local){
+            
+            folder.createTime = new Date().toLocaleString();
+            folder.lastModifiedTime =  new Date().toLocaleString();
+            folder._id = ''+Date.now()+Math.round((Math.random()+1)*1000);
+
+            folders.push(folder)
+            try {
+                
+                fs.writeFileSync(localFolderPath,JSON.stringify(folders));
+                var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:folder});
                 projectList.prepend(html);
                 if($('#project-empty').css('display')=='block'){$('#project-empty').hide()}
-            },
-            error: function (err, status, xhr) {
-                console.log(err)
+            }catch (e){
+                toastr.error(e)
             }
-        })
+        }else{
+            $.ajax({
+                type:'POST',
+                url:'/folder/create',
+                data:folder,
+                success: function (data, status, xhr) {
+                    var newFolder = JSON.parse(data);
+                    var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:newFolder});
+                    projectList.prepend(html);
+                    if($('#project-empty').css('display')=='block'){$('#project-empty').hide()}
+                },
+                error: function (err, status, xhr) {
+                    toastr.error(err)
+                }
+            })
+        }
+
+        
     }
     function updateFolder(){
         var name=$('#folder-title');
@@ -1409,31 +1477,44 @@ $(function(){
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();
-        $.ajax({
-            type:'GET',
-            url:"/folder/getFolderList",
-            success:function(result){
-                var classList=JSON.parse(result);
-                folderList=classList;
-                var items={};
-                if(project.classId=='space'){
-                    items.space={name:'个人中心',disabled:true};
-                }else{
-                    items.space={name:'个人中心'};
+        if(local){
+            processClassList(folders.map(function(f){
+                return {
+                    classInfo:f
                 }
+            }))
+        }else{
+            $.ajax({
+                type:'GET',
+                url:"/folder/getFolderList",
+                success:function(result){
+                    var classList=JSON.parse(result);
+                    processClassList(classList)
+                }
+            });
+        }
 
-                if(classList&&classList.length>0){
-                    for(var i=0;i<classList.length;i++){
-                        if(classList[i].classInfo.id==project.classId){
-                            items["class"+(i+1)]={name:classList[i].classInfo.name,disabled:true}
-                        }else{
-                            items["class"+(i+1)]={name:classList[i].classInfo.name};
-                        }
+        function processClassList(classList){
+            folderList=classList;
+            var items={};
+            if(project.classId=='space'){
+                items.space={name:'个人中心',disabled:true};
+            }else{
+                items.space={name:'个人中心'};
+            }
+
+            if(classList&&classList.length>0){
+                for(var i=0;i<classList.length;i++){
+                    if(classList[i].classInfo.id==project.classId){
+                        items["class"+(i+1)]={name:classList[i].classInfo.name,disabled:true}
+                    }else{
+                        items["class"+(i+1)]={name:classList[i].classInfo.name};
                     }
                 }
-                dfd.resolve(items);
             }
-        });
+            dfd.resolve(items);
+        }
+        
         return dfd.promise();
     }
     function moveToClass(_project,_class){

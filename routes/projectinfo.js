@@ -1263,6 +1263,13 @@ projectRoute.generateLocalProject = function (req, res) {
                     }
                     return value;
                 };
+
+                var maskDirectoryExist = false
+                try{
+                    maskDirectoryExist = fs.existsSync(srcMaskFolderUrl)
+                }catch(e){
+
+                }
                 try {
                     var contentObj = JSON.parse(project.content);
                     var contentNewJSON = JSON.stringify(contentObj, transformSrc);
@@ -1284,13 +1291,15 @@ projectRoute.generateLocalProject = function (req, res) {
                     });
                     archive.on('error', function (err) {
                         console.log('error', err);
-                        // throw err;
+                        errHandler(res,500,err)
+                        return
                     });
                     archive.pipe(output);
                     archive.directory(srcResourcesFolderUrl, '/resources');
 
-                    if (contentObj.mask) {
+                    if (contentObj.mask&&maskDirectoryExist) {
                         archive.directory(srcMaskFolderUrl, '/mask');
+                        
                     }
 
                     archive.file(srcJsonUrl, {name: 'project.json'});
@@ -1544,7 +1553,7 @@ projectRoute.downloadFile = function (req,res) {
 
 //分类操作
 projectRoute.createFolder = function (req, res) {
-    var data = _.cloneDeep(req.body);
+    var data = req.body
     data.userId = req.session.user.id;
     if (req.session.user) {
         var newFolder = new ClassModel(data);
