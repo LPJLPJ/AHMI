@@ -1,4 +1,18 @@
 $(function(){
+    var local = false
+    var fs,path,__dirname
+    try {
+        var os = require('os');
+        if (os){
+            local = true;
+            
+        }
+        fs = require('fs')
+        path = require('path')
+        __dirname = global.__dirname;
+    }catch (e){
+
+    }
     let margin = {
         top:20,
         right:90,
@@ -61,19 +75,58 @@ $(function(){
                     }
                 ]
             }
-        },
+        }
+
+    var projectId
+    if(local){
+        projectId = window.location.search&&window.location.search.split('=')[1]
+    }else{
         projectId = window.location.pathname&&window.location.pathname.split('/')[2];
+    }
 
     //声明一个tree布局并设置大小
     let treemap = d3.tree().size([height,width]);
+    //load project content
+    if(local){
+        var projectUrl = path.join(__dirname,'localproject',projectId,'project.json')
+        var projectRaw = readSingleFile(projectUrl,true)
+        var projectData = JSON.parse(projectRaw)
+        project = JSON.parse(projectData.content)
+        project.name = projectData.name
+        loadDataToTree(project)
+    }else{
+        d3.json('/project/'+projectId+'/content',function(error,data){
+            if(!data.content){
+                $('#loading').hide();
+                return;
+            }
+            project = JSON.parse(data.content);
+            project.name = data.name;
+            loadDataToTree(project)
+    
+        });
+    }
 
-    d3.json('/project/'+projectId+'/content',function(error,data){
-        if(!data.content){
-            $('#loading').hide();
-            return;
+    function readSingleFile(filePath,check) {
+        if (check){
+            try{
+                var stats = fs.statSync(filePath);
+                if (stats&&stats.isFile()){
+                    return fs.readFileSync(filePath,'utf-8');
+                }else{
+                    return null;
+                }
+            }catch (e){
+                return null;
+            }
+
+
+        }else{
+            return fs.readFileSync(filePath,'utf-8');
         }
-        project = JSON.parse(data.content);
-        project.name = data.name;
+    }
+
+    function loadDataToTree(project){
         root = d3.hierarchy(project,function(d){
             return d.pages||d.layers||d.subLayers||d.widgets;
         });
@@ -95,8 +148,9 @@ $(function(){
             // console.log('root',root);
             update(root);
         },500)
+    }
 
-    });
+    
 
     //更新视图
     function update(source){

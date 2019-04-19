@@ -521,7 +521,11 @@ $(function(){
                     closeModal.modal('show');
                     break;
                 case "visualization":
-                    window.open('/project/'+project._id+'/visualization');
+                    if(local){
+                        window.open('../ide/projectTree.html?projectId='+project._id);
+                    }else{
+                        window.open('/project/'+project._id+'/visualization');
+                    }
                     break;
                 case "showProjectVersion":
                     break;
