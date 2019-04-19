@@ -1295,6 +1295,15 @@ $(function(){
                 });
                 projects = projects.filter(function(p){
                     return p.classId == folder._id
+                }).map(function(p){
+                    delete p.content
+                    var thumbnail = p.thumbnail
+                    delete p.thumbnail
+                    return {
+                        projectInfo:p,
+                        thumbnail:thumbnail
+                    }
+
                 })
                 folderWrap.show();
                 projectWrap.hide();
@@ -1477,12 +1486,17 @@ $(function(){
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();
+        var items={};
         if(local){
             processClassList(folders.map(function(f){
                 return {
-                    classInfo:f
+                    classInfo:{
+                        id:f._id,
+                        name:f.name
+                    }
                 }
             }))
+            return items
         }else{
             $.ajax({
                 type:'GET',
@@ -1490,13 +1504,15 @@ $(function(){
                 success:function(result){
                     var classList=JSON.parse(result);
                     processClassList(classList)
+                    dfd.resolve(items);
                 }
             });
+            return dfd.promise();
         }
 
         function processClassList(classList){
             folderList=classList;
-            var items={};
+            
             if(project.classId=='space'){
                 items.space={name:'个人中心',disabled:true};
             }else{
@@ -1512,22 +1528,36 @@ $(function(){
                     }
                 }
             }
-            dfd.resolve(items);
+            
         }
         
-        return dfd.promise();
+        
     }
     function moveToClass(_project,_class){
         var project=_project;
         project.classId=_class;
-        $.ajax({
-            type:"post",
-            url:'/project/moveToClass',
-            data:project,
-            success:function(data){
+        if(local){
+            if(project._id){
+                var projectPath = path.join(localProjectDir,String(project._id),'project.json');
+                var oldProject = JSON.parse(readSingleFile(projectPath,true));
+                for(var key in project){
+                    oldProject[key] = project[key];
+                }
+                fs.writeFileSync(projectPath,JSON.stringify(oldProject));
                 curPanel.remove();
             }
-        })
+            
+        }else{
+            $.ajax({
+                type:"post",
+                url:'/project/moveToClass',
+                data:project,
+                success:function(data){
+                    curPanel.remove();
+                }
+            })
+        }
+        
     }
 
     /*分享工程*/
