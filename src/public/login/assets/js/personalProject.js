@@ -271,6 +271,12 @@ $(function(){
                 // targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
             }
         })
+    }else{
+        $versionSelector = $('#basicinfo-ideversion')
+        if(userType!=='admin'){
+            $versionSelector.attr('disabled',true)
+        }
+        $versionSelector.html($('<option value="'+curIDEVersion+'">'+curIDEVersion+'</option>'))
     }
 
     function saveProjectCopy(projectId,saveAsName,cb){

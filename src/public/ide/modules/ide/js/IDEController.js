@@ -343,6 +343,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             globalProject.maxSize = data.maxSize;
             globalProject.projectId = id;
             globalProject.encoding = data.encoding;
+            globalProject.supportTouch = data.supportTouch;
             //console.log('globalProject',globalProject);
             var resourceList = globalProject.resourceList;
             // console.log('resourceList',resourceList);
