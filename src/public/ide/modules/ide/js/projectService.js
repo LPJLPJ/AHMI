@@ -6175,14 +6175,13 @@ ideServices
                 var cellInfo = TemplateProvider.calcGridCell(option.row,option.col,option.border);
                 //console.log(cellInfo);
 
-                level.info.border = option.border;
                 level.info.row = option.row;
                 level.info.col = option.col;
                 level.info.width = cellInfo.width;
                 level.info.height = cellInfo.height;
                 level.info.cellWidth = cellInfo.cellWidth;
                 level.info.cellHeight = cellInfo.cellHeight;
-                console.log(level);
+                //console.log(level);
 
                 var arg={
                     level:level,
@@ -6219,4 +6218,19 @@ ideServices
                 };
                 selectObj.target.fire('changeCellSize',arg);
             };
+
+            this.changeGridCellBorder = function (option,_successCallback) {
+                var selectObj=_self.getCurrentSelectObject();
+                var level = selectObj.level;
+
+                level.info.width = level.info.width - level.info.border + option.border;
+                level.info.height = level.info.height - level.info.border + option.border;
+                level.info.border = option.border;
+
+                var arg={
+                    level:level,
+                    callback:_successCallback
+                };
+                selectObj.target.fire('changeCellBorder',arg);
+            }
         }]);

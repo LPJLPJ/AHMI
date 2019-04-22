@@ -4057,6 +4057,7 @@
                             <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">宽度</p>
                                 <input class="attr-item__cell-input form-control"
+                                       disabled
                                        ng-model="component.object.level.info.width"
                                        ng-blur="component.restore()"
                                        ng-keypress="component.enterWidth($event)"
@@ -4064,6 +4065,7 @@
                             </div><div class="attr-item__cell-wrap">
                             <p class="attr-item__cell-title">高度</p>
                             <input class="attr-item__cell-input form-control"
+                                   disabled
                                    ng-model="component.object.level.info.height"
                                    ng-blur="component.restore()"
                                    ng-keypress="component.enterHeight($event)"
@@ -4082,24 +4084,24 @@
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.border"
                                        ng-blur="component.restore()"
-                                       ng-keypress="component.grid.enterGridCellNum($event)"
+                                       ng-keypress="component.grid.enterGridCellBorder($event)"
                                        type="number">
                             </div>
 
                             <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">列数</p>
+                                <input class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.col"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.grid.enterGridCellNum($event)"
+                                       type="number">
+                            </div><div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">行数</p>
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.row"
                                        ng-blur="component.restore()"
                                        ng-keypress="component.grid.enterGridCellNum($event)"
                                        type="number">
-                            </div><div class="attr-item__cell-wrap">
-                            <p class="attr-item__cell-title">列数</p>
-                            <input class="attr-item__cell-input form-control"
-                                   ng-model="component.object.level.info.col"
-                                   ng-blur="component.restore()"
-                                   ng-keypress="component.grid.enterGridCellNum($event)"
-                                   type="number">
                             </div>
 
                             <div class="attr-item__cell-wrap" ng-repeat="cellWidth in component.object.level.info.cellWidth">

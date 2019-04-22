@@ -3492,6 +3492,18 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.lockRotation=true;
             this.hasRotatingPoint=false;
 
+            var ctrlOptions={
+                bl:false,
+                br:false,
+                mb:false,
+                ml:false,
+                mr:false,
+                mt:false,
+                tl:false,
+                tr:false
+            };
+            this.setControlsVisibility(ctrlOptions);//使数字控件不能拉伸
+
             this.row = level.info.row;
             this.col = level.info.col;
             this.lineWidth = level.info.border;
@@ -3534,6 +3546,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 self.height = level.info.height;
                 self.cellWidth = level.info.cellWidth;
                 self.cellHeight = level.info.cellHeight;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeCellBorder',function (arg) {
+                var level = arg.level;
+                var _callback=arg.callback;
+
+                self.lineWidth = level.info.border;
+                self.width = level.info.width;
+                self.height = level.info.height;
 
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();

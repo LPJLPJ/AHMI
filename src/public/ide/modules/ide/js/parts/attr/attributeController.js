@@ -357,7 +357,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 // 表格
                 grid:{
                     enterGridCellNum:enterGridCellNum,
-                    enterGridCellSize:enterGridCellSize
+                    enterGridCellSize:enterGridCellSize,
+                    enterGridCellBorder:enterGridCellBorder
                 },
                 group: {
                     align: [
@@ -3594,8 +3595,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     restore();
                     return;
                 }
-                if (col < 1 || col > 20 || row < 1 || row > 20) {
-                    toastr.warning('超出范围(1-20)');
+                if (col < 1 || col > 100 || row < 1 || row > 100) {
+                    toastr.warning('超出范围(1-100)');
                     restore();
                     return;
                 }
@@ -3606,9 +3607,36 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     border:border
                 };
 
-                console.log(option);
+                //console.log(option);
                 var oldOperate = ProjectService.SaveCurrentOperate();
                 ProjectService.changeGridCellNum(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+        }
+
+        function enterGridCellBorder(e){
+            if (e.keyCode === 13){
+                var border = $scope.component.object.level.info.border;
+
+                if (!_.isInteger(border)) {
+                    toastr.warning('输入不合法');
+                    restore();
+                    return;
+                }
+                if (border < 1 || border > 100) {
+                    toastr.warning('超出范围(1-100)');
+                    restore();
+                    return;
+                }
+
+                var option = {
+                    border:border
+                };
+
+                //console.log(option);
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.changeGridCellBorder(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
                 })
             }
@@ -3623,8 +3651,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     return;
                 }
 
-                if (n < 1 || n > 200) {
-                    toastr.warning('超出范围');
+                if (n < 1 || n > 2000) {
+                    toastr.warning('超出范围(1-2000)');
                     restore();
                     return;
                 }
