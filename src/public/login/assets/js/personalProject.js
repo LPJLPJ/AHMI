@@ -114,7 +114,7 @@ $(function(){
         try{
             var folderJson = fs.readFileSync(localFolderPath)
             folders = JSON.parse(folderJson)
-        }catch{
+        }catch(e){
             folders = []
         }
 
