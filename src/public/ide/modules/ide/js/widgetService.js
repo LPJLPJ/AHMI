@@ -3492,6 +3492,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.lockRotation=true;
             this.hasRotatingPoint=false;
 
+            this.row = level.info.row;
+            this.col = level.info.col;
+            this.lineWidth = level.info.border;
+            this.lineColor = level.info.borderColor;
+            this.cellWidth = level.info.cellWidth;
+            this.cellHeight = level.info.cellHeight;
+
             this.normalColor=level.texList[0].slices[0].color;
             this.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
 
@@ -3501,6 +3508,46 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 self.normalColor=level.texList[0].slices[0].color;
                 self.normalImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeBorderColor',function (arg) {
+               var level = arg.level;
+                var _callback=arg.callback;
+
+                self.lineColor = level.info.borderColor;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeCellNum',function (arg) {
+                var level = arg.level;
+                var _callback=arg.callback;
+
+                self.lineWidth = level.info.border;
+                self.width = level.info.width;
+                self.height = level.info.height;
+                self.cellWidth = level.info.cellWidth;
+                self.cellHeight = level.info.cellHeight;
+
+                var subLayerNode=CanvasService.getSubLayerNode();
+                subLayerNode.renderAll();
+                _callback&&_callback();
+            });
+
+            this.on('changeCellSize',function (arg) {
+                var level = arg.level;
+                var _callback=arg.callback;
+
+                self.width = level.info.width;
+                self.height = level.info.height;
+                self.cellWidth = level.info.cellWidth;
+                self.cellHeight = level.info.cellHeight;
 
                 var subLayerNode=CanvasService.getSubLayerNode();
                 subLayerNode.renderAll();
@@ -3533,6 +3580,8 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if (this.normalImageElement){
                     ctx.drawImage(this.normalImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
+
+                drawGridWidget(ctx,-this.width / 2, -this.height / 2,this.width,this.height,this.lineWidth,this.lineColor,this.cellWidth,this.cellHeight);
 
                 //将图片超出canvas的部分裁剪
                 this.clipTo=function(ctx){
@@ -3568,6 +3617,45 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         callback && callback(new fabric.MyGrid(level, object));
     };
     fabric.MyGrid.async = true;
+    function drawGridWidget(ctx,x,y,width,height,lineWidth,lineColor,row,col){
+        //console.log(x,y,width,height,lineWidth,lineColor);
+
+        ctx.beginPath();
+
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = lineColor;
+
+        //行
+        var initRowX,initRowY;
+        //加上 lineWidth/2（边框宽度的一半） 是为了防止最外层边框超出被裁剪掉
+        initRowX = x;
+        initRowY = y + lineWidth/2;
+        for(var i=0;i<=col.length;i++){
+            if (i !== 0)  {
+                initRowY += col[i-1].height;
+            }
+            ctx.moveTo(initRowX,initRowY);
+            //如果不设置moveTo，当前画笔没有位置
+            ctx.lineTo(initRowX+width,initRowY);
+        }
+
+        //列
+        var initColX,initColY;
+        initColX = x + lineWidth/2;
+        initColY = y;
+
+        for(var j=0;j<=row.length;j++){
+            if (j !== 0) {
+                initColX += row[j-1].width;
+            }
+            ctx.moveTo(initColX,initColY);
+            //如果不设置moveTo，当前画笔没有位置
+            ctx.lineTo(initColX,initColY + height);
+        }
+
+        ctx.stroke();
+        ctx.closePath();
+    }
 
     //Text area
     fabric.MyTextArea = fabric.util.createClass(fabric.Object,{

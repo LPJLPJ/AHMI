@@ -5522,7 +5522,7 @@ module.exports = React.createClass({
                     gridUnitX: gridUnitX,
                     gridUnitY: gridUnitY
                 }
-                this.drawGrid(curX, curY, width, height, blankX, blankY, spacing, spacing, gridStyle, minValue,ctx);
+                this.drawTable(curX, curY, width, height, blankX, blankY, spacing, spacing, gridStyle, minValue,ctx);
             }
             //draw points lines
 
@@ -5534,6 +5534,65 @@ module.exports = React.createClass({
 
         cb && cb();
 
+    },
+
+    //grid
+    drawGrid: function (curX, curY, widget, options, cb) {
+
+    },
+    paintGrid: function (curX, curY, widget, options, cb,ctx) {
+        var info = widget.info;
+        var tex = widget.texList,
+            width = info.width,
+            height = info.height,
+            row = info.row,
+            col = info.col,
+            border = info.border,
+            borderColor = info.borderColor,
+            cellWidth = info.cellWidth,
+            cellHeight = info.cellHeight;
+
+        this.drawBg(curX, curY, width, height, tex[0].slices[0].imgSrc, tex[0].slices[0].color,ctx);
+
+        this.drawGridWidget(ctx,curX,curY,width,height,border,borderColor,cellWidth,cellHeight);
+        cb && cb();
+    },
+    drawGridWidget:function(ctx,x,y,width,height,lineWidth,lineColor,row,col){
+        ctx = ctx || this.offctx;
+        ctx.beginPath();
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = lineColor;
+
+        //行
+        var initRowX,initRowY;
+        //加上 lineWidth/2（边框宽度的一半） 是为了防止最外层边框超出被裁剪掉
+        initRowX = x;
+        initRowY = y + lineWidth/2;
+        for(var i=0;i<=col.length;i++){
+            if (i !== 0)  {
+                initRowY += col[i-1].height;
+            }
+            ctx.moveTo(initRowX,initRowY);
+            //如果不设置moveTo，当前画笔没有位置
+            ctx.lineTo(initRowX+width,initRowY);
+        }
+
+        //列
+        var initColX,initColY;
+        initColX = x + lineWidth/2;
+        initColY = y;
+
+        for(var j=0;j<=row.length;j++){
+            if (j !== 0) {
+                initColX += row[j-1].width;
+            }
+            ctx.moveTo(initColX,initColY);
+            //如果不设置moveTo，当前画笔没有位置
+            ctx.lineTo(initColX,initColY + height);
+        }
+
+        ctx.stroke();
+        ctx.closePath();
     },
 
     drawPointsLine: function (curX, curY, width, height, spacing, points, minValue, maxValue, bgSlice, blankX, blankY, lineColor,ctx) {
@@ -5576,7 +5635,7 @@ module.exports = React.createClass({
         offctx.stroke();
         offctx.restore();
     },
-    drawGrid: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue,ctx) {
+    drawTable: function (curX, curY, width, height, offsetX, offsetY, gridWidth, gridHeight, gridStyle, minValue,ctx) {
         var offcanvas = this.refs.offcanvas;
         var offctx = ctx||this.offctx
         var _offsetX = offsetX % (2 * gridWidth);

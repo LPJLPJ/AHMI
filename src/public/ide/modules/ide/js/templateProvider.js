@@ -12,7 +12,7 @@ ideServices
         }
 
         var defaultTransition=new Transition('NO_TRANSITION','无动画',0);
-
+        var _self = this;
         var project,
             defaultButton={
                 info :{
@@ -1503,34 +1503,29 @@ ideServices
         // 表格控件
         this.getDefaultGrid = function () {
             var info = {
-                width:300,
-                height:300,
                 left:0,
                 top:0,
-                row:3,
-                col:2,
-                color:'rgba(100,100,100,1)',
-                border:2,
+                row:4,
+                col:4,
+                borderColor:'rgba(60,60,60,1)',
+                border:1,
                 originX: 'center',
                 originY: 'center',
                 enableAnimation:false
             };
 
-            info.cellWidth = [];
-            for (var i = 0;i<info.row;i++){
-                info.cellWidth.push({width:150})
-            }
+            var base = _self.calcGridCell(info.row,info.col,info.border);
 
-            info.cellHeight = [];
-            for (var j = 0;j<info.col;j++){
-                info.cellHeight.push({height:150})
-            }
+            info.width = base.width;
+            info.height = base.height;
+            info.cellWidth = base.cellWidth;
+            info.cellHeight = base.cellHeight;
 
             var texList=[{
                 currentSliceIdx:0,
                 name:'表格背景',
                 slices:[{
-                    color:'rgba(100,100,100,0)',
+                    color:'rgba(212,212,212,0)',
                     imgSrc:'',
                     name:'表格背景'
                 }]
@@ -1546,6 +1541,28 @@ ideServices
                 zIndex:0,
                 texList:texList
             }
+        };
+        //计算表格尺寸
+        this.calcGridCell = function(row,col,border){
+            var info = {};
+            var initWidth,initHeight;
+            initWidth = 50;
+            initHeight = 50;
+
+            info.cellWidth = [];
+            for (var i = 0;i<col;i++){
+                info.cellWidth.push({width:initWidth})
+            }
+
+            info.cellHeight = [];
+            for (var j = 0;j<row;j++){
+                info.cellHeight.push({height:initHeight})
+            }
+
+            info.width = col*initWidth+border;
+            info.height = row*initHeight+border;
+
+            return info;
         }
 
     }]);

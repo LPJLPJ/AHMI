@@ -1700,6 +1700,131 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
     };
 
+    renderer.prototype.renderGrid = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            var width = info.width;
+            var height = info.height;
+            var totalSlices;
+            var slices;
+
+            var border = info.border,
+                borderColor = info.borderColor,
+                cellWidth = info.cellWidth,
+                cellHeight = info.cellHeight;
+
+
+            slices = widget.texList.map(function (t) {
+                return t.slices[0]
+            });
+            totalSlices = slices.length;
+            slices.map(function (slice,i) {
+                var curSlice = slice;
+                var imgObj;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+
+                }
+
+                var canvas,ctx;
+                var tWidth,tHeight;
+
+                tWidth = width;
+                tHeight = height;
+
+                canvas = new Canvas(tWidth,tHeight);
+                ctx = canvas.getContext('2d');
+                ctx.clearRect(0,0,tWidth,tHeight);
+                ctx.save();
+
+                //render color
+                renderingX.renderColor(ctx,new Size(tWidth,tHeight),new Pos(),curSlice.color);
+
+                //render image;
+                if (targetImageObj){
+                    renderingX.renderImage(ctx,new Size(tWidth,tHeight),new Pos(),targetImageObj,new Pos(),new Size(tWidth,tHeight));
+                }
+
+                paintGridWidget(ctx,0,0,width,height,border,borderColor,cellWidth,cellHeight);
+
+                //output
+                var outputFilename = makeOutputFilenameFromId(widget.id,i);
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,null,outputFilename,tWidth,tHeight,curSlice));
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlices -= 1;
+                        if (totalSlices===0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+        }else{
+            cb&&cb();
+        }
+    };
+
+    function paintGridWidget(ctx,x,y,width,height,lineWidth,lineColor,row,col){
+        ctx = ctx || this.offctx;
+        ctx.beginPath();
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = lineColor;
+
+        //行
+        var initRowX,initRowY;
+        //加上 lineWidth/2（边框宽度的一半） 是为了防止最外层边框超出被裁剪掉
+        initRowX = x;
+        initRowY = y + lineWidth/2;
+        for(var i=0;i<=col.length;i++){
+            if (i !== 0)  {
+                initRowY += col[i-1].height;
+            }
+            ctx.moveTo(initRowX,initRowY);
+            //如果不设置moveTo，当前画笔没有位置
+            ctx.lineTo(initRowX+width,initRowY);
+        }
+
+        //列
+        var initColX,initColY;
+        initColX = x + lineWidth/2;
+        initColY = y;
+
+        for(var j=0;j<=row.length;j++){
+            if (j !== 0) {
+                initColX += row[j-1].width;
+            }
+            ctx.moveTo(initColX,initColY);
+            //如果不设置moveTo，当前画笔没有位置
+            ctx.lineTo(initColX,initColY + height);
+        }
+
+        ctx.stroke();
+        ctx.closePath();
+    };
+
     renderer.prototype.renderOscilloscope = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         var info = widget.info;
         var width = info.width;
@@ -1927,6 +2052,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 break;
             case 'MyChart':
                 this.renderChart(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MyGrid':
+                this.renderGrid(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
                 cb&&cb();
