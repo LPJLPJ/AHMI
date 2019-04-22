@@ -109,6 +109,8 @@ $(function(){
         //remove recyle and template center
         $('.project-operate__view').remove()
 
+        $('.modal-recycle-reminder').hide()
+
         //load folders
 
         try{
@@ -1495,18 +1497,52 @@ $(function(){
         }
     }
     function deleteFolder(folder,curFolder){
-        $.ajax({
-            type:'POST',
-            url:'/folder/delete',
-            data:{folderId:folder._id},
-            success:function (data, status, xhr){
-                curFolder.remove();
-            },
-            error: function (err, status, xhr) {
-                console.log(err);
-                alert('删除失败')
+        if(local){
+            var projects = readLocalProjects('normal').map(function (raw) {
+                var data =  JSON.parse(raw);
+                delete data.content
+                return data
+            }).filter(function(p){
+                return p.classId === folder._id
+            })
+            var deleteErr = null
+            for(var i = 0;i<projects.length;i++){
+                var projectdirpath = path.join(localProjectDir,String(projects[i]._id));
+                try{
+                    rmdir(projectdirpath);
+                }catch (e){
+                    deleteErr = e
+                }
             }
-        })
+            //delete folder
+            for(i=0;i<folders.length;i++){
+                if(folders[i]._id === folder._id){
+                    folders.splice(i,1)
+                    break
+                }
+            }
+            fs.writeFileSync(localFolderPath,JSON.stringify(folders));
+            if(deleteErr){
+                toastr.error(deleteErr)
+            }else{
+                curFolder.remove();
+            }
+            
+        }else{
+            $.ajax({
+                type:'POST',
+                url:'/folder/delete',
+                data:{folderId:folder._id},
+                success:function (data, status, xhr){
+                    curFolder.remove();
+                },
+                error: function (err, status, xhr) {
+                    console.log(err);
+                    alert('删除失败')
+                }
+            })
+        }
+        
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();
