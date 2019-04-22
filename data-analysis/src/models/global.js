@@ -1,6 +1,6 @@
 import {notification} from 'antd';
 import {queryProject, logout} from '../services/global';
-
+import {isLocal} from '../utils/local'
 export default {
 
   namespace: 'global',
@@ -15,10 +15,17 @@ export default {
     setup({dispatch, history}) {
       const {pathname = ""} = window.location;
       const paths = pathname.split('/');
+      const local = isLocal()
+      let projectId = ''
+      if(local){
+        projectId = window.location.search && window.location.search.split('=')[1] || ''
+      }else{
+        projectId = paths[2] || ''
+      }
       dispatch({
         type: 'save',
         payload: {
-          projectId: paths[2] || '',
+          projectId: projectId,
         }
       });
       dispatch({

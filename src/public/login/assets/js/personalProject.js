@@ -530,7 +530,14 @@ $(function(){
                 case "showProjectVersion":
                     break;
                 case "data-analysis":
-                    window.open('/project/'+project._id+'/data-analysis');
+                    if(local){
+                        // console.log(path.join(__dirname))
+                        // console.log(window.location)
+                        window.open('../../public/data-analysis/index.html?projectId='+project._id)
+                        // window.open('../ide/projectTree.html?projectId='+project._id);
+                    }else{
+                        window.open('/project/'+project._id+'/data-analysis');
+                    }    
                     break;
                 case "sub1":
                     openVertion(0,project._id);
