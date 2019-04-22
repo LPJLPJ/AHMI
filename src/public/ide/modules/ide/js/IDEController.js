@@ -296,17 +296,20 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //     }
 
             // }
-            if (!!data.shared&&!!data.readOnlyState) {
-                //在分享状态下，并且以只读方式打开，不用打开socket进行排队
-                toastr.options.closeButton = true;
-                toastr.options.timeOut = 0;
-                toastr.warning('注意：您无法执行保存工程操作', '只读模式');
-                toastr.options.closeButton = close;
-                toastr.options.timeOut = 1000;
-               
-            }else if (!socketIOService.getSocket()) {
-                initSocketIO(data.userId);
+            if(!local){
+                if (!!data.shared&&!!data.readOnlyState) {
+                    //在分享状态下，并且以只读方式打开，不用打开socket进行排队
+                    toastr.options.closeButton = true;
+                    toastr.options.timeOut = 0;
+                    toastr.warning('注意：您无法执行保存工程操作', '只读模式');
+                    toastr.options.closeButton = close;
+                    toastr.options.timeOut = 1000;
+                   
+                }else if (!socketIOService.getSocket()) {
+                    initSocketIO(data.userId);
+                }
             }
+            
 
             //change html title to name
             var name = data && data.name || '';

@@ -1,4 +1,19 @@
 $(function(){
+    var local = false
+    var projectData
+    var fs,path,__dirname
+    try {
+        var os = require('os');
+        if (os){
+            local = true;
+            
+        }
+        fs = require('fs')
+        path = require('path')
+        __dirname = global.__dirname;
+    }catch (e){
+
+    }
     let margin = {
         top:20,
         right:90,
@@ -61,19 +76,58 @@ $(function(){
                     }
                 ]
             }
-        },
+        }
+
+    var projectId
+    if(local){
+        projectId = window.location.search&&window.location.search.split('=')[1]
+    }else{
         projectId = window.location.pathname&&window.location.pathname.split('/')[2];
+    }
 
     //声明一个tree布局并设置大小
     let treemap = d3.tree().size([height,width]);
+    //load project content
+    if(local){
+        var projectUrl = path.join(__dirname,'localproject',projectId,'project.json')
+        var projectRaw = readSingleFile(projectUrl,true)
+        projectData = JSON.parse(projectRaw)
+        project = JSON.parse(projectData.content)
+        project.name = projectData.name
+        loadDataToTree(project)
+    }else{
+        d3.json('/project/'+projectId+'/content',function(error,data){
+            if(!data.content){
+                $('#loading').hide();
+                return;
+            }
+            project = JSON.parse(data.content);
+            project.name = data.name;
+            loadDataToTree(project)
+    
+        });
+    }
 
-    d3.json('/project/'+projectId+'/content',function(error,data){
-        if(!data.content){
-            $('#loading').hide();
-            return;
+    function readSingleFile(filePath,check) {
+        if (check){
+            try{
+                var stats = fs.statSync(filePath);
+                if (stats&&stats.isFile()){
+                    return fs.readFileSync(filePath,'utf-8');
+                }else{
+                    return null;
+                }
+            }catch (e){
+                return null;
+            }
+
+
+        }else{
+            return fs.readFileSync(filePath,'utf-8');
         }
-        project = JSON.parse(data.content);
-        project.name = data.name;
+    }
+
+    function loadDataToTree(project){
         root = d3.hierarchy(project,function(d){
             return d.pages||d.layers||d.subLayers||d.widgets;
         });
@@ -95,8 +149,9 @@ $(function(){
             // console.log('root',root);
             update(root);
         },500)
+    }
 
-    });
+    
 
     //更新视图
     function update(source){
@@ -386,28 +441,52 @@ $(function(){
         if(confirm('确定保存?')){
             // console.log(project);
             var btn = $(this).text('保存中..').attr('disabled',true);
-            $.ajax({
-                type:'put',
-                url:'/project/'+projectId+'/save',
-                contentType:'application/json;charset=UTF-8',
-                processData:false,
-                data:JSON.stringify({
-                    project: project
-                }),
-                success:function(data){
-                    btn.text('保存修改').attr('disabled',false);
-                    if(data==='ok'){
-                        alert('保存成功')
-                    }else{
-                        console.log(data);
+            if(local){
+                
+                projectData.lastModifiedTime = new Date().toLocaleString();
+        
+                projectData.content = JSON.stringify(project);
+                if (projectData.backups && projectData.backups instanceof Array) {
+
+                } else {
+                    projectData.backups = []
+                }
+                if (projectData.backups.length >= 5) {
+                    projectData.backups.shift()
+                }
+                projectData.backups.push({
+                    time: new Date(),
+                    content: projectData.content
+                });
+                var filePath = path.join(__dirname,'localproject',projectId,'project.json')
+                fs.writeFileSync(filePath,JSON.stringify(projectData));
+                btn.text('保存修改').attr('disabled',false);
+                alert('保存成功')
+            }else{
+                $.ajax({
+                    type:'put',
+                    url:'/project/'+projectId+'/save',
+                    contentType:'application/json;charset=UTF-8',
+                    processData:false,
+                    data:JSON.stringify({
+                        project: project
+                    }),
+                    success:function(data){
+                        btn.text('保存修改').attr('disabled',false);
+                        if(data==='ok'){
+                            alert('保存成功')
+                        }else{
+                            console.log(data);
+                            alert('保存出错');
+                        }
+                    },
+                    error:function(err){
+                        btn.text('保存修改').attr('disabled',false);
                         alert('保存出错');
                     }
-                },
-                error:function(err){
-                    btn.text('保存修改').attr('disabled',false);
-                    alert('保存出错');
-                }
-            })
+                })
+            }
+            
         }
     })
 });

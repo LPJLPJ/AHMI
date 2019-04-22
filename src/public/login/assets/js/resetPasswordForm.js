@@ -105,7 +105,7 @@ $(function () {
                     var errMsg
                     try{
                         errMsg = JSON.parse(err.responseText).errMsg
-                    }catch{
+                    }catch(e){
                         errMsg = err.responseText
                     }
                     switch (err.responseText){

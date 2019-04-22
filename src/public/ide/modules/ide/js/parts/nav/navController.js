@@ -100,6 +100,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     play: play,
                     showActionVisualization:showActionVisualization,
                     openPanel: openPanel,
+                    GenACF:GenACF,
                     openShare: openShare,
                     openValidate:openValidate,
                     openCANPanel: openCANPanel,
@@ -1317,7 +1318,20 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             });
         }
 
-
+        function GenACF(){
+            var cmd=require('node-cmd');
+            console.log('cmd',cmd)
+            if(window.zipfilename == undefined){
+                alert("the zipfile is not exist,please click 生成 first！");
+            }
+            else {
+                cmd.get(
+                'AHMISimGenDemo.exe -f ".\\localproject\\15549468934871660\\'+ window.zipfilename +  '" -m 2', function(err,data){
+                    console.log('data',err,data);
+                })
+            console.log('cmd',cmd)
+            }
+        }
         function openPanel() {
             /**
              * 利用$uiModal服务，制作模态窗口

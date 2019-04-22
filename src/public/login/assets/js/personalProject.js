@@ -106,12 +106,15 @@ $(function(){
             $(elem).remove();
         });
 
+        //remove recyle and template center
+        $('.project-operate__view').remove()
+
         //load folders
 
         try{
             var folderJson = fs.readFileSync(localFolderPath)
             folders = JSON.parse(folderJson)
-        }catch{
+        }catch(e){
             folders = []
         }
 
@@ -122,8 +125,18 @@ $(function(){
 
         //load projects
         var projects = readLocalProjects('normal').map(function (raw) {
-            return JSON.parse(raw);
-        });
+            var data =  JSON.parse(raw);
+            delete data.content
+            return data
+        }).filter(function(p){
+            if(p.classId == 'space'){
+                return true
+            }else if(!p.classId){
+                return true
+            }else{
+                return false
+            }
+        })
         projects.sort(function(p1,p2){
             var s1 = parseInt(String(p1._id).slice(0,String(p1._id).length-4));
             var s2 = parseInt(String(p2._id).slice(0,String(p2._id).length-4));
@@ -146,7 +159,7 @@ $(function(){
             newProject.thumbnail = getResourceRelativePath(newProject.thumbnail);
             delete newProject.content;
             delete newProject.backups;
-            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail});
+            var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:newProject.thumbnail,local:local});
             $('#project-list').prepend(html);
         }
 
@@ -224,7 +237,7 @@ $(function(){
                                     if(err){
                                         updateAlert.html('更新版本出错')
                                     }else{
-                                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail,local:local});
                                         curPanel.replaceWith(html)
                                         updateModal.modal('hide')
                                         targetUrl = '/project/'+curProject._id+'/editor'
@@ -244,7 +257,7 @@ $(function(){
                             if(err){
                                 updateAlert.html('更新版本出错')
                             }else{
-                                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail});
+                                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:toUpdateProject,thumbnail:thumbnail,local:local});
                                 curPanel.replaceWith(html)
                                 updateModal.modal('hide')
                                 targetUrl = '/project/'+curProject._id+'/editor'
@@ -508,7 +521,11 @@ $(function(){
                     closeModal.modal('show');
                     break;
                 case "visualization":
-                    window.open('/project/'+project._id+'/visualization');
+                    if(local){
+                        window.open('../ide/projectTree.html?projectId='+project._id);
+                    }else{
+                        window.open('/project/'+project._id+'/visualization');
+                    }
                     break;
                 case "showProjectVersion":
                     break;
@@ -1004,7 +1021,7 @@ $(function(){
                 }
                 fs.writeFileSync(projectPath,JSON.stringify(oldProject));
                 updateSuccess = true;
-                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+                var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail,local:local});
                 curPanel.replaceWith(html)
             }else{
                 $.ajax({
@@ -1014,7 +1031,7 @@ $(function(){
                     success: function (data, status, xhr) {
                         //update success
                         updateSuccess = true;
-                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+                        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail,local:local});
                         curPanel.replaceWith(html);
 
                     },
@@ -1032,12 +1049,12 @@ $(function(){
     window.generateNewProjectView = generateNewProjectView;
 
     function generateNewProjectView(project,thumbnail){
-        return new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail});
+        return new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:project,thumbnail:thumbnail,local:local});
     }
 
 
     function addNewProject(newProject){
-        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null});
+        var html = new EJS({url:'../../public/login/assets/views/projectpanel.ejs'}).render({project:newProject,thumbnail:null,local:local});
         if (location.hash === '') {
             $('#project-list').prepend(html);
             if($('#project-list').find('.project-list__item').length){
@@ -1295,13 +1312,22 @@ $(function(){
                 });
                 projects = projects.filter(function(p){
                     return p.classId == folder._id
+                }).map(function(p){
+                    delete p.content
+                    var thumbnail = p.thumbnail
+                    delete p.thumbnail
+                    return {
+                        projectInfo:p,
+                        thumbnail:thumbnail
+                    }
+
                 })
                 folderWrap.show();
                 projectWrap.hide();
                 
-                var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:projects,folder:folder});
+                var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:projects,folder:folder,local:local});
                 folderWrap.find('.folder-space-list').replaceWith(html);
-                $('#add-project').attr('folder-id',folder.id);
+                $('#add-project').attr('folder-id',folder._id);
             }catch (e){
                 console.log(e)
                 toastr.error('获取工程失败')
@@ -1316,7 +1342,7 @@ $(function(){
                         folderWrap.show();
                         projectWrap.hide();
                         data = JSON.parse(data);
-                        var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder});
+                        var html = new EJS({url:'../../public/login/assets/views/folderSpace.ejs'}).render({projects:data.projects,folder:data.folder,local:local});
                         folderWrap.find('.folder-space-list').replaceWith(html);
                         $('#add-project').attr('folder-id',data.folder.id);
                     }
@@ -1477,12 +1503,17 @@ $(function(){
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();
+        var items={};
         if(local){
             processClassList(folders.map(function(f){
                 return {
-                    classInfo:f
+                    classInfo:{
+                        id:f._id,
+                        name:f.name
+                    }
                 }
             }))
+            return items
         }else{
             $.ajax({
                 type:'GET',
@@ -1490,13 +1521,15 @@ $(function(){
                 success:function(result){
                     var classList=JSON.parse(result);
                     processClassList(classList)
+                    dfd.resolve(items);
                 }
             });
+            return dfd.promise();
         }
 
         function processClassList(classList){
             folderList=classList;
-            var items={};
+            
             if(project.classId=='space'){
                 items.space={name:'个人中心',disabled:true};
             }else{
@@ -1512,22 +1545,36 @@ $(function(){
                     }
                 }
             }
-            dfd.resolve(items);
+            
         }
         
-        return dfd.promise();
+        
     }
     function moveToClass(_project,_class){
         var project=_project;
         project.classId=_class;
-        $.ajax({
-            type:"post",
-            url:'/project/moveToClass',
-            data:project,
-            success:function(data){
+        if(local){
+            if(project._id){
+                var projectPath = path.join(localProjectDir,String(project._id),'project.json');
+                var oldProject = JSON.parse(readSingleFile(projectPath,true));
+                for(var key in project){
+                    oldProject[key] = project[key];
+                }
+                fs.writeFileSync(projectPath,JSON.stringify(oldProject));
                 curPanel.remove();
             }
-        })
+            
+        }else{
+            $.ajax({
+                type:"post",
+                url:'/project/moveToClass',
+                data:project,
+                success:function(data){
+                    curPanel.remove();
+                }
+            })
+        }
+        
     }
 
     /*分享工程*/
