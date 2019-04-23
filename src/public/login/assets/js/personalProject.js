@@ -111,6 +111,8 @@ $(function(){
 
         $('.modal-recycle-reminder').hide()
 
+        $('.template__option-collected').remove()
+
         //load folders
 
         try{
