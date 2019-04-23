@@ -1713,41 +1713,90 @@ body {
 }
 
 /*资源上传*/
-.upload-button {
-    padding: 0 10px;
-    height: 28px;
-    line-height: 20px;
-    position: relative;
-    cursor: pointer;
-    overflow: hidden;
-    display: inline-block;
-    *display: inline;
-    *zoom: 1
+.resource-operate-wrap{
+    height: 30px;
+    position:relative;
 }
 
-.upload-button input {
+.RO__upload{
     position: absolute;
-    font-size: 100px;
-    right: 0;
-    top: 0;
-    opacity: 0;
-    filter: alpha(opacity=0);
-    cursor: pointer
+    left: 0;
+    height: 25px;
+    padding: 0 6px;
+    line-height: 25px;
+    background-color: dodgerblue;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer!important;
 }
 
-.upload-button:hover {
-    color: #444;
-    background: #eee;
-    text-decoration: none
+.RO__upload-form{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    cursor: pointer!important;
 }
+
+.RO__upload-input{
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.RO__batch-select{
+    position: absolute;
+    right: 0;
+    top: 2px;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    line-height: 25px;
+}
+
+.RO__batch-select-icon{
+    font-size: 22px;
+    font-weight: bold;
+    color: #7d7d7d;
+    cursor: pointer;
+}
+
+.RO__batch-select-icon:hover{
+    color: dodgerblue;
+}
+
+.RO__search{
+    position: absolute;
+    top: 0;
+    height: 25px;
+    line-height: 25px;
+    right: 30px;
+    left: 70px;
+    border: 1px solid #7d7d7d;
+    border-radius: 10px;
+    text-align: right;
+    padding: 0 5px;
+}
+
+.RO__search-input{
+    width: calc(100% - 30px);
+    height: 20px;
+    background: 0 0;
+    border: 0;
+    outline: 0;
+    line-height: 20px!important;
+    position: relative;
+    font-size: 12px;
+    top: -3px;
+}
+
+
 
 .upload-progressbar-text {
     color: #7d7d7d;
     white-space: nowrap;
-}
-
-.upload-progressbar {
-    margin: 5px 0;
 }
 
 .mask-upload {

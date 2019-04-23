@@ -7,11 +7,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                                           Type,
                                           CanvasService,$uibModal,Upload) {
     $scope.$on('GlobalProjectReceived', function () {
-
-        initUserInterface();
-
         initProject();
-
     });
 
     $scope.$on('ResourceChanged', function () {
@@ -21,10 +17,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.$emit('ChangeCurrentPage');
     });
 
-    function initUserInterface(){
-
-    }
-
+    //初始化资源
     function initProject(){
         $scope.component={
             top:{
@@ -48,7 +41,13 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 unSelAll:unSelAll,
                 imageType:imageType,
                 mask:[]
-            }
+            },
+            paging:{
+                pagingAmount:100,
+                currentIndex:0,
+                indexCount:1
+            },
+            resourcesList:[]
         };
 
         $scope.component.top.resources = ResourceService.getAllResource();
@@ -58,12 +57,12 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
 
-
+        //console.log($scope.component.top.files);
         $scope.stopProp = function(e){
             e.stopPropagation();
         };
-        
-        
+
+
         /**
          * 删除资源按钮的弹窗
          */
@@ -103,7 +102,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             e.preventDefault();
         };
 
-        $scope.resourcesTree = {
+        //排序
+        /*$scope.resourcesTree = {
             update:function(e){
 
             },
@@ -111,11 +111,29 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 ResourceService.syncFiles($scope.component.top.files);
                 $scope.$emit('ResourceUpdate');
             }
-        };
+        };*/
 
         updateFileIndex();
+
+        initResourcesList();
     }
-    
+
+    //初始化资源列表
+    function initResourcesList() {
+        var files = $scope.component.top.files,
+            startIndex = $scope.component.paging.currentIndex*$scope.component.paging.pagingAmount,
+            endIndex = startIndex + $scope.component.paging.pagingAmount;
+
+        $scope.component.resourcesList = files.filter(function (file, index) {
+            return startIndex <= index && index < endIndex;
+        });
+
+        //console.log($scope.component.resourcesList);
+    }
+
+
+
+    //刷新资源列表
     function updateFileIndex() {
         $scope.component.top.indexCount = Math.ceil($scope.component.top.files.length/100);
         $scope.component.top.fileIndex = ($scope.component.top.currentIndex-1)*100;
@@ -161,7 +179,6 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             if(fileIsNotUsed&&TextIsNotUsed){
                 resourceId = files[fileIndex].id;
                 ResourceService.deleteFileById(resourceId, function () {
-                    //$scope.component.top.files = ResourceService.getAllImages();
                     $scope.$emit('ResourceUpdate');
                 }.bind(this));
             }else{
@@ -270,8 +287,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
     //验证新值
     $scope.enterName=function(th){
-
-        console.log("enterName");
+        //console.log("enterName");
         //判断是否和初始一样
         if (th.file.name===restoreValue){
             return;
