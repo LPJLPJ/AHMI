@@ -14,6 +14,13 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
         updateFileIndex();
+
+        if($scope.component.search.status){
+            enterResourceSearch(1);
+        }else {
+            initResourcesList($scope.component.paging.currentIndex);
+        }
+
         $scope.$emit('ChangeCurrentPage');
     });
 
@@ -47,7 +54,13 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 currentIndex:0,
                 indexCount:1
             },
-            resourcesList:[]
+            resourcesList:[],
+            search:{
+                searchText:'',
+                enterResourceSearch:enterResourceSearch,
+                status:false,
+                cancelSearch:cancelSearch
+            }
         };
 
         $scope.component.top.resources = ResourceService.getAllResource();
@@ -115,15 +128,16 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
         updateFileIndex();
 
-        initResourcesList();
+        initResourcesList($scope.component.paging.currentIndex);
     }
 
     //初始化资源列表
-    function initResourcesList() {
+    function initResourcesList(currentIndex) {
         var files = $scope.component.top.files,
-            startIndex = $scope.component.paging.currentIndex*$scope.component.paging.pagingAmount,
+            startIndex = currentIndex*$scope.component.paging.pagingAmount,
             endIndex = startIndex + $scope.component.paging.pagingAmount;
 
+        $scope.component.paging.indexCount = Math.ceil(files.length/100);
         $scope.component.resourcesList = files.filter(function (file, index) {
             return startIndex <= index && index < endIndex;
         });
@@ -131,7 +145,34 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         //console.log($scope.component.resourcesList);
     }
 
+    // 搜索
+    function enterResourceSearch(e) {
+        if(e.keyCode == 13 || e == 1){
+            var text = $scope.component.search.searchText,
+                files = $scope.component.top.files;
 
+            if (text){
+                $scope.component.search.status = true;
+                $scope.component.resourcesList = files.filter(function (file, index) {
+                    return file.name.search(text) != -1;
+                });
+                //console.log($scope.component.resourcesList);
+            } else {
+                $scope.component.search.status = false;
+                initResourcesList($scope.component.paging.currentIndex);
+            }
+        }
+    }
+
+    // 取消搜索
+    function cancelSearch(){
+        $scope.component.search.searchText = '';
+        $scope.component.search.status = false;
+        initResourcesList($scope.component.paging.currentIndex);
+
+        $scope.component.top.unSelAll();
+        $scope.component.top.selectIndexArr = [];
+    }
 
     //刷新资源列表
     function updateFileIndex() {
@@ -162,12 +203,13 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     function deleteFile(indexArr){
         var requiredTextNames = ProjectService.getRequiredTextNames();
         var requiredResourceNames=ProjectService.getRequiredResourceNames(),
-            files = _.cloneDeep($scope.component.top.files),
+            files = _.cloneDeep($scope.component.resourcesList),
             resourceId = [],
             j,
             fileIsNotUsed = true,
             TextIsNotUsed = true;
 
+        //console.log(indexArr);
         for(j=0;j<indexArr.length;j++){
             var fileIndex = indexArr[j];
             fileIsNotUsed = requiredResourceNames.every(function(itemSrc){
@@ -192,7 +234,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
      * @author tang
      */
     function downloadFile(index){
-        var file = $scope.component.top.files[index];
+        var file = $scope.component.resourcesList[index];
         var projectId = $scope.project.projectId;
         ResourceService.downloadFile(file,projectId);
     }
@@ -237,22 +279,25 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
 
     //全选
     function selectAll(selected){
-        for(var i=0;i<$scope.component.top.files.length;i++){
+        for(var i=0;i<$scope.component.resourcesList.length;i++){
             $scope.component.top.selectIndexArr[i]=selected;
         }
+
+        //console.log($scope.component.top.selectIndexArr)
     }
     //反选
     function oppSelect(){
         //点击反选后全选不选中
         $scope.component.top.unSelAll();
-        for(var i=0;i<$scope.component.top.files.length;i++){
+        for(var i=0;i<$scope.component.resourcesList.length;i++){
             if($scope.component.top.selectIndexArr[i]==null){
                 $scope.component.top.selectIndexArr[i]=true;
             }else{
                 $scope.component.top.selectIndexArr[i]=(!$scope.component.top.selectIndexArr[i]);
             }
-
         }
+
+        //console.log($scope.component.top.selectIndexArr)
     }
     //全选框重置
     function unSelAll(){
