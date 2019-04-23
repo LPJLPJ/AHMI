@@ -266,15 +266,16 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
 
     function loadImageSync(imgUrl) {
-        if (local){
-            var ext = path.extname(imgUrl);
-            var type = checkFileType(ext);
-            var prefix = 'data:'+type+';base64,';
+        // if (local){
+        //     var ext = path.extname(imgUrl);
+        //     var type = checkFileType(ext);
+        //     var prefix = 'data:'+type+';base64,';
 
-            return prefix+fs.readFileSync(imgUrl).toString('base64');
-        }else{
-            return imgUrl
-        }
+        //     return prefix+fs.readFileSync(imgUrl).toString('base64');
+        // }else{
+        //     return imgUrl
+        // }
+        return imgUrl
 
     }
 
@@ -317,15 +318,16 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     };
 
     renderer.prototype.getTargetImage = function (url) {
-        if (local){
-            if (this.images[url]!=='undefined'){
-                return this.images[url];
-            }else{
-                return null;
-            }
-        }else{
-            return this.images[getLastName(url)]
-        }
+        // if (local){
+        //     if (this.images[url]!=='undefined'){
+        //         return this.images[url];
+        //     }else{
+        //         return null;
+        //     }
+        // }else{
+            
+        // }
+        return this.images[getLastName(url)]
     };
 
     renderer.prototype.addImage = function (imageUrl, image) {

@@ -555,7 +555,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                 var progressHandler = function (e) {
 
                     translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
-                    console.log(translatedFile.progress);
+                    // console.log(translatedFile.progress);
                 };
 
 

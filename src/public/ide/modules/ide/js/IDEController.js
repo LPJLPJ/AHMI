@@ -170,12 +170,11 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //load projectId project
             var projectBaseUrl = path.join(__dirname, 'localproject', projectId);
             ResourceService.setProjectUrl(projectBaseUrl);
-            var resourceUrl = path.join(projectBaseUrl, 'resources');
+            var resourceUrl = path.join(projectBaseUrl, 'resources')+path.sep;
             ResourceService.setResourceUrl(resourceUrl);
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
 
             ResourceService.setResourceNWUrl(path.relative(realDirPath, resourceUrl));
-            console.log(path.relative(realDirPath, resourceUrl));
             var data = readSingleFile(path.join(projectBaseUrl, 'project.json'));
 
 
@@ -190,7 +189,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                         }
                     }
                     data.backups = [];
-                    loadFromContent(data, projectId);
+                    LoadWithTemplate(data, projectId);
                 } else {
                     loadFromBlank({}, projectId);
                 }
@@ -854,7 +853,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             var template = _.cloneDeep(date);
 
             //translate src
-            var resourceUrl = ResourceService.getResourceUrl() + 'template/';
+            var resourceUrl
+            if(local){
+                resourceUrl = ResourceService.getResourceNWUrl() +  '/template/';
+            }else{
+                resourceUrl = ResourceService.getResourceUrl() + 'template/';
+            }
             var tempSrc = ''
             for (var key in template) {
                 if (template[key] instanceof Array) {

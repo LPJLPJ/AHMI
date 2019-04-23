@@ -932,14 +932,19 @@ $(function(){
 
 
     //copy directory
-    function copyDirectorySync(src,dst){
+    function copyDirectorySync(src,dst,createDir){
         var stats = fs.statSync(src)
         mkdir.sync(dst)
         if(stats.isDirectory()){
             var files = fs.readdirSync(src)
-            var nextDst = path.join(dst,path.win32.basename(src))
+            var nextDst = ''
+            if(createDir){
+                nextDst = path.join(dst,path.win32.basename(src))
+            }else{
+                nextDst = dst
+            }
             files.forEach(function(f){
-                copyDirectorySync(path.join(src,f),nextDst)
+                copyDirectorySync(path.join(src,f),nextDst,true)
             })
             
         }else{
