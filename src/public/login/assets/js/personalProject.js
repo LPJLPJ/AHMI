@@ -763,6 +763,7 @@ $(function(){
         //consider collected templates
         if(project.template&&project.template!='defaultTemplate'&&project.template!='collectedTemplate'){
             var curTemplate = null
+            window.userTemplates = window.userTemplates || []
             for(var i=0;i<window.userTemplates.length;i++){
                 if(window.userTemplates[i]._id == project.template){
                     curTemplate = window.userTemplates[i]
@@ -771,10 +772,12 @@ $(function(){
             }
 
             //custom template
+            var collectedTemplateOption = ''
             var basicOptions = '<option value="">---</option>' +
-            '<option value="defaultTemplate">默认模板</option>' +
-            '<option value="collectedTemplate">收藏模板</option>'
-            template.html(basicOptions+'<option value="'+project.template+'">'+(curTemplate.name+" -- "+curTemplate.resolution)+'</option>')
+            '<option value="defaultTemplate">默认模板</option>';
+           
+            collectedTemplateOption = local?'':'<option value="collectedTemplate">收藏模板</option>' + '<option value="'+project.template+'">'+(curTemplate.name+" -- "+curTemplate.resolution)+'</option>'
+            template.html(basicOptions+collectedTemplateOption)
         }
         template.val(project.template);
         template.attr('disabled',true);
@@ -799,9 +802,10 @@ $(function(){
         $('#basicinfo-title').val('');
         $('#basicinfo-author').val('');
         //reset template options
+        var collectedTemplateOption = local ? '':'<option value="collectedTemplate">收藏模板</option>';
         var basicOptions = '<option value="">---</option>' +
         '<option value="defaultTemplate">默认模板</option>' +
-        '<option value="collectedTemplate">收藏模板</option>';
+        collectedTemplateOption;
         $('#basicinfo-template').html(basicOptions)
         $('#basicinfo-template').attr('disabled',false).val('');
         $('.basicinfo-template-options').hide();
@@ -888,11 +892,19 @@ $(function(){
 
                 try {
                     mkdir.sync(localresourcepath);
+                    if(project.template == 'defaultTemplate'){
+                        var templateName = 'defaultTemplate'
+                        var srcDir = path.join(localProjectDir, '../public/templates/', templateName, 'defaultResources');
+                        var dstDir = path.join(localProjectDir,String(project._id),'resources', 'template');
+                        copyDirectorySync(srcDir,dstDir)
+                    }
+                    
                     //save init project.json
                     var filePath = path.join(localprojectpath,'project.json')
                     fs.writeFileSync(filePath,JSON.stringify(project));
                     addNewProject(project);
                 }catch (e){
+                    console.log(e)
                     toastr.error(e)
                 }
 
@@ -916,6 +928,24 @@ $(function(){
             }
         }
 
+    }
+
+
+    //copy directory
+    function copyDirectorySync(src,dst){
+        var stats = fs.statSync(src)
+        mkdir.sync(dst)
+        if(stats.isDirectory()){
+            var files = fs.readdirSync(src)
+            var nextDst = path.join(dst,path.win32.basename(src))
+            files.forEach(function(f){
+                copyDirectorySync(path.join(src,f),nextDst)
+            })
+            
+        }else{
+            //file
+            fs.copyFileSync(src,path.join(dst,path.win32.basename(src)))
+        }
     }
 
     function deleteProject(project,curPanel){
