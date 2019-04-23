@@ -947,6 +947,32 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 return urlArr.join('/');
             };
 
+            var renderedRes = []
+            function addToRenderedRes(url){
+                if(!url){
+                    return
+                }
+                for(var i=0;i<renderedRes.length;i++){
+                    if(renderedRes[i]==url){
+                        return
+                    }
+                }
+                renderedRes.push(url)
+            }
+            function renderResUrlToRes(){
+                return renderedRes.map(function(url){
+                    var nameParts = url.split('/')
+                    var name = nameParts[nameParts.length - 1]
+                    return {
+                        id:name,
+                        name:name,
+                        src:url,
+                        type:'image/png',
+                        size:0
+                    }
+                })
+            }
+
             //fix basic data structure
             newData.thumbnail = '';
             newData.template = '';
@@ -979,9 +1005,10 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 pageNode.setWidth(tempContentObj.initSize.width);
                 pageNode.setHeight(tempContentObj.initSize.height);
                 pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
-                page.originBackgroundImage = replaceProjectId(page.originBackgroundImage);
-                page.backgroundImage = page.originBackgroundImage;
-                // pageNode.clear();
+                // page.originBackgroundImage = replaceProjectId(page.originBackgroundImage);
+                // page.backgroundImage = page.originBackgroundImage;
+                page.backgroundImage = replaceProjectId(page.backgroundImage)
+                addToRenderedRes(page.backgroundImage)
                 if (page.canvasList !== undefined) {
                     page.selected = (index === 0) ? true : false
                     page.layers = page.canvasList;
@@ -1065,8 +1092,10 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                         if (tex.slices && (tex.slices instanceof Array)) {
                                             tex.slices.forEach(function (slice, index) {
                                                 if (slice.hasOwnProperty('originSrc')) {
-                                                    slice.originSrc = replaceProjectId(slice.originSrc);
-                                                    slice.imgSrc = slice.originSrc;
+                                                    // slice.originSrc = replaceProjectId(slice.originSrc);
+                                                    // slice.imgSrc = slice.originSrc;
+                                                    slice.imgSrc = replaceProjectId(slice.imgSrc)
+                                                    addToRenderedRes(slice.imgSrc)
                                                     delete slice.originSrc;
                                                 }
                                             })
@@ -1102,6 +1131,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                 if (i < pageLength) {
                                     ergodicPages();
                                 } else {
+                                    tempContentObj.resourceList = renderResUrlToRes()
                                     newData.content = JSON.stringify(tempContentObj);
                                     // console.log('after preprocess',newData);
                                     cb && cb(newData)
@@ -1120,6 +1150,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                 if (i < pageLength) {
                                     ergodicPages();
                                 } else {
+                                    tempContentObj.resourceList = renderResUrlToRes()
                                     newData.content = JSON.stringify(tempContentObj);
                                     // console.log('after preprocess',newData);
                                     cb && cb(newData)
@@ -1171,67 +1202,71 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 node.add(fabWidget);
             };
 
-            switch (dataStructure.type) {
-                case 'MySlide':
-                    fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyProgress':
-                    fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyDashboard':
-                    fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyButton':
-                    fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyButtonGroup':
-                    fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyNumber':
-                    fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyTextArea':
-                    fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyKnob':
-                    fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyOscilloscope':
-                    fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MySwitch':
-                    fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyRotateImg':
-                    fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyDateTime':
-                    fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyScriptTrigger':
-                    fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyVideo':
-                    fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyAnimation':
-                    fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyLayer':
-                    node.add(new fabric.MyLayer(dataStructure, initiator));
-                    break;
-                case 'MyNum':
-                    node.add(new fabric.MyNum(dataStructure, initiator));
-                    break;
-                case 'MyTexNum':
-                    node.add(new fabric.MyTexNum(dataStructure, initiator));
-                    break;
-                case 'MyTexTime':
-                    node.add(new fabric.MyTexTime(dataStructure, initiator));
-                    break;
-                default :
-                    console.error('not match widget in preprocess!');
-                    break;
+            // switch (dataStructure.type) {
+            //     case 'MySlide':
+            //         fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyProgress':
+            //         fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyDashboard':
+            //         fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyButton':
+            //         fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyButtonGroup':
+            //         fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyNumber':
+            //         fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyTextArea':
+            //         fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyKnob':
+            //         fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyOscilloscope':
+            //         fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MySwitch':
+            //         fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyRotateImg':
+            //         fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyDateTime':
+            //         fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyScriptTrigger':
+            //         fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyVideo':
+            //         fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyAnimation':
+            //         fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyLayer':
+            //         node.add(new fabric.MyLayer(dataStructure, initiator));
+            //         break;
+            //     case 'MyNum':
+            //         node.add(new fabric.MyNum(dataStructure, initiator));
+            //         break;
+            //     case 'MyTexNum':
+            //         node.add(new fabric.MyTexNum(dataStructure, initiator));
+            //         break;
+            //     case 'MyTexTime':
+            //         node.add(new fabric.MyTexTime(dataStructure, initiator));
+            //         break;
+            //     default :
+            //         console.error('not match widget in preprocess!');
+            //         break;
+            // }
+            if(dataStructure.type){
+                // fabric[dataStructure.type].fromLevel(dataStructure, addFabWidget, initiator);
+                node.add(new fabric[dataStructure.type](dataStructure, initiator));
             }
         };
         /**
