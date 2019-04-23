@@ -81,6 +81,7 @@ $(function () {
                 // console.info(data)
                 data = JSON.parse(data)
                 userTemplates = data
+                window.userTemplates = userTemplates
                 renderTemplateList()
                 renderOptionTemplateList()
             },

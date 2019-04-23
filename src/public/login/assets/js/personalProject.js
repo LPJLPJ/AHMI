@@ -760,6 +760,22 @@ $(function(){
         }
         ideVersion.val(project.ideVersion);
         ideVersion.trigger('change');
+        //consider collected templates
+        if(project.template&&project.template!='defaultTemplate'&&project.template!='collectedTemplate'){
+            var curTemplate = null
+            for(var i=0;i<window.userTemplates.length;i++){
+                if(window.userTemplates[i]._id == project.template){
+                    curTemplate = window.userTemplates[i]
+                    break
+                }
+            }
+
+            //custom template
+            var basicOptions = '<option value="">---</option>' +
+            '<option value="defaultTemplate">默认模板</option>' +
+            '<option value="collectedTemplate">收藏模板</option>'
+            template.html(basicOptions+'<option value="'+project.template+'">'+(curTemplate.name+" -- "+curTemplate.resolution)+'</option>')
+        }
         template.val(project.template);
         template.attr('disabled',true);
         supportTouch.val(project.supportTouch);
@@ -782,6 +798,11 @@ $(function(){
     $('#add-project').on('click', function (e) {
         $('#basicinfo-title').val('');
         $('#basicinfo-author').val('');
+        //reset template options
+        var basicOptions = '<option value="">---</option>' +
+        '<option value="defaultTemplate">默认模板</option>' +
+        '<option value="collectedTemplate">收藏模板</option>';
+        $('#basicinfo-template').html(basicOptions)
         $('#basicinfo-template').attr('disabled',false).val('');
         $('.basicinfo-template-options').hide();
         $('#basicinfo-supportTouch').attr('disabled',false);
