@@ -3,16 +3,21 @@
  */
 (function(){
     var local = false;
+    var fs,path,__dirname
     try {
         var os = require('os');
         if (os){
             local = true;
+            fs = require('fs')
+            path = require('path')
+            __dirname = global.__dirname
             //console.log('os',os);
         }
     }catch (e){
 
     }
     var formData = new FormData();
+    var localDirDataUrls = []
     var project;
     if(window.File&&window.FileList&&window.FileReader){
         console.log('support File API congratulations!!');
@@ -32,7 +37,12 @@
             var titleText = $('#uploadModal .modal-title').text();
             if(titleText==='上传本地工程'){
                 //upload
-                sendFiles(hideWrapper);
+                if(local){
+                    sendFilesLocal(hideWrapper)
+                }else{
+                    sendFiles(hideWrapper);
+                }
+                
             }else if(titleText==='上传压缩包'){
                 sendProjectZip();
             }
@@ -64,7 +74,38 @@
         var items,
             item;
         if(local){
-            //本地版不支持拖拽上传工程
+            console.log(e)
+            //本地版不支持拖拽上传工程zip
+            //遮挡现有工程，显示：正在预处理工程...
+            showWrapper();
+            //初始化当前更新状态信息
+            changeUpdateState('正在预处理工程...',100);
+            if(isDropFileIsFolder(e)){
+                //上传文件夹
+                items = e.dataTransfer.items;
+                for(var i=0;i<items.length;i++){
+                    //webkitGetAsEntry is the key point
+                    item = items[i].webkitGetAsEntry();
+                    if(item){
+                        var fcb = function(){//失败
+                            hideWrapper();//隐藏遮挡层（显示：正在预处理工程...）
+                            toastr.error('不合法的工程');
+                            legal = false;
+                        };
+                        var scb = function(item){//成功
+                            traverseFileTreeLocal(item);//遍历文件夹，进行预处理
+                            setTimeout(function(){//模态框
+                                //hideWrapper();
+                                $('#uploadModal .modal-title').text('上传本地工程');
+                                $('#uploadModal .modal-body p').text('合法的本地工程，确定上传？');
+                                $('#uploadModal').modal({backdrop:'static',keyboard:false});
+                            },500);
+                        };
+                        // console.log('item',item);
+                        readJSONFile(item,scb,fcb);
+                    }
+                }
+            }
         }else{
             //遮挡现有工程，显示：正在预处理工程...
             showWrapper();
@@ -125,7 +166,7 @@
      * @return {[type]}      [description]
      */
     function traverseFileTree(item,path){
-        var path = path||'';
+        path = path||'';
         if(item.isFile){
             item.file(function(file){
                 // console.log('file.name',file.name);
@@ -159,6 +200,35 @@
                         for(var i=0;i<entries.length;i++){
                             //对于文件夹，读取文件夹后，对于文件夹内的每一项，通过递归调用traverseFileTree来读取
                             traverseFileTree(entries[i],path+item.name+"/");
+                        }
+                    }else{
+                        return;
+                    }
+
+                });
+            };
+            readDir();
+        }
+    }
+
+    function traverseFileTreeLocal(item,path){
+        path = path||'';
+        if(item.isFile){
+            item.file(function(file){
+                // console.log('file.name',file.name);
+                localDirDataUrls.push(file.path)
+            });
+        }else if(item.isDirectory){
+            //文件夹
+            var dirReader = item.createReader();
+            var readDir = function(){
+                dirReader.readEntries(function(entries){
+                    if(entries.length){
+                        readDir();
+                        // console.log('entries.length',entries.length);
+                        for(var i=0;i<entries.length;i++){
+                            //对于文件夹，读取文件夹后，对于文件夹内的每一项，通过递归调用traverseFileTree来读取
+                            traverseFileTreeLocal(entries[i],path+item.name+"/");
                         }
                     }else{
                         return;
@@ -213,6 +283,72 @@
                 return xhr;
             }
         })
+    }
+
+    function sendFilesLocal(cb){
+        
+        changeUpdateState('正在上传',0);
+        var oldId = project._id
+        project.createTime = new Date().toLocaleString();
+        project.lastModifiedTime =  new Date().toLocaleString();
+        project._id = ''+Date.now()+Math.round((Math.random()+1)*1000);
+        project.maxSize = 1024*1024*100;
+        var localProjectDir = path.join(__dirname,'localproject')
+        var localprojectpath = path.join(localProjectDir,String(project._id));
+        var localresourcepath = path.join(localprojectpath,'resources');
+        project.originalSite = 'localIDE'
+        
+        try {
+            //prepare directories
+            mkdirSync(localresourcepath)
+            mkdirSync(path.join(localresourcepath,'template'))
+            mkdirSync(path.join(localprojectpath,'mask'))
+            var count = localDirDataUrls.length
+            var bar = $('#myprogress');
+            var curCount = 0
+            if(count){
+                localDirDataUrls.forEach(function(url){
+                    fs.copyFileSync(url,path.join(localprojectpath,url.split(oldId)[1]))
+                    curCount++
+                    var percentVal = Math.floor(curCount/count*100) + '%';
+                    bar.width(percentVal);
+                            
+                })
+            }
+            //transform content src
+            if(project.content){
+                project.content = project.content.replace(new RegExp(oldId,'g'),project._id)
+
+            }
+            
+            //save init project.json
+            var filePath = path.join(localprojectpath,'project.json')
+            fs.writeFileSync(filePath,JSON.stringify(project));
+            changeUpdateState('上传成功,正在解析。',100);
+            setTimeout(function(){
+                location.reload();
+            },1000);
+            // addNewProject(project);
+        }catch (e){
+            console.log(e)
+            toastr.error(e)
+        }
+        
+    }
+
+    function mkdirSync(dist) {
+        dist = path.resolve(dist);
+        try{
+            var stats = fs.statSync(dist)
+            if (!stats.isDirectory()) {
+                mkdirSync(path.dirname(dist));
+                fs.mkdirSync(dist);
+            }
+        }catch(e){
+            mkdirSync(path.dirname(dist));
+            fs.mkdirSync(dist);
+        }
+
     }
 
     /**

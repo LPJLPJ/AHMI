@@ -5884,7 +5884,7 @@ module.exports = React.createClass({
     },
     getImageName: function (imageName) {
         if (imageName && (typeof imageName === 'string')) {
-            var names = imageName.split(sep)
+            var names = imageName.split(/[\/|\\]/)
             return names[names.length - 1]
         } else {
             return ''
