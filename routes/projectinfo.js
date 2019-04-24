@@ -1456,6 +1456,76 @@ function cpDefaultTemplates(newProjectId, cb) {
     })
 }
 
+projectRoute.getProjectResourcesSize = function(req,res){
+    var projectId = req.params.id;
+    if (projectId != "") {
+        var ProjectResourcesUrl = path.join(__dirname, '../project', String(projectId),'resources');
+        var sizeObj = {}
+        getFileSizeInDirectory(ProjectResourcesUrl,sizeObj,function(err){
+            if(err){
+                errHandler(res,500,JSON.stringify(err))
+            }else{
+                res.end(JSON.stringify(sizeObj))
+            }
+        })
+    }else{
+        errHandler(res,500,'invalid project')
+    }
+        
+
+}
+
+function getFileSizeInDirectory(dirUrl,sizeObj,cb){
+    // console.log(dirUrl)
+    fs.readdir(dirUrl,function(err,files){
+        if(err){
+            cb && cb(err)
+        }else{
+            files = files || []
+            var count = files.length
+            var lastErr = err
+            var calculateCB = function(err){
+                if(err){
+                    lastErr = err
+                }
+                count--
+                if(count == 0){
+                    cb && cb(lastErr)
+                }
+            }
+            if(count){
+                // console.log(files)
+                files.forEach(function(f){
+                    // console.log(f)
+                    var curFileUrl = path.join(dirUrl,f)
+                    fs.stat(curFileUrl,function(err,stats){
+                        if(err){
+                            calculateCB(err)
+                        }else{
+                            if(stats.isFile()){
+                                var id = path.basename(curFileUrl)
+                                // console.log(id)
+                                sizeObj[id] = stats.size
+                                calculateCB()
+                            }else{
+                                getFileSizeInDirectory(curFileUrl,sizeObj,function(err){
+                                    if(err){
+                                        calculateCB(err)
+                                    }else{
+                                        calculateCB()
+                                    }
+                                })
+                            }
+                        }
+                    })
+                })
+            }else{
+                cb && cb(lastErr)
+            }
+        }
+    })
+}
+
 
 projectRoute.downloadProject = function (req, res) {
     var projectId = req.params.id;

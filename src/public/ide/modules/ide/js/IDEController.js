@@ -50,7 +50,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
         var loadStep = 0;     //加载到了第几步,共8步
         var fs, path, __dirname;
-
+        var resourcesSizeObj = {}
         // showIDE();
 
         //var params=getUrlParams();
@@ -248,9 +248,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                         }
                         if (tempData.format !== undefined || tempData.DSFlag === 'base') {
                             //load from a zip
-                            preProcessData(data, function (newData) {
-                                loadFromContent(newData, id);
-                            });
+                            getResourcesSize(id,function(err){
+                                preProcessData(data, function (newData) {
+                                    loadFromContent(newData, id);
+                                });
+                            })
+                            
                         } else {
                             loadFromContent(data, id);
                         }
@@ -266,9 +269,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     var tempData = JSON.parse(data.content);
                     if (tempData.format !== undefined) {
                         //load from a zip
-                        preProcessData(data, function (newData) {
-                            loadFromContent(newData, id);
-                        });
+                        getResourcesSize(id,function(err){
+                            preProcessData(data, function (newData) {
+                                loadFromContent(newData, id);
+                            });
+                        })
+                        
                     } else {
                         loadFromContent(data, id);
                     }
@@ -925,6 +931,24 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         }
 
         /**
+         * 重新获取资源大小
+         */
+        function getResourcesSize(id,cb){
+            $http({
+                method: 'GET',
+                url: '/project/' + id + '/resourcesSize'
+            })
+                .success(function (data, status, xhr) {
+                    resourcesSizeObj = data||{}
+                    cb && cb()
+                })
+                .error(function (err) {
+                    console.log(err)
+                    cb && cb(err)
+                });
+        }
+
+        /**
          * 预处理并恢复从zip包上传并创建的工程
          * @param rawData
          */
@@ -968,15 +992,18 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                         name:name,
                         src:url,
                         type:'image/png',
-                        size:0
+                        size:getResSize(name)
                     }
                 })
+            }
+            function getResSize(id){
+                return resourcesSizeObj[id]||0
             }
 
             //fix basic data structure
             newData.thumbnail = '';
             newData.template = '';
-            newData.supportTouch = 'false';
+            //newData.supportTouch = 'false';
 
             tempContentObj.currentSize = _.cloneDeep(tempContentObj.size);
             tempContentObj.customTags = _.cloneDeep(tempContentObj.tagList);

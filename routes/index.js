@@ -313,6 +313,9 @@ router.route('/project/:id/generateLocalProject')
 router.route('/project/:id/downloadLocalProject')
     .get(projectInfo.downloadLocalProject);
 
+router.route('/project/:id/resourcesSize')
+    .get(projectInfo.getProjectResourcesSize)
+
 router.route('/project/:id/download')
     .get(projectInfo.downloadProject);
 //download resources
