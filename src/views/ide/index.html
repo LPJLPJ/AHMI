@@ -4822,20 +4822,32 @@
                     <div ng-controller="ResourceCtrl" class="attr-item__cell-wrap lg resource-drop-wrap" ngf-drop="uploadFiles($files)" ngf-multiple='true'
                          ngf-drag-over-class="'resource-drop-over'">
                             <div ng-show="component.top.showDel">
-                                <form ref='uploadForm' encType='multipart/form-data'>
-                                    <a href="javascript:;" class="btn btn-default attr-default-btn upload-button">
-                                        <filereadform>
+                                <!--资源操作-->
+                                <div class="resource-operate-wrap">
+                                    <span class="RO__upload">
+                                        <span class="iconfont">&#xe7d9;</span>
+                                        <span>上传</span>
+                                        <form ref='uploadForm' encType='multipart/form-data' class="RO__upload-form">
+                                            <filereadform></filereadform>
+                                        </form>
+                                    </span>
+                                    <span class="RO__search">
+                                        <input type="text" class="RO__search-input" ng-model="component.search.searchText"
+                                               ng-keypress="component.search.enterResourceSearch($event)">
+                                        <span class="iconfont RO__batch-select-icon" ng-click="component.search.enterResourceSearch(1)">&#xe8ef;</span>
+                                    </span>
+                                    <span class="RO__batch-select">
+                                        <span class="iconfont RO__batch-select-icon" title="批量操作"
+                                              ng-click="component.top.toggleOperation('operate')">&#xe7f4;</span>
+                                    </span>
+                                </div>
 
-                                        </filereadform>
-                                        上传资源<span class="iconfont" style="font-size: 15px;padding-left: 5px;">&#xe648;</span>
-                                    </a>
-                                    <button class="btn btn-default pull-right attr-default-btn" ng-click="component.top.toggleOperation('operate')" ng-show="component.top.showDel">批量操作</button>
-                                </form>
-
+                                <!--资源容量-->
                                 <uib-progressbar type="info" class="progress-striped active upload-progressbar" value="component.top.totalSize"
                                                  max="component.top.maxSize" >
                                     <span class="upload-progressbar-text">{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+'/'+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>
                                 </uib-progressbar>
+
                                 <!--上传进度面板-->
                                 <div class="attr-item__table-wrap" ng-show="component.top.uploadingArray.length">
                                     <table class="attr-item__table table table-bordered">
@@ -4857,34 +4869,35 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <!-- list of resources -->
-                                <!--total size-->
-                                <!--<span>{{(component.top.totalSize/1024/1024).toFixed(2)+'MB'+' / '+(component.top.maxSize/1024/1024).toFixed(2)+'MB'}}</span>-->
                             </div>
-                            <div ng-hide="component.top.showDel">
-                                <div class="attr-item__cell-wrap lg">
-                                    <label class="resource-operate__all-select">
-                                        <input type="checkbox" ng-model="component.top.allSelected"
-                                               style="vertical-align: -2px"
-                                               ng-click="component.top.selectAll(component.top.allSelected)">
-                                        <span>全选</span>
-                                    </label>
-                            <span>
-                                <button class="btn btn-default attr-default-btn" ng-click="component.top.oppSelect()">反选</button></span>
-                            <span class="fr">
-                                <button class="btn btn-default attr-default-btn" ng-click="component.top.toggleOperation('delete')">删除</button>
-                                <button class="btn btn-default attr-default-btn" ng-click="component.top.toggleOperation('cancel')">取消</button>
-                            </span>
-                                </div>
-                            </div>
-                            <!-- table -->
-                            <!--<div ng-class="{'my-mulOpt':component.top.showDel}" class="my-sigOpt">-->
-                            <div class="attr-item__table-wrap" ng-show="component.top.files.length">
 
-                                <ul class="resource-list" ui-sortable="resourcesTree" ng-model="component.top.files">
-                                    <li class="rl__item row" ng-repeat="file in component.top.files | paging: component.top.currentIndex : component.top.pagingNum">
+                            <!--批量操作-->
+                            <div ng-hide="component.top.showDel">
+                                    <div class="attr-item__cell-wrap lg">
+                                        <label class="resource-operate__all-select">
+                                            <input type="checkbox" ng-model="component.top.allSelected"
+                                                   style="vertical-align: -2px"
+                                                   ng-click="component.top.selectAll(component.top.allSelected)">
+                                            <span>全选</span>
+                                        </label>
+                                        <button class="btn btn-default attr-default-btn" ng-click="component.top.oppSelect()">反选</button></span>
+                                        <span class="fr">
+                                            <button class="btn btn-default attr-default-btn" ng-click="component.top.toggleOperation('delete')">删除</button>
+                                            <button class="btn btn-default attr-default-btn" ng-click="component.top.toggleOperation('cancel')">取消</button>
+                                        </span>
+                                    </div>
+                            </div>
+
+                            <!--资源列表-->
+                            <div class="attr-item__table-wrap" ng-show="component.top.files.length">
+                                <!--ui-sortable="resourcesTree" ng-model="component.top.files"-->
+                                <p ng-show="component.search.status" class="search-result">搜索结果：
+                                    <span class="cancel-search" ng-click="component.search.cancelSearch(component.paging.currentIndex)">取消搜索</span>
+                                </p>
+                                <ul class="resource-list">
+                                    <li class="rl__item row" ng-repeat="file in component.resourcesList track by $index">
                                         <div class="col-lg-4 rl_item-icon">
-                                            <span class="file-index">{{$index + component.top.fileIndex + 1}}</span>
+                                            <span class="file-index">{{$index}}</span>
                                             <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
                                             <span style="display: inline-block" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
                                         </div>
@@ -4900,8 +4913,8 @@
                                         </div>
                                         <div class="col-lg-3 rl_item-operate">
                                             <div ng-show="component.top.showDel" class="rl_item-operate1">
-                                                <p ng-click="component.top.downloadFile($index + component.top.fileIndex)" ng-mousedown="stopProp($event)">下载</p>
-                                                <p ng-click="openPanel($index + component.top.fileIndex)" ng-mousedown="stopProp($event)">删除</p>
+                                                <p ng-click="component.top.downloadFile($index)" ng-mousedown="stopProp($event)">下载</p>
+                                                <p ng-click="openPanel($index)" ng-mousedown="stopProp($event)">删除</p>
                                             </div>
                                             <label class="checkbox-inline" style="padding-left: 30px" ng-hide="component.top.showDel">
                                                 <input type="checkbox" class="multi-choice" ng-model="component.top.selectIndexArr[$index]" ng-click="component.top.unSelAll()">
@@ -4910,25 +4923,20 @@
                                     </li>
                                 </ul>
 
-                                <div ng-show="component.top.files.length>100" style="text-align: center;margin-top: 10px">
-                                    <button ng-click="component.top.changeFileIndex(0)" class="btn btn-default attr-default-btn">上一页</button>
-                                    <span>{{component.top.currentIndex}}</span>
-                                    <button ng-click="component.top.changeFileIndex(1)" class="btn btn-default attr-default-btn">下一页</button>
-                                    <span>页数:{{component.top.indexCount}}</span>
-                                    <span>数量:{{component.top.files.length}}</span>
-                                </div>
+<!--                                <div ng-show="component.top.files.length>100" style="text-align: center;margin-top: 10px">-->
+<!--                                    <button ng-click="component.top.changeFileIndex(0)" class="btn btn-default attr-default-btn">上一页</button>-->
+<!--                                    <span>{{component.top.currentIndex}}</span>-->
+<!--                                    <button ng-click="component.top.changeFileIndex(1)" class="btn btn-default attr-default-btn">下一页</button>-->
+<!--                                    <span>页数:{{component.top.indexCount}}</span>-->
+<!--                                    <span>数量:{{component.top.files.length}}</span>-->
+<!--                                </div>-->
                             </div>
 
-                            <!--<div class="text-right">-->
-                            <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('delete')">删除</button>-->
-                            <!--<button class="my-upload" ng-hide="component.top.showDel" ng-click="component.top.toggleOperation('cancel')">取消</button>-->
-                            <!--</div>-->
-
+                            <!--资源删除-->
                             <script type="text/ng-template" id="deletePanelModal.html">
                                 <div class="modal-header">
                                     <h3 class="modal-title">确定删除该资源？</h3>
                                 </div>
-                                <!--<div class="modal-body">-->
                                 <div class="modal-footer">
                                     <button class="modal-btn btn-confirm" type="button" ng-click="confirm()">确定</button>
                                     <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
