@@ -7297,8 +7297,10 @@ module.exports = React.createClass({
 
                 var readNum, readStartId, canId;
                 if (fileType === 'modbus') {
-                    readNum = firstValue;
-                    readStartId = secondValue;
+                    // readNum = firstValue;
+                    // readStartId = secondValue;
+                    readNum = secondValue;
+                    readStartId = firstValue;
                     var j;
                     for (var i = readStartId; i < readStartId + readNum; i++) {
                         if (this.registers[i]) {
@@ -7428,10 +7430,10 @@ module.exports = React.createClass({
 
             for (i = 0; i < tags.length; i++) {
                 tag = tags[i];
-                if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
+                //if (tag.writeOrRead == 'false' || tag.writeOrRead == 'readAndWrite') {
                     //write
                     register.value = tag.value;
-                }
+                //}
             }
             //update
             // this.updateRegisters();
@@ -7440,11 +7442,11 @@ module.exports = React.createClass({
         } else if (rwType == 'read') {
             for (i = 0; i < tags.length; i++) {
                 tag = tags[i];
-                if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
+                //if (tag.writeOrRead == 'true' || tag.writeOrRead == 'readAndWrite') {
                     //read
                     updatedTagNames.push(tag.name);
                     this.setTagByTagRawValue(tag, register.value);
-                }
+                //}
             }
             //update
             this.draw(null, {
