@@ -4769,6 +4769,7 @@ ideServices
                     case 'MyTextInput':
                     case 'MyButtonSwitch':
                     case 'MyAlphaImg':
+                    case 'MyGird':
                     case 'MyClock':
                         image = ResourceService.getResourceFromCache(selectObj.level.texList[0].slices[0].imgSrc);
                         break;
