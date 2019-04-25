@@ -887,7 +887,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //translate src
             var resourceUrl
             if(local){
-                resourceUrl = ResourceService.getResourceNWUrl() +  '/template/';
+                resourceUrl = ResourceService.getResourceNWUrl() + path.sep + 'template'+path.sep;
             }else{
                 resourceUrl = ResourceService.getResourceUrl() + 'template/';
             }
