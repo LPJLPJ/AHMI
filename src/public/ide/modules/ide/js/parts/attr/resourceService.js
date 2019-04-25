@@ -384,7 +384,21 @@ ideServices
                 fileName:fileName,
                 projectId:projectId
             };
-            window.location.href = '/project/' +data.projectId + '/downloadFile'+'?'+'fileId='+data.fileId+'&'+'fileName='+data.fileName;
+
+            if (window.local){//本地版直接打开文件夹
+                var fs,path,__dirname,localProjectDir;
+                fs = require('fs');
+                path = require('path');
+                __dirname = global.__dirname;
+                localProjectDir = path.join(__dirname,'localproject');
+
+                var localprojectpath = path.join(localProjectDir,String(data.projectId),'resources',String(data.fileId));
+                var gui = require('nw.gui');
+                gui.Shell.openItem(localprojectpath);
+
+            } else {
+                window.location.href = '/project/' +data.projectId + '/downloadFile'+'?'+'fileId='+data.fileId+'&'+'fileName='+data.fileName;
+            }
         };
 
         this.setMaskUrl = function(url){

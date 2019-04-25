@@ -660,7 +660,6 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     if (type == "MyDashboard") {
                                         widgetInfo.pointerLength = Math.round(widgetInfo.pointerLength * widthProportion);
                                     }
-
                                 }
                             }
                         }
@@ -1888,6 +1887,10 @@ ide.controller('NavModalSaveAsCtrl', ['$scope', '$uibModalInstance', function ($
 
     $scope.ok = function () {
         var data = {};
+        if ($scope.saveAsName.length > 30 || $scope.saveAsAuthor.length > 30) {
+            toastr.error('名称长度不能超过30个字符');
+            return;
+        }
         if (!checkName($scope.saveAsName, $scope.saveAsAuthor)) {
             //invalid name
             toastr.error('名称只支持：汉字、英文、数字、下划线_、英文破折号-、中文破折号—、英文()、小数点.');

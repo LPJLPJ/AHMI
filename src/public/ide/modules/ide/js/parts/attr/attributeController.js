@@ -358,7 +358,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 grid:{
                     enterGridCellNum:enterGridCellNum,
                     enterGridCellSize:enterGridCellSize,
-                    enterGridCellBorder:enterGridCellBorder
+                    enterGridCellBorder:enterGridCellBorder,
                 },
                 group: {
                     align: [
@@ -1239,8 +1239,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     restore();
                     return;
                 }
-                if (fontSize < 0 || fontSize > 150) {
-                    toastr.warning('超出范围');
+                if (fontSize < 1 || fontSize > 64) {
+                    toastr.warning('超出范围(1 - 64)');
                     restore();
                     return;
                 }
@@ -1586,6 +1586,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     restore();
                     return;
                 }
+
+                if ($scope.component.object.level.info.curValue < 0 || $scope.component.object.level.info.curValue >= $scope.component.object.level.info.count) {
+                    toastr.warning('当前值超出范围(0 - 最大个数)');
+                    restore();
+                    return;
+                }
+
                 //判断是否有变化
                 if ($scope.component.object.level.info.curValue == initObject.level.info.curValue) {
                     return;
@@ -1632,8 +1639,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if ($scope.component.object.level.info.count == initObject.level.info.count) {
                     return;
                 }
-                if ($scope.component.object.level.info.count < 1) {
-                    toastr.warning('至少为1');
+                if ($scope.component.object.level.info.count < 1 || $scope.component.object.level.info.count > 15) {
+                    toastr.warning('设置个数超出范围(1 - 15)');
                     restore();
                     return;
                 }
@@ -3538,6 +3545,20 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     return;
                 }
                 
+                if (key == 'xPadding'){
+                    if ($scope.component.object.level.info[key] < 0 || $scope.component.object.level.info[key] > $scope.component.object.level.info.width){
+                        toastr.warning('左右边距超出范围(0-宽度)');
+                        restore();
+                        return;
+                    }
+                }else if (key == 'yPadding') {
+                    if ($scope.component.object.level.info[key] < 0 || $scope.component.object.level.info[key] > $scope.component.object.level.info.height){
+                        toastr.warning('上下边距超出范围(0-高度)');
+                        restore();
+                        return;
+                    }
+                }
+
                 var option = {
                     [key]: $scope.component.object.level.info[key]
                 };

@@ -208,6 +208,13 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
 
         // 验证持续时间参数
         function checkDuration(e) {
+
+            if (!_.isInteger($scope.animation.duration)) {
+                toastr.warning('持续时间必须为正整数');
+                $scope.animation.duration = 0;
+                return false;
+            }
+
             if ($scope.animation.duration < 0) {
                 toastr.warning('持续时间必须大于0s');
                 $scope.animation.duration = 0;
@@ -228,6 +235,16 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
                 return;
             }
             if (!checkDuration()) {
+                return;
+            }
+
+            if (!checkTranslate()) {
+                toastr.warning('位移超出范围(-2000 - 2000)');
+                return;
+            }
+
+            if (!checkAnimationId()){
+                toastr.warning('动画序号必须为(0 - 99999999)的整数');
                 return;
             }
             fixData($scope.animation, $scope.switchButtons);
@@ -293,7 +310,7 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
         var scaleMin = 1/127
         var scaleMax = 8
         function checkEachScale(s){
-            if(s>=scaleMin && s <= scaleMax){
+            if(s >= scaleMin && s <= scaleMax){
                 return true
             }
             return false
@@ -327,12 +344,58 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
                     }
                 }
             }
-
-            // if (scaleX < 0 || scaleY < 0 || stopScaleX<0 || stopScaleY<0) {
-            //     toastr.warning("缩放倍率禁止使用负数");
-            //     return false;
-            // }
             return true;
+        }
+
+        //验证translate
+        function checkTranslate() {
+            var advanceMode = $scope.animation.advanceMode;
+            var attrs = ['srcPos','dstPos']
+            var subAttrs = ['x','y']
+            var attr,subAttr
+            if (advanceMode === true) {
+
+                for(attr in attrs){
+                    for(subAttr in subAttrs){
+                        if(!$scope.animation.animationAttrs.translate[attrs[attr]][subAttrs[subAttr]].tag){
+                            //check value
+                            if(!checkEachTranslate($scope.animation.animationAttrs.translate[attrs[attr]][subAttrs[subAttr]].value)){
+                                return false
+                            }
+                        }
+                    }
+                }
+
+            } else if (advanceMode === false) {
+                for(attr in attrs){
+                    for(subAttr in subAttrs){
+                        //check value
+                        if(!checkEachTranslate($scope.animation.animationAttrs.translate[attrs[attr]][subAttrs[subAttr]])){
+                            return false
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        //检测translate范围
+        function checkEachTranslate(s){
+            if(s > -2000 && s < 2000){
+                return true
+            }
+            return false
+        }
+
+        //验证id
+        function checkAnimationId () {
+            var id = $scope.animation.id;
+
+            if (id < 0 || !_.isInteger(id)) {
+                return false;
+            }else {
+                return true;
+            }
 
         }
 

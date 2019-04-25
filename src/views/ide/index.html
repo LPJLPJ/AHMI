@@ -286,7 +286,7 @@
                     <img class="active-title" src="../../public/ide/modules/ide/images/generate-active.png"/>
                     <p>生成</p>
                 </a>
-                <a ng-click="component.tool.openShare()" class="top-menu-content__item-title" ng-class="" >
+                <a ng-click="component.tool.openShare()" class="top-menu-content__item-title" ng-show="!local">
                     <img class="default-title" src="../../public/ide/modules/ide/images/share.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/share-active.png"/>
                     <p>分享</p>
@@ -630,12 +630,12 @@
                     </div>
                     <div class="modal-body dengModel-body">
                         <div class="modal-title form-group modelPart">
-                            <select class="form-control dengModel-trigger" ng-model="mode" ng-options="format.type as format.name for format in formats">{{format}}</select>
+                            <select class="form-control" ng-model="mode" ng-options="format.type as format.name for format in formats">{{format}}</select>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" type="button" ng-click="ok()">确认</button>
-                        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+                        <button class="modal-btn btn-confirm" type="button" ng-click="ok()">确认</button>
+                        <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                     </div>
                 </script>
             </div>
@@ -5413,46 +5413,6 @@
                      ng-show="component.top.currentNav==3" >
                     <div ng-controller="AttributeCtrl">
                         <div ng-show="component.object.type=='MyTextArea'" ng-controller="characterSetCtrl">
-                            <div class=" dropdown attr-item__cell-wrap lg">
-                                <p class="attr-item__cell-title">字符集</p>
-                                <button type="button"
-                                        class="btn btn-default dropdown-toggle form-control"
-                                        id="fontMenu"
-                                        data-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="true">
-                                    {{componentOfChar.character.fontName}}
-                                    <span class="caret" style="width: 0"></span>
-                                </button>
-
-                                <ul class="dropdown-menu list-group xiangPage-dropdown" aria-labelledby="fontMenu"
-                                    id="characterNameInput">
-                                    <li class="list-group-item">
-                                        添加样式
-                                    <span class="btn btn-default btn-primary badge"
-                                          ng-click="component.textArea.addCharacterSet($event)">+</span>
-
-                                    </li>
-                                    <li ng-repeat="character in componentOfChar.allCharacters track by $index"
-                                        class="list-group-item"
-                                        style="cursor: pointer;"
-                                        ng-click="component.textArea.selectCharacterSetByIndex($index)">
-                                        <div ng-click="componentOfChar.selectCharacterByIndex($index)">
-                                            <input type="text"
-                                                   class=""
-                                                   readonly="readonly"
-                                                   ng-dblclick="componentOfChar.enableInput($index)"
-                                                   ng-blur="componentOfChar.disableInput($index)"
-                                                   ng-model="character.fontName">
-                                        <span class="btn btn-primary btn-sm badge"
-                                              ng-click="component.textArea.deleteCharacterSetByIndex($event,$index)">
-                                         ×
-                                        </span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-
                             <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">字体</p>
                                 <select class="form-control attr-item__cell-input"
@@ -5487,45 +5447,45 @@
                         </div>
 
                         <div ng-show="component.object.type=='MyTextInput'" ng-controller="characterSetCtrl">
-                            <div class=" dropdown attr-item__cell-wrap lg">
-                                <p class="attr-item__cell-title">字符集</p>
-                                <button type="button"
-                                        class="btn btn-default dropdown-toggle form-control"
-                                        id="fontMenu"
-                                        data-toggle="dropdown"
-                                        aria-haspopup="true"
-                                        aria-expanded="true">
-                                    {{componentOfChar.character.fontName}}
-                                    <span class="caret" style="width: 0"></span>
-                                </button>
+                            <!--<div class=" dropdown attr-item__cell-wrap lg">-->
+                                <!--<p class="attr-item__cell-title">字符集</p>-->
+                                <!--<button type="button"-->
+                                        <!--class="btn btn-default dropdown-toggle form-control"-->
+                                        <!--id="fontMenu"-->
+                                        <!--data-toggle="dropdown"-->
+                                        <!--aria-haspopup="true"-->
+                                        <!--aria-expanded="true">-->
+                                    <!--{{componentOfChar.character.fontName}}-->
+                                    <!--<span class="caret" style="width: 0"></span>-->
+                                <!--</button>-->
 
-                                <ul class="dropdown-menu list-group xiangPage-dropdown" aria-labelledby="fontMenu"
-                                    id="characterNameInput">
-                                    <li class="list-group-item">
-                                        添加样式
-                                    <span class="btn btn-default btn-primary badge"
-                                          ng-click="component.textInput.addCharacterSet($event)">+</span>
+                                <!--<ul class="dropdown-menu list-group xiangPage-dropdown" aria-labelledby="fontMenu"-->
+                                    <!--id="characterNameInput">-->
+                                    <!--<li class="list-group-item">-->
+                                        <!--添加样式-->
+                                    <!--<span class="btn btn-default btn-primary badge"-->
+                                          <!--ng-click="component.textInput.addCharacterSet($event)">+</span>-->
 
-                                    </li>
-                                    <li ng-repeat="character in componentOfChar.allCharacters track by $index"
-                                        class="list-group-item"
-                                        style="cursor: pointer;"
-                                        ng-click="component.textInput.selectCharacterSetByIndex($index)">
-                                        <div ng-click="componentOfChar.selectCharacterByIndex($index)">
-                                            <input type="text"
-                                                   class=""
-                                                   readonly="readonly"
-                                                   ng-dblclick="componentOfChar.enableInput($index)"
-                                                   ng-blur="componentOfChar.disableInput($index)"
-                                                   ng-model="character.fontName">
-                                        <span class="btn btn-primary btn-sm badge"
-                                              ng-click="component.textInput.deleteCharacterSetByIndex($event,$index)">
-                                         ×
-                                        </span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
+                                    <!--</li>-->
+                                    <!--<li ng-repeat="character in componentOfChar.allCharacters track by $index"-->
+                                        <!--class="list-group-item"-->
+                                        <!--style="cursor: pointer;"-->
+                                        <!--ng-click="component.textInput.selectCharacterSetByIndex($index)">-->
+                                        <!--<div ng-click="componentOfChar.selectCharacterByIndex($index)">-->
+                                            <!--<input type="text"-->
+                                                   <!--class=""-->
+                                                   <!--readonly="readonly"-->
+                                                   <!--ng-dblclick="componentOfChar.enableInput($index)"-->
+                                                   <!--ng-blur="componentOfChar.disableInput($index)"-->
+                                                   <!--ng-model="character.fontName">-->
+                                        <!--<span class="btn btn-primary btn-sm badge"-->
+                                              <!--ng-click="component.textInput.deleteCharacterSetByIndex($event,$index)">-->
+                                         <!--×-->
+                                        <!--</span>-->
+                                        <!--</div>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                            <!--</div>-->
 
                             <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">字体</p>
