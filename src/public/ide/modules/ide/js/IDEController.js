@@ -314,15 +314,37 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     initSocketIO(data.userId);
                 }
             }
+
+            var transformSrc = function (key, value) {
+                //console.log('key');
+                
+                if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage' || key == 'backgroundImg') {
+                    if (typeof(value) == 'string' && value != '') {
+                        if(path.sep == '/'){
+                            return value.replace(/\\/g,'/')
+                        }else{
+                            return value.replace(/\//g,'\\')
+                        }
+                    } else {
+                        return value;
+                    }
+                }
+                return value;
+            };
             
 
             //change html title to name
             var name = data && data.name || '';
             document.title = '工程编辑-' + name;
             var globalProject
+            
             if (data.content) {
+                //process local content with path sep
+
+                
                 //var globalProject = GlobalService.getBlankProject()
                 globalProject = JSON.parse(data.content);
+                globalProject = JSON.parse(JSON.stringify(globalProject,transformSrc))
             }else{
                 globalProject = GlobalService.getBlankProject();
             }

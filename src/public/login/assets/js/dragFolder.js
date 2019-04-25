@@ -289,6 +289,7 @@
         
         changeUpdateState('正在上传',0);
         var oldId = project._id
+        var oldDirBaseName = oldId
         project.createTime = new Date().toLocaleString();
         project.lastModifiedTime =  new Date().toLocaleString();
         project._id = ''+Date.now()+Math.round((Math.random()+1)*1000);
@@ -297,6 +298,16 @@
         var localprojectpath = path.join(localProjectDir,String(project._id));
         var localresourcepath = path.join(localprojectpath,'resources');
         project.originalSite = 'localIDE'
+
+        //get base dir name
+        for(var i=0;i<localDirDataUrls.length;i++){
+            if(localDirDataUrls[i].indexOf('project.json')!=-1){
+                var parts = localDirDataUrls[i].split(/[\/|\\]/)
+                oldDirBaseName = parts[parts.length-2]
+                break
+            }
+        }
+
         
         try {
             //prepare directories
@@ -308,7 +319,7 @@
             var curCount = 0
             if(count){
                 localDirDataUrls.forEach(function(url){
-                    fs.copyFileSync(url,path.join(localprojectpath,url.split(oldId)[1]))
+                    fs.copyFileSync(url,path.join(localprojectpath,url.split(oldDirBaseName)[1]))
                     curCount++
                     var percentVal = Math.floor(curCount/count*100) + '%';
                     bar.width(percentVal);
@@ -323,7 +334,7 @@
             
             //save init project.json
             var filePath = path.join(localprojectpath,'project.json')
-            fs.writeFileSync(filePath,JSON.stringify(project));
+            fs.writeFileSync(filePath,JSON.stringify(project,null,4));
             changeUpdateState('上传成功,正在解析。',100);
             setTimeout(function(){
                 location.reload();
