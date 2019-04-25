@@ -97,7 +97,7 @@
                             setTimeout(function(){//模态框
                                 //hideWrapper();
                                 $('#uploadModal .modal-title').text('上传本地工程');
-                                $('#uploadModal .modal-body p').text('合法的本地工程，确定上传？');
+                                $('#uploadModal .modal-body h4').text('合法的本地工程，确定上传？');
                                 $('#uploadModal').modal({backdrop:'static',keyboard:false});
                             },500);
                         };
@@ -120,7 +120,7 @@
                         formData.append('file.zip',file);
                         setTimeout(function(){
                             $('#uploadModal .modal-title').text('上传压缩包');
-                            $('#uploadModal .modal-body p').text('此为生成的压缩文件，尝试从此文件恢复工程不保证所恢复工程完整性，确定上传？')
+                            $('#uploadModal .modal-body h4').text('此为生成的压缩文件，尝试从此文件恢复工程不保证所恢复工程完整性，确定上传？')
                             $('#uploadModal').modal({backdrop:'static',keyboard:false});
                         },500);
                         // sendProjectZip();
@@ -145,7 +145,7 @@
                             setTimeout(function(){//模态框
                                 //hideWrapper();
                                 $('#uploadModal .modal-title').text('上传本地工程');
-                                $('#uploadModal .modal-body p').text('合法的本地工程，确定上传？');
+                                $('#uploadModal .modal-body h4').text('合法的本地工程，确定上传？');
                                 $('#uploadModal').modal({backdrop:'static',keyboard:false});
                             },500);
                         };
