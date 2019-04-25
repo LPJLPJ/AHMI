@@ -6,9 +6,10 @@
     <link rel="stylesheet" href="../../public/ide/lib/toastr/toastr.min.css" type="text/css" />
     <link rel="stylesheet" href="../../public/font/iconfont/iconfont.css" type="text/css" />
     <link href="../../public/login/assets/css/bootstrap.min.css" rel="stylesheet" />
-    <!--<link href="/public/login/assets/css/style.css" rel="stylesheet"/>-->
-    <link rel="stylesheet" href="../../public/login/assets/css/personalSpace.css" type="text/css" />
     <link rel="stylesheet" href="../../public/login/assets/css/jquery.contextMenu.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../public/login/assets/css/personalSpace.css" type="text/css">
+    <link rel="stylesheet" href="../../public/login/assets/css/templates.css" type="text/css" />
+
     <script src="../../public/login/assets/js/jquery-1.10.2.min.js"></script>
     <script src="../../public/login/assets/js/jquery.contextMenu.min.js"></script>
     <script src="../../public/login/assets/js/bootstrap.min.js"></script>
@@ -17,19 +18,27 @@
     <script src="../../public/login/assets/js/projectSpaceView.js"></script>
     <script src="../../public/login/assets/js/compatibilityCheck.js"></script>
     <script src="../../public/ide/lib/toastr/toastr.min.js"></script>
+    <script src="../../public/login/assets/js/templates.js"></script>
 </head>
 <body>
 <header class="project-top-nav">
-    <div class="index-top-nav clearfix" style="text-align: center;position: relative;">
-        <a style="position: absolute;left: 60px;top: 0;"><img src="../../public/login/assets/images/logo.png"/></a>
-        <h3 style="color: #005599;font-weight: 600">AHMI-IDE 桌面版</h3>
-    </div>
+    <h3 style="color: #005599;font-weight: 600">AHMI-IDE 桌面版</h3>
 </header>
 <!--工程列表-->
 <div class="wrapper" id="filedrag">
     <div class="project-content" id="project-content">
         <div class="project-content__operate clearfix">
-            <div class="project-operate__create" style="float: none">
+            <div class="project-operate__view clearfix">
+                <a href="/project/recycle" target="_blank" class="p-o__item"><i class="iconfont">&#xe643;</i><span>回收站</span></a>
+                <span class="project-operate__view-line"></span>
+                <a href="/templatecenter" target="_blank" class="p-o__item"><i class="iconfont">&#xe76a;</i><span>工程模板</span></a>
+            </div>
+            <div class="project-operate__create">
+                <div class="project-operate__create-item add-folder" id="add-folder" data-toggle="modal" data-target="#folder-info-modal">
+                    <img class="default-img" src="../../public/login/assets/images/add-project.png"/>
+                    <img class="active-img" src="../../public/login/assets/images/add-project-active.png"/>
+                    <span>新建文件夹</span>
+                </div>
                 <div class="project-operate__create-item add-project" id="add-project" data-toggle="modal" data-target="#project-info-modal">
                     <img class="default-img" src="../../public/login/assets/images/add-project.png"/>
                     <img class="active-img" src="../../public/login/assets/images/add-project-active.png"/>
@@ -41,10 +50,15 @@
         <!--工程列表-->
         <div id="list-wrap">
             <div class="project-list-wrap" id="project-list-wrap">
-                <!--<p class="list-title">我的工程</p>-->
                 <ul class="project-list clearfix" id="project-list">
-
+                    <span id="boundary"></span>
+        
                 </ul>
+                
+            </div>
+
+            <div class="folder-space-wrap" id="folder-space-wrap">
+                <div class="folder-space-list"></div>
             </div>
         </div>
     </div>
@@ -109,12 +123,12 @@
                     <select id="basicinfo-template" class="col-lg-9 modal-input" value="">
                         <option value="">---</option>
                         <option value="defaultTemplate">默认模板</option>
-                        <option value="collectedTemplate">收藏模板</option>
+                        <option class="template__option-collected" value="collectedTemplate">收藏模板</option>
                     </select>
 
                 </div>
                 <div>
-                    <div class="basicinfo-template-options">
+                    <div class="basicinfo-template-options row">
 
                     </div>
                 </div>
@@ -144,22 +158,77 @@
         </div>
     </div>
 </div>
-
+<!--新建、修改项目-->
+<div class="modal fade" id="folder-info-modal" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myFolderLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myFolderLabel">文件夹选项</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">名&emsp;称</span>
+                    <input id="folder-title" type="text" autocomplete="off" placeholder="文件夹名称" class="modal-input col-lg-9" />
+                </div>
+                <div class="modal-row">
+                    <span class="modal-label col-lg-3">作&emsp;者</span>
+                    <input id="folder-author" type="text" placeholder="创建人名称" class="modal-input col-lg-9" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="folder-ok" type="button" class="btn-confirm modal-btn" data-dismiss="modal">创建</button>
+                <button id="folder-cancel" type="button" class="modal-btn" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--删除工程-->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
                 <h4 class="modal-title" id="exampleModalLabel">删除工程</h4>
             </div>
             <div class="modal-body">
                 <h4 class="modal-text-h">您确定要删除&nbsp;<span class="project-delete__prompt"></span>&nbsp;吗?</h4>
-                <!--<p class="modal-text-h">可在回收站中找回已删除的工程</p>-->
+                <p class="modal-text-h modal-recycle-reminder">可在回收站中找回已删除的工程</p>
             </div>
             <div class="modal-footer">
                 <button id="delete-project-confirm" type="button" class="btn-confirm modal-btn" data-dismiss="modal">确认</button>
                 <button type="button" class="modal-btn" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--删除模板-->
+<div class="modal fade" id="template-modal" tabindex="-1" role="dialog" aria-labelledby="template-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="template-modal-delete">确认删除?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="template-modal-confirm" type="button" class="modal-btn btn-confirm" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--删除项目-->
+<div class="modal fade" id="delete-folder-modal" tabindex="-1" role="dialog" aria-labelledby="deleteFolderLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deleteFolderLabel">删除文件夹</h4>
+            </div>
+            <div class="modal-body">
+                <h4 class="modal-text-h">你确定要删除&nbsp;<span class="folder-delete__prompt"></span>&nbsp;包括其中的工程吗？</h4>
+                <p class="modal-text-h modal-recycle-reminder">可在回收站中找回已删除的工程</p>
+            </div>
+            <div class="modal-footer">
+                <button id="deleteFolderConfirm" type="button" class="modal-btn btn-confirm" data-dismiss="modal">确认</button>
+                <button type="button" class="modal-btn" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -177,6 +246,27 @@
             <div class="modal-footer">
                 <button type="button" class="modal-btn btn-confirm" id="confirmReleaseBtn">确定</button>
                 <button type="button" class="modal-btn" data-dismiss="modal" id="cancelReleaseBtn">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--分享工程-->
+<div class="modal fade" id="share-project-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">分享工程</h4>
+            </div>
+            <div class="modal-body" style="text-align: center">
+                <button class="btn btn-primary" id="share-button">开启分享</button>
+                <div class="share-wrap" id="share-wrap">
+                    <p id="share-url"></p>
+                    <p id="share-key"></p>
+                    <p id="readOnly-key"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="share-cancel" type="button" class="modal-btn" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -245,6 +335,10 @@
     }catch (e){
 
     }
+
+    /*var loadFont = function() {
+        document.body.className+='customFont';
+    }*/
 </script>
 </body>
 <script src="../../public/general/js/versionTag.js"></script>
