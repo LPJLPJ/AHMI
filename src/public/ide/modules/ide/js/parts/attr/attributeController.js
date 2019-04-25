@@ -2759,7 +2759,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterTextContent(e) {
-            if (e.keyCode == 13 && e.ctrlKey) {
+            var ctrlKey = e.ctrlKey || e.metaKey;
+            if (ctrlKey && e.keyCode == 10) {
                 if ($scope.component.object.level.info.textContent == initObject.level.info.textContent) {
                     return;
                 }
