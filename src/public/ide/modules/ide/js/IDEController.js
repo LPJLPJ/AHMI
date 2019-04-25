@@ -339,12 +339,16 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             var globalProject
             
             if (data.content) {
-                //process local content with path sep
+                
 
                 
                 //var globalProject = GlobalService.getBlankProject()
                 globalProject = JSON.parse(data.content);
-                globalProject = JSON.parse(JSON.stringify(globalProject,transformSrc))
+                //process local content with path sep
+                if(local){
+                    globalProject = JSON.parse(JSON.stringify(globalProject,transformSrc))
+                }
+                
             }else{
                 globalProject = GlobalService.getBlankProject();
             }
