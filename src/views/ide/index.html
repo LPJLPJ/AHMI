@@ -4897,7 +4897,9 @@
                                 <ul class="resource-list">
                                     <li class="rl__item row" ng-repeat="file in component.resourcesList track by $index">
                                         <div class="col-lg-4 rl_item-icon">
-                                            <span class="file-index">{{$index}}</span>
+                                            <span class="file-index" ng-show="!component.search.status">
+                                                {{$index + 1 + component.paging.currentIndex * component.paging.pagingAmount}}
+                                            </span>
                                             <img width="50px" height="50px" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
                                             <span style="display: inline-block" ng-show="component.top.imageType(file)==2" class="glyphicon glyphicon-text-size my-font-image"></span>
                                         </div>
@@ -4923,13 +4925,13 @@
                                     </li>
                                 </ul>
 
-<!--                                <div ng-show="component.top.files.length>100" style="text-align: center;margin-top: 10px">-->
-<!--                                    <button ng-click="component.top.changeFileIndex(0)" class="btn btn-default attr-default-btn">上一页</button>-->
-<!--                                    <span>{{component.top.currentIndex}}</span>-->
-<!--                                    <button ng-click="component.top.changeFileIndex(1)" class="btn btn-default attr-default-btn">下一页</button>-->
-<!--                                    <span>页数:{{component.top.indexCount}}</span>-->
-<!--                                    <span>数量:{{component.top.files.length}}</span>-->
-<!--                                </div>-->
+                                <div ng-show="component.top.files.length > component.paging.pagingAmount && !component.search.status" style="text-align: center;margin-top: 10px">
+                                    <button ng-click="component.paging.changeFileIndex(0)" class="btn btn-default attr-default-btn">上一页</button>
+                                    <span>{{component.paging.currentIndex+1}}</span>
+                                    <button ng-click="component.paging.changeFileIndex(1)" class="btn btn-default attr-default-btn">下一页</button>
+                                    <span>页数:{{component.paging.indexCount}}</span>
+                                    <span>数量:{{component.top.files.length}}</span>
+                                </div>
                             </div>
 
                             <!--资源删除-->

@@ -13,8 +13,6 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     $scope.$on('ResourceChanged', function () {
         $scope.component.top.files = ResourceService.getAllCustomResources();
         $scope.component.top.totalSize = ResourceService.getCurrentTotalSize();
-        updateFileIndex();
-
         if($scope.component.search.status){
             enterResourceSearch(1);
         }else {
@@ -30,11 +28,6 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             top:{
                 uploadingArray:[],
                 files:[],
-                currentIndex:1,
-                indexCount:0,
-                pagingNum:100,
-                fileIndex:0,
-                changeFileIndex:changeFileIndex,
                 deleteFile:deleteFile,
                 downloadFile:downloadFile,
                 toggleOperation:toggleOperation,
@@ -52,7 +45,8 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             paging:{
                 pagingAmount:100,
                 currentIndex:0,
-                indexCount:1
+                indexCount:1,
+                changeFileIndex:changeFileIndex,
             },
             resourcesList:[],
             search:{
@@ -125,9 +119,6 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 $scope.$emit('ResourceUpdate');
             }
         };*/
-
-        updateFileIndex();
-
         initResourcesList($scope.component.paging.currentIndex);
     }
 
@@ -137,12 +128,10 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             startIndex = currentIndex*$scope.component.paging.pagingAmount,
             endIndex = startIndex + $scope.component.paging.pagingAmount;
 
-        $scope.component.paging.indexCount = Math.ceil(files.length/100);
+        $scope.component.paging.indexCount = Math.ceil(files.length/$scope.component.paging.pagingAmount);
         $scope.component.resourcesList = files.filter(function (file, index) {
             return startIndex <= index && index < endIndex;
         });
-
-        //console.log($scope.component.resourcesList);
     }
 
     // 搜索
@@ -150,7 +139,6 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         if(e.keyCode == 13 || e == 1){
             var text = $scope.component.search.searchText,
                 files = $scope.component.top.files;
-
             if (text){
                 $scope.component.search.status = true;
                 $scope.component.resourcesList = files.filter(function (file, index) {
@@ -174,27 +162,21 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.component.top.selectIndexArr = [];
     }
 
-    //刷新资源列表
-    function updateFileIndex() {
-        $scope.component.top.indexCount = Math.ceil($scope.component.top.files.length/100);
-        $scope.component.top.fileIndex = ($scope.component.top.currentIndex-1)*100;
-    }
-
     //切换资源分页
     function changeFileIndex(n) {
-        var indexCount = $scope.component.top.indexCount,
-            currentIndex = $scope.component.top.currentIndex;
+        var indexCount = $scope.component.paging.indexCount,
+            currentIndex = $scope.component.paging.currentIndex;
+        console.log(currentIndex,indexCount);
         if (n === 1) {
-            if (currentIndex < indexCount) {
-                $scope.component.top.currentIndex ++;
+            if (currentIndex < indexCount - 1) {
+                $scope.component.paging.currentIndex ++;
             }
         }else {
-            if (currentIndex > 1) {
-                $scope.component.top.currentIndex --;
+            if (currentIndex > 0) {
+                $scope.component.paging.currentIndex --;
             }
         }
-
-        updateFileIndex();
+        initResourcesList($scope.component.paging.currentIndex);
     }
     /**
      * 删除文件
