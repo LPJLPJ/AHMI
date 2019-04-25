@@ -109,6 +109,10 @@ $(function(){
         //remove recyle and template center
         $('.project-operate__view').remove()
 
+        $('.modal-recycle-reminder').hide()
+
+        $('.template__option-collected').remove()
+
         //load folders
 
         try{
@@ -269,6 +273,12 @@ $(function(){
                 // targetUrl = '/project/'+project._id+'/editor?ideVersion='+project.ideVersion;
             }
         })
+    }else{
+        $versionSelector = $('#basicinfo-ideversion')
+        if(userType!=='admin'){
+            $versionSelector.attr('disabled',true)
+        }
+        $versionSelector.html($('<option value="'+curIDEVersion+'">'+curIDEVersion+'</option>'))
     }
 
     function saveProjectCopy(projectId,saveAsName,cb){
@@ -530,7 +540,14 @@ $(function(){
                 case "showProjectVersion":
                     break;
                 case "data-analysis":
-                    window.open('/project/'+project._id+'/data-analysis');
+                    if(local){
+                        // console.log(path.join(__dirname))
+                        // console.log(window.location)
+                        window.open('../../public/data-analysis/index.html?projectId='+project._id)
+                        // window.open('../ide/projectTree.html?projectId='+project._id);
+                    }else{
+                        window.open('/project/'+project._id+'/data-analysis');
+                    }    
                     break;
                 case "sub1":
                     openVertion(0,project._id);
@@ -743,6 +760,25 @@ $(function(){
         }
         ideVersion.val(project.ideVersion);
         ideVersion.trigger('change');
+        //consider collected templates
+        if(project.template&&project.template!='defaultTemplate'&&project.template!='collectedTemplate'){
+            var curTemplate = null
+            window.userTemplates = window.userTemplates || []
+            for(var i=0;i<window.userTemplates.length;i++){
+                if(window.userTemplates[i]._id == project.template){
+                    curTemplate = window.userTemplates[i]
+                    break
+                }
+            }
+
+            //custom template
+            var collectedTemplateOption = ''
+            var basicOptions = '<option value="">---</option>' +
+            '<option value="defaultTemplate">默认模板</option>';
+           
+            collectedTemplateOption = local?'':'<option value="collectedTemplate">收藏模板</option>' + '<option value="'+project.template+'">'+(curTemplate.name+" -- "+curTemplate.resolution)+'</option>'
+            template.html(basicOptions+collectedTemplateOption)
+        }
         template.val(project.template);
         template.attr('disabled',true);
         supportTouch.val(project.supportTouch);
@@ -765,6 +801,12 @@ $(function(){
     $('#add-project').on('click', function (e) {
         $('#basicinfo-title').val('');
         $('#basicinfo-author').val('');
+        //reset template options
+        var collectedTemplateOption = local ? '':'<option value="collectedTemplate">收藏模板</option>';
+        var basicOptions = '<option value="">---</option>' +
+        '<option value="defaultTemplate">默认模板</option>' +
+        collectedTemplateOption;
+        $('#basicinfo-template').html(basicOptions)
         $('#basicinfo-template').attr('disabled',false).val('');
         $('.basicinfo-template-options').hide();
         $('#basicinfo-supportTouch').attr('disabled',false);
@@ -850,11 +892,19 @@ $(function(){
 
                 try {
                     mkdir.sync(localresourcepath);
+                    if(project.template == 'defaultTemplate'){
+                        var templateName = 'defaultTemplate'
+                        var srcDir = path.join(localProjectDir, '../public/templates/', templateName, 'defaultResources');
+                        var dstDir = path.join(localProjectDir,String(project._id),'resources', 'template');
+                        copyDirectorySync(srcDir,dstDir)
+                    }
+                    
                     //save init project.json
                     var filePath = path.join(localprojectpath,'project.json')
                     fs.writeFileSync(filePath,JSON.stringify(project));
                     addNewProject(project);
                 }catch (e){
+                    console.log(e)
                     toastr.error(e)
                 }
 
@@ -878,6 +928,29 @@ $(function(){
             }
         }
 
+    }
+
+
+    //copy directory
+    function copyDirectorySync(src,dst,createDir){
+        var stats = fs.statSync(src)
+        mkdir.sync(dst)
+        if(stats.isDirectory()){
+            var files = fs.readdirSync(src)
+            var nextDst = ''
+            if(createDir){
+                nextDst = path.join(dst,path.win32.basename(src))
+            }else{
+                nextDst = dst
+            }
+            files.forEach(function(f){
+                copyDirectorySync(path.join(src,f),nextDst,true)
+            })
+            
+        }else{
+            //file
+            fs.copyFileSync(src,path.join(dst,path.win32.basename(src)))
+        }
     }
 
     function deleteProject(project,curPanel){
@@ -1488,18 +1561,52 @@ $(function(){
         }
     }
     function deleteFolder(folder,curFolder){
-        $.ajax({
-            type:'POST',
-            url:'/folder/delete',
-            data:{folderId:folder._id},
-            success:function (data, status, xhr){
-                curFolder.remove();
-            },
-            error: function (err, status, xhr) {
-                console.log(err);
-                alert('删除失败')
+        if(local){
+            var projects = readLocalProjects('normal').map(function (raw) {
+                var data =  JSON.parse(raw);
+                delete data.content
+                return data
+            }).filter(function(p){
+                return p.classId === folder._id
+            })
+            var deleteErr = null
+            for(var i = 0;i<projects.length;i++){
+                var projectdirpath = path.join(localProjectDir,String(projects[i]._id));
+                try{
+                    rmdir(projectdirpath);
+                }catch (e){
+                    deleteErr = e
+                }
             }
-        })
+            //delete folder
+            for(i=0;i<folders.length;i++){
+                if(folders[i]._id === folder._id){
+                    folders.splice(i,1)
+                    break
+                }
+            }
+            fs.writeFileSync(localFolderPath,JSON.stringify(folders));
+            if(deleteErr){
+                toastr.error(deleteErr)
+            }else{
+                curFolder.remove();
+            }
+            
+        }else{
+            $.ajax({
+                type:'POST',
+                url:'/folder/delete',
+                data:{folderId:folder._id},
+                success:function (data, status, xhr){
+                    curFolder.remove();
+                },
+                error: function (err, status, xhr) {
+                    console.log(err);
+                    alert('删除失败')
+                }
+            })
+        }
+        
     }
     function loadClass(project){
         var dfd = jQuery.Deferred();

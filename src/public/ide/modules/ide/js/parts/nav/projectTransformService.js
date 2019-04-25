@@ -75,6 +75,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.author = rawProject.author || 'author';
         targetProject.encoding = rawProject.encoding
         targetProject.size = rawProject.initSize;
+        targetProject.supportTouch = rawProject.supportTouch
         curProjectEncoding = rawProject.encoding;
         //add last save info
         targetProject.lastSaveTimeStamp = rawProject.lastSaveTimeStamp;

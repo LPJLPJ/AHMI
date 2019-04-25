@@ -210,12 +210,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
     Canvas.prototype.pngStream =function () {
         var data = this.canvasObj.toDataURL();
-        if (local){
-            var dataBuffer = new Buffer(data.split(',')[1],'base64');
-            return dataBuffer;
-        }else{
-            return data
-        }
+        // if (local){
+        //     var dataBuffer = new Buffer(data.split(',')[1],'base64');
+        //     return dataBuffer;
+        // }else{
+        //     return data
+        // }
+        return data
 
 
     };
@@ -230,17 +231,18 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     Canvas.prototype.output = function (outpath, cb ) {
         var stream = this.pngStream();
         var fileName = getLastName(outpath)
-        if (local){
-            try {
-                fs.writeFileSync(outpath,stream);
-                cb && cb();
-            }catch (e) {
-                cb && cb(e);
-            }
-        }else{
-            // uploadDataURI(stream,fileName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
-            uploadDataURIToMemory(stream,fileName,cb,cb)
-        }
+        // if (local){
+        //     try {
+        //         fs.writeFileSync(outpath,stream);
+        //         cb && cb();
+        //     }catch (e) {
+        //         cb && cb(e);
+        //     }
+        // }else{
+        //     // uploadDataURI(stream,fileName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',cb,cb)
+        //     uploadDataURIToMemory(stream,fileName,cb,cb)
+        // }
+        uploadDataURIToMemory(stream,fileName,cb,cb)
 
     };
 
@@ -264,15 +266,16 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
 
     function loadImageSync(imgUrl) {
-        if (local){
-            var ext = path.extname(imgUrl);
-            var type = checkFileType(ext);
-            var prefix = 'data:'+type+';base64,';
+        // if (local){
+        //     var ext = path.extname(imgUrl);
+        //     var type = checkFileType(ext);
+        //     var prefix = 'data:'+type+';base64,';
 
-            return prefix+fs.readFileSync(imgUrl).toString('base64');
-        }else{
-            return imgUrl
-        }
+        //     return prefix+fs.readFileSync(imgUrl).toString('base64');
+        // }else{
+        //     return imgUrl
+        // }
+        return imgUrl
 
     }
 
@@ -315,15 +318,16 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     };
 
     renderer.prototype.getTargetImage = function (url) {
-        if (local){
-            if (this.images[url]!=='undefined'){
-                return this.images[url];
-            }else{
-                return null;
-            }
-        }else{
-            return this.images[getLastName(url)]
-        }
+        // if (local){
+        //     if (this.images[url]!=='undefined'){
+        //         return this.images[url];
+        //     }else{
+        //         return null;
+        //     }
+        // }else{
+            
+        // }
+        return this.images[getLastName(url)]
     };
 
     renderer.prototype.addImage = function (imageUrl, image) {
@@ -2253,6 +2257,24 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             // console.log(resourcesRemainToBeRendered)
             var count = resourcesRemainToBeRendered.length
             var lastErr = null
+            function saveZipFile(blob,name,cb){
+                console.log(blob)
+                if(local){
+                    // var arrayBuffer;
+                    var fileReader = new FileReader();
+                    fileReader.onload = function(event) {
+                        // arrayBuffer = event.target.result;
+                        fs.writeFileSync(path.join(ProjectBaseUrl,name),Buffer.from(event.target.result))
+                        cb && cb()
+                    };
+                    fileReader.readAsArrayBuffer(blob);
+                    
+                }else{
+                    saveAs(blob, name);
+                    cb && cb()
+                }
+                
+            }
             var cb = function(err){
                 if(err){
                     lastErr = err
@@ -2268,10 +2290,12 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                             var reader = new FileReader()
                             reader.onload = function(e){
                                 var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
-                                saveAs(blob, "file_"+md5+".zip");
-                                window.zipfilename = "file_"+md5+".zip"
-                                console.log(window.zipfilename)
-                                sCb && sCb()
+                                saveZipFile(blob, "file_"+md5+".zip",function(){
+                                    window.zipfilename = "file_"+md5+".zip"
+                                    console.log(window.zipfilename)
+                                    sCb && sCb()
+                                });
+                                
                             }
                             reader.onerror = function(e){
                                 fCb && fCb(e)
@@ -2303,8 +2327,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     var reader = new FileReader()
                     reader.onload = function(e){
                         var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
-                        saveAs(blob, "file_"+md5+".zip");
-                        sCb && sCb()
+                        saveZipFile(blob, "file_"+md5+".zip",function(){
+                            window.zipfilename = "file_"+md5+".zip"
+                            console.log(window.zipfilename)
+                            sCb && sCb()
+                        });
                     }
                     reader.onerror = function(e){
                         fCb && fCb(e)
@@ -2315,12 +2342,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     fCb && fCb()
                 })
             }
-            
-            
-            // zip.generateAsync({type:"blob"})
-            // .then(function (blob) {
-            //     saveAs(blob, "hello.zip");
-            // })
+        
             
     
     
@@ -2367,23 +2389,24 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                             console.log('trans finished');
                             var shouldRemoveFiles = Renderer.removeSameOutputFiles();
                             // console.log('trackedRes',Renderer.trackedRes,shouldRemoveFiles)
-                            if (local){
-                                fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
-                                    if (err){
-                                        errHandler(err);
-                                    }else{
-                                        //write ok
-                                        // successHandler();
-                                        var SrcUrl = path.join(ProjectBaseUrl,'resources');
-                                        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                                        zipResources(DistUrl,SrcUrl);
-                                    }
-                                })
-                            }else{
-                                //browser
-                                // downloadZipData(dataStructure,sCb,fCb)
-                                downloadZipDataFromMemory(dataStructure,sCb,fCb)
-                            }
+                            // if (local){
+                            //     fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+                            //         if (err){
+                            //             errHandler(err);
+                            //         }else{
+                            //             //write ok
+                            //             // successHandler();
+                            //             var SrcUrl = path.join(ProjectBaseUrl,'resources');
+                            //             var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+                            //             zipResources(DistUrl,SrcUrl);
+                            //         }
+                            //     })
+                            // }else{
+                            //     //browser
+                            //     // downloadZipData(dataStructure,sCb,fCb)
+                            //     downloadZipDataFromMemory(dataStructure,sCb,fCb)
+                            // }
+                            downloadZipDataFromMemory(dataStructure,sCb,fCb)
 
                         }else{
                             //fail
@@ -2392,27 +2415,46 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 }
             }.bind(this);
 
-            if (local){
-                Renderer = new renderer();
-                var ViewUrl = path.join(global.__dirname,path.dirname(window.location.pathname));
-                if(allPageList.length){
-                    for(m=0;m<allPageList.length;m++){
-                        curRenderPage = allPageList[m]
-                        Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,ViewUrl,ResourceUrl,ResourceUrl,cb)
-                    }
-                }
-                if(fontList.length!==0){
-                    for(m=0;m<fontList.length;m++){
-                        fontList[m].encoding = encoding
-                        Renderer.renderFontPng(fontList[m],ViewUrl,ResourceUrl,ResourceUrl,cb);
-                    }
-                }
-                for (m=0;m<allWidgets.length;m++){
-                    curWidget = allWidgets[m];
-                    Renderer.renderWidget(curWidget,ViewUrl,ResourceUrl,ResourceUrl,cb);
-                }
-            }else{
-                Renderer = new renderer(prepareCachedRes());
+            // if (local){
+            //     Renderer = new renderer();
+            //     var ViewUrl = path.join(global.__dirname,path.dirname(window.location.pathname));
+            //     if(allPageList.length){
+            //         for(m=0;m<allPageList.length;m++){
+            //             curRenderPage = allPageList[m]
+            //             Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,ViewUrl,ResourceUrl,ResourceUrl,cb)
+            //         }
+            //     }
+            //     if(fontList.length!==0){
+            //         for(m=0;m<fontList.length;m++){
+            //             fontList[m].encoding = encoding
+            //             Renderer.renderFontPng(fontList[m],ViewUrl,ResourceUrl,ResourceUrl,cb);
+            //         }
+            //     }
+            //     for (m=0;m<allWidgets.length;m++){
+            //         curWidget = allWidgets[m];
+            //         Renderer.renderWidget(curWidget,ViewUrl,ResourceUrl,ResourceUrl,cb);
+            //     }
+            // }else{
+            //     Renderer = new renderer(prepareCachedRes());
+            //     if(allPageList.length){
+            //         for(m=0;m<allPageList.length;m++){
+            //             curRenderPage = allPageList[m]
+            //             Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,'/',ResourceUrl,ResourceUrl,cb)
+            //         }
+            //     }
+            //     //生成不同种类的字符列表
+            //     if(fontList.length!==0){
+            //         for(m=0;m<fontList.length;m++){
+            //             fontList[m].encoding = encoding
+            //             Renderer.renderFontPng(fontList[m],'/',ResourceUrl,ResourceUrl,cb);
+            //         }
+            //     }
+            //     for (m=0;m<allWidgets.length;m++){
+            //         curWidget = allWidgets[m];
+            //         Renderer.renderWidget(curWidget,'/',ResourceUrl,ResourceUrl,cb);
+            //     }
+            // }
+            Renderer = new renderer(prepareCachedRes());
                 if(allPageList.length){
                     for(m=0;m<allPageList.length;m++){
                         curRenderPage = allPageList[m]
@@ -2430,24 +2472,24 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     curWidget = allWidgets[m];
                     Renderer.renderWidget(curWidget,'/',ResourceUrl,ResourceUrl,cb);
                 }
-            }
         }else{
-            if (local){
-                fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
-                    if (err){
-                        errHandler(err);
-                    }else{
-                        //write ok
-                        // successHandler();
-                        var SrcUrl = path.join(ProjectBaseUrl,'resources');
-                        var DistUrl = path.join(ProjectBaseUrl,'file.zip');
-                        zipResources(DistUrl,SrcUrl);
-                    }
-                })
-            }else{
-                // downloadZipData(dataStructure,sCb,fCb)
-                downloadZipDataFromMemory(dataStructure,sCb,fCb)
-            }
+            // if (local){
+            //     fs.writeFile(DataFileUrl,JSON.stringify(dataStructure,null,4), function (err) {
+            //         if (err){
+            //             errHandler(err);
+            //         }else{
+            //             //write ok
+            //             // successHandler();
+            //             var SrcUrl = path.join(ProjectBaseUrl,'resources');
+            //             var DistUrl = path.join(ProjectBaseUrl,'file.zip');
+            //             zipResources(DistUrl,SrcUrl);
+            //         }
+            //     })
+            // }else{
+            //     // downloadZipData(dataStructure,sCb,fCb)
+            //     downloadZipDataFromMemory(dataStructure,sCb,fCb)
+            // }
+            downloadZipDataFromMemory(dataStructure,sCb,fCb)
 
         }
     };

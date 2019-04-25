@@ -33,19 +33,21 @@
 
 .template-option-panel{
     text-align:center;
-    border:1px solid lightgray;
-    border-radius:5px;
+    /* border:1px solid lightgray; */
+    /* border-radius:5px; */
     box-sizing: border-box;
     display: block;
     overflow: hidden;
 }
 
 .template-option-panel:hover{
-    border:1px solid #005599;
+    /* border:1px solid #005599; */
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, .2);
 }
 
 .template-option-thumbnail-container{
     width:100%;
+    
 }
 
 .template-option-info{
@@ -68,6 +70,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    border-radius:5px;
 }
 
 .template-more{

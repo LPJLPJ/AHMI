@@ -50,7 +50,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
         var loadStep = 0;     //加载到了第几步,共8步
         var fs, path, __dirname;
-
+        var resourcesSizeObj = {}
         // showIDE();
 
         //var params=getUrlParams();
@@ -170,12 +170,11 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             //load projectId project
             var projectBaseUrl = path.join(__dirname, 'localproject', projectId);
             ResourceService.setProjectUrl(projectBaseUrl);
-            var resourceUrl = path.join(projectBaseUrl, 'resources');
+            var resourceUrl = path.join(projectBaseUrl, 'resources')+path.sep;
             ResourceService.setResourceUrl(resourceUrl);
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
 
             ResourceService.setResourceNWUrl(path.relative(realDirPath, resourceUrl));
-            console.log(path.relative(realDirPath, resourceUrl));
             var data = readSingleFile(path.join(projectBaseUrl, 'project.json'));
 
 
@@ -190,7 +189,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                         }
                     }
                     data.backups = [];
-                    loadFromContent(data, projectId);
+                    LoadWithTemplate(data, projectId);
                 } else {
                     loadFromBlank({}, projectId);
                 }
@@ -249,9 +248,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                         }
                         if (tempData.format !== undefined || tempData.DSFlag === 'base') {
                             //load from a zip
-                            preProcessData(data, function (newData) {
-                                loadFromContent(newData, id);
-                            });
+                            getResourcesSize(id,function(err){
+                                preProcessData(data, function (newData) {
+                                    loadFromContent(newData, id);
+                                });
+                            })
+                            
                         } else {
                             loadFromContent(data, id);
                         }
@@ -267,9 +269,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     var tempData = JSON.parse(data.content);
                     if (tempData.format !== undefined) {
                         //load from a zip
-                        preProcessData(data, function (newData) {
-                            loadFromContent(newData, id);
-                        });
+                        getResourcesSize(id,function(err){
+                            preProcessData(data, function (newData) {
+                                loadFromContent(newData, id);
+                            });
+                        })
+                        
                     } else {
                         loadFromContent(data, id);
                     }
@@ -309,15 +314,37 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     initSocketIO(data.userId);
                 }
             }
+
+            var transformSrc = function (key, value) {
+                //console.log('key');
+                
+                if (key == 'src' || key == 'imgSrc' || key == 'backgroundImage' || key == 'backgroundImg') {
+                    if (typeof(value) == 'string' && value != '') {
+                        if(path.sep == '/'){
+                            return value.replace(/\\/g,'/')
+                        }else{
+                            return value.replace(/\//g,'\\')
+                        }
+                    } else {
+                        return value;
+                    }
+                }
+                return value;
+            };
             
 
             //change html title to name
             var name = data && data.name || '';
             document.title = '工程编辑-' + name;
             var globalProject
+            
             if (data.content) {
+                //process local content with path sep
+
+                
                 //var globalProject = GlobalService.getBlankProject()
                 globalProject = JSON.parse(data.content);
+                globalProject = JSON.parse(JSON.stringify(globalProject,transformSrc))
             }else{
                 globalProject = GlobalService.getBlankProject();
             }
@@ -343,6 +370,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             globalProject.maxSize = data.maxSize;
             globalProject.projectId = id;
             globalProject.encoding = data.encoding;
+            globalProject.supportTouch = data.supportTouch;
             //console.log('globalProject',globalProject);
             var resourceList = globalProject.resourceList;
             // console.log('resourceList',resourceList);
@@ -853,7 +881,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             var template = _.cloneDeep(date);
 
             //translate src
-            var resourceUrl = ResourceService.getResourceUrl() + 'template/';
+            var resourceUrl
+            if(local){
+                resourceUrl = ResourceService.getResourceNWUrl() +  '/template/';
+            }else{
+                resourceUrl = ResourceService.getResourceUrl() + 'template/';
+            }
             var tempSrc = ''
             for (var key in template) {
                 if (template[key] instanceof Array) {
@@ -920,6 +953,24 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         }
 
         /**
+         * 重新获取资源大小
+         */
+        function getResourcesSize(id,cb){
+            $http({
+                method: 'GET',
+                url: '/project/' + id + '/resourcesSize'
+            })
+                .success(function (data, status, xhr) {
+                    resourcesSizeObj = data||{}
+                    cb && cb()
+                })
+                .error(function (err) {
+                    console.log(err)
+                    cb && cb(err)
+                });
+        }
+
+        /**
          * 预处理并恢复从zip包上传并创建的工程
          * @param rawData
          */
@@ -942,10 +993,39 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 return urlArr.join('/');
             };
 
+            var renderedRes = []
+            function addToRenderedRes(url){
+                if(!url){
+                    return
+                }
+                for(var i=0;i<renderedRes.length;i++){
+                    if(renderedRes[i]==url){
+                        return
+                    }
+                }
+                renderedRes.push(url)
+            }
+            function renderResUrlToRes(){
+                return renderedRes.map(function(url){
+                    var nameParts = url.split('/')
+                    var name = nameParts[nameParts.length - 1]
+                    return {
+                        id:name,
+                        name:name,
+                        src:url,
+                        type:'image/png',
+                        size:getResSize(name)
+                    }
+                })
+            }
+            function getResSize(id){
+                return resourcesSizeObj[id]||0
+            }
+
             //fix basic data structure
             newData.thumbnail = '';
             newData.template = '';
-            newData.supportTouch = 'false';
+            //newData.supportTouch = 'false';
 
             tempContentObj.currentSize = _.cloneDeep(tempContentObj.size);
             tempContentObj.customTags = _.cloneDeep(tempContentObj.tagList);
@@ -974,9 +1054,10 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 pageNode.setWidth(tempContentObj.initSize.width);
                 pageNode.setHeight(tempContentObj.initSize.height);
                 pageNode.zoomToPoint(new fabric.Point(0, 0), 1);
-                page.originBackgroundImage = replaceProjectId(page.originBackgroundImage);
-                page.backgroundImage = page.originBackgroundImage;
-                // pageNode.clear();
+                // page.originBackgroundImage = replaceProjectId(page.originBackgroundImage);
+                // page.backgroundImage = page.originBackgroundImage;
+                page.backgroundImage = replaceProjectId(page.backgroundImage)
+                addToRenderedRes(page.backgroundImage)
                 if (page.canvasList !== undefined) {
                     page.selected = (index === 0) ? true : false
                     page.layers = page.canvasList;
@@ -1060,8 +1141,10 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                         if (tex.slices && (tex.slices instanceof Array)) {
                                             tex.slices.forEach(function (slice, index) {
                                                 if (slice.hasOwnProperty('originSrc')) {
-                                                    slice.originSrc = replaceProjectId(slice.originSrc);
-                                                    slice.imgSrc = slice.originSrc;
+                                                    // slice.originSrc = replaceProjectId(slice.originSrc);
+                                                    // slice.imgSrc = slice.originSrc;
+                                                    slice.imgSrc = replaceProjectId(slice.imgSrc)
+                                                    addToRenderedRes(slice.imgSrc)
                                                     delete slice.originSrc;
                                                 }
                                             })
@@ -1097,6 +1180,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                 if (i < pageLength) {
                                     ergodicPages();
                                 } else {
+                                    tempContentObj.resourceList = renderResUrlToRes()
                                     newData.content = JSON.stringify(tempContentObj);
                                     // console.log('after preprocess',newData);
                                     cb && cb(newData)
@@ -1115,6 +1199,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                                 if (i < pageLength) {
                                     ergodicPages();
                                 } else {
+                                    tempContentObj.resourceList = renderResUrlToRes()
                                     newData.content = JSON.stringify(tempContentObj);
                                     // console.log('after preprocess',newData);
                                     cb && cb(newData)
@@ -1166,67 +1251,71 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 node.add(fabWidget);
             };
 
-            switch (dataStructure.type) {
-                case 'MySlide':
-                    fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyProgress':
-                    fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyDashboard':
-                    fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyButton':
-                    fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyButtonGroup':
-                    fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyNumber':
-                    fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyTextArea':
-                    fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyKnob':
-                    fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyOscilloscope':
-                    fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MySwitch':
-                    fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyRotateImg':
-                    fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyDateTime':
-                    fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyScriptTrigger':
-                    fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyVideo':
-                    fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyAnimation':
-                    fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
-                    break;
-                case 'MyLayer':
-                    node.add(new fabric.MyLayer(dataStructure, initiator));
-                    break;
-                case 'MyNum':
-                    node.add(new fabric.MyNum(dataStructure, initiator));
-                    break;
-                case 'MyTexNum':
-                    node.add(new fabric.MyTexNum(dataStructure, initiator));
-                    break;
-                case 'MyTexTime':
-                    node.add(new fabric.MyTexTime(dataStructure, initiator));
-                    break;
-                default :
-                    console.error('not match widget in preprocess!');
-                    break;
+            // switch (dataStructure.type) {
+            //     case 'MySlide':
+            //         fabric.MySlide.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyProgress':
+            //         fabric.MyProgress.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyDashboard':
+            //         fabric.MyDashboard.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyButton':
+            //         fabric.MyButton.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyButtonGroup':
+            //         fabric.MyButtonGroup.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyNumber':
+            //         fabric.MyNumber.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyTextArea':
+            //         fabric.MyTextArea.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyKnob':
+            //         fabric.MyKnob.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyOscilloscope':
+            //         fabric.MyOscilloscope.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MySwitch':
+            //         fabric.MySwitch.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyRotateImg':
+            //         fabric.MyRotateImg.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyDateTime':
+            //         fabric.MyDateTime.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyScriptTrigger':
+            //         fabric.MyScriptTrigger.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyVideo':
+            //         fabric.MyVideo.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyAnimation':
+            //         fabric.MyAnimation.fromLevel(dataStructure, addFabWidget, initiator);
+            //         break;
+            //     case 'MyLayer':
+            //         node.add(new fabric.MyLayer(dataStructure, initiator));
+            //         break;
+            //     case 'MyNum':
+            //         node.add(new fabric.MyNum(dataStructure, initiator));
+            //         break;
+            //     case 'MyTexNum':
+            //         node.add(new fabric.MyTexNum(dataStructure, initiator));
+            //         break;
+            //     case 'MyTexTime':
+            //         node.add(new fabric.MyTexTime(dataStructure, initiator));
+            //         break;
+            //     default :
+            //         console.error('not match widget in preprocess!');
+            //         break;
+            // }
+            if(dataStructure.type){
+                // fabric[dataStructure.type].fromLevel(dataStructure, addFabWidget, initiator);
+                node.add(new fabric[dataStructure.type](dataStructure, initiator));
             }
         };
         /**
