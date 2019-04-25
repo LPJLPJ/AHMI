@@ -2673,17 +2673,18 @@ div.wrapper-custom {
     border-radius: 3px;
     background-color: rgba(200, 200, 200, .3);
     box-shadow: 1px 1px 1px rgba(200, 200, 200, .8), -1px -1px 1px rgba(200, 200, 200, .8);
+    position: relative;
 }
 
 .rl__item > div {
-    height: 100%;
+    height: 80px;
 }
 
 .rl_item-icon {
     text-align: center;
     line-height: 80px;
-    padding: 0;
-    position: relative;
+    position: absolute;
+    width: 80px;
 }
 
 .file-index {
@@ -2694,12 +2695,33 @@ div.wrapper-custom {
     font-size: 12px;
 }
 
+.file-thumb__img{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    right: 0;
+    top: 15px;
+}
+
+.file-prompt{
+    color: #606060;
+}
+
+.rl_item-info{
+    position: absolute;
+    left: 100px;
+    right: 50px;
+}
+
 .rl_item-operate {
-    padding: 0;
+    position: absolute;
+    right: 0;
+    width: 50px;
 }
 
 .rl_item-operate1 {
     height: 100%;
+    width: 100%;
 }
 
 .rl_item-operate1 > p {
