@@ -776,7 +776,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 ideServices.directive("maskform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
     return {
         restrict:'AE',
-        template:"<input type='file' ngf-select='upload($file)'  ngf-multiple='true' />",
+        template:"<input ngf-select='upload($file)'  ngf-multiple='true' class='RO__upload-input'/>",
         replace:'true',
         link: function (scope) {
             var path;
