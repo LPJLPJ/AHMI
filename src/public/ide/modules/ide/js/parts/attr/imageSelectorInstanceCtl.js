@@ -105,6 +105,18 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
         case Type.MyTexTime:
             initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
+        case Type.MyChart:
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
+            if(widgetInfo.tex.name==='线'){
+                initConfigure(false,false,1,widgetInfo.tex,true,true,false,false);
+            }
+            break;
+        case Type.MyAlphaImg:
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
+            break;
+        case Type.MyGrid:
+            initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
+            break;
         default:
             initConfigure(true,false,1,widgetInfo.tex,false,false,false,false);
             break;
