@@ -108,7 +108,7 @@ $(function () {
                     }catch(e){
                         errMsg = err.responseText
                     }
-                    switch (err.responseText){
+                    switch (errMsg){
                         case 'captcha error':
                             $('#captcha-verify').html(errMessages.captcha.error)
                             break;
