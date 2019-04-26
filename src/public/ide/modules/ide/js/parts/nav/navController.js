@@ -1321,11 +1321,11 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             var cmd=require('node-cmd');
             console.log('cmd',cmd)
             if(window.zipfilename == undefined){
-                alert("the zipfile is not exist,please click 生成 first！");
+                toastr.error("the zipfile is not exist,please click 生成 first！");
             }
             else {
                 cmd.get(
-                'AHMISimGenDemo.exe -f ".\\localproject\\15549468934871660\\'+ window.zipfilename +  '" -m 2', function(err,data){
+                'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2', function(err,data){
                     console.log('data',err,data);
                 })
             console.log('cmd',cmd)
