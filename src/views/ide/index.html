@@ -848,10 +848,13 @@
                         </div>
 
                             <div class="attr-item__cell-wrap lg" style="margin-top: 20px" ng-controller="ResourceCtrl">
-                                <a href="javascript:;" class="btn btn-default upload-button mask-upload">
-                                    <maskform></maskform>
-                                    设置模具框图片<span class="iconfont">&#xe648;</span>
-                                </a>
+                                <span class="mask__upload">
+                                        <span class="iconfont">&#xe7d9;</span>
+                                        <span>设置模具框图片</span>
+                                        <form ref='uploadForm' encType='multipart/form-data' class="RO__upload-form">
+                                            <maskform></maskform>
+                                        </form>
+                                    </span>
                             </div>
                         </div>
                         <!--页面-->
