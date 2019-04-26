@@ -2265,6 +2265,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     fileReader.onload = function(event) {
                         // arrayBuffer = event.target.result;
                         fs.writeFileSync(path.join(ProjectBaseUrl,name),Buffer.from(event.target.result))
+
+                        var gui = require('nw.gui');
+                        gui.Shell.openItem(ProjectBaseUrl);
+
                         cb && cb()
                     };
                     fileReader.readAsArrayBuffer(blob);

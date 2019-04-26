@@ -832,7 +832,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             animation: $scope.animationsEnabled,
             templateUrl: 'customPreset.html',
             scope: $scope,//指定父scope
-            size: 'md',
+            size: 'lg',
             resolve: {
                 curTagClass: function () {
                     return $scope.component.curTagClass;
@@ -900,6 +900,41 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             }]
         });
     };
+
+    /**
+     * 本地版预览主题
+     */
+    $scope.previewTagTheme=function(n){
+        var modalInstance = $uibModal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'tagTheme.html',
+            scope: $scope,//指定父scope
+            size: 'lg',
+            resolve: {
+                curTagClass: function () {
+                    return $scope.component.curTagClass;
+                }
+            },
+            controller: ['$scope', '$uibModalInstance', '$http', 'TagService', 'curTagClass', function ($scope, $uibModalInstance, $http, TagService, curTagClass) {
+                $scope.batchSelectList=[];
+
+                $http({
+                    method: 'get',
+                    url: "/public/ide/modules/tagConfig/template/tags.default"+n+".json"
+                }).success(function (data) {
+                    $scope.themeTags=data;
+                }).error(function (err) {
+                    console.log(err)
+                });
+
+
+                $scope.cancel = function () {
+                    $uibModalInstance.dismiss();
+                };
+            }]
+        });
+    };
+
 
     /**
      * 导出tag序号表 excel

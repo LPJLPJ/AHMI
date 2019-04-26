@@ -14,7 +14,6 @@ var UserModel = require('../db/models/UserModel');
 var ProjectModel = require('../db/models/ProjectModel')
 var DownloadRouter = require('./routeDownload');
 var VersionManager = require('../utils/versionManager');
-var route_tag = require('./route_tags');
 var templateRoute = require('./templateRoute')
 var fse = require('fs-extra')
 
@@ -559,10 +558,6 @@ router.route('/download/resources.html')
 
 router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
-
-
-router.route('/tags/preview')
-    .get(route_tag.getDefault);
 
 
 // router.route('/project/data-analysis')

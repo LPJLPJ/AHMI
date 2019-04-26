@@ -5027,29 +5027,30 @@
                                         </div>
                                     </div>
                                     <h5>主题:</h5>
+
                                     <div class="row" style="margin-bottom: 20px">
                                         <div class="col-xs-3">
                                             <label class="radio-inline">
                                                 <input type="radio" name="tagsOptions" value="tags_default1" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default1" target="_blank">主题1</a>
+                                                <a target="_blank" ng-click="previewTagTheme(1)">主题1</a>
                                             </label>
                                         </div>
                                         <div class="col-xs-3">
                                             <label class="radio-inline">
                                                 <input type="radio" name="tagsOptions" value="tags_default2" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default2" target="_blank">主题2</a>
+                                                <a ng-click="previewTagTheme(2)" target="_blank">主题2</a>
                                             </label>
                                         </div>
                                         <div class="col-xs-3">
                                             <label class="radio-inline">
                                                 <input type="radio" name="tagsOptions" value="tags_default3" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default3" target="_blank">主题3</a>
+                                                <a ng-click="previewTagTheme(3)" target="_blank">主题3</a>
                                             </label>
                                         </div>
                                         <div class="col-xs-3">
                                             <label class="radio-inline">
                                                 <input type="radio" name="tagsOptions" value="tags_default4" ng-model="selectedTagId">
-                                                <a href="/tags/preview?id=default4" target="_blank">主题4</a>
+                                                <a ng-click="previewTagTheme(4)" target="_blank">主题4</a>
                                             </label>
                                         </div>
                                     </div>
@@ -5240,6 +5241,37 @@
                                 <div class="modal-footer">
                                     <button class="modal-btn btn-confirm" type="button" ng-click="close()">确定</button>
                                     <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
+                                </div>
+                            </script>
+
+                            <script type="text/ng-template" id="tagTheme.html">
+                                <div class="modal-header">
+                                    <h3 class="modal-title">预设tag列表<small></small></h3>
+                                </div>
+                                <div class="modal-body" style="height: 500px;overflow-y: auto">
+                                    <table class="table table-striped attr-item__table">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>变量名称</th>
+                                            <th>是否启用寄存器</th>
+                                            <th>寄存器号</th>
+                                            <th>变量类型</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="tag in themeTags track by $index" ng-click="selectCustomTag($index)" style="cursor: pointer">
+                                            <td>{{$index}}</td>
+                                            <td>{{tag.name}}</td>
+                                            <td>{{tag.register?"是":"否"}}</td>
+                                            <td>{{tag.indexOfRegister}}</td>
+                                            <td>{{tag.type==='custom'?'自定义':'系统'}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="modal-btn" type="button" ng-click="cancel()">关闭</button>
                                 </div>
                             </script>
 
