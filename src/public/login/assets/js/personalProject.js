@@ -4,7 +4,7 @@ $(function(){
     var curFolder = null;
     var closeModal = $('#exampleModal');
     var curProject = null;
-    var fs,path,mkdir,__dirname;
+    var fs,fse,path,mkdir,__dirname;
     var deleteProjectButton = $('#delete-project-confirm');
     var localProjectDir='';
     var localCANProjectDir='';
@@ -61,6 +61,7 @@ $(function(){
     if (local){
         //create localproject folder
         fs = require('fs');
+        fse =require('fs-extra')
         path = require('path');
         mkdir = {};
         mkdir.sync = mkdirSync;
@@ -949,7 +950,7 @@ $(function(){
             
         }else{
             //file
-            fs.copyFileSync(src,path.join(dst,path.win32.basename(src)))
+            fse.copySync(src,path.join(dst,path.win32.basename(src)))
         }
     }
 
