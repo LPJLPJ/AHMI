@@ -12,7 +12,7 @@ $(function(){
     var curIDEVersion = window.ideVersion.split('_')[0].trim();
     var userType = localStorage.getItem('userType');
     var listWrap = $('#list-wrap');
-
+    var isProjectMovedToSpace = false
     var folders = []
 
     deleteProjectButton.on('click',function (e) {
@@ -1422,6 +1422,7 @@ $(function(){
                 },
                 error:function (err) {
                     console.log(err);
+                    toastr.error('获取工程失败')
                 }
     
             })
@@ -1432,12 +1433,17 @@ $(function(){
     var addFolder = $('#add-folder');
 
     window.addEventListener('hashchange',function () {
-        console.log('hashchange',location.hash)
+        // console.log('hashchange',location.hash)
         if (location.hash === '') {
             folderWrap.hide();
             addFolder.show();
             projectWrap.show();
             $('#add-project').attr('folder-id','');
+            if(isProjectMovedToSpace){
+                isProjectMovedToSpace = false
+                location.reload()
+            }
+            
         }else {
             folderWrap.show();
             addFolder.hide();
@@ -1538,26 +1544,52 @@ $(function(){
         var folder = curFolder.attr('data-folder');
         folder = JSON.parse(folder);
 
-        if (!checkName({value:folder.name,empty:false},{value:folder.author,empty:true})){
+        if (!checkName({value:name,empty:false},{value:author,empty:true})){
             return;
         }
 
         if(name!==folder.name||author!==folder.author){
             folder.name=name;
             folder.author=author;
-            $.ajax({
-                type:'POST',
-                url:'/folder/update',
-                data:folder,
-                success: function (data) {
+            if(local){
+                
+                var folderInData
+                for(var i=0;i<folders.length;i++){
+                    if(folders[i]._id == folder._id){
+                        folderInData = folders[i]
+                    }
+                }
+                if(folderInData){
+                    folderInData.lastModifiedTime = new Date().toLocaleString();
+                    folderInData.name = name
+                    folderInData.author = author
+                }
+    
+                //folders.push(folder)
+                try {
+                    
+                    fs.writeFileSync(localFolderPath,JSON.stringify(folders));
                     var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:folder});
                     curFolder.replaceWith(html);
-                },
-                error: function (err) {
-                    console.log('err',err);
-                    alert('修改失败')
+                }catch (e){
+                    toastr.error(e)
                 }
-            })
+            }else{
+                $.ajax({
+                    type:'POST',
+                    url:'/folder/update',
+                    data:folder,
+                    success: function (data) {
+                        var html = new EJS({url:'../../public/login/assets/views/folderPanel.ejs'}).render({folder:folder});
+                        curFolder.replaceWith(html);
+                    },
+                    error: function (err) {
+                        console.log('err',err);
+                        toastr.error('修改失败')
+                    }
+                })
+            }
+            
         }
     }
     function deleteFolder(folder,curFolder){
@@ -1660,6 +1692,9 @@ $(function(){
     function moveToClass(_project,_class){
         var project=_project;
         project.classId=_class;
+        if(_class == 'space'){
+            isProjectMovedToSpace = true
+        }
         if(local){
             if(project._id){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');

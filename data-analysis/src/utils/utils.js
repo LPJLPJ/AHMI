@@ -354,24 +354,25 @@ class CfgSizeCalculator {
  * 纹理类
  */
 class Texture {
-  constructor(w, h, type) {
+  constructor(w, h, type, sliceNum=1) {
     this.width = w;
     this.height = h;
+    this.sliceNum = sliceNum
     this.type = type;
   }
 
   getSize() {
     let size = 0;
-    let {width, height, type} = this;
+    let {width, height, sliceNum, type} = this;
     switch (type) {
       case ARGB8888:
-        size = width * height * 4;
+        size = width * height * sliceNum * 4;
         if (size % 8 !== 0) {
           size += (8 - size % 8);
         }
         break;
       case RGB565:
-        size = width * height * 2;
+        size = width * height * sliceNum * 2;
         if (size % 8 !== 0) {
           size += (8 - size % 8);
         }
@@ -383,7 +384,7 @@ class Texture {
         if (height % 4 !== 0) {
           height += (4 - height % 4);
         }
-        size = width * height / 2;
+        size = width * height * sliceNum / 2;
         break;
       case DXT5:
         if (width % 4 !== 0) {
@@ -392,7 +393,7 @@ class Texture {
         if (height % 4 !== 0) {
           height += (4 - height % 4);
         }
-        size = width * height;
+        size = width * height * sliceNum;
         break;
       case ALPH4:
         if (width % 4 !== 0) {
@@ -401,7 +402,7 @@ class Texture {
         if (height % 4 !== 0) {
           height += (4 - height % 4);
         }
-        size = width * height / 2;
+        size = width * height * sliceNum / 2;
         break;
       default:
         break;
@@ -430,6 +431,7 @@ class TextureSizeCalculator {
     this.totalSize = 0;
     this.fonts = []; // 记录所有的字体，防止重复
     this.images = []; // 记录所有控件图片，防止重复
+    this.encoding = 'utf-8'
   }
 
   /**
@@ -445,18 +447,24 @@ class TextureSizeCalculator {
     const suffixArr = backgroundImage.split('.');
     const suffix = suffixArr[suffixArr.length - 1].toLowerCase();
 
-    if (suffix === BMP) {
-      if (format === FORMAT_NORMAL) {
-        texture.push(new Texture(w, h, RGB565));
-      } else if (format === FORMAT_DXT3) {
-        texture.push(new Texture(w, h, DXT1))
-      }
-    } else if (suffix === PNG) {
-      if (format === FORMAT_NORMAL) {
-        texture.push(new Texture(w, h, ARGB8888))
-      } else if (format === FORMAT_DXT3) {
-        texture.push(new Texture(w, h, DXT5));
-      }
+    // if (suffix === BMP) {
+    //   if (format === FORMAT_NORMAL) {
+    //     texture.push(new Texture(w, h, RGB565));
+    //   } else if (format === FORMAT_DXT3) {
+    //     texture.push(new Texture(w, h, DXT1))
+    //   }
+    // } else if (suffix === PNG) {
+    //   if (format === FORMAT_NORMAL) {
+    //     texture.push(new Texture(w, h, ARGB8888))
+    //   } else if (format === FORMAT_DXT3) {
+    //     texture.push(new Texture(w, h, DXT5));
+    //   }
+    // }
+    //render to png
+    if (format === FORMAT_NORMAL) {
+      texture.push(new Texture(w, h, ARGB8888))
+    } else if (format === FORMAT_DXT3) {
+      texture.push(new Texture(w, h, DXT5));
     }
 
 
@@ -477,7 +485,13 @@ class TextureSizeCalculator {
         break;
       case 'mynum':
       case 'mydatetime':
-        this._parseNumText(widget, format);
+        this._parseNumText(widget,false, format);
+        break;
+      case 'mytextinput':
+        this._parseNumText(widget,true,format)
+        break;
+      case 'myalphaslide':
+        this._parseAlphaSlide(widget,format);
         break;
       case 'myscripttrigger':
         break;
@@ -486,6 +500,20 @@ class TextureSizeCalculator {
         break;
     }
 
+  }
+
+  _getSliceFlagName(slice,font={}){
+    let text = slice.text
+    let {fontFamily,fontSize,fontBold,fontItalic,fontColor} = font
+    let textInfo = ''
+    if(text){
+      textInfo += fontFamily + fontSize + fontBold + fontItalic + fontColor
+    }
+    if(slice.imgSrc){
+      return slice.imgSrc + textInfo
+    }else{
+      return slice.color + textInfo
+    }
   }
 
   /**
@@ -503,39 +531,54 @@ class TextureSizeCalculator {
     }
     texList.forEach(tex => {
       const {slices = []} = tex;
+      var imgFlag = '' + width+height
       slices.forEach(slice => {
-        const {imgSrc = ''} = slice;
-
-        if (!!imgSrc) {
-          const imgFlag = '' + imgSrc + width + height;
-          if (checkDup(images, imgFlag)) {
-            return;
-          }
-          images.push(imgFlag);
-
-          const suffixArr = imgSrc.split('.');
-          suffixs.push(suffixArr[suffixArr.length - 1])
-        }
+        imgFlag += this._getSliceFlagName(slice)
       })
+      if (checkDup(images, imgFlag)) {
+        return;
+      }
+      images.push(imgFlag);
+
+      if (format === FORMAT_NORMAL) {
+        texture.push(new Texture(width, height, RGB565,slices.length));
+      } else if (format === FORMAT_DXT3) {
+        texture.push(new Texture(width, height, DXT1,slices.length));
+      }
+
     });
 
-    if (format === FORMAT_NORMAL) {
-      suffixs.forEach(suffix => {
-        if (suffix === BMP) {
-          texture.push(new Texture(width, height, RGB565));
-        } else if (suffix === PNG) {
-          texture.push(new Texture(width, height, RGB565));
-        }
-      })
-    } else if (format === FORMAT_DXT3) {
-      suffixs.forEach(suffix => {
-        if (suffix === BMP) {
-          texture.push(new Texture(width, height, DXT1));
-        } else if (suffix === PNG) {
-          texture.push(new Texture(width, height, DXT1));
-        }
-      })
+    
+  }
+
+  _parseAlphaSlide(widget, format = 'normal') {
+    const {texture, images} = this;
+    const {texList = [], info: {width, height}} = widget;
+
+    const suffixs = [];
+    if (!texList) {
+      return;
     }
+    texList.forEach(tex => {
+      const {slices = []} = tex;
+      var imgFlag = '' + width+height
+      slices.forEach(slice => {
+        imgFlag += this._getSliceFlagName(slice)
+      })
+      if (checkDup(images, imgFlag)) {
+        return;
+      }
+      images.push(imgFlag);
+
+      if (format === FORMAT_NORMAL) {
+        texture.push(new Texture(width, height, ALPH4,slices.length));
+      } else if (format === FORMAT_DXT3) {
+        texture.push(new Texture(width, height, ALPH4,slices.length));
+      }
+
+    });
+
+    
   }
 
   /**
@@ -544,12 +587,12 @@ class TextureSizeCalculator {
    * @param format
    * @private
    */
-  _parseNumText(widget, format = 'normal') {
+  _parseNumText(widget,full, format = 'normal') {
     const paddingRatio = 1.2;
     const {texture, fonts} = this;
     const {info: {fontFamily, fontSize, fontBold, fontItalic}} = widget;
 
-    const fontStr = '\\' + fontFamily + '-' + fontSize + '-' + fontBold + '-' + (fontItalic || 'null') + '.png';
+    const fontStr = '\\' + fontFamily + '-' + fontSize + '-' + fontBold + '-' + (fontItalic || 'null')+(full?'full':'short') + '.png';
     if (checkDup(fonts, fontStr)) {
       return;
     }
@@ -557,16 +600,33 @@ class TextureSizeCalculator {
 
     const width = Math.ceil(paddingRatio * fontSize);
     const height = width;
+    var charRanges = []
+    if(full){
+      switch (this.encoding){
+          case 'utf-8':
+              charRanges = [
+                  [0x4e00,0x9fa5]
+              ]
+              
+          break;
+          case 'gb2312':
+              for(var i= 1;i<=94;i++){
+                  charRanges.push([((0xa0+i)<<8) + (0xa0+1),((0xa0+i)<<8) + (0xa0+94)])
+              }
+              // charRanges = [
+              //     [0xa1a1,0xfefe,options.encoding]
+              // ]
+          break;
+          default:
+              //ascii
+              charRanges = [
+              ]
 
-    if (format === FORMAT_NORMAL) {
-      for (let i = 0; i < 95; i++) {
-        texture.push(new Texture(width, height, ALPH4));
       }
-    } else if (format === FORMAT_DXT3) {
-      for (let i = 0; i < 95; i++) {
-        texture.push(new Texture(width, height, ALPH4));
-      }
+    }else{
+      charRanges = []
     }
+    texture.push(new Texture(width, height, ALPH4,95+charRanges.length));
 
   }
 
@@ -578,58 +638,37 @@ class TextureSizeCalculator {
    */
   _parseNormalWidget(widget, format = 'normal') {
     const {texture, images} = this;
-    const {
-      texList = [],
-      info: {width, height, text = '', fontFamily = '', fontSize = '', fontColor = '', fontBold = '', fontItalic = ''}
-    } = widget;
+    const {texList = [], info: {width, height, text = '', fontFamily = '', fontSize = '', fontColor = '', fontBold = '', fontItalic = ''}} = widget;
 
+    const suffixs = [];
     if (!texList) {
       return;
     }
-
-    const suffixs = [];
-
     texList.forEach(tex => {
       const {slices = []} = tex;
+      var imgFlag = '' + (text ? (''+text + fontFamily+fontSize+fontColor+fontBold+fontItalic):'')+ width+height;
       slices.forEach(slice => {
-        const {imgSrc = '', color} = slice;
-
-        const imgFlag = '' + imgSrc + color + width + height + text + fontFamily + fontSize + fontColor + fontBold + fontItalic;
-        if (checkDup(images, imgFlag)) {
-          console.log('dup');
-          return;
-        }
-        images.push(imgFlag);
-
-        const suffixArr = imgSrc.split('.');
-        suffixs.push(suffixArr[suffixArr.length - 1])
-
+        imgFlag += this._getSliceFlagName(slice,{fontFamily,fontSize,fontColor,fontBold,fontItalic})
       })
+      if (checkDup(images, imgFlag)) {
+        return;
+      }
+      images.push(imgFlag);
+
+      if (format === FORMAT_NORMAL) {
+        texture.push(new Texture(width, height, ARGB8888,slices.length));
+      } else if (format === FORMAT_DXT3) {
+        texture.push(new Texture(width, height, DXT5,slices.length));
+      }
+
     });
-
-    if (format === FORMAT_NORMAL) {
-      suffixs.forEach(suffix => {
-        if (suffix === BMP) {
-          texture.push(new Texture(width, height, RGB565));
-        } else if (suffix === PNG) {
-          texture.push(new Texture(width, height, ARGB8888));
-        }
-      })
-    } else if (format === FORMAT_DXT3) {
-      suffixs.forEach(suffix => {
-        if (suffix === BMP) {
-          texture.push(new Texture(width, height, DXT1));
-        } else if (suffix === PNG) {
-          texture.push(new Texture(width, height, DXT5));
-        }
-      })
-    }
 
   }
 
   // 加载工程
   load(project, format = 'normal') {
-    const {pages = [], initSize: {width, height}} = project;
+    const {encoding, pages = [], initSize: {width, height}} = project;
+    this.encoding = encoding
     // 遍历
     pages.forEach((page) => {
       this._parsePage(page, width, height, format);
