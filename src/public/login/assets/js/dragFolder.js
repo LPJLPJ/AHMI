@@ -3,12 +3,13 @@
  */
 (function(){
     var local = false;
-    var fs,path,__dirname
+    var fs,path,__dirname,fse
     try {
         var os = require('os');
         if (os){
             local = true;
             fs = require('fs')
+            fse = require('fs-extra')
             path = require('path')
             __dirname = global.__dirname
             //console.log('os',os);
@@ -319,7 +320,7 @@
             var curCount = 0
             if(count){
                 localDirDataUrls.forEach(function(url){
-                    fs.copyFileSync(url,path.join(localprojectpath,url.split(oldDirBaseName)[1]))
+                    fse.copySync(url,path.join(localprojectpath,url.split(oldDirBaseName)[1]))
                     curCount++
                     var percentVal = Math.floor(curCount/count*100) + '%';
                     bar.width(percentVal);
