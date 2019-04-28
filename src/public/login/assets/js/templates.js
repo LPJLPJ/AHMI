@@ -9,8 +9,18 @@ $(function () {
     var curShouldRemoveTemplatePanel = undefined
     var $templateOptions = $('.basicinfo-template-options')
     var $templateSelector = $('#basicinfo-template')
+    var local = false
+    try{
+        var os = require('os')
+        local = true
+    }catch(e){
+        local = false
+    }
 
-    init()
+    if(!local){
+        init()
+    }
+    
     function init() {
         loadTemplates()
         $templateOptions.hide()
