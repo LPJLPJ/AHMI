@@ -1341,18 +1341,65 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             }
             else {
                 showSpinner()
-                cmd.get(
-                'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2', function(err,data){
-                    if(err){
-                        toastr.error('生成ACF失败',err)
+                // cmd.get(
+                // 'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2', function(err,data){
+                //     if(err){
+                //         toastr.error('生成ACF失败',err)
+                //     }else{
+                //         toastr.info('生成ACF成功！')
+                //         console.log(data)
+                //         var gui = require('nw.gui');
+                //         gui.Shell.openItem(path.join(__dirname,'ACF'));
+                //     }
+                //     hideSpinner()
+                // })
+                // var spawn = require('child_process').spawn
+                // var gen  = spawn('AHMISimGenDemo.exe', ['-f', '.\\localproject\\'+$scope.project.projectId+'\\'+window.zipfilename,'-m',2],{
+                //     shell:true
+                // });
+                // gen.stdout.on('data', function(data){
+                //     console.log(data+'')
+                // });
+                
+                // gen.stderr.on('data', function(data){
+                //     console.log(data+'')
+                // });
+                
+                // gen.on('close',function(code){
+                //     if(code){
+                //         toastr.error('生成ACF失败')
+                //     }else{
+                //         toastr.error('生成ACF成功')
+                //     }
+                //     hideSpinner()
+                // });
+                // var exec = require('child_process').exec
+                // exec('AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2',function(err,data,errData){
+                //     if(err){
+                //         console.log(err)
+                //         hideSpinner()
+                //     }else{
+                //         console.log(data+'',errData+'')
+                //         hideSpinner()
+                //     }
+                // })
+                setTimeout(function(){
+                    var spawn = require('child_process').spawnSync
+                    var gen  = spawn('AHMISimGenDemo.exe', ['-f', '.\\localproject\\'+$scope.project.projectId+'\\'+window.zipfilename,'-m',2]);
+                    if(gen.error){
+                        console.log(gen.error)
+                        toastr.error("生成ACF失败")
                     }else{
-                        toastr.info('生成ACF成功！')
-                        console.log(data)
-                        var gui = require('nw.gui');
-                        gui.Shell.openItem(path.join(__dirname,'ACF'));
+                        console.log(gen.stdout+'')
+                        console.log(gen.stderr+'')
+                        toastr.info("生成ACF成功")
+                        hideSpinner()
                     }
-                    hideSpinner()
+
                 })
+                
+                
+                
             }
         }
         function openPanel() {
