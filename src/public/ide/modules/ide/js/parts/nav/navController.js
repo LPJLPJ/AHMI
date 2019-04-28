@@ -1316,18 +1316,29 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             });
         }
 
-        function GenACF(){
+       function GenACF(){
             var cmd=require('node-cmd');
-            console.log('cmd',cmd)
+            //console.log('cmd',cmd)
             if(window.zipfilename == undefined){
-                alert("the zipfile is not exist,please click 生成 first！");
+                toastr.info("the zipfile is not exist,please click 生成 first！");
+				//alert($scope.project.projectId);
             }
             else {
+				cmd.get("chdir",function(err,data){
+					//console.log("luijng",data);
+				})
+				//console.log("name:",zipfilename,"id:",$scope.project.projectId)
                 cmd.get(
-                'AHMISimGenDemo.exe -f ".\\localproject\\15549468934871660\\'+ window.zipfilename +  '" -m 2', function(err,data){
-                    console.log('data',err,data);
+                'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename + '" -m 1', function(err,data){
+						if(!err){
+						toastr.info("ACF文件生成成功");
+						}
+						
+						else{
+							toastr.info(data);
+						}
                 })
-            console.log('cmd',cmd)
+            //console.log('cmd',cmd)
             }
         }
         function openPanel() {
