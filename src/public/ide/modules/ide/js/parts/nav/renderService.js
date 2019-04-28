@@ -2058,6 +2058,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 this.renderChart(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             case 'MyGrid':
+                widget.subType = 'MySlide';
                 this.renderGrid(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
