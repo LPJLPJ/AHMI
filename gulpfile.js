@@ -14,6 +14,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var csso = require('gulp-csso');
 var htmlmin = require('gulp-htmlmin')
 var runSequence = require('run-sequence');
+var fs = require('fs')
 var path = require('path');
 var os = require('os');
 var baseUrl = './public/ide/modules/ide/js/';
@@ -197,6 +198,12 @@ gulp.task('watch:modified',function () {
     gulp.src(['./public/ide/modules/ide/js/**/*.js'],{base:'./public/ide/modules/ide/js'})
         .pipe(watch(['./public/ide/modules/ide/js/**/*.js'],{base:'./public/ide/modules/ide/js',verbose:true}))
         .pipe(gulp.dest('./public/ide/modules/ide/min-js/'))
+})
+
+gulp.task('local',function(){
+    var local_html = fs.readFileSync('./views/login/personalProject_local.html','utf-8');
+
+    fs.writeFileSync('./views/login/personalProject.html',local_html);
 })
 
 gulp.task('dev',function () {

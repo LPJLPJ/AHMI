@@ -2243,14 +2243,17 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 })
         }
     
-        
+        function transKeyToFileName(key){
+        	var parts = key.split(/[\/|\\]/)
+        	return parts[parts.length-1]
+        }
     
         function downloadZipDataFromMemory(dataStructure,sCb,fCb){
             var zip = new JSZip();
             zip.file("data.json", JSON.stringify(dataStructure,null,4));
             for(var key in window.renderedTex){
                 if(window.renderedTex.hasOwnProperty(key)){
-                    zip.file(key,window.renderedTex[key])
+                    zip.file(transKeyToFileName(key),window.renderedTex[key])
                 }
             }
             
@@ -2319,7 +2322,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                         responseType: "arraybuffer"
                     }).success(function(data){
                         //blob
-                        zip.file(url.split('resources/')[1],data)
+                        if (local) {
+							zip.file(url.split('resources'+path.sep)[1],data)
+                        }else{
+                        	zip.file(url.split('resources/')[1],data)
+                        }
                         cb()
                     }).error(function(err){
                         cb(err)

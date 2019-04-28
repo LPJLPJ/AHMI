@@ -10,7 +10,7 @@ $(function(){
     var localCANProjectDir='';
     var localFolderPath = '';
     var curIDEVersion = window.ideVersion.split('_')[0].trim();
-    var userType = localStorage.getItem('userType');
+    var userType
     var listWrap = $('#list-wrap');
     var isProjectMovedToSpace = false
     var folders = []
@@ -95,6 +95,34 @@ $(function(){
             mkdir.sync(localProjectDir);
             mkdir.sync(localCANProjectDir);
         }
+    }
+
+    //userType
+    if (local) {
+        var userInfoUrl = path.join(__dirname, 'public', 'nw', 'userInfo.json');
+        var userInfo = {
+            name: '',
+            type: 'basic'
+        };
+        if (!fs.existsSync(userInfoUrl)) {
+            fs.writeFileSync(userInfoUrl, JSON.stringify(userInfo));
+        }
+        var data = JSON.parse(fs.readFileSync(userInfoUrl, 'utf-8'));
+        $('.icon__username').html(data.name)
+        $('.icon__usertype').html(data.type)
+        userType = data.type;
+
+        //listen to logout event
+        $('.personal-info__logout').on('click',function(e){
+            e.preventDefault()
+            fs.writeFileSync(userInfoUrl, JSON.stringify(userInfo));
+            toastr.info('退出登录成功！')
+            setTimeout(function(){
+                location.reload()
+            },1000)
+        })
+    } else {
+        userType = localStorage.getItem('userType');
     }
 
     //render projects

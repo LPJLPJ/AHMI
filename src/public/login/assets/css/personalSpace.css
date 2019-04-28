@@ -148,6 +148,13 @@ a img {
     text-align: center;
 }
 
+.personal-info-local{
+    float: none;
+    position: absolute;
+    top:0px;
+    right:40px;
+}
+
 .personal-info__name {
 
 }
