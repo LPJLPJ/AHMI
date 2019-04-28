@@ -61,7 +61,7 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyButtonSwitch:'button-switch',
             MyClock:'time',
             MyChart:'chart',
-            MyGrid:'tex-num'
+            MyGrid:'grid'
         };
     }
 
