@@ -427,12 +427,13 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
      * @returns {*}
      */
     function pngStream(dataUrl,local){
-        if (local){
-            var dataBuffer = new Buffer(dataUrl.split(',')[1],'base64');
-            return dataBuffer;
-        }else{
-            return dataUrl
-        }
+        // if (local){
+        //     var dataBuffer = new Buffer(dataUrl.split(',')[1],'base64');
+        //     return dataBuffer;
+        // }else{
+        //     return dataUrl
+        // }
+        return dataUrl
     }
 
     this.generateSingleFont = generateSingleFont;

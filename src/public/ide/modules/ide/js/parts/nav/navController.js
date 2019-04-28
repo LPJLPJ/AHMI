@@ -1330,6 +1330,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         toastr.error('生成ACF失败',err)
                     }else{
                         toastr.info('生成ACF成功！')
+                        console.log(data)
                         var gui = require('nw.gui');
                         gui.Shell.openItem(path.join(__dirname,'ACF'));
                     }
