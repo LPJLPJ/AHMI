@@ -413,6 +413,10 @@ body {
     box-sizing: border-box;
 }
 
+.top-menu-content__widget-list .inactive{
+    display:none;
+}
+
 .widget-list__item {
     display: inline-block;
     width: 60px;

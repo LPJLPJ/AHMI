@@ -249,7 +249,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                         if (tempData.format !== undefined || tempData.DSFlag === 'base') {
                             //load from a zip
                             getResourcesSize(id,function(err){
-                                preProcessData(data, function (newData) {
+                                preProcessData(data, id,function (newData) {
                                     loadFromContent(newData, id);
                                 });
                             })
@@ -270,7 +270,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     if (tempData.format !== undefined) {
                         //load from a zip
                         getResourcesSize(id,function(err){
-                            preProcessData(data, function (newData) {
+                            preProcessData(data, id,function (newData) {
                                 loadFromContent(newData, id);
                             });
                         })
@@ -979,7 +979,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
          * @param rawData
          */
 
-        function preProcessData(rawData, cb) {
+        function preProcessData(rawData, projectId,cb) {
             var newData = _.cloneDeep(rawData),
                 i = 0,//循环变量
                 index,//第一个timer tag的下标
@@ -987,14 +987,28 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 attrArr = [],//属性名数组
                 pageNode = new fabric.Canvas('c'),
                 subLayerNode = new fabric.Canvas('c1', {renderOnAddRemove: false});
-            var projectId = window.location.pathname.split('/')[2];
+            // var projectId = window.location.pathname.split('/')[2];
+            var replaceSep = '/'
+            if(local){
+                replaceSep = path.sep
+            }else{
+                replaceSep = '/'
+            }
             var replaceProjectId = function (url) {
                 if (!url) {
                     return url;
                 }
-                var urlArr = url.split('/');
-                urlArr[2] = projectId;
-                return urlArr.join('/');
+                var urlArr = url.split(replaceSep);
+                
+                var targetIdx = 2
+                for(var i=0;i<urlArr.length;i++){
+                    if(urlArr[i]=='resources'){
+                        targetIdx = i - 1
+                        break
+                    }
+                }
+                urlArr[targetIdx] = projectId;
+                return urlArr.join(replaceSep);
             };
 
             var renderedRes = []
@@ -1011,7 +1025,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             }
             function renderResUrlToRes(){
                 return renderedRes.map(function(url){
-                    var nameParts = url.split('/')
+                    var nameParts = url.split(replaceSep)
                     var name = nameParts[nameParts.length - 1]
                     return {
                         id:name,
@@ -1033,7 +1047,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
 
             tempContentObj.currentSize = _.cloneDeep(tempContentObj.size);
             tempContentObj.customTags = _.cloneDeep(tempContentObj.tagList);
-            tempContentObj.projectId = window.location.pathname && window.location.pathname.split('/')[2];
+            tempContentObj.projectId = projectId
             tempContentObj.initSize = _.cloneDeep(tempContentObj.size);
             tempContentObj.pages = _.cloneDeep(tempContentObj.pageList);
             for (i = 0; i < tempContentObj.tagList.length; i++) {

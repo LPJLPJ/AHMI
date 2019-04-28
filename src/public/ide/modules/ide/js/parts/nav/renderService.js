@@ -2162,17 +2162,18 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                 pngDataUrls.forEach(function(stream,idx){
                     stream = FontGeneratorService.pngStream(stream,local);
                     var curStreamName = imgNamePrefix+(idx>0?'-'+idx:'')+imagePostfix
-                    if(local){
-                        try {
-                            fs.writeFileSync(path.join(dstDir,curStreamName),stream);
-                            coutDownCB()
-                        }catch (e) {
-                            coutDownCB(e)
-                        }
-                    }else{
-                        // uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
-                        uploadDataURIToMemory(stream,curStreamName,coutDownCB,coutDownCB)
-                    }
+                    // if(local){
+                    //     try {
+                    //         fs.writeFileSync(path.join(dstDir,curStreamName),stream);
+                    //         coutDownCB()
+                    //     }catch (e) {
+                    //         coutDownCB(e)
+                    //     }
+                    // }else{
+                    //     // uploadDataURI(stream,curStreamName,'/project/'+ResourceService.getResourceUrl().split('/')[2]+'/generatetex',coutDownCB,coutDownCB)
+                    //     uploadDataURIToMemory(stream,curStreamName,coutDownCB,coutDownCB)
+                    // }
+                    uploadDataURIToMemory(stream,curStreamName,coutDownCB,coutDownCB)
                 })
             }
         })
@@ -2271,7 +2272,7 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                         var arraybuffer = new Uint8Array(event.target.result)
                         fs.writeFileSync(path.join(ProjectBaseUrl,name),Buffer.from(arraybuffer))
                         var gui = require('nw.gui');
-                        gui.Shell.openItem(ProjectBaseUrl);
+                        gui.Shell.showItemInFolder(path.join(ProjectBaseUrl,name));
                         cb && cb()
                     };
                     fileReader.readAsArrayBuffer(blob);

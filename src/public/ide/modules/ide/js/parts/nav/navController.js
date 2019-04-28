@@ -102,6 +102,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     openPanel: openPanel,
                     GenACF:GenACF,
                     openShare: openShare,
+                    openAutoSave:openAutoSave,
                     openValidate:openValidate,
                     openCANPanel: openCANPanel,
                     runSimulator: runSimulator,
@@ -137,7 +138,22 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             // setInterval(function () {
             //     saveProject();
             // }.bind(this),5*60*1000)
+            setAutoSave()
 
+        }
+
+        function setAutoSave(){
+            //auto save
+            var mode = Number($scope.project.autoSaveMode)||0
+            //cancel last
+            if($scope.autoSaveId){
+                clearInterval($scope.autoSaveId)
+            }
+            if(mode > 0 ){
+                $scope.autoSaveId = setInterval(function () {
+                    saveProject(null,true,true);
+                }.bind(this),mode * 60 * 1000)
+            }
         }
 
         //spinner
@@ -1319,16 +1335,24 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function GenACF(){
             var cmd=require('node-cmd');
-            console.log('cmd',cmd)
+            // console.log('cmd',cmd)
             if(window.zipfilename == undefined){
-                toastr.error("the zipfile is not exist,please click 生成 first！");
+                toastr.error("请点击生成按钮，生成新的zip文件！");
             }
             else {
+                showSpinner()
                 cmd.get(
                 'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2', function(err,data){
-                    console.log('data',err,data);
+                    if(err){
+                        toastr.error('生成ACF失败',err)
+                    }else{
+                        toastr.info('生成ACF成功！')
+                        console.log(data)
+                        var gui = require('nw.gui');
+                        gui.Shell.openItem(path.join(__dirname,'ACF'));
+                    }
+                    hideSpinner()
                 })
-            console.log('cmd',cmd)
             }
         }
         function openPanel() {
@@ -1377,6 +1401,29 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
             modalInstance.result.then(function (result) {
                 generateDataFile(result.format);
+            }, function () {
+
+            });
+        }
+
+        function openAutoSave() {
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'autoSaveModal.html',
+                controller: 'autoSaveModalCtl',
+                scope: $scope,
+                size: 'md',
+                resolve:{
+                    mode:function(){
+                        return $scope.project.autoSaveMode||0 
+                    }
+                }
+                
+            });
+
+            modalInstance.result.then(function (result) {
+                $scope.project.autoSaveMode = result.mode
+                setAutoSave()
             }, function () {
 
             });
@@ -1766,6 +1813,40 @@ ide.controller('shareModalCtl', ['$rootScope', '$scope', '$uibModalInstance', '$
 
     $scope.cancel = function () {
         $uibModalInstance.dismiss($scope.shareInfo.shared);
+    };
+}]);
+
+
+ide.controller('autoSaveModalCtl', ['$rootScope', '$scope', '$uibModalInstance', '$http', 'mode', function ($rootScope, $scope, $uibModalInstance, $http, mode) {
+   $scope.mode = mode
+
+   $scope.autoSaveModes = [
+       {
+           key:0,
+           title:"不自动保存"
+       },
+       {
+           key:10,
+           title:"每10分钟自动保存"
+       },
+       {
+           key:30,
+           title:"每30分钟自动保存"
+       },
+       {
+           key:60,
+           title:"每60分钟自动保存"
+       }
+   ]
+
+   $scope.ok = function(){
+    $uibModalInstance.close({
+        mode: Number($scope.mode)||0
+    });
+   }
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss();
     };
 }]);
 
