@@ -21,7 +21,7 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"触摸追踪",icon:"touch-track"},
         {name:"透明度图层",icon:"alpha-slide"},
         {name:"文本输入",icon:"text-input"},
-        {name:"照片栏",icon:"gallery"},
+        {name:"照片栏",icon:"gallery",enable:false},
         {name:"动态透明图",icon:"alpha-img"},
         {name:"按钮开关",icon:"button-switch"},
         {name:"时钟",icon:"time"},
