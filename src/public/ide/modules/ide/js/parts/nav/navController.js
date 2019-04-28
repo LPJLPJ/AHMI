@@ -1319,16 +1319,21 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function GenACF(){
             var cmd=require('node-cmd');
-            console.log('cmd',cmd)
+            // console.log('cmd',cmd)
             if(window.zipfilename == undefined){
-                toastr.error("the zipfile is not exist,please click 生成 first！");
+                toastr.error("请点击生成按钮，生成新的zip文件！");
             }
             else {
                 cmd.get(
                 'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2', function(err,data){
-                    console.log('data',err,data);
+                    if(err){
+                        toastr.error('生成ACF失败',err)
+                    }else{
+                        toastr.info('生成ACF成功！')
+                        var gui = require('nw.gui');
+                        gui.Shell.openItem(path.join(__dirname,'ACF'));
+                    }
                 })
-            console.log('cmd',cmd)
             }
         }
         function openPanel() {
