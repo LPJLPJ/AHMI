@@ -1324,6 +1324,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 toastr.error("请点击生成按钮，生成新的zip文件！");
             }
             else {
+                if(spinner){
+                    showSpinner()
+                }
                 cmd.get(
                 'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2', function(err,data){
                     if(err){
@@ -1333,6 +1336,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         console.log(data)
                         var gui = require('nw.gui');
                         gui.Shell.openItem(path.join(__dirname,'ACF'));
+                    }
+                    if(spinner){
+                        hideSpinner()
                     }
                 })
             }
