@@ -3558,8 +3558,15 @@ module.exports = React.createClass({
         var height = widget.info.height;
         //get current value
         var curSlideTag = this.findTagByName(widget.tag);
-        //console.log(widget.curValue);
-        var curSlide = (curSlideTag && curSlideTag.value) || widget.curValue || 0;
+
+        var curSlide;
+        if (curSlideTag && curSlideTag.value !== '') {
+            curSlide = curSlideTag.value;
+        }else {
+            curSlide = widget.curValue || 0;
+        }
+        //var curSlide = (curSlideTag && curSlideTag.value !== (undefined||null||'') ) ||
+
         var curScale = 1.0 * (curSlide - widget.info.minValue) / (widget.info.maxValue - widget.info.minValue);
 
         curScale = (curScale >= 0 ? curScale : 0.0);
@@ -6711,6 +6718,8 @@ module.exports = React.createClass({
                         break;
                     case 'MySlideBlock':
                         elem.mouseState = mouseState;
+                        /*var targetTag = this.findTagByName(elem.tag);
+                        this.setTagByTag(targetTag, 1);*/
                         needRedraw = true;
                         break;
                 }
