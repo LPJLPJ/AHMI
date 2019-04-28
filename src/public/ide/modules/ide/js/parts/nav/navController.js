@@ -1393,10 +1393,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         console.log(gen.stdout+'')
                         console.log(gen.stderr+'')
                         toastr.info("生成ACF成功")
-                        hideSpinner()
                         var gui = require('nw.gui');
                         gui.Shell.openItem(path.join(__dirname,'ACF'));
                     }
+                    hideSpinner()
 
                 })
                 
