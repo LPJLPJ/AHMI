@@ -25,7 +25,7 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"动态透明图",icon:"alpha-img"},
         {name:"按钮开关",icon:"button-switch"},
         {name:"时钟",icon:"time"},
-        {name:"图表",icon:"chart"},
+        {name:"图表",icon:"chart",enable:false},
         {name:"表格",icon:"grid"}
     ];
     $scope.addWidget = function (index) {
