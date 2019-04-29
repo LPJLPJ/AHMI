@@ -38,7 +38,7 @@ var inputKeybaordStruct = {
                                 {
                                     slices: [{
                                         imgSrc: '',
-                                        color: 'rgba(0,0,0,1)'
+                                        color: 'rgba(236,236,236,1)'
                                     }]
                                 }
                             ]
@@ -251,9 +251,9 @@ var num = {
     y: 0,
     width: 1,
     height: 0.2,
-    color: 'rgba(255,0,0,1.0)',
+    color: 'rgba(84,84,84,1.0)',
     slices: [
-        new KeyTexObj('', '', '', 'rgba(0,0,0,1.0)'),
+        new KeyTexObj('', '', '', 'rgba(207,207,207,1.0)'),
     ]
 }
 
@@ -298,7 +298,7 @@ function TexRes(name) {
     this.id = name;
     this.name = name;
     this.type = 'image/bmp';
-    this.src = '/public/images/' + name + '.png';
+    this.src = '/public/images/keyboard/' + name + '.png';
 }
 
 var defaultKeyTexList = ['b0press', 'b0release', 'b1press', 'b1release', 'b2press', 'b2release', 'b3press', 'b3release', 'b4press', 'b4release', 'b5press', 'b5release', 'b6press', 'b6release', 'b7press', 'b7release', 'b8press', 'b8release',
