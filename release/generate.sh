@@ -18,7 +18,7 @@ echo "start to copy tempFolder to complete folder" &&
 cp -rf tempFolder/* ./complete/IDENW/package.nw/ &&
 
 echo "start to zip complete IDE" &&
-cd ./complete && zip -q  -r localIDE.zip ./IDENW && cd .. &&
+cd ./complete && rm -rf localIDE.zip && zip -q  -r localIDE.zip ./IDENW && cd .. &&
 
 echo "start to edit logs" &&
 node editLogs.js &&
