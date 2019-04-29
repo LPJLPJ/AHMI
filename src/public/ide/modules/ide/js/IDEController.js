@@ -172,11 +172,12 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             ResourceService.setProjectUrl(projectBaseUrl);
             var resourceUrl = path.join(projectBaseUrl, 'resources')+path.sep;
             ResourceService.setResourceUrl(resourceUrl);
+            ResourceService.setMaskUrl(path.join('..','..','localproject',projectId,'mask')+path.sep);
             var realDirPath = path.join(__dirname, path.dirname(window.location.pathname));
 
             ResourceService.setResourceNWUrl(path.relative(realDirPath, resourceUrl));
             var data = readSingleFile(path.join(projectBaseUrl, 'project.json'));
-
+            
 
             $timeout(function () {
                 if (data) {
@@ -960,18 +961,24 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
          * 重新获取资源大小
          */
         function getResourcesSize(id,cb){
-            $http({
-                method: 'GET',
-                url: '/project/' + id + '/resourcesSize'
-            })
-                .success(function (data, status, xhr) {
-                    resourcesSizeObj = data||{}
-                    cb && cb()
+            if(local){
+                var projectBaseUrl = path.join(__dirname, 'localproject', id);
+
+            }else{
+                $http({
+                    method: 'GET',
+                    url: '/project/' + id + '/resourcesSize'
                 })
-                .error(function (err) {
-                    console.log(err)
-                    cb && cb(err)
-                });
+                    .success(function (data, status, xhr) {
+                        resourcesSizeObj = data||{}
+                        cb && cb()
+                    })
+                    .error(function (err) {
+                        console.log(err)
+                        cb && cb(err)
+                    });
+            }
+            
         }
 
         /**
