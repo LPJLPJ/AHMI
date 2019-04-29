@@ -817,8 +817,100 @@ ideServices.directive("maskform", ['uploadingService','idService','ResourceServi
                 }
             }
 
+            // function upload(file, translatedFile) {
+            //         uploadServer(file, translatedFile);
+            // }
+
             function upload(file, translatedFile) {
+                if (window.local) {
+                    uploadLocal(file, translatedFile);
+                } else {
                     uploadServer(file, translatedFile);
+                }
+            }
+
+            function uploadLocal(file, translatedFile) {
+                //overload check
+                var curSize = ResourceService.getCurrentTotalSize();
+                var maxSize = ResourceService.getMaxTotalSize();
+                if (curSize > maxSize) {
+                    toastr.info('资源超过限制');
+                    deleteUploadingItem(translatedFile);
+                    return;
+                }
+
+                var successHandler = function () {
+                    toastr.info('上传成功');
+                    scope.$emit('MaskUpdate',scope.component.top.mask.src);
+                };
+
+                var errHandler = function (err) {
+                    translatedFile.progress ='上传失败';
+                    toastr.error("上传失败")
+                    console.log(err)
+
+                };
+
+                /**
+                 * 处理进度
+                 * @param e
+                 */
+                var progressHandler = function (e) {
+
+                    translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
+                    // console.log(translatedFile.progress);
+                };
+
+
+                function saveFileAsync(data, dstUrl, successHandler, errHandler, progressHandler) {
+
+                    var dstStream = fs.createWriteStream(dstUrl);
+                    var srcStream;
+                    var stats;
+                    var totalSize;
+                    try {
+                        console.log(data);
+                        srcStream = fs.createReadStream(data);
+                        stats = fs.statSync(data);
+                        totalSize = stats.size;
+                    } catch (e) {
+                        console.log('err load file', e);
+                        return;
+                    }
+                    dstStream.on('finish', function () {
+                        successHandler && successHandler();
+                    });
+                    dstStream.on('error', function (err) {
+                        errHandler && errHandler(err);
+                    });
+                    srcStream.on('data', function (chunk) {
+                        // console.log(arguments);
+                        var e = {
+                            loaded: dstStream.bytesWritten,
+                            total: totalSize
+                        };
+                        progressHandler && progressHandler(e);
+                    });
+
+                    srcStream.pipe(dstStream);
+                }
+
+                // {file:file,name:translatedFile.id}
+                var resourcePath = ResourceService.getResourceUrl();
+                var maskPath = path.join(resourcePath,'..','mask')
+                var filePath = path.join(maskPath, translatedFile.id);
+                var stats
+                try{
+                    stats = fs.statSync(maskPath)
+                }catch(e){
+
+                }
+                if(!stats||!stats.isDirectory()){
+                    fs.mkdirSync(maskPath)
+                }
+                saveFileAsync(file.path, filePath, successHandler, errHandler, progressHandler);
+
+
             }
 
             function uploadServer(file, translatedFile) {
