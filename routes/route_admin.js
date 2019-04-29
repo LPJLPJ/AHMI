@@ -276,7 +276,7 @@ Route_admin.releaseUpdate = function(req,res){
                             errHandler(res,500,'package folder err');
                         });
                         archive.pipe(output);
-                        archive.directory(path.join(__dirname,'../release','complete','IDENW'),'/IDENW');
+                        archive.directory(path.join(__dirname,'../release','complete','IDENW'),'/');
                         archive.finalize();
                     }
                 })

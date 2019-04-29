@@ -343,9 +343,10 @@ body {
     cursor: pointer;
     display: inline-block;
     width: 4%;
-    min-width: 60px;
+    min-width: 72px;
     height: 50px;
     text-align: center;
+    /* overflow: hidden; */
 }
 
 .top-menu-content__item-title-group {
@@ -356,7 +357,7 @@ body {
 .top-menu-content__item-title-g {
     cursor: pointer;
     width: 4%;
-    min-width: 60px;
+    min-width: 72px;
     height: 50px;
     text-align: center;
 }
