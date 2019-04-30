@@ -5429,7 +5429,7 @@ module.exports = React.createClass({
             
             for(var i=0;i<xCount;i++){
                 x = (width-2*xPadding)/xCount * (i + 0.5)+xPadding
-                y = height - yPadding - (height-2*yPadding)/(maxValue - minValue) * values[i]
+                y = height - yPadding - (height-2*yPadding)/(maxValue - minValue) * (values[i] - minValue)
                 
                 if(i!==0){
                     if(lineTex.color){
@@ -5447,7 +5447,7 @@ module.exports = React.createClass({
 
             for(i=0;i<xCount;i++){
                 x = (width-2*xPadding)/xCount * (i + 0.5)+xPadding
-                y = height - yPadding - (height-2*yPadding)/(maxValue - minValue) * values[i]
+                y = height - yPadding - (height-2*yPadding)/(maxValue - minValue) * (values[i] - minValue)
             
 
                 if(dotTex){
