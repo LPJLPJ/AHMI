@@ -97,7 +97,7 @@ localIDEService.uploadProjectZip = function(req,res){
         form.parse(req,function(err,fields,files){
             if(err){
                 console.log('err in parse',err);
-                errHandle(res,500,'err in parse!');
+                errHandler(res,500,'err in parse!');
             }
         });
 
@@ -220,11 +220,12 @@ function parseFormData(req,res,newProject){
     var field = {};
     var files = {};
     var form = new formidable.IncomingForm();
+    var lastErr = null
     form.encoding="utf-8";
     form.uploadDir = resourceDir;
     form.multiples = true;//设置为多文件上传
     form.keepExtensions=true;//是否保存文件后缀
-    form.maxFieldsSize = 10*1024*1024;
+    form.maxFieldsSize = 30*1024*1024;
 
     //监听事件
     form.on('field',function(name,value){
@@ -244,7 +245,7 @@ function parseFormData(req,res,newProject){
                 }else{
                     newProject[key] = project[key];
                 }
-            }
+            } 
         }
     });
     form.on('file',function(name,file){
@@ -263,6 +264,9 @@ function parseFormData(req,res,newProject){
         });
     });
     form.on('end',function(){
+        if(lastErr){
+            return
+        }
         newProject.save(function(err){
             if(err){
                 console.log('save err in upload',err);
@@ -308,7 +312,7 @@ function parseFormData(req,res,newProject){
     });
     form.on('error',function(err){
         console.log('err',err);
-        errHandler(res,500,'upload file err');
+        lastErr = err
     });
     form.on('aborted',function(){
         console.log('aborted');
@@ -318,7 +322,7 @@ function parseFormData(req,res,newProject){
     form.parse(req,function(err,fields,files){
         if(err){
             console.log('err in parse',err);
-            errHandle(res,500,'err in parse!');
+            errHandler(res,500,'err in parse!');
         }
     });
 }

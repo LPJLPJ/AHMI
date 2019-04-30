@@ -6173,7 +6173,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 ctx.fillRect(xPadding-this.width/2,yPadding-this.height/2,this.width-2*xPadding,this.height-2*yPadding)
                 for(var i=0;i<xCount;i++){
                     x = (this.width-2*xPadding)/xCount * (i + 0.5)+xPadding
-                    y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * values[i]
+                    y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * (values[i] - this.minValue)
                     
                     if(i!==0){
                         if(this.lineTex.color){
@@ -6191,7 +6191,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 for(i=0;i<xCount;i++){
                     x = (this.width-2*xPadding)/xCount * (i + 0.5)+xPadding
-                    y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * values[i]
+                    y = this.height - yPadding - (this.height-2*yPadding)/(this.maxValue - this.minValue) * (values[i] - this.minValue)
                 
 
                     ctx.fillStyle = this.dotTex.color
