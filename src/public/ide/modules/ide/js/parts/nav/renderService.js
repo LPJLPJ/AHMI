@@ -47,6 +47,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         }
         
     }
+
+
     if(!local){
             document.getElementById("ACF").style.visibility="hidden";
         }
@@ -2295,20 +2297,37 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     }else{
                         zip.generateAsync({type:"blob"})
                         .then(function (blob) {
-                            var reader = new FileReader()
-                            reader.onload = function(e){
-                                var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
-                                saveZipFile(blob, "file_"+md5+".zip",function(){
-                                    window.zipfilename = "file_"+md5+".zip"
-                                    console.log(window.zipfilename)
-                                    sCb && sCb()
-                                });
+                            //delete rendered
+                            // zip = null
+                            // window.renderedTex = {}
+                            // var reader = new FileReader()
+                            // reader.onload = function(e){
+                            //     var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
+                            //     saveZipFile(blob, "file_"+md5+".zip",function(){
+                            //         window.zipfilename = "file_"+md5+".zip"
+                            //         console.log(window.zipfilename)
+                            //         sCb && sCb()
+                            //     });
                                 
-                            }
-                            reader.onerror = function(e){
-                                fCb && fCb(e)
-                            }
-                            reader.readAsBinaryString(blob)
+                            // }
+                            // reader.onerror = function(e){
+                            //     fCb && fCb(e)
+                            // }
+                            // reader.readAsBinaryString(blob)
+                            window.CrptoEngine.hashMD5(blob,function(err,md5){
+                                if(err){
+                                    console.log(err)
+                                    toastr.err('计算压缩包哈希值出错！')
+                                }else{
+                                    saveZipFile(blob, "file_"+md5+".zip",function(){
+                                        window.zipfilename = "file_"+md5+".zip"
+                                        console.log(window.zipfilename)
+                                        sCb && sCb()
+                                    });
+                                }
+                                
+                            })
+                            
                         }, function (err) {
                             errHandler(err);
                             fCb && fCb()
@@ -2336,19 +2355,32 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }else{
                 zip.generateAsync({type:"blob"})
                 .then(function (blob) {
-                    var reader = new FileReader()
-                    reader.onload = function(e){
-                        var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
-                        saveZipFile(blob, "file_"+md5+".zip",function(){
-                            window.zipfilename = "file_"+md5+".zip"
-                            console.log(window.zipfilename)
-                            sCb && sCb()
-                        });
-                    }
-                    reader.onerror = function(e){
-                        fCb && fCb(e)
-                    }
-                    reader.readAsBinaryString(blob)
+                    // var reader = new FileReader()
+                    // reader.onload = function(e){
+                    //     var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(e.target.result)).toString();
+                    //     saveZipFile(blob, "file_"+md5+".zip",function(){
+                    //         window.zipfilename = "file_"+md5+".zip"
+                    //         console.log(window.zipfilename)
+                    //         sCb && sCb()
+                    //     });
+                    // }
+                    // reader.onerror = function(e){
+                    //     fCb && fCb(e)
+                    // }
+                    // reader.readAsBinaryString(blob)
+                    window.CrptoEngine.hashMD5(blob,function(err,md5){
+                        if(err){
+                            console.log(err)
+                            toastr.err('计算压缩包哈希值出错！')
+                        }else{
+                            saveZipFile(blob, "file_"+md5+".zip",function(){
+                                window.zipfilename = "file_"+md5+".zip"
+                                console.log(window.zipfilename)
+                                sCb && sCb()
+                            });
+                        }
+                        
+                    })
                 }, function (err) {
                     errHandler(err);
                     fCb && fCb()
