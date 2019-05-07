@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService,Type, $uibModal,$http,$q) {
+ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService','GenerateTagService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService,GenerateTagService,Type, $uibModal,$http,$q) {
     $scope.selectedIdx = -1;
     $scope.animationsEnabled = true;
     $scope.component = {
@@ -988,20 +988,25 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     }
 
     function makeTagExcel(tagsData,project){
-        $http({
-            method:'post',
-            url:"/project/"+project.projectId+"/generateTagExcel",
-            data:tagsData
-        }).success(function(data){
-            if(data == 'ok'){
-                downloadTagExcel(project);
-                toastr.info('生成excel成功');
-            }else{
-                toastr.error('生成失败，请刷新');
-            }
-        }).error(function(err){
-            console.log(err);
-        })
+
+        if (window.local){
+            GenerateTagService.generateTagExcel(tagsData,project);
+        } else {
+            $http({
+                method:'post',
+                url:"/project/"+project.projectId+"/generateTagExcel",
+                data:tagsData
+            }).success(function(data){
+                if(data == 'ok'){
+                    downloadTagExcel(project);
+                    toastr.info('生成excel成功');
+                }else{
+                    toastr.error('生成失败，请刷新');
+                }
+            }).error(function(err){
+                console.log(err);
+            })
+        }
     }
 
     function downloadTagExcel(project){
