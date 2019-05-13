@@ -1,7 +1,7 @@
 /**
  * Created by shenaolin on 16/2/26.
  */
-var ide = angular.module('ide', ['ui.bootstrap.contextMenu', 'colorpicker.module', 'btford.modal', 'ui.bootstrap', 'ngAnimate', 'GlobalModule', 'ui.tree', 'IDEServices','ui.select', 'ngSanitize','ui.sortable']);
+var ide = angular.module('ide', ['ui.bootstrap.contextMenu', 'colorpicker.module', 'btford.modal', 'ui.bootstrap', 'ngAnimate', 'GlobalModule', 'ui.tree', 'IDEServices','ui.select', 'ngSanitize','ui.sortable','ngSanitize']);
 
 
 ide.config(['$compileProvider',
@@ -34,14 +34,14 @@ console.log = (function (console) {
 
 
 ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectService', 'GlobalService', 'Preference', 'ResourceService', 'WaveFilterService','TagService', 'TemplateProvider', 'UserTypeService', 'WidgetService', 'NavModalCANConfigService',
-    'socketIOService', 'MiddleWareService', function ($scope, $timeout, $http, $interval,
+    'socketIOService', 'MiddleWareService','TrackService', function ($scope, $timeout, $http, $interval,
                                                       ProjectService,
                                                       GlobalService,
                                                       Preference,
                                                       ResourceService,
                                                       WaveFilterService,
                                                       TagService,
-                                                      TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService) {
+                                                      TemplateProvider, UserTypeService, WidgetService, NavModalCANConfigService, socketIOService, MiddleWareService,TrackService) {
 
         ideScope = $scope;
         $scope.ide = {
@@ -51,6 +51,9 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         var loadStep = 0;     //加载到了第几步,共8步
         var fs, path, __dirname;
         var resourcesSizeObj = {}
+
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        window.audioCtx = audioCtx
         // showIDE();
 
         //var params=getUrlParams();
@@ -746,6 +749,7 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 $scope.$broadcast('PageNodeChanged');
                 $scope.$broadcast('AttributeChanged');
                 $scope.$broadcast('syncTagSuccess')
+                $scope.$broadcast('trackListChanged')
             });
 
             $scope.$on('Redo', function (event, operate, callback) {
@@ -753,6 +757,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 $scope.$broadcast('NavStatusChanged');
                 $scope.$broadcast('PageNodeChanged');
                 $scope.$broadcast('AttributeChanged');
+                $scope.$broadcast('syncTagSuccess')
+                $scope.$broadcast('trackListChanged')
             });
 
             $scope.$on('DoCopy', function (event) {
@@ -873,7 +879,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
         function syncServices(globalProject) {
             ResourceService.setMaxTotalSize(globalProject.maxSize || 100 * 1024 * 1024);
             ResourceService.syncFiles(globalProject.resourceList);
-            WaveFilterService.syncWaveFilters(globalProject.waveFilterList)
+            WaveFilterService.syncWaveFilters(globalProject.waveFilterList);
+            TrackService.setTracks(globalProject.trackList||[]);
             //tags tbc
             TagService.syncCustomTags(globalProject.customTags);
             TagService.syncTimerTags(globalProject.timerTags);

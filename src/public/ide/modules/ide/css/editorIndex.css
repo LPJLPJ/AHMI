@@ -2713,6 +2713,26 @@ div.wrapper-custom {
     top: 15px;
 }
 
+.file-thumb__audio-img{
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.file-thumb--animate{
+    -webkit-animation: playAudio 5s infinite linear;
+    -o-animation: playAudio 5s infinite linear;
+    animation: playAudio 5s infinite linear;
+}
+
+@keyframes playAudio {
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
 .file-prompt{
     color: #606060;
 }
