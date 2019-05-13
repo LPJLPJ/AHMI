@@ -74,6 +74,17 @@ ideServices
             }
             return null;
         }
+
+        this.getResourceObjFromCache = function (key, type) {
+            type = type || 'src';
+            for (var i = 0; i < globalResources.length; i++) {
+                if (globalResources[i][type] == key) {
+                    return globalResources[i];
+                }
+            }
+            return null;
+        }
+
         this.setResourceNWUrl = function (_url) {
             resourceNWUrl = _url;
         };
@@ -99,6 +110,13 @@ ideServices
             return files
 
         };
+
+        this.getAllAudios = function(){
+            var audios = _.filter(files, function (file) {
+                return file.type && file.type.split('/')[0]=='audio'
+            })
+            return audios
+        }
 
         this.setFiles=function (_files) {
             files=_files||[];
@@ -274,6 +292,46 @@ ideServices
                 // curFont.fontFamily = file.name
                 // curFont.src = file.src;
                 // globalResources.push(resourceObj);
+
+            }else if(file.type.match(/audio/)){
+                // var curAudio = new Audio(file.src)
+                // resourceObj.content = curAudio
+                // globalResources.push(resourceObj);
+                // scb && scb({type:'ok'}, resourceObj);
+                jsmediatags.read(window.location.origin+ file.src, {
+                    onSuccess: function(tag) {
+                        var picture = tag.tags.picture
+                        var imageData = picture.data;
+                        var base64String = "";
+                        for (var i = 0; i < imageData.length; i++) {
+                            base64String += String.fromCharCode(imageData[i]);
+                        }
+
+                        file.albumCoverSrc = "data:" + picture.format + ";base64," + window.btoa(base64String);
+
+                    },
+                    onError: function(error) {
+                        console.log(error);
+                    }
+                });
+
+                var request = new XMLHttpRequest();
+                request.open('get', file.src, true);
+                request.responseType = 'arraybuffer';
+                request.onload = function() {
+                    audioCtx.decodeAudioData(request.response, function(buffer) {
+                        resourceObj.complete = true
+                        resourceObj.content = buffer
+                        scb && scb({type:'ok'}, resourceObj);
+
+                    });
+                };
+                request.onerror = function(e){
+                    resourceObj.complete = false
+                    fcb && fcb({type:'error'}, resourceObj);
+                }
+                request.send();
+                globalResources.push(resourceObj);
 
             }else{
                 //other
@@ -500,6 +558,8 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     // case 'tiff':
                     case 'ttf':
                     case 'woff':
+                    //audio
+                    case 'mp3':
                         return true;
                     default:
                         toastr.warning('不支持'+fileExt+'格式');
