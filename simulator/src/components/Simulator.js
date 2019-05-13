@@ -10,6 +10,7 @@ var VideoSource = require('./VideoSource');
 var EasingFunctions = require('../utils/easing');
 var AnimationManager = require('../utils/animationManager');
 var AnimationAPI = require('../utils/animationAPI')
+var AudioManager = require('../utils/audioManager')
 var math = require('mathjs');
 var StringConverter = require('./StringConverter')
 var WaveFilterManager = require('./WaveFilterManager')
@@ -68,6 +69,7 @@ module.exports = React.createClass({
         this.state.innerTimerList.map(function (timerId) {
             clearInterval(timerId);
         }.bind(this));
+        AudioManager.stopAllAudios()
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
@@ -198,7 +200,8 @@ module.exports = React.createClass({
 
         //loading resources
         var resourceList = [];
-        var imageList = []
+        var imageList = [];
+        var audioList = [];
         var allResources = data.resourceList || [];
         this.state.resourceList = resourceList
         //this.state.imageList = imageList
@@ -262,6 +265,20 @@ module.exports = React.createClass({
                         imageList.push(newResource)
 
                         break;
+                    case 'audio':
+                        var curAudio = new Audio(resource.src)
+                        curAudio.onload = function(){
+                            requiredResourceNum = requiredResourceNum - 1;
+                            //update loading progress
+                            this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
+                            if (requiredResourceNum <= 0) {
+                                // console.log(imageList);
+                                callBack(data);
+                            }
+                        }.bind(this)
+                        newResource.content = curAudio;
+                        audioList.push(newResource)
+                    break;
                     default:
                         num = num - 1
                         this.drawLoadingProgress(this.totalRequiredResourceNum, requiredResourceNum, true, projectWidth, projectHeight);
@@ -7406,6 +7423,100 @@ module.exports = React.createClass({
                     });
                 };
                 break;
+            case 'PLAY_SOUND':
+                // this.state.imageList.forEach(function(res){
+                //     if(res.type &&res.type.match(/audio/)){
+                //         res.content.play()
+                //     }
+                // })
+                //window.audioList[0].connect(window.audioCtx)
+                //window.audioList[0].start(0)
+
+                // var bufferSrc = audioCtx.createBufferSource();
+                // bufferSrc.buffer =window.audioList[0];
+                // //bufferSrc.connect(gainNode);
+                // bufferSrc.connect(window.audioCtx.destination);
+                // bufferSrc.start(0)
+                // AudioManager.addNewAudioAndPlay(this.state.project.trackList[0].buffer)
+                // AudioManager.addNewAudioAndPlay(this.state.project.trackList[1].buffer)
+
+
+
+                //window.audioList[0].play()
+                // window.audioCtx.play()
+                var param2Value = this.getParamValue(param2);
+
+                var playTrackIndex = param2Value
+
+                //console.log(this.state.project.trackList);
+
+                for(var i=0;i<this.state.project.trackList.length;i++){
+                    var curTrack = this.state.project.trackList[i]
+
+                    if(curTrack.index == playTrackIndex){
+                        //hit
+                        if(curTrack.key){
+                            AudioManager.playAudioWithKey(curTrack.key)
+                        }else{
+                            curTrack.key = AudioManager.addNewAudioAndPlay(curTrack.buffer,{
+                                loop:curTrack.loop||false
+                            })
+                        }
+                    }
+                }
+
+                break;
+            case 'PAUSE_SOUND':
+            var param2Value = this.getParamValue(param2);
+
+            var playTrackIndex = param2Value
+            for(var i=0;i<this.state.project.trackList.length;i++){
+                var curTrack = this.state.project.trackList[i]
+                if(curTrack.index == playTrackIndex){
+                    //hit
+                    var key = curTrack.key
+                    if(key){
+                        AudioManager.pauseAudioWithKey(key)
+                    }
+                }
+            }
+
+
+            break;
+            case 'RESUME_SOUND':
+            var param2Value = this.getParamValue(param2);
+
+            var playTrackIndex = param2Value
+            for(var i=0;i<this.state.project.trackList.length;i++){
+                var curTrack = this.state.project.trackList[i]
+                if(curTrack.index == playTrackIndex){
+                    //hit
+                    var key = curTrack.key
+                    if(key){
+                        AudioManager.resumeAudioWithKey(key)
+                    }
+                }
+            }
+
+
+            break;
+            case 'STOP_SOUND':
+            var param2Value = this.getParamValue(param2);
+
+            var playTrackIndex = param2Value
+            for(var i=0;i<this.state.project.trackList.length;i++){
+                var curTrack = this.state.project.trackList[i]
+                if(curTrack.index == playTrackIndex){
+                    //hit
+                    var key = curTrack.key
+                    if(key){
+                        AudioManager.stopAudioWithKey(key)
+                    }
+                }
+            }
+
+
+            break;
             default:
                 console.log('unsupported cmd: ',op)
 

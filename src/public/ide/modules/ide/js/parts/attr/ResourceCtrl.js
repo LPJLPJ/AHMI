@@ -117,7 +117,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                     TrackService.updateTrackByIndex(index,_track)
                 }
                 //$scope.component.top.tracks = TrackService.getAllTracks()
-                console.log(TrackService.getAllTracks(),ProjectService.getAllTrackList())
+                //console.log(TrackService.getAllTracks(),ProjectService.getAllTrackList())
                 $scope.$emit('ChangeCurrentPage', oldOperate);
             })
         }

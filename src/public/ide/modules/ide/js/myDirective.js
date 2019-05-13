@@ -164,3 +164,34 @@ ide.directive('mySwitchButton', function () {
         }
     }
 });
+
+/**
+ * switch开关指令-组件
+ * 内部status与外部数据相绑定,status 有两种状态 true  false
+ */
+ide.directive('myBoolSwitchButton', function () {
+    return {
+        restrict: "EA",
+        template: "<div id='btn' class='switch-button switch-button-close' ng-click='clickHandler()'><span class='switch-flag'></span></div>",
+        scope: {
+            status: '=',
+        },
+        replace: true,
+        link: function ($scope, $element) {
+            function init() {
+                $scope.status  ? $element.removeClass('switch-button-close') : $element.addClass('switch-button-close');
+            }
+
+            init();
+            $scope.clickHandler = function () {
+                if ($scope.status ) {
+                    $scope.status = false;
+                    $element.addClass('switch-button-close')
+                } else if (!$scope.status ) {
+                    $scope.status = true;
+                    $element.removeClass('switch-button-close')
+                }
+            };
+        }
+    }
+});

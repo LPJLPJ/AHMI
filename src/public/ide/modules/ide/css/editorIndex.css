@@ -1485,7 +1485,7 @@ body {
     top: -12px;
 }
 
-.action-wrap .action-item__action-list {
+.action-item__action-list {
     border: 0;
     background-color: white;
     max-height: 180px;
@@ -1493,18 +1493,18 @@ body {
     list-style: none;
 }
 
-.action-wrap .action-item__action-list li {
+.action-item__action-list li {
     border: 1px solid #a9a9a9;
     border-radius: 4px;
     min-height: 25px;
     padding: 3px 0 0 10px;
 }
 
-.action-wrap .action-item__action-list li:hover {
+.action-item__action-list li:hover {
     background-color: #e5e5e5;
 }
 
-.action-wrap .action-item__action-list li i {
+.action-item__action-list li i {
     background-color: transparent;
     padding: 0 5px;
     float: right;
@@ -1514,7 +1514,7 @@ body {
     cursor: pointer;
 }
 
-.action-wrap .action-item__action-list li span {
+.action-item__action-list li span {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 125px;
@@ -1522,7 +1522,7 @@ body {
     display: inline-block;
 }
 
-.action-wrap .action-item__action-list li:hover {
+.action-item__action-list li:hover {
     opacity: 1;
 }
 
@@ -2710,12 +2710,37 @@ div.wrapper-custom {
     width: 50px;
     height: 50px;
     right: 0;
+    top: 10px;
+}
+
+.file-thumb__audio{
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    right: -5px;
+    top: 10px;
+}
+
+.file-thumb__audio>.audio-play{
+    font-size: 30px;
+    line-height: 35px;
+    text-align: center;
+    color: dodgerblue;
+    position: absolute;
+    left: 15px;
     top: 15px;
+    z-index: 1;
+    cursor: pointer;
 }
 
 .file-thumb__audio-img{
     border-radius: 50%;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    z-index: auto;
 }
 
 .file-thumb--animate{

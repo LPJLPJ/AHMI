@@ -527,6 +527,17 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                             pass = false;
                         }
                         break;
+                    case 'PLAY_SOUND':
+                    case 'PAUSE_SOUND':
+                    case 'RESUME_SOUND':
+                    case 'STOP_SOUND':
+                        var integerReg = /^\d+$/;
+                        if(!integerReg.test(cmd[2].value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
+                            pass = false;
+                        }
+                        break;
                     default:
                         var value = cmd[2].value;
                         var tagName = cmd[2].tag;
