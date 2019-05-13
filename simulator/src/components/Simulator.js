@@ -69,7 +69,7 @@ module.exports = React.createClass({
         this.state.innerTimerList.map(function (timerId) {
             clearInterval(timerId);
         }.bind(this));
-        AudioManager.stopAllAudios()
+        AudioManager.stopAllAudios();
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
@@ -147,7 +147,7 @@ module.exports = React.createClass({
         })
         this.state.tagList = data.tagList;
         this.setState({tagList: data.tagList});
-        console.log('tagList loaded', data.tagList, this.state.tagList);
+        //console.log('tagList loaded', data.tagList, this.state.tagList);
         //initialize registers
         this.registers = {};
         var curTag;
@@ -170,7 +170,7 @@ module.exports = React.createClass({
                 WaveFilterManager.registerWaveFilter(curTag.waveFilter,curTag.name)
             }
         }
-        console.log(WaveFilterManager.getWaveFilters())
+        //console.log(WaveFilterManager.getWaveFilters())
         // console.log(this.registers);
         this.state.registers = this.registers;
         this.setState({registers: this.registers});
@@ -343,13 +343,14 @@ module.exports = React.createClass({
         this.state.innerTimerList.map(function (timerId) {
             clearInterval(timerId);
         }.bind(this));
+        AudioManager.stopAllAudios();
         this.simState = {};
         VideoSource.setVideoSrc('');
         //init animation keys
         AnimationManager.clearAllAnimationKeys();
         var nextState = _.cloneDeep(defaultSimulator);
         nextState.project = _.cloneDeep(newProps.projectData);
-        console.log('reced', nextState.project)
+        //console.log('reced', nextState.project)
         if (!nextState.project.size) {
             //close
             cancelAnimationFrame(this.paintKey)

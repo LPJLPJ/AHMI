@@ -67,8 +67,6 @@ AudioManager.addNewAudio = function(buffer,opts){
 }
 
 AudioManager.addNewAudioAndPlay = function(buffer,opts){
-    console.log(buffer);
-
     opts = opts||{}
     var key = getKey()
     var curAudio = {
