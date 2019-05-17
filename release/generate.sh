@@ -16,10 +16,11 @@ cd tempFolder && zip -q -r updFiles.zip * && mv updFiles.zip ../update/updFiles.
 
 echo "start to copy tempFolder to complete folder" && 
 cp -rf tempFolder/* ./complete/IDENW/package.nw/ &&
+cp -rf tempFolder/* ./complete/IDENW_XP/package.nw/ &&
 
 echo "start to zip complete IDE" &&
 cd ./complete && rm -rf localIDE.zip && cd IDENW && zip -q  -r ../localIDE.zip * && cd ../.. &&
-
+cd ./complete && rm -rf localIDE_XP.zip && cd IDENW_XP && zip -q  -r ../localIDE_XP.zip * && cd ../.. &&
 echo "start to edit logs" &&
 node editLogs.js &&
 

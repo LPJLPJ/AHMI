@@ -559,6 +559,8 @@ router.route('/download/resources.html')
 router.route('/download/pcclient/latest')
     .get(DownloadRouter.downloadPCClinet)
 
+router.route('/download/pcclient_xp/latest')
+    .get(DownloadRouter.downloadPCClinetXP)
 
 // router.route('/project/data-analysis')
 //     .get(function(req, res){

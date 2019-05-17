@@ -19,4 +19,8 @@ DownloadRouter.downloadPCClinet  = function (req,res) {
     res.download(path.join(__dirname,'../release/complete/localIDE.zip'),'速显微AHMI-IDE.zip');
 }
 
+DownloadRouter.downloadPCClinetXP  = function (req,res) {
+    res.download(path.join(__dirname,'../release/complete/localIDE_XP.zip'),'速显微AHMI-IDE_XP.zip');
+}
+
 module.exports = DownloadRouter;

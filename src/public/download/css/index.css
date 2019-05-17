@@ -21,7 +21,7 @@ a{
     text-decoration: none!important;
 }
 
-/*¶¥²¿µ¼º½*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 .project-top-nav{
     width: 100%;
     min-width: 1106px;
@@ -150,6 +150,13 @@ a{
 }
 .download-button-wrapper{
     text-align: center;
+    /* width:30%;
+    display: inline-block; */
+}
+
+.download-button-group{
+    /* width:30%; */
+    display: inline-block;
 }
 
 .download-description{
@@ -159,7 +166,7 @@ a{
 }
 
 .download-button{
-    width:30%;
+    /* width:100%; */
     display: inline-block;
     background: #126EB7;
     color: #fff;
@@ -173,7 +180,7 @@ a{
 
 .download-button span{
     display: block;
-    font-size:0.8em;
+    font-size:0.5em;
 }
 
 .download-button:hover{
