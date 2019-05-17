@@ -55,10 +55,10 @@ ideServices.service('OperationService',[function () {
         // ['DEL_STR_FROM_TAIL','delStrFromTail'],
         // ['DEL_STR_FROM_HEAD','delStrFromHead'],
         // ['GET_STR_LEN','getStrLen'],
-        ['PLAY_SOUND','playSound'],
-        ['PAUSE_SOUND','pauseSound'],
-        ['RESUME_SOUND','resumeSound'],
-        ['STOP_SOUND','stopSound']
+        // ['PLAY_SOUND','playSound'],
+        // ['PAUSE_SOUND','pauseSound'],
+        // ['RESUME_SOUND','resumeSound'],
+        // ['STOP_SOUND','stopSound']
     ];
 
     for (var i=0;i<opsRaw.length;i++ ){

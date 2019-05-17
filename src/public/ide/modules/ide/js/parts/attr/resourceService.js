@@ -301,13 +301,16 @@ ideServices
                 jsmediatags.read(window.location.origin+ file.src, {
                     onSuccess: function(tag) {
                         var picture = tag.tags.picture
-                        var imageData = picture.data;
-                        var base64String = "";
-                        for (var i = 0; i < imageData.length; i++) {
-                            base64String += String.fromCharCode(imageData[i]);
+                        if(picture){
+                            var imageData = picture.data;
+                            var base64String = "";
+                            for (var i = 0; i < imageData.length; i++) {
+                                base64String += String.fromCharCode(imageData[i]);
+                            }
+    
+                            file.albumCoverSrc = "data:" + picture.format + ";base64," + window.btoa(base64String);
                         }
-
-                        file.albumCoverSrc = "data:" + picture.format + ";base64," + window.btoa(base64String);
+                        
 
                     },
                     onError: function(error) {
