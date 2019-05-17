@@ -45,7 +45,8 @@ $(function () {
         $('#captcha-img').attr('src','/captcha?'+Date.now())
     })
 
-    $('#submit').on('click', function () {
+    $('#submit').on('click', function (e) {
+        e.preventDefault()
         $('#submit').attr('disabled',true)
         if ($('#mail').val()!==''&&$('#captcha-input').val()!=''){
             //not empty
