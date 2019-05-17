@@ -12,14 +12,18 @@ ideServices
         'TemplateProvider',
         'ViewService',
         'Type',
-        'ResourceService','TagService',function ($rootScope,$timeout,
+        'ResourceService',
+        'TrackService',
+        'TagService',function ($rootScope,$timeout,
                                     CanvasService,
                                     GlobalService,
                                     Preference,
                                     TemplateProvider,
                                     ViewService,
                                     Type,
-                                    ResourceService,TagService) {
+                                    ResourceService,
+                                    TrackService,
+                                    TagService) {
 
 
             var _self=this;
@@ -4748,6 +4752,17 @@ ideServices
                 };
                 selectObj.target.fire('changeTex',arg);
             };
+
+
+            //track list
+            this.getAllTrackList = function(){
+                return project.trackList
+            }
+
+            this.updateTrackList = function(newTrackList){
+                project.trackList = newTrackList
+
+            }
 
             /**
              * 用于一键配置控件大小，使控件大小与纹理大小相同

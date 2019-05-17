@@ -12,6 +12,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
     'TagService',
     'ResourceService',
     'WaveFilterService',
+    'TrackService',
     '$http',
     'ProjectTransformService',
     'RenderSerive',
@@ -27,14 +28,15 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
               Type,
               CanvasService,
               $uibModal,
-              OperateQueService, 
-              TagService, 
+              OperateQueService,
+              TagService,
               ResourceService,
               WaveFilterService,
-              $http, 
-              ProjectTransformService, 
-              RenderSerive, 
-              LinkPageWidgetsService, 
+              TrackService,
+              $http,
+              ProjectTransformService,
+              RenderSerive,
+              LinkPageWidgetsService,
               NavModalCANConfigService) {
 
         var path, fs, __dirname, fse;
@@ -339,7 +341,11 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
                     function postFun() {
                         curScope.project.resourceList = ResourceService.getAllResource();
-                        curScope.project.waveFilterList = _.cloneDeep(WaveFilterService.getWaveFilters())
+                        curScope.project.waveFilterList = _.cloneDeep(WaveFilterService.getWaveFilters());
+                        curScope.project.resourceList.forEach(function(r){
+                            delete r.albumCoverSrc
+                        })
+                        curScope.project.trackList = TrackService.getAllTracks();
                         curScope.project.customTags = TagService.getAllCustomTags();
                         curScope.project.timerTags = TagService.getAllTimerTags();//-
                         curScope.project.timers = TagService.getTimerNum();//-
@@ -1101,7 +1107,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             temp.project.physicalPixelRatio = physicalPixelRatio;
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
             temp.project.waveFilterList = _.cloneDeep(WaveFilterService.getWaveFilters())
-
+            temp.project.trackList = _.cloneDeep(TrackService.getAllTracks())
             temp.project.basicUrl = ResourceService.getResourceUrl();
             //$scope.project.tagList = TagService.getAllCustomTags().concat(TagService.getAllTimerTags());
             temp.project.tagList = TagService.getAllTagsWithSystemTagSorted();
@@ -1279,6 +1285,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
         function play() {
             generateData()
             window.cachedResourceList = ResourceService.getGlobalResources();
+            for(var i=0;i<window.projectData.trackList.length;i++){
+                var curTrack = window.projectData.trackList[i];
+                curTrack.buffer = ResourceService.getResourceFromCache(curTrack.src,'src')
+            }
             $scope.component.simulator.show = true;
             $scope.$broadcast("InitRecord");
         }

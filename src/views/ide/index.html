@@ -46,6 +46,7 @@
     <script src="../../public/ide/lib/sxintro/SXIntro.bundle.js"></script>
     <script src="../../public/ide/lib/angular-ui-select/select.min.js"></script>
     <script src="../../public/ide/lib/angular-sanitize-1.5.10/angular-sanitize.min.js"></script>
+    <script src="../../public/ide/lib/jsmediatags.min.js"></script>
     <script src="../../public/ide/lib/sortable.js"></script>
     <script src="../../public/ide/lib/3dDraw/babylon.custom.js"></script>
     <script src="../../public/ide/lib/3dDraw/advancedDrawEngine.js"></script>
@@ -97,6 +98,7 @@
 
     <script src="../../public/ide/modules/ide/min-js/parts/render/renderingX.bundle.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/animationService.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/attr/trackService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/userType.js"></script>
     <script src="../../public/ide/modules/ide/min-js/socketIOService.js"></script>
     <script src="../../public/ide/modules/ide/min-js/middleWareService.js"></script>
@@ -4930,6 +4932,13 @@
                                             </span>
                                             <img class="file-thumb__img" ng-show="component.top.imageType(file)==1" ng-src="{{file.src}}" ng-mousedown="prevent($event)"/>
                                             <img class="file-thumb__img" ng-show="component.top.imageType(file)==2" src="../../public/ide/modules/ide/images/font-icon.png">
+                                            <div class="file-thumb__audio" ng-show="component.top.imageType(file)==3">
+                                                <img class="file-thumb__audio-img"
+                                                     ng-class="{'file-thumb--animate':file.playing}"
+                                                     ng-src="{{file.albumCoverSrc}}"/>
+                                                <span class="iconfont audio-play" title="播放" style="left: 18px" ng-show="!file.playing" ng-click="component.top.playMusic(file)">&#xe6dd;</span>
+                                                <span class="iconfont audio-play" title="停止" ng-show="file.playing" ng-click="component.top.playMusic(file)">&#xe76b;</span>
+                                            </div>
                                         </div>
                                         <div class="rl_item-info">
                                             <input class="rl_item-name"
@@ -4962,6 +4971,73 @@
                                     <span>数量:{{component.top.files.length}}</span>
                                 </div>
                             </div>
+
+                        <!-- audio -->
+                        <div style="margin-top: 10px">
+                            <span class="attr-item__action-title">声音</span>
+                            <button type="button" class="btn btn-default attr-default-btn action-item__add-action" ng-click="openTrackPanel(-1)" id="addTrackBtn">
+                                添加新声音
+                            </button>
+                        </div>
+
+                        <!--list of current tracks-->
+                        <div class="glyphicon" style="top: -10px;width: auto" ng-click="collapseTrackList($event)"
+                             ng-class="{'glyphicon-chevron-down':!trackListCollapsed,'glyphicon-chevron-right':trackListCollapsed}"></div>
+                        <ul uib-collapse="trackListCollapsed" class="action-item__action-list" id="tracksUL">
+                            <li ng-repeat="track in component.top.tracks" >
+                                <span ng-click="openTrackPanel($index)">{{track.name}}</span><span>{{track.index}}</span>
+                                <i class="iconfont" ng-click="deleteTrack($index)">&#xe627;</i>
+                            </li>
+                        </ul>
+
+                        <script type="text/ng-template" id="trackPanelModal.html">
+                            <div class="modal-header">
+                                <h3 class="modal-title">声音配置</h3>
+                            </div>
+                            <div class="modal-body lx-modal-body">
+
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-3 col-xs-3 lx-margin-top-5">声音名称</div>
+                                    <div class="col-md-5 col-sm-5 col-xs-5">
+                                        <input class="attr-item__cell-input"
+                                               type="text"
+                                               ng-model="track.name" >
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-3 col-xs-3 lx-margin-top-5">声音序号</div>
+                                    <div class="col-md-5 col-sm-5 col-xs-5">
+                                        <input class="attr-item__cell-input" type="number" ng-model="track.index">
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 col-sm-3 col-xs-3 lx-margin-top-5">声音源</div>
+                                    <div class="col-md-5 col-sm-5 col-xs-5">
+                                        <ui-select ng-model="track.src" theme="bootstrap">
+                                            <ui-select-match placeholder="">{{$select.selected.name}}</ui-select-match>
+                                            <ui-select-choices repeat="trackSource.src as trackSource in (trackSources | filter: $select.search) track by trackSource.src">
+                                                <span ng-bind-html="trackSource.name | highlight: $select.search"></span>
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </div>
+
+                                </div>
+                                <div class="row" style="margin-top: 20px">
+                                    <div class="col-md-3 col-sm-3 col-xs-3 lx-margin-top-5">循环</div>
+                                    <div class="col-md-5 col-sm-5 col-xs-5">
+                                        <my-bool-switch-button status="track.loop"></my-bool-switch-button>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button class="modal-btn btn-confirm" type="button" ng-click="confirm(this)">保存</button>
+                                <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
+                            </div>
+                        </script>
 
                             <!--资源删除-->
                             <script type="text/ng-template" id="deletePanelModal.html">

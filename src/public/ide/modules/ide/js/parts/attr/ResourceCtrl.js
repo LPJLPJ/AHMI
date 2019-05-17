@@ -2,11 +2,12 @@
  * Created by shenaolin on 16/3/10.
  */
 
-ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal', 'Upload',function(ResourceService,$scope,$timeout,
+ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectService', 'Type', 'CanvasService','$uibModal', 'Upload','TrackService',function(ResourceService,$scope,$timeout,
                                           ProjectService,
                                           Type,
-                                          CanvasService,$uibModal,Upload) {
+                                          CanvasService,$uibModal,Upload,TrackService) {
     $scope.$on('GlobalProjectReceived', function () {
+        initUserInterface();
         initProject();
     });
 
@@ -22,6 +23,14 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.$emit('ChangeCurrentPage');
     });
 
+    $scope.$on('trackListChanged',function(){
+        $scope.component.top.tracks = TrackService.getAllTracks();
+    })
+
+    function initUserInterface(){
+        $scope.trackListCollapsed = false
+    }
+
     //初始化资源
     function initProject(){
         $scope.component={
@@ -33,6 +42,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 toggleOperation:toggleOperation,
                 basicUrl:'',
                 resources:[],
+                tracks:[],
                 showDel:true,
                 selectIndexArr:[],
                 selectAll:selectAll,
@@ -40,6 +50,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
                 allSelected:false,
                 unSelAll:unSelAll,
                 imageType:imageType,
+                playMusic:playMusic,
                 mask:[]
             },
             paging:{
@@ -58,7 +69,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         };
 
         $scope.component.top.resources = ResourceService.getAllResource();
-
+        $scope.component.top.tracks = TrackService.getAllTracks();
         $scope.component.top.basicUrl = ResourceService.getResourceUrl();
         $scope.component.top.maxSize = ResourceService.getMaxTotalSize();
         $scope.component.top.files = ResourceService.getAllCustomResources();
@@ -68,6 +79,48 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.stopProp = function(e){
             e.stopPropagation();
         };
+
+        $scope.collapseTrackList = function(){
+            $scope.trackListCollapsed = !$scope.trackListCollapsed
+        }
+
+        /**
+         * 删除资源按钮的弹窗
+         */
+        $scope.openTrackPanel = function(index,cb){
+            var curTrack
+            if(index<=-1){
+                //new track
+                curTrack = TrackService.getNewTrack()
+            }else{
+                curTrack = _.cloneDeep(TrackService.getTrackByIndex(index))
+            }
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'trackPanelModal.html',
+                controller: 'trackPanelCtrl',
+                size: 'md',
+                resolve: {
+
+                    track:function(){
+                        return curTrack
+                    }
+                }
+            });
+            modalInstance.result.then(function(_track){
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+
+                if(index<=-1){
+                    TrackService.appendTrack(_track)
+                }else{
+                    TrackService.updateTrackByIndex(index,_track)
+                }
+                //$scope.component.top.tracks = TrackService.getAllTracks()
+                //console.log(TrackService.getAllTracks(),ProjectService.getAllTrackList())
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+        }
 
 
         /**
@@ -211,6 +264,14 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         }
     }
 
+
+    $scope.deleteTrack = function(index){
+        var oldOperate = ProjectService.SaveCurrentOperate();
+        TrackService.deleteTrackByIndex(index)
+        $scope.$emit('ChangeCurrentPage', oldOperate);
+
+    }
+
     /**
      * 下载资源
      * @author tang
@@ -291,10 +352,40 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
             return 1;//文件是图片
         }else if(file.type.match(/font/)){
             return 2;//文件是字体文件
+        }else if(file.type.match(/audio/)){
+            return 3
         }else{
             return 1;//预留
         }
 
+    }
+
+    function playMusic(file){
+        var curAudio = ResourceService.getResourceObjFromCache(file.src,'src')
+        if(curAudio){
+            if(curAudio.playing){
+                // curAudio.playing = false
+                // file.playing = false
+                curAudio.audioSrc.stop()
+            }else{
+                var bufferSrc = audioCtx.createBufferSource();
+                bufferSrc.buffer = curAudio.content;
+
+                bufferSrc.connect(window.audioCtx.destination);
+                bufferSrc.onended = function(){
+                    $scope.$apply(function(){
+                        curAudio.playing = false
+                        file.playing = false
+                    })
+
+                }
+                curAudio.audioSrc = bufferSrc
+                bufferSrc.start(0)
+                curAudio.playing = true
+                file.playing = true
+            }
+
+        }
     }
 
     var restoreValue;
@@ -349,5 +440,18 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         }
-    }]);
+    }])
 
+    .controller('trackPanelCtrl', ['$scope', '$uibModalInstance', 'ResourceService','track', function ($scope, $uibModalInstance,ResourceService, track) {
+        $scope.track = track;     // 动画配置
+
+        $scope.trackSources = ResourceService.getAllAudios()
+
+        $scope.confirm = function(){
+            $uibModalInstance.close($scope.track)
+        }
+
+        $scope.cancel = function(){
+            $uibModalInstance.dismiss()
+        }
+    }])

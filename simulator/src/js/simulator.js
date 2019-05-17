@@ -20,6 +20,15 @@ var closeButton = document.getElementById('close');
 playButton.addEventListener('click', function () {
 
     {/*ReactDOM.render( < Simulator projectData = {{}} />, simulatorContainer);*/}
+
+    window.projectData.trackList.forEach(function(res){
+        var bufferSrc = audioCtx.createBufferSource();
+        bufferSrc.buffer = res.buffer;
+        bufferSrc.connect(audioCtx.destination);
+        bufferSrc.start(0)
+        bufferSrc.stop()
+    })
+
     ReactDOM.render( < Simulator projectData = {window.projectData} />, simulatorContainer);
 });
 
