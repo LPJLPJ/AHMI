@@ -172,6 +172,7 @@ a{
     color: #fff;
     border-radius: 3px;
     padding: 8px 16px;
+    /* margin:0 1em; */
     text-align: center;
     text-decoration: none;
     cursor:pointer;
@@ -179,8 +180,8 @@ a{
 }
 
 .download-button span{
-    display: block;
-    font-size:0.5em;
+    /* display: block;
+    font-size:0.5em; */
 }
 
 .download-button:hover{
