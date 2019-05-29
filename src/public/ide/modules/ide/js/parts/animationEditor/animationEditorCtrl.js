@@ -83,6 +83,10 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         $scope.EasingFunctions = EasingFunctions
     }
 
+    $scope.$on('AttributeChanged',function () {
+        onAttributeChanged();
+    });
+
     //timingFuns
 
     var EasingFunctions = {
@@ -141,7 +145,6 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
             $scope.component.animations = selectedObj.level.animations.map(function(a){
                 return a.title||'动画'
             })
-
             $scope.component.ui.selectedAnimationIdx = '0'
             changeAnimationIdx()
             
@@ -194,6 +197,9 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
             scaleY:rawAnimation.animationAttrs.scale.dstScale.y,
             timingFun:rawAnimation.timingFun
         }
+
+        result.id = rawAnimation.id;
+        result.newAnimation = rawAnimation.newAnimation;
         return result
     }
 
@@ -222,8 +228,11 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
                 }
             }
         }
+
         result.duration = (rawAnimation.keyFrames[1].time - rawAnimation.keyFrames[0].time)*1000
-        result.timingFun = rawAnimation.keyFrames[1].timingFun
+        result.timingFun = rawAnimation.keyFrames[1].timingFun;
+        result.id = rawAnimation.id;
+        result.newAnimation = rawAnimation.newAnimation;
         return result
     }
 
@@ -231,11 +240,13 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
     //save current animation to level
     function saveAnimation(){
         $scope.component.ui.savingStatus = 'saving'
-        var animation = editorAnimationToProjectAnimation($scope.component.animation)
+        var animation = editorAnimationToProjectAnimation($scope.component.animation);
+
         AnimationService.updateAnimationByIndex(animation, $scope.component.ui.selectedAnimationIdx, function () {
             // $scope.animations = AnimationService.getAllAnimations();
             $scope.component.ui.savingStatus = 'saved'
-            toastr.info("保存成功")
+            toastr.info("保存成功");
+            $scope.$emit("ChangeCurrentPage");
             $timeout(function(){
                 $scope.component.ui.savingStatus = ''
             },1000)

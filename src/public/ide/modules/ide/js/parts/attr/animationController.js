@@ -97,10 +97,12 @@ ide.controller('animationCtl', ['$scope', 'ProjectService', 'Type', '$uibModal',
                 if ($scope.selectIdx == -1) {
                     AnimationService.appendAnimation(newAnimation, function () {
                         $scope.animations = AnimationService.getAllAnimations();
+                        $scope.$emit("ChangeCurrentPage");
                     }.bind(this));
                 } else if ($scope.selectIdx >= 0 && $scope.selectIdx < $scope.animations.length) {
                     AnimationService.updateAnimationByIndex(newAnimation, $scope.selectIdx, function () {
                         $scope.animations = AnimationService.getAllAnimations();
+                        $scope.$emit("ChangeCurrentPage");
                     }.bind(this));
                 }
             });
