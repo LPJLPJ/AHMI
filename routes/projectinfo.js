@@ -1467,14 +1467,12 @@ projectRoute.getUserType = function (req, res) {
 
 //下载资源
 projectRoute.downloadFile = function (req,res) {
-    var data = req.params.id;
-    if(data!=''){
-        data = JSON.parse(data);
-        var projectId = data.projectId;
-        var fileId = data.fileId;
-        var fileOldName = data.fileName;
+    var projectId = req.params.id;
+    if(projectId!=''){
+        var fileId = req.query.fileId;
+        var fileOldName = req.query.fileName;
 
-        if(projectId&&fileId){
+        if(fileId){
             var fileUrl = path.join(__dirname,'../project',String(projectId),'resources',String(fileId));
 
             var formatName = fileId.substring(fileId.lastIndexOf('.'),fileId.length);
@@ -1502,7 +1500,7 @@ projectRoute.downloadFile = function (req,res) {
 
 //分类操作
 projectRoute.createFolder = function (req, res) {
-    var data = _.cloneDeep(req.body);
+    var data = req.body
     data.userId = req.session.user.id;
     if (req.session.user) {
         var newFolder = new ClassModel(data);

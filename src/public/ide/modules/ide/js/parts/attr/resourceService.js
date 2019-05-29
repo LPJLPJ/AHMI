@@ -396,7 +396,7 @@ ideServices
                 fileName:fileName,
                 projectId:projectId
             };
-            window.location.href = '/project/' + JSON.stringify(data) + '/downloadFile';
+            window.location.href = '/project/' +data.projectId + '/downloadFile'+'?'+'fileId='+data.fileId+'&'+'fileName='+data.fileName;
         };
 
         this.setMaskUrl = function(url){
