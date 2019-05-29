@@ -35,7 +35,7 @@ var ProjectSchema = new mongoose.Schema({
     lastModifiedTime:{type:Date,default:Date.now}
 })
 
-ProjectSchema.index({createTime:-1});
+ProjectSchema.index({createTime:-1,'recycle.recycleTime':-1});
 
 ProjectSchema.pre('save',function(next){
     var project = this
@@ -130,8 +130,8 @@ ProjectSchema.statics = {
     },
     findRecycle:function(_userId,cb){
         return this
-            .find({userId:_userId,"recycle.recycleStatus":true})
-            .sort({'recycle.recycleTime':-1})
+            .find({userId:_userId,"recycle.recycleStatus":true},{content:0,backups:0})
+            // .sort({'recycle.recycleTime':-1})
             .exec(cb)
     },
     clearRecycle:function(_userId,cb){

@@ -35,10 +35,13 @@ const App = ({children, location, global, loading, dispatch}) => {
 
 
   if (!global.project || loading) {
+    document.title = '数据分析 - '
     return (<div>
       <Loader fullScreen spinning={loading}/>
     </div>)
   }
+
+  document.title = '数据分析 - '+global.project.name
 
   return (
     <Layout>
