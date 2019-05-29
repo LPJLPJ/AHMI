@@ -51,12 +51,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     //导入tags事件
     $scope.$on('syncTagSuccess', function (event, data) {
-        data = data || [];
-        data.forEach(function (item) {
-            addTagToTagClass(item, $scope.component.curTagClassName);
-        });
-
         readTagsInfo();
+        readTagClassesInfo();
     });
 
 
@@ -127,8 +123,9 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 //new tag
                 TagService.setUniqueTags(newTag, noDuplication, function () {
                     readTagsInfo();
+                    readTagClassesInfo();
                     //如果添加了一个新的tag，同时将其添加到当前标签里
-                    addTagToTagClass(newTag, $scope.component.curTagClass.name);
+                    //addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
             } else if ($scope.selectedType == 'custom') {
                 //edit custom tag
@@ -151,7 +148,8 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 //edit timer tag
                 TagService.editTimerTagByIndex($scope.selectedIdx, newTag, function () {
                     readTagsInfo();
-                    addTagToTagClass(newTag, $scope.component.curTagClass.name);
+                    readTagClassesInfo();
+                    //addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
             }
         }, function (newTag) {
@@ -159,7 +157,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     }
 
     //加入的标签模态框
-    function openPanelAddToTagClass(name) {
+    /*function openPanelAddToTagClass(name) {
         //由于tag名不能重名，可以用来做统一标识，根据tag名找到在allCustomTags中对应的index
         for (var j = 0; j < $scope.component.allCustomTags.length; j++) {
             if ($scope.component.allCustomTags[j].name === name) {
@@ -226,13 +224,16 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             addTagToTagClass($scope.component.allCustomTags[$scope.selectedIdx], tagClassName);
         }, function (tagClassName) {
         });
-    }
+    }*/
 
     //将tag加入到以tagClassName标识的标签中
     function addTagToTagClass(tag, tagClassName) {
+        //console.log(tagClassName,$scope.component.tagClasses);
+
         for (var i = 0; i < $scope.component.tagClasses.length; i++) {
             //找到name为tagClassName的标签
             if (tagClassName === $scope.component.tagClasses[i].name) {
+
                 //查重
                 for (var j = 0; j < $scope.component.tagClasses[i].tagArray.length; j++) {
                     if ($scope.component.tagClasses[i].tagArray[j].name === tag.name) {
@@ -552,6 +553,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     function readTags() {
         readTagsInfo();
+        readTagClassesInfo();
     }
 
     //get sysTmr number
@@ -652,8 +654,10 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     //读取默认标签列表
     function readTagClassesInfo() {
         $scope.component.tagClasses = TagService.getAllTagClasses();
+
         $scope.component.tagClasses[0].tagArray = $scope.component.allCustomTags;
         $scope.component.tagClasses[1].tagArray = $scope.component.allTimerTags;
+
         $scope.component.curTagClass = TagService.getAllTagClasses()[0];
         $scope.component.curTagClassName = TagService.getAllTagClasses()[0].name;
     }
@@ -723,11 +727,13 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 var index = IndexInTagClass(tag.name, $scope.component.tagClasses[1]);
                 TagService.editTimerTagByIndex(index, tag, function () {
                     readTagsInfo();
+                    readTagClassesInfo();
                 });
             }else {
                 var index = IndexInTagClass(tag.name, $scope.component.tagClasses[0]);
                 TagService.editTagByIndex(index, tag, function () {
                     readTagsInfo();
+                    readTagClassesInfo();
                 });
             }
         }
@@ -1042,6 +1048,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             selectTimer.remark = remarkInfo;
             TagService.editTimerTagByIndex(index, selectTimer, function () {
                 readTagsInfo();
+                readTagClassesInfo();
             });
         });
     }

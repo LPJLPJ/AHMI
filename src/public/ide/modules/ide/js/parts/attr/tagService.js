@@ -27,6 +27,8 @@ ideServices.service('TagService', [function () {
     var backLight = new Tag('背光', false, 7, 'true', 0, 'system', '', '', true);
     var fpsTag = new Tag('帧率', false, 8, 'true', 0, 'system', '', '', true);
     var sysTags = [videoTag, curPageTag, keyCode, RTCTag1, RTCTag2, buzzer, backLight, fpsTag];
+
+
     var tags = sysTags;
     var timerTags = [];
     var timerNum = 0;
@@ -70,11 +72,7 @@ ideServices.service('TagService', [function () {
         }
 
         if (noDuplication(tag, tags)) {
-            if(sortRegisterOrder){
-                tags.push(tag);
-            }else{
-                tags.unshift(tag);
-            }
+            tags.unshift(tag);
             tagClasses[0].tagArray=tags;
             cb && cb();
 
@@ -299,6 +297,7 @@ ideServices.service('TagService', [function () {
     var allTags = new TagClass('变量', 'system', tags);
     var timeTags = new TagClass('定时器', 'timer', timerTags);
     var defaultTagClass = new TagClass('default', 'custom', []);
+
     var tagClasses = [allTags, timeTags];
 
     //新增一个tagClass
@@ -330,6 +329,7 @@ ideServices.service('TagService', [function () {
 
     //给用户的标签列表添加默认标签
     function addDefaultTagClasses(tagClassesList) {
+
         var allTags = new TagClass('变量', 'system', tags);
         var timeTags = new TagClass('定时器', 'timer', timerTags);
         var defaultTagClasses = [allTags, timeTags];
@@ -351,6 +351,7 @@ ideServices.service('TagService', [function () {
                 tagClassesList.push(defaultTagClasses[j]);
             }
         }
+
         return tagClassesList;
 
     }

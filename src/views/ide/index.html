@@ -4349,7 +4349,7 @@
                                     <span class="my-tagSelect-span-right">寄存器</span>-->
                                 </div>
                                 <div>
-                                    <select ng-model="selectedTag.tagName" ng-change="action()" ng-click="component.showRegValidTags()"
+                                    <select ng-model="selectedTag.tagName" ng-change="action()" ng-focus="component.syncTagClasses()"
                                             class="tagSelect__select form-control">
                                         <option value="{{selectedTag.tagName}}" ng-if="selectedTag.tagName" style="color: red">{{selectedTag.tagName||'----'}}</option>
                                         <option value="">----</option>
@@ -5075,7 +5075,7 @@
                                         ng-model="component.curTagClassName" ng-change="component.changeCurTagClass()">{{component.curTagClassName}}
                                     <option ng-repeat="classItem in component.tagClasses track by $index" value="{{classItem.name}}" >{{classItem.name}}</option>
                                 </select>
-                                <button type="button"  ng-click="component.editTagClass()" class="btn btn-default attr-default-btn tag-item__tag-btn">标签管理</button>
+                                <!--<button type="button"  ng-click="component.editTagClass()" class="btn btn-default attr-default-btn tag-item__tag-btn">标签管理</button>-->
                             </div>
 
                         </div>
@@ -5408,10 +5408,10 @@
                                 <table class="attr-item__table table table-bordered" ng-show="component.timerTagShow==false">
                                     <thead align="center">
                                         <tr>
-                                            <td>名称<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span></td>
-                                            <td>寄存器<span class="iconfont c-p" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span></td>
+                                            <td>名称<!--<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span>--></td>
+                                            <td>寄存器<!--<span class="iconfont c-p" ng-click="component.sortByRegister()" style="font-size: 12px">&#xe6a5;</span>--></td>
                                             <td>启用</td>
-                                            <td>标签</td>
+                                            <!--<td>标签</td>-->
                                             <td>删除</td>
                                         </tr>
                                     </thead>
@@ -5434,9 +5434,9 @@
                                                    ng-change="component.regCheckboxClick(tag)"
                                                    ng-model="tag.register">
                                         </td>
-                                        <td align="center">
-                                            <i class="iconfont" ng-click="component.addToTagClass(tag.name)">&#xe7c5;</i>
-                                        </td>
+                                        <!--<td align="center">-->
+                                            <!--<i class="iconfont" ng-click="component.addToTagClass(tag.name)">&#xe7c5;</i>-->
+                                        <!--</td>-->
                                         <td align="center">
                                             <i class="iconfont" ng-click="component.deleteTag(tag.name,tag.type)">&#xe627;</i>
                                         </td>
