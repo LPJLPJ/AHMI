@@ -219,7 +219,7 @@ ide.controller('ResourceCtrl',['ResourceService','$scope','$timeout', 'ProjectSe
     function changeFileIndex(n) {
         var indexCount = $scope.component.paging.indexCount,
             currentIndex = $scope.component.paging.currentIndex;
-        console.log(currentIndex,indexCount);
+        //console.log(currentIndex,indexCount);
         if (n === 1) {
             if (currentIndex < indexCount - 1) {
                 $scope.component.paging.currentIndex ++;

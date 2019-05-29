@@ -454,6 +454,24 @@ ideServices.service('TagService', [function () {
     function getWidgetBindTag(project){
         var tagsData = [];
         _.forEach(project.pages,function(page){
+            var pageTag = new TagData(page.tag,null,null,null,page.type);
+
+            if(pageTag!=''){
+                _.forEach(tags,function(tag){
+                    if(pageTag.name == tag.name){
+                        pageTag.indexOfRegister = tag.indexOfRegister;
+                        if(tag.type == 'system'){
+                            pageTag.type = tag.type;
+                        }else if(tag.theme != undefined){
+                            pageTag.type = tag.theme;
+                        }else{
+                            pageTag.type = 'custom';
+                        }
+                    }
+                });
+                tagsData.push(pageTag);
+            }
+
             var layers = page.layers;
             if(layers&&layers.length){
                 _.forEach(layers,function(layer){
@@ -463,30 +481,31 @@ ideServices.service('TagService', [function () {
                         if(widgets&&widgets.length){
                             _.forEach(widgets,function(widget){
                                 if(widget.tag){
-                                    var info = widget.info;
-                                    var tag = widget.tag;
-                                    var tagData = '';
+                                    var info = widget.info,
+                                        tag = widget.tag,
+                                        tagData = '';
+
                                     switch (widget.type){
                                         case 'MyNum':
-                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.numValue,remake:widget.type};
+                                            tagData = new TagData(tag,info.minValue,info.maxValue,info.numValue,widget.type);
                                             break;
                                         case 'MyProgress':
-                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.progressValue,remake:widget.type};
+                                            tagData = new TagData(tag,info.minValue,info.maxValue,info.progressValue,widget.type);
                                             break;
                                         case 'MyDashboard':
-                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.value,remake:widget.type};
+                                            tagData = new TagData(tag,info.minValue,info.maxValue,info.value,widget.type);
                                             break;
                                         case 'MyRotateImg':
-                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.initValue,remake:widget.type};
+                                            tagData = new TagData(tag,info.minValue,info.maxValue,info.initValue,widget.type);
                                             break;
                                         case 'MySlideBlock':
-                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.initValue,remake:widget.type};
+                                            tagData = new TagData(tag,info.minValue,info.maxValue,info.initValue,widget.type);
                                             break;
                                         case 'MyTexNum':
-                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.numValue,remake:widget.type};
+                                            tagData = new TagData(tag,info.minValue,info.maxValue,info.numValue,widget.type);
                                             break;
                                         case 'MyAlphaImg':
-                                            tagData = {name:tag,min:info.minValue,max:info.maxValue,value:info.initValue,remake:widget.type};
+                                            tagData = new TagData(tag,info.minValue,info.maxValue,info.initValue,widget.type);
                                             break;
                                         default :
                                             break;
@@ -519,6 +538,14 @@ ideServices.service('TagService', [function () {
         }else{
             return null;
         }
+    }
+
+    function TagData(name,min,max,value,remake) {
+        this.name = name;
+        this.min = min;
+        this.max = max;
+        this.value = value;
+        this.remake = remake;
     }
 
     function generateTagsList(tagsData,defaultTags){
