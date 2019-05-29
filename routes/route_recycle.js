@@ -57,7 +57,7 @@ recycleRoute.getRecycle = function (req, res) {
     if (_user && _user.id) {
         ProjectModel.findRecycle(_user.id, function (err, projects) {
             if (err) {
-                console.log(err);
+                console.log('find Recycle error ',err);
                 res.status(500).end()
             } else {
                 var processedProjects = projects.map(function (project) {
