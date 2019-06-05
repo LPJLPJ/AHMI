@@ -1132,10 +1132,10 @@ body {
     padding: 2px 12px;
 }
 
-.attr-item__cell-input:focus {
-    border: 1px solid #005599 !important;
-    outline: none;
-    box-shadow: none !important;
+.form-control:focus {
+    border: 2px solid #005599 !important;
+    /* outline: none; */
+    /* box-shadow: none !important; */
 }
 
 .attr-item__cell-wrap > .attr-item__cell-input {
