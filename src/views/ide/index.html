@@ -672,7 +672,7 @@
     <!--左侧缩略图-->
     <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow}" data-step="2">
         <div class="thumb-operate">
-            <div class="thumb-operate__add-page" ng-click="component.addPage()"></div>
+            <div class="thumb-operate__add-page" title="添加新页面" ng-click="component.addPage()">+添加新页面</div>
             <i class="iconfont function-prompts function-prompts__thumb" title="功能介绍" ng-click="openHelp($event,'thumb','thumb')">&#xe63e;</i>
         </div>
         <div ui-tree="component.uitree" class="thumb-content" data-drag-delay="200">
