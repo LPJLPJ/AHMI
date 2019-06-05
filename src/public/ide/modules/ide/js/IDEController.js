@@ -786,6 +786,19 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                 }
             });
 
+            //offline
+            window.onoffline = function(){
+                var bkOptions = toastr.options
+                toastr.options.closeButton = true;
+                toastr.options.timeOut = 0;
+                toastr.warning("您的设备已经离线，请不要进行保存和生成！")
+                toastr.options = bkOptions
+            }
+            //online
+            window.ononline = function(){
+                toastr.success("您的设备已经上线，可以正常使用！")
+            }
+
         }
 
         //mask  add by tang
