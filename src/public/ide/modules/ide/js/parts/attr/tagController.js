@@ -52,7 +52,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
     //导入tags事件
     $scope.$on('syncTagSuccess', function (event, data) {
         readTagsInfo();
-        readTagClassesInfo();
+        readTagClasses();
     });
 
 
@@ -123,7 +123,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 //new tag
                 TagService.setUniqueTags(newTag, noDuplication, function () {
                     readTagsInfo();
-                    readTagClassesInfo();
+                    readTagClasses();
                     //如果添加了一个新的tag，同时将其添加到当前标签里
                     //addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
@@ -140,7 +140,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
                 TagService.editTagByIndex($scope.selectedIdx, newTag, function () {
                     readTagsInfo();
-                    readTagClassesInfo();
+                    readTagClasses();
                 }.bind(this));
 
 
@@ -148,7 +148,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 //edit timer tag
                 TagService.editTimerTagByIndex($scope.selectedIdx, newTag, function () {
                     readTagsInfo();
-                    readTagClassesInfo();
+                    readTagClasses();
                     //addTagToTagClass(newTag, $scope.component.curTagClass.name);
                 }.bind(this));
             }
@@ -553,7 +553,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
 
     function readTags() {
         readTagsInfo();
-        readTagClassesInfo();
+        readTagClasses();
     }
 
     //get sysTmr number
@@ -662,6 +662,13 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         $scope.component.curTagClassName = TagService.getAllTagClasses()[0].name;
     }
 
+    function readTagClasses() {
+        $scope.component.tagClasses = TagService.getAllTagClasses();
+        $scope.component.tagClasses[0].tagArray = $scope.component.allCustomTags;
+        $scope.component.tagClasses[1].tagArray = $scope.component.allTimerTags;
+        $scope.component.curTagClass = TagService.getAllTagClasses()[0];
+    }
+
     //打开标签管理模态框
     function editTagClass() {
         openPanelEditTagClasses();
@@ -727,13 +734,13 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
                 var index = IndexInTagClass(tag.name, $scope.component.tagClasses[1]);
                 TagService.editTimerTagByIndex(index, tag, function () {
                     readTagsInfo();
-                    readTagClassesInfo();
+                    readTagClasses();
                 });
             }else {
                 var index = IndexInTagClass(tag.name, $scope.component.tagClasses[0]);
                 TagService.editTagByIndex(index, tag, function () {
                     readTagsInfo();
-                    readTagClassesInfo();
+                    readTagClasses();
                 });
             }
         }
@@ -1048,7 +1055,7 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
             selectTimer.remark = remarkInfo;
             TagService.editTimerTagByIndex(index, selectTimer, function () {
                 readTagsInfo();
-                readTagClassesInfo();
+                readTagClasses();
             });
         });
     }
@@ -1079,6 +1086,7 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
             $uibModalInstance.close($scope.tag);
             return;
         }
+
         if (index !== -1) {
             //edit tag
             var oldTag = TagService.getTagByIndex(index);
@@ -1109,6 +1117,17 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
                 toastr.error('SysTmr_数字_t 为定时器保留名称');
                 return;
             }
+
+            var allTags = _.cloneDeep(TagService.getAllTags());
+            for (var k = 0; k < allTags.length; k++) {
+                if ($scope.tag.name === allTags[k].name) {
+                    if (index != k) {
+                        toastr.error('重复的tag名称');
+                        return;
+                    }
+                }
+            }
+
             $scope.tag.valueType = parseInt($scope.tag.valueType,10);
             $uibModalInstance.close($scope.tag);
         }
@@ -1117,7 +1136,8 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
 
     $scope.forceSave = function (th) {
 
-        var shouldForceEdit = false
+        var shouldForceEdit = false;
+
         if (index !== -1) {
             //edit tag
             var oldTag = TagService.getTagByIndex(index);
