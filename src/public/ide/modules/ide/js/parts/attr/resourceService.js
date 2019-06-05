@@ -520,7 +520,7 @@ ideServices
 ideServices.directive("filereadform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
     return {
         restrict:'AE',
-        template:"<input ngf-select='uploadFiles($files)'  ngf-multiple='true' class='RO__upload-input'/>",
+        template:"<input ngf-select='uploadFiles($files)'  ngf-multiple='true' class='RO__upload-input' type='file'/>",
         replace:'true',
         link: function (scope, element, attributes) {
             var path;
@@ -545,8 +545,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                         scope.component.top.uploadingArray.push(translatedFile);
                         upload(files[i],translatedFile);
                     }
-
-
                 }
             }
 
@@ -567,7 +565,6 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     default:
                         toastr.warning('不支持'+fileExt+'格式');
                         return false;
-
                 }
             }
 
@@ -839,7 +836,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
 ideServices.directive("maskform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
     return {
         restrict:'AE',
-        template:"<input ngf-select='upload($file)'  ngf-multiple='true' class='RO__upload-input'/>",
+        template:"<input ngf-select='upload($file)'  ngf-multiple='true' class='RO__upload-input' type='file'/>",
         replace:'true',
         link: function (scope) {
             var path;

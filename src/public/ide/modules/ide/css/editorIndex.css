@@ -414,8 +414,8 @@ body {
     box-sizing: border-box;
 }
 
-.top-menu-content__widget-list .inactive{
-    display:none;
+.top-menu-content__widget-list .inactive {
+    display: none;
 }
 
 .widget-list__item {
@@ -725,7 +725,7 @@ body {
 
 .stage__tools {
     width: 100%;
-    background-color: rgba(0,0,0,.1);
+    background-color: rgba(0, 0, 0, .1);
     box-sizing: border-box;
     text-align: center;
     font-size: 14px;
@@ -1718,7 +1718,7 @@ body {
     background-color: dodgerblue;
     color: white;
     border-radius: 5px;
-    cursor: pointer !important;
+    cursor: pointer;
 }
 
 .RO__upload-form {
@@ -1727,7 +1727,6 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
-    cursor: pointer !important;
 }
 
 .RO__upload-input {
@@ -2695,7 +2694,7 @@ div.wrapper-custom {
     font-size: 12px;
 }
 
-.file-thumb__img{
+.file-thumb__img {
     position: absolute;
     width: 50px;
     height: 50px;
@@ -2703,7 +2702,7 @@ div.wrapper-custom {
     top: 10px;
 }
 
-.file-thumb__audio{
+.file-thumb__audio {
     position: absolute;
     width: 60px;
     height: 60px;
@@ -2711,7 +2710,7 @@ div.wrapper-custom {
     top: 10px;
 }
 
-.file-thumb__audio>.audio-play{
+.file-thumb__audio > .audio-play {
     font-size: 30px;
     line-height: 35px;
     text-align: center;
@@ -2723,7 +2722,7 @@ div.wrapper-custom {
     cursor: pointer;
 }
 
-.file-thumb__audio-img{
+.file-thumb__audio-img {
     border-radius: 50%;
     cursor: pointer;
     width: 100%;
@@ -2733,26 +2732,26 @@ div.wrapper-custom {
     z-index: auto;
 }
 
-.file-thumb--animate{
+.file-thumb--animate {
     -webkit-animation: playAudio 5s infinite linear;
     -o-animation: playAudio 5s infinite linear;
     animation: playAudio 5s infinite linear;
 }
 
 @keyframes playAudio {
-    0%{
+    0% {
         transform: rotate(0deg);
     }
-    100%{
+    100% {
         transform: rotate(360deg);
     }
 }
 
-.file-prompt{
+.file-prompt {
     color: #606060;
 }
 
-.rl_item-info{
+.rl_item-info {
     position: absolute;
     left: 100px;
     right: 50px;

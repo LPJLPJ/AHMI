@@ -2878,6 +2878,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 if ($scope.component.object.level.info.numOfDigits == initObject.level.info.numOfDigits) {
                     return;
                 }
+
+                if ($scope.component.object.level.info.numOfDigits < $scope.component.object.level.info.maxValue.toString().length) {
+                    restore();
+                    toastr.warning('不能低于已设定的最大或最小值位数');
+                    return;
+                }
                 if ($scope.component.object.level.info.numOfDigits < 1 || $scope.component.object.level.info.numOfDigits > 10) {
                     restore();
                     toastr.warning('超出范围');

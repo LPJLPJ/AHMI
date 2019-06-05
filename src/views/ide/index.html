@@ -5405,7 +5405,7 @@
                             </script>
 
                             <div class="attr-item__table-wrap" uib-collapse="status.collapsed">
-                                <table class="attr-item__table table table-bordered" ng-show="component.timerTagShow==false">
+                                <table class="attr-item__table table table-bordered" ng-show="component.timerTagShow==false" id="tag-table">
                                     <thead align="center">
                                         <tr>
                                             <td>名称<!--<span class="iconfont c-p" ng-click="component.sortByName()" style="font-size: 12px">&#xe6a5;</span>--></td>
@@ -5443,7 +5443,7 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <table class="attr-item__table table table-bordered" ng-show="component.timerTagShow==true">
+                                <table class="attr-item__table table table-bordered" ng-show="component.timerTagShow==true" id="timer-table">
                                     <thead>
                                     <tr align="center">
                                         <td>名称</td>
@@ -5469,7 +5469,7 @@
                                         </td>
                                     </tr>
                                     </tbody>
-                                </table>
+                                </table >
                             </div>
                         </div>
 
