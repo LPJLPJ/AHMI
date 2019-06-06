@@ -64,17 +64,17 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enableAnimationModeId: '0'
                 },
                 buttonGroup: {
-                    enterInterval: enterInterval,
-                    enterButtonCount: enterButtonCount,
+                    enterInterval: makeBounceFunc(enterInterval),
+                    enterButtonCount: makeBounceFunc(enterButtonCount),
                     enterArrange: enterArrange,
                     highlightModeId: '0'
                 },
                 gallery:{
                     enableAnimationModeId: '0',
                     // enterInterval:enterInterval,
-                    enterCurValue:enterCurValue,
-                    enterPhotoWidth:enterPhotoWidth,
-                    enterCount:enterCount,
+                    enterCurValue:makeBounceFunc(enterCurValue),
+                    enterPhotoWidth:makeBounceFunc(enterPhotoWidth),
+                    enterCount:makeBounceFunc(enterCount),
                     enterArrange:enterArrange
                 },
                 progress: {
@@ -90,12 +90,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         {id: '1', name: '两段色'},
                         {id: '2', name: '三段色'}
                     ],
-                    enterProgressValue: enterProgressValue,
+                    enterProgressValue: makeBounceFunc(enterProgressValue),
                     enterArrange: enterArrange,
                     enterCursor: enterCursor,
                     enterThresholdMode: enterThresholdMode,
-                    enterThresholdValue1: enterThresholdValue1,
-                    enterThresholdValue2: enterThresholdValue2
+                    enterThresholdValue1: makeBounceFunc(enterThresholdValue1),
+                    enterThresholdValue2: makeBounceFunc(enterThresholdValue2)
                 },
                 dashboard: {
                     dashboardModeId: '0',
@@ -118,21 +118,21 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enableAnimationModeId: '0',
                     enterDashboardMode: enterDashboardMode,
                     enterDashboardClockwise: enterRotateClockwise,
-                    enterDashboardValue: enterDashboardValue,
-                    enterDashboardOffsetValue: enterDashboardOffsetValue,
+                    enterDashboardValue: makeBounceFunc(enterDashboardValue),
+                    enterDashboardOffsetValue: makeBounceFunc(enterDashboardOffsetValue),
                     enterBackgroundMode: enterBackgroundMode,
-                    enterPointerLength: enterPointerLength,
+                    enterPointerLength: makeBounceFunc(enterPointerLength),
                     enterDashboardPointerPos:enterPointerOffset.bind(null,'dashboard'),
-                    enterDashboardInnerRadius:enterDashboardInnerRadius,
-                    enterMinCoverAngle: enterMinCoverAngle,
-                    enterMaxCoverAngle: enterMaxCoverAngle
+                    enterDashboardInnerRadius:makeBounceFunc(enterDashboardInnerRadius),
+                    enterMinCoverAngle: makeBounceFunc(enterMinCoverAngle),
+                    enterMaxCoverAngle: makeBounceFunc(enterMaxCoverAngle)
                 },
                 textArea: {
                     modes:['单行','多行'],
                     enterMode:enterTextAreaMode,
-                    enterText: enterText,
+                    enterText: makeBounceFunc(enterText),
                     enterAttr: enterTextAreaAttr,
-                    enterTextContent: enterTextContent,
+                    enterTextContent: makeBounceFunc(enterTextContent),
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,
                     addCharacterSet: addCharacterSet,
@@ -142,7 +142,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 textInput: {
                     modes:['单行','多行'],
                     enterMode:enterTextInputMode,
-                    enterText: enterText,
+                    enterText: makeBounceFunc(enterText),
                     selectCharacterSetByIndex: selectCharacterSetByIndex,
                     selectCharacterSetByName: selectCharacterSetByName,
                     addCharacterSet: addCharacterSet,
@@ -190,14 +190,14 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         enterMarkingMode:enterMarkingMode,
                         enterTransformMode:enterTransformMode
                     },
-                    changeNumOfDigits: changeNumOfDigits,
-                    changeDecimalCount: changeDecimalCount,
+                    changeNumOfDigits: makeBounceFunc(changeNumOfDigits),
+                    changeDecimalCount: makeBounceFunc(changeDecimalCount),
                     enterNumMode: enterNumMode,
                     enterSymbolMode: enterSymbolMode,
                     enterFrontZeroMode: enterFrontZeroMode,
                     enterOverFlowStyle: enterOverFlowStyle,
 
-                    enterNumValue: enterNumValue,
+                    enterNumValue: makeBounceFunc(enterNumValue),
                     changeNumAlign: changeNumAlign,
                     enterArrange: enterArrange,
                     //16进制
@@ -247,55 +247,55 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     },
                     enterNumSystem:enterNumSystem,
 
-                    changeNumOfDigits: changeNumOfDigits,
-                    changeDecimalCount: changeDecimalCount,
+                    changeNumOfDigits: makeBounceFunc(changeNumOfDigits),
+                    changeDecimalCount: makeBounceFunc(changeDecimalCount),
                     enterNumMode: enterNumMode,
                     enterSymbolMode: enterSymbolMode,
                     enterFrontZeroMode: enterFrontZeroMode,
                     enterOverFlowStyle: enterOverFlowStyle,
 
-                    enterNumValue: enterNumValue,
+                    enterNumValue: makeBounceFunc(enterNumValue),
                     changeNumAlign: changeNumAlign,
 
-                    enterCharacterW: enterCharacterW,
-                    enterCharacterH: enterCharacterH
+                    enterCharacterW: makeBounceFunc(enterCharacterW),
+                    enterCharacterH: makeBounceFunc(enterCharacterH)
                 },
                 //旋钮
                 knob: {
                     backgroundImage: 'blank.png',
                     knobImg: 'blank.png',
-                    enterKnobSize: enterKnobSize,
-                    enterKnobValue: enterKnobValue
+                    enterKnobSize: makeBounceFunc(enterKnobSize),
+                    enterKnobValue: makeBounceFunc(enterKnobValue)
                 },
 
                 //示波器
                 oscilloscope: {
-                    changeOscSpacing: changeOscSpacing,
+                    changeOscSpacing: makeBounceFunc(changeOscSpacing),
                     changeOscGrid: changeOscGrid,
-                    changeOscLinWidth: changeOscLinWidth,
-                    changeOscGridInitValue: changeOscGridInitValue,
-                    changeOscGridUnitX: changeOscGridUnitX,
-                    changeOscGridUnitY: changeOscGridUnitY
+                    changeOscLinWidth: makeBounceFunc(changeOscLinWidth),
+                    changeOscGridInitValue: makeBounceFunc(changeOscGridInitValue),
+                    changeOscGridUnitX: makeBounceFunc(changeOscGridUnitX),
+                    changeOscGridUnitY: makeBounceFunc(changeOscGridUnitY)
                 },
 
                 //开关
                 switchWidget: {
-                    enterBindBit: enterBindBit
+                    enterBindBit: makeBounceFunc(enterBindBit)
                 },
                 //旋转
                 rotateImg: {
-                    enterInitValue: enterInitValue,
+                    enterInitValue: makeBounceFunc(enterInitValue),
                     clockwise:1,
                     enterRotateImgClockwise:enterRotateClockwise,
                     rotateImgClockwise: [
                         {wise:1,name:'顺时针'},
                         {wise:0,name:'逆时针'}
                     ],
-                    enterRotateImgPointerPos:enterPointerOffset.bind(null,'rotateImg')
+                    enterRotateImgPointerPos:makeBounceFunc(enterPointerOffset.bind(null,'rotateImg'))
                 },
                 //alpha
                 alphaImg: {
-                    enterInitValue: enterInitValue
+                    enterInitValue: makeBounceFunc(enterInitValue)
                 },
                 dateTime: {
                     dateTimeModes: [
@@ -327,13 +327,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     highlightModeId: '0',
                     enterDateTimeMode: enterDateTimeMode,
                     enterArrange: enterArrange,
-                    enterCharacterW: enterCharacterW,
-                    enterCharacterH: enterCharacterH
+                    enterCharacterW: makeBounceFunc(enterCharacterW),
+                    enterCharacterH: makeBounceFunc(enterCharacterH)
                 },
                 //滑块
                 slideBlock: {
-                    enterInitValue: enterInitValue,
-                    enterArrange: enterArrange,
+                    enterInitValue: makeBounceFunc(enterInitValue),
+                    enterArrange: makeBounceFunc(enterArrange),
                     enterSlideBlockMode:enterSlideBlockMode,
                     slideBlockModeId:'0',
                     slideBlockModes: [
@@ -356,9 +356,9 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 // 表格
                 grid:{
-                    enterGridCellNum:enterGridCellNum,
-                    enterGridCellSize:enterGridCellSize,
-                    enterGridCellBorder:enterGridCellBorder,
+                    enterGridCellNum:makeBounceFunc(enterGridCellNum),
+                    enterGridCellSize:makeBounceFunc(enterGridCellSize),
+                    enterGridCellBorder:makeBounceFunc(enterGridCellBorder),
                 },
                 group: {
                     align: [
@@ -388,37 +388,37 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterMatteOpacity: enterMatteOpacity,
                     enterMatteBgi: enterMatteBgi
                 },
-                enterName: enterName,
+                enterName: makeBounceFunc(enterName),
                 enterColor: enterColor,
-                enterFontText: enterFontText,
-                enterFontSize: enterFontSize,
+                enterFontText: makeBounceFunc(enterFontText),
+                enterFontSize: makeBounceFunc(enterFontSize),
                 enterFontFamily: enterFontFamily,
                 enterFontBold: enterFontBold,
                 enterFontItalic: enterFontItalic,
-                enterX: enterX,
-                enterY: enterY,
-                enterAbsoluteX: enterAbsoluteX,
-                enterAbsoluteY: enterAbsoluteY,
-                enterWidth: enterWidth,
-                enterHeight: enterHeight,
+                enterX: makeBounceFunc(enterX),
+                enterY: makeBounceFunc(enterY),
+                enterAbsoluteX: makeBounceFunc(enterAbsoluteX),
+                enterAbsoluteY: makeBounceFunc(enterAbsoluteY),
+                enterWidth: makeBounceFunc(enterWidth),
+                enterHeight: makeBounceFunc(enterHeight),
                 enterImage: enterBackgroundImage,
-                enterMinValue: enterMinValue,
-                enterMaxValue: enterMaxValue,
-                enterMinAngle: enterMinAngle,
-                enterMaxAngle: enterMaxAngle,
-                enterMinAlert: enterMinAlert,
-                enterMaxAlert: enterMaxAlert,
+                enterMinValue: makeBounceFunc(enterMinValue),
+                enterMaxValue: makeBounceFunc(enterMaxValue),
+                enterMinAngle: makeBounceFunc(enterMinAngle),
+                enterMaxAngle: makeBounceFunc(enterMaxAngle),
+                enterMinAlert: makeBounceFunc(enterMinAlert),
+                enterMaxAlert: makeBounceFunc(enterMaxAlert),
                 restore: restore,
                 changeTransitionName: changeTransitionName,
                 changeTimingFun: changeTimingFun,
-                changeTransitionDur: changeTransitionDur,
+                changeTransitionDur: makeBounceFunc(changeTransitionDur),
                 enterHighlightMode: enterHighlightMode,
                 enterEnableAnimationMode: enterEnableAnimationMode,
-                enterSpacing: enterSpacing,
-                enterHalfSpacing:enterHalfSpacing,
-                enterLineSpacing:enterLineSpacing,
-                enterGenerateAttrs:enterGenerateAttrs,
-                enterGeneralAttrsWithInput:enterGeneralAttrsWithInput,
+                enterSpacing: makeBounceFunc(enterSpacing),
+                enterHalfSpacing:makeBounceFunc(enterHalfSpacing),
+                enterLineSpacing:makeBounceFunc(enterLineSpacing),
+                enterGenerateAttrs:makeBounceFunc(enterGenerateAttrs),
+                enterGeneralAttrsWithInput:makeBounceFunc(enterGeneralAttrsWithInput),
             };
             $scope.animationsDisabled = UserTypeService.getAnimationAuthor()
         }
@@ -481,6 +481,37 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 return Type.isWidget($scope.component.object.type)
             }
             return false
+            
+        }
+
+        var bounceKeys = {}
+        function bounce(func,timeDuration){
+            timeDuration = timeDuration||300
+            if(!func.name){
+                throw new Error("bounce: func name is not valid!")
+            }
+            if(bounceKeys[func.name]){
+                clearTimeout(bounceKeys[func.name])
+            }
+            bounceKey[func.name] = setTimeout(func,timeDuration)
+        }
+
+        function makeBounceFunc(func,timeDuration){
+            var bounceKeys = {}
+            timeDuration = timeDuration||500
+            if(!func.name){
+                throw new Error("bounce: func name is not valid!")
+            }
+            var args = Array.prototype.slice.call(arguments,0)
+            return function(){
+                if(bounceKeys[func.name]){
+                    clearTimeout(bounceKeys[func.name])
+                }
+                bounceKeys[func.name] = setTimeout(function(){
+                    bounceKeys[func.name] = null
+                    return func.apply(null,args)
+                },timeDuration)
+            }
             
         }
 
@@ -836,28 +867,26 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function changeTransitionDur(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.transition.duration > 5000 || $scope.component.object.level.transition.duration < 0) {
-                    toastr.warning('超出限制');
-                    restore();
-                    return;
-                }
-                if (!_.isInteger($scope.component.object.level.transition.duration)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.transition.duration == initObject.level.transition.duration) {
-                    return;
-                }
-                var option = {
-                    duration: $scope.component.object.level.transition.duration
-                };
-                toastr.info('修改成功');
-                ProjectService.ChangeAttributeTransition(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            if ($scope.component.object.level.transition.duration > 5000 || $scope.component.object.level.transition.duration < 0) {
+                toastr.warning('超出限制');
+                restore();
+                return;
             }
+            if (!_.isInteger($scope.component.object.level.transition.duration)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if ($scope.component.object.level.transition.duration == initObject.level.transition.duration) {
+                return;
+            }
+            var option = {
+                duration: $scope.component.object.level.transition.duration
+            };
+            toastr.info('修改成功');
+            ProjectService.ChangeAttributeTransition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
         }
 
         function addSubSlide() {
@@ -869,262 +898,262 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * @param e
          */
         function enterName(e, th) {
-            if (e.keyCode == 13) {
+            
 
-                //判断是否和初始一样
-                if ($scope.component.object.level.name == initObject.level.name) {
-                    th.component.object.level.name = $scope.component.object.level.name;
-                    return;
-                }
-                var validation = ProjectService.inputValidate($scope.component.object.level.name);
-                if (!validation) {
-                    restore();
-                    return;
-                }
-                toastr.info('修改成功');
-                var option = {
-                    name: $scope.component.object.level.name
-                };
-
-                ProjectService.ChangeAttributeName(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
+            //判断是否和初始一样
+            if ($scope.component.object.level.name == initObject.level.name) {
+                th.component.object.level.name = $scope.component.object.level.name;
+                return;
             }
+            var validation = ProjectService.inputValidate($scope.component.object.level.name);
+            if (!validation) {
+                restore();
+                return;
+            }
+            toastr.info('修改成功');
+            var option = {
+                name: $scope.component.object.level.name
+            };
+
+            ProjectService.ChangeAttributeName(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+            
 
         }
 
         function enterX(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var xCoor = Number($scope.component.object.level.info.left);
-                if (!_.isInteger(xCoor)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (xCoor < -2000 || xCoor > 2000) {
-                    toastr.warning('超出画布范围');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if (xCoor == initObject.level.info.left) {
-                    toastr.warning('未改变值' + $scope.component.object.level.info.left);
-                    return;
-                }
-
-                var isWidget = Type.isWidget($scope.component.object.level.type)
-                if(isWidget){
-                    //whether absoluteX absoluteY overflow
-                    var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
-                    if(futureAbsolutePos&&(futureAbsolutePos.absoluteX<-2000||futureAbsolutePos.absoluteX>2000)){
-                        toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
-                        restore();
-                        return;
-                    }
-                }
-
-                
-
-                var option = {
-                    left: xCoor
-                };
-
-                ProjectService.ChangeAttributePosition(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                    if(isWidget){
-                        var currentWidgetInfo = $scope.component.object.level.info;
-                        ProjectService.setAbsolutePosition(currentWidgetInfo);
-                    }
-                    
-                })
-
+            
+            //判断输入是否合法
+            var xCoor = Number($scope.component.object.level.info.left);
+            if (!_.isInteger(xCoor)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (xCoor < -2000 || xCoor > 2000) {
+                toastr.warning('超出画布范围');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if (xCoor == initObject.level.info.left) {
+                toastr.warning('未改变值' + $scope.component.object.level.info.left);
+                return;
+            }
+
+            var isWidget = Type.isWidget($scope.component.object.level.type)
+            if(isWidget){
+                //whether absoluteX absoluteY overflow
+                var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
+                if(futureAbsolutePos&&(futureAbsolutePos.absoluteX<-2000||futureAbsolutePos.absoluteX>2000)){
+                    toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
+                    restore();
+                    return;
+                }
+            }
+
+            
+
+            var option = {
+                left: xCoor
+            };
+
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+                if(isWidget){
+                    var currentWidgetInfo = $scope.component.object.level.info;
+                    ProjectService.setAbsolutePosition(currentWidgetInfo);
+                }
+                
+            })
+
+            
         }
 
         function enterY(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var yCoor = Number($scope.component.object.level.info.top);
-                if (!_.isInteger(yCoor)) {
-                    toastr.warning('输入不合法');
+            
+            //判断输入是否合法
+            var yCoor = Number($scope.component.object.level.info.top);
+            if (!_.isInteger(yCoor)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if (yCoor < -2000 || yCoor > 2000) {
+                toastr.warning('超出范围，相对坐标范围-2000 ~ 2000');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if (yCoor == initObject.level.info.top) {
+                toastr.warning('未改变值' + $scope.component.object.level.info.top);
+                return;
+            }
+
+
+            var isWidget = Type.isWidget($scope.component.object.level.type)
+            if(isWidget){
+                //whether absoluteX absoluteY overflow
+                var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
+                if(futureAbsolutePos&&(futureAbsolutePos.absoluteY<-2000||futureAbsolutePos.absoluteY>2000)){
+                    toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
                     restore();
                     return;
                 }
-                if (yCoor < -2000 || yCoor > 2000) {
-                    toastr.warning('超出范围，相对坐标范围-2000 ~ 2000');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if (yCoor == initObject.level.info.top) {
-                    toastr.warning('未改变值' + $scope.component.object.level.info.top);
-                    return;
-                }
+            }
+            
 
+            var option = {
+                top: yCoor
+            };
 
-                var isWidget = Type.isWidget($scope.component.object.level.type)
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
                 if(isWidget){
-                    //whether absoluteX absoluteY overflow
-                    var futureAbsolutePos = ProjectService.getFutureAbsolutePosition($scope.component.object.level.info)
-                    if(futureAbsolutePos&&(futureAbsolutePos.absoluteY<-2000||futureAbsolutePos.absoluteY>2000)){
-                        toastr.warning('超出范围，绝对坐标范围-2000 ~ 2000');
-                        restore();
-                        return;
-                    }
+                    var currentWidgetInfo = $scope.component.object.level.info;
+                    ProjectService.setAbsolutePosition(currentWidgetInfo);
                 }
                 
+            })
 
-                var option = {
-                    top: yCoor
-                };
-
-                ProjectService.ChangeAttributePosition(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                    if(isWidget){
-                        var currentWidgetInfo = $scope.component.object.level.info;
-                        ProjectService.setAbsolutePosition(currentWidgetInfo);
-                    }
-                    
-                })
-
-            }
+            
         }
 
         //add by tang 2018/01/15
         function enterAbsoluteX(e) {
             var absoluteX = Number($rootScope.position.absoluteX);
             var xCoor = $rootScope.position.absoluteX - $rootScope.position.currentLayerInfo.left;
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(absoluteX)) {
-                    toastr.warning('输入不合法');
-                    $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
-                    return;
-                }
-                if (xCoor < -2000 || xCoor > 2000) {
-                    toastr.warning('超出画布范围，必须是-2000 ~ 2000');
-                    $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
-                    return;
-                }
-                //判断是否有变化
-                if (absoluteX == $rootScope.position.initAbsoluteX) {
-                    toastr.warning('未改变值' + $rootScope.position.absoluteX);
-                    return;
-                }
-
-                if (absoluteX < -2000 || absoluteX > 2000) {
-                    toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
-                    $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
-                    return;
-                }
-                var option = {
-                    left: xCoor
-                };
-
-                ProjectService.ChangeAttributePosition(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(absoluteX)) {
+                toastr.warning('输入不合法');
+                $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
+                return;
             }
+            if (xCoor < -2000 || xCoor > 2000) {
+                toastr.warning('超出画布范围，必须是-2000 ~ 2000');
+                $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
+                return;
+            }
+            //判断是否有变化
+            if (absoluteX == $rootScope.position.initAbsoluteX) {
+                toastr.warning('未改变值' + $rootScope.position.absoluteX);
+                return;
+            }
+
+            if (absoluteX < -2000 || absoluteX > 2000) {
+                toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
+                $rootScope.position.absoluteX = $rootScope.position.initAbsoluteX;
+                return;
+            }
+            var option = {
+                left: xCoor
+            };
+
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterAbsoluteY(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var absoluteY = Number($rootScope.position.absoluteY);
-                var yCoor = $rootScope.position.absoluteY - $rootScope.position.currentLayerInfo.top;
-                if (!_.isInteger(absoluteY)) {
-                    toastr.warning('输入不合法');
-                    $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
-                    return;
-                }
-                if (yCoor < -2000 || yCoor > 2000) {
-                    toastr.warning('超出画布范围');
-                    $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
-                    return;
-                }
-                //判断是否有变化
-                if (absoluteY == $rootScope.position.initAbsoluteY) {
-                    toastr.warning('未改变值' + $rootScope.position.absoluteY);
-                    return;
-                }
-                if (absoluteY < -2000 || absoluteY > 2000) {
-                    toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
-                    $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
-                    return;
-                }
-                var option = {
-                    top: yCoor
-                };
-
-                ProjectService.ChangeAttributePosition(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            var absoluteY = Number($rootScope.position.absoluteY);
+            var yCoor = $rootScope.position.absoluteY - $rootScope.position.currentLayerInfo.top;
+            if (!_.isInteger(absoluteY)) {
+                toastr.warning('输入不合法');
+                $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
+                return;
             }
+            if (yCoor < -2000 || yCoor > 2000) {
+                toastr.warning('超出画布范围');
+                $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
+                return;
+            }
+            //判断是否有变化
+            if (absoluteY == $rootScope.position.initAbsoluteY) {
+                toastr.warning('未改变值' + $rootScope.position.absoluteY);
+                return;
+            }
+            if (absoluteY < -2000 || absoluteY > 2000) {
+                toastr.warning('超出绝对坐标范围，必须是-2000 ~ 2000');
+                $rootScope.position.absoluteY = $rootScope.position.initAbsoluteY;
+                return;
+            }
+            var option = {
+                top: yCoor
+            };
+
+            ProjectService.ChangeAttributePosition(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterWidth(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var width = Number($scope.component.object.level.info.width);
-                if (!_.isInteger(width)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (width < 1 || width > 2000) {
-                    toastr.warning('超出范围');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if (width == initObject.level.info.width) {
-                    console.log('没有变化');
-                    return;
-                }
-                var option = {
-                    width: width
-                };
-
-                ProjectService.ChangeAttributeSize(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            //判断输入是否合法
+            var width = Number($scope.component.object.level.info.width);
+            if (!_.isInteger(width)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (width < 1 || width > 2000) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if (width == initObject.level.info.width) {
+                console.log('没有变化');
+                return;
+            }
+            var option = {
+                width: width
+            };
+
+            ProjectService.ChangeAttributeSize(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function enterHeight(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var height = Number($scope.component.object.level.info.height);
-                if (!_.isInteger(height)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (height < 1 || height > 2000) {
-                    toastr.warning('超出范围');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if (height == initObject.level.info.height) {
-                    console.log('没有变化');
-                    return;
-                }
-                var option = {
-                    height: height
-                };
-
-                ProjectService.ChangeAttributeSize(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
+            
+            //判断输入是否合法
+            var height = Number($scope.component.object.level.info.height);
+            if (!_.isInteger(height)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (height < 1 || height > 2000) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if (height == initObject.level.info.height) {
+                console.log('没有变化');
+                return;
+            }
+            var option = {
+                height: height
+            };
+
+            ProjectService.ChangeAttributeSize(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+            
         }
 
         function enterColor(op) {
@@ -1208,23 +1237,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * @param e
          */
         function enterFontText(e) {
-            if (e.keyCode == 13) {
-                var fontText = $scope.component.object.level.info.text;
-                if (fontText == initObject.level.info.text) {
-                    return;
-                }
-                var textLength = fontText.length;
-                if (textLength > 20) {
-                    toastr.warning('字数最大20');
-                    restore();
-                    return;
-                }
-                var option = {
-                    text: fontText
-                };
-
-                _changeTextAttr(option)
+            
+            var fontText = $scope.component.object.level.info.text;
+            if (fontText == initObject.level.info.text) {
+                return;
             }
+            var textLength = fontText.length;
+            if (textLength > 20) {
+                toastr.warning('字数最大20');
+                restore();
+                return;
+            }
+            var option = {
+                text: fontText
+            };
+
+            _changeTextAttr(option)
+            
         }
 
         /**
@@ -1232,26 +1261,26 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * @param e
          */
         function enterFontSize(e) {
-            if (e.keyCode == 13) {
-                var fontSize = $scope.component.object.level.info.fontSize;
-                if (!_.isInteger(Number(fontSize))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (fontSize < 1 || fontSize > 64) {
-                    toastr.warning('超出范围(1 - 64)');
-                    restore();
-                    return;
-                }
-                if (fontSize == initObject.level.info.fontSize) {
-                    return;
-                }
-                var option = {
-                    fontSize: fontSize
-                };
-                _changeTextAttr(option);
+            
+            var fontSize = $scope.component.object.level.info.fontSize;
+            if (!_.isInteger(Number(fontSize))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (fontSize < 1 || fontSize > 64) {
+                toastr.warning('超出范围(1 - 64)');
+                restore();
+                return;
+            }
+            if (fontSize == initObject.level.info.fontSize) {
+                return;
+            }
+            var option = {
+                fontSize: fontSize
+            };
+            _changeTextAttr(option);
+            
         }
 
         /**
@@ -1467,229 +1496,229 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterInterval(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(Number($scope.component.object.level.info.interval)) || (parseInt($scope.component.object.level.info.interval)) < 0) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                var interval = $scope.component.object.level.info.interval || 0;
-                var count = $scope.component.object.level.info.count || 0;
-                var width = $scope.component.object.level.info.width || 0;
-                if (interval * (count - 1) > width) {
-                    toastr.warning('配置不合理');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.interval == initObject.level.info.interval) {
-                    return;
-                }
-
-                var option = {
-                    interval: $scope.component.object.level.info.interval
-                };
-
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeInterval(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(Number($scope.component.object.level.info.interval)) || (parseInt($scope.component.object.level.info.interval)) < 0) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            var interval = $scope.component.object.level.info.interval || 0;
+            var count = $scope.component.object.level.info.count || 0;
+            var width = $scope.component.object.level.info.width || 0;
+            if (interval * (count - 1) > width) {
+                toastr.warning('配置不合理');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.interval == initObject.level.info.interval) {
+                return;
+            }
+
+            var option = {
+                interval: $scope.component.object.level.info.interval
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeInterval(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterButtonCount(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.count)) || (parseInt($scope.component.object.level.info.interval) < 0)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                var interval = $scope.component.object.level.info.interval || 0;
-                var count = $scope.component.object.level.info.count || 0;
-                var width = $scope.component.object.level.info.width || 0;
-                if (interval * (count - 1) > width) {
-                    toastr.warning('配置不合理');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.count == initObject.level.info.count) {
-                    return;
-                }
-                if ($scope.component.object.level.info.count < 2) {
-                    toastr.warning('按钮数至少为2');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.count > 15) {
-                    toastr.warning('按钮数至多为15');
-                    restore();
-                    return;
-                }
-
-                var option = {
-                    count: parseInt($scope.component.object.level.info.count)
-                };
-
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeCount(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.count)) || (parseInt($scope.component.object.level.info.interval) < 0)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            var interval = $scope.component.object.level.info.interval || 0;
+            var count = $scope.component.object.level.info.count || 0;
+            var width = $scope.component.object.level.info.width || 0;
+            if (interval * (count - 1) > width) {
+                toastr.warning('配置不合理');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.count == initObject.level.info.count) {
+                return;
+            }
+            if ($scope.component.object.level.info.count < 2) {
+                toastr.warning('按钮数至少为2');
+                restore();
+                return;
+            }
+            if ($scope.component.object.level.info.count > 15) {
+                toastr.warning('按钮数至多为15');
+                restore();
+                return;
+            }
+
+            var option = {
+                count: parseInt($scope.component.object.level.info.count)
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeCount(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterPhotoWidth(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.photoWidth))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.photoWidth == initObject.level.info.photoWidth) {
-                    return;
-                }
-
-                //判断是否在范围内
-                if ($scope.component.object.level.info.photoWidth <= 0
-                    || $scope.component.object.level.info.photoWidth > $scope.component.object.level.info.width) {
-                    toastr.warning('超出范围');
-
-                    restore();
-                    return;
-                }
-                var option = {
-                    photoWidth: $scope.component.object.level.info.photoWidth
-                };
-
-                ProjectService.ChangeAttributePhotoWidth(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.photoWidth))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            //判断是否有变化
+            if ($scope.component.object.level.info.photoWidth == initObject.level.info.photoWidth) {
+                return;
+            }
+
+            //判断是否在范围内
+            if ($scope.component.object.level.info.photoWidth <= 0
+                || $scope.component.object.level.info.photoWidth > $scope.component.object.level.info.width) {
+                toastr.warning('超出范围');
+
+                restore();
+                return;
+            }
+            var option = {
+                photoWidth: $scope.component.object.level.info.photoWidth
+            };
+
+            ProjectService.ChangeAttributePhotoWidth(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
 
         function enterCurValue(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.curValue))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                if ($scope.component.object.level.info.curValue < 0 || $scope.component.object.level.info.curValue >= $scope.component.object.level.info.count) {
-                    toastr.warning('当前值超出范围(0 - 最大个数)');
-                    restore();
-                    return;
-                }
-
-                //判断是否有变化
-                if ($scope.component.object.level.info.curValue == initObject.level.info.curValue) {
-                    return;
-                }
-
-                //判断是否在范围内
-                // if ($scope.component.object.level.info.progressValue < $scope.component.object.level.info.minValue
-                //     || $scope.component.object.level.info.progressValue > $scope.component.object.level.info.maxValue) {
-                //     toastr.warning('超出范围');
-
-                //     restore();
-                //     return;
-                // }
-                var option = {
-                    curValue: $scope.component.object.level.info.curValue
-                };
-
-                ProjectService.ChangeAttributeCurValue(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.curValue))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+
+            if ($scope.component.object.level.info.curValue < 0 || $scope.component.object.level.info.curValue >= $scope.component.object.level.info.count) {
+                toastr.warning('当前值超出范围(0 - 最大个数)');
+                restore();
+                return;
+            }
+
+            //判断是否有变化
+            if ($scope.component.object.level.info.curValue == initObject.level.info.curValue) {
+                return;
+            }
+
+            //判断是否在范围内
+            // if ($scope.component.object.level.info.progressValue < $scope.component.object.level.info.minValue
+            //     || $scope.component.object.level.info.progressValue > $scope.component.object.level.info.maxValue) {
+            //     toastr.warning('超出范围');
+
+            //     restore();
+            //     return;
+            // }
+            var option = {
+                curValue: $scope.component.object.level.info.curValue
+            };
+
+            ProjectService.ChangeAttributeCurValue(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         //general enter count
         function enterCount(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.count)) ) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                var interval = $scope.component.object.level.info.interval || 0;
-                var count = $scope.component.object.level.info.count || 0;
-                var width = $scope.component.object.level.info.width || 0;
-                if (interval * (count - 1) > width) {
-                    toastr.warning('配置不合理');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.count == initObject.level.info.count) {
-                    return;
-                }
-                if ($scope.component.object.level.info.count < 1 || $scope.component.object.level.info.count > 15) {
-                    toastr.warning('设置个数超出范围(1 - 15)');
-                    restore();
-                    return;
-                }
-
-                var option = {
-                    count: parseInt($scope.component.object.level.info.count)
-                    //ignoreHighlight:$scope.component.object.level.type === Type.MyGallery
-                };
-
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeCount(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.count)) ) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            var interval = $scope.component.object.level.info.interval || 0;
+            var count = $scope.component.object.level.info.count || 0;
+            var width = $scope.component.object.level.info.width || 0;
+            if (interval * (count - 1) > width) {
+                toastr.warning('配置不合理');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.count == initObject.level.info.count) {
+                return;
+            }
+            if ($scope.component.object.level.info.count < 1 || $scope.component.object.level.info.count > 15) {
+                toastr.warning('设置个数超出范围(1 - 15)');
+                restore();
+                return;
+            }
+
+            var option = {
+                count: parseInt($scope.component.object.level.info.count)
+                //ignoreHighlight:$scope.component.object.level.type === Type.MyGallery
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeCount(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterProgressValue(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.progressValue))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.progressValue == initObject.level.info.progressValue) {
-                    return;
-                }
-
-                //判断是否在范围内
-                if ($scope.component.object.level.info.progressValue < $scope.component.object.level.info.minValue
-                    || $scope.component.object.level.info.progressValue > $scope.component.object.level.info.maxValue) {
-                    toastr.warning('超出范围');
-
-                    restore();
-                    return;
-                }
-                var option = {
-                    progressValue: $scope.component.object.level.info.progressValue
-                };
-
-                ProjectService.ChangeAttributeProgressValue(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.progressValue))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            //判断是否有变化
+            if ($scope.component.object.level.info.progressValue == initObject.level.info.progressValue) {
+                return;
+            }
+
+            //判断是否在范围内
+            if ($scope.component.object.level.info.progressValue < $scope.component.object.level.info.minValue
+                || $scope.component.object.level.info.progressValue > $scope.component.object.level.info.maxValue) {
+                toastr.warning('超出范围');
+
+                restore();
+                return;
+            }
+            var option = {
+                progressValue: $scope.component.object.level.info.progressValue
+            };
+
+            ProjectService.ChangeAttributeProgressValue(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         /**
@@ -1739,59 +1768,59 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * @param e
          */
         function enterThresholdValue1(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.threshold1 == initObject.level.info.threshold1) {
-                    return;
-                }
-                if ($scope.component.object.level.info.threshold1 < $scope.component.object.level.info.minValue ||
-                    $scope.component.object.level.info.threshold1 > $scope.component.object.level.info.maxValue) {
+            
+            if ($scope.component.object.level.info.threshold1 == initObject.level.info.threshold1) {
+                return;
+            }
+            if ($scope.component.object.level.info.threshold1 < $scope.component.object.level.info.minValue ||
+                $scope.component.object.level.info.threshold1 > $scope.component.object.level.info.maxValue) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if ($scope.component.object.level.info.threshold2) {
+                if ($scope.component.object.level.info.threshold1 > $scope.component.object.level.info.threshold2) {
                     toastr.warning('超出范围');
                     restore();
                     return;
                 }
-                if ($scope.component.object.level.info.threshold2) {
-                    if ($scope.component.object.level.info.threshold1 > $scope.component.object.level.info.threshold2) {
-                        toastr.warning('超出范围');
-                        restore();
-                        return;
-                    }
-                }
-                var option = {
-                    threshold1: $scope.component.object.level.info.threshold1
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeProgressThreshold(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
             }
+            var option = {
+                threshold1: $scope.component.object.level.info.threshold1
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeProgressThreshold(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function enterThresholdValue2(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.threshold2 == initObject.level.info.threshold2) {
-                    return;
-                }
-                if ($scope.component.object.level.info.threshold2 < $scope.component.object.level.info.minValue ||
-                    $scope.component.object.level.info.threshold2 > $scope.component.object.level.info.maxValue) {
+            
+            if ($scope.component.object.level.info.threshold2 == initObject.level.info.threshold2) {
+                return;
+            }
+            if ($scope.component.object.level.info.threshold2 < $scope.component.object.level.info.minValue ||
+                $scope.component.object.level.info.threshold2 > $scope.component.object.level.info.maxValue) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            if ($scope.component.object.level.info.threshold1) {
+                if ($scope.component.object.level.info.threshold2 < $scope.component.object.level.info.threshold1) {
                     toastr.warning('超出范围');
                     restore();
                     return;
                 }
-                if ($scope.component.object.level.info.threshold1) {
-                    if ($scope.component.object.level.info.threshold2 < $scope.component.object.level.info.threshold1) {
-                        toastr.warning('超出范围');
-                        restore();
-                        return;
-                    }
-                }
-                var option = {
-                    threshold2: $scope.component.object.level.info.threshold2
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeProgressThreshold(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
             }
+            var option = {
+                threshold2: $scope.component.object.level.info.threshold2
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeProgressThreshold(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         /**
@@ -1944,35 +1973,35 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterDashboardOffsetValue(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(Number($scope.component.object.level.info.offsetValue))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.offsetValue < -360 ||
-                    $scope.component.object.level.info.offsetValue > 360) {
-                    toastr.warning('超出最小最大角度范围');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.offsetValue == initObject.level.info.offsetValue) {
-                    return;
-                }
-
-                var option = {
-                    offsetValue: $scope.component.object.level.info.offsetValue
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeDashboardOffsetValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(Number($scope.component.object.level.info.offsetValue))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if ($scope.component.object.level.info.offsetValue < -360 ||
+                $scope.component.object.level.info.offsetValue > 360) {
+                toastr.warning('超出最小最大角度范围');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.offsetValue == initObject.level.info.offsetValue) {
+                return;
+            }
+
+            var option = {
+                offsetValue: $scope.component.object.level.info.offsetValue
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardOffsetValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterBackgroundMode() {
@@ -1988,138 +2017,138 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterDashboardValue(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isNumber($scope.component.object.level.info.value)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.value == initObject.level.info.value) {
-                    return;
-                }
-
-                //判断是否在范围内
-                if ($scope.component.object.level.info.value < $scope.component.object.level.info.minValue
-                    || $scope.component.object.level.info.value > $scope.component.object.level.info.maxValue) {
-                    toastr.warning('超出范围');
-
-                    restore();
-                    return;
-                }
-                var option = {
-                    value: $scope.component.object.level.info.value
-                };
-
-                //console.log('change attribute dashboard value',option)
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeDashboardValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isNumber($scope.component.object.level.info.value)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            //判断是否有变化
+            if ($scope.component.object.level.info.value == initObject.level.info.value) {
+                return;
+            }
+
+            //判断是否在范围内
+            if ($scope.component.object.level.info.value < $scope.component.object.level.info.minValue
+                || $scope.component.object.level.info.value > $scope.component.object.level.info.maxValue) {
+                toastr.warning('超出范围');
+
+                restore();
+                return;
+            }
+            var option = {
+                value: $scope.component.object.level.info.value
+            };
+
+            //console.log('change attribute dashboard value',option)
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterPointerLength(e) {
-            if (e.keyCode == 13) {
-                var pointerLength = $scope.component.object.level.info.pointerLength;
-                var width = $scope.component.object.level.info.width;
-                var maxLengthOfPointer = width / Math.SQRT2 + 10;
-                //判断输入是否合法
-                if (!_.isInteger(Number(pointerLength))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (pointerLength < 0 || pointerLength > maxLengthOfPointer) {
-                    toastr.warning('指针长度超出范围');
-                    restore();
-                    return;
-                }
-
-                if (pointerLength == initObject.level.info.pointerLength) {
-                    return;
-                }
-
-                var option = {
-                    pointerLength: pointerLength
-                };
-                //console.log(option);
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeDashboardPointerLength(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+        
+            var pointerLength = $scope.component.object.level.info.pointerLength;
+            var width = $scope.component.object.level.info.width;
+            var maxLengthOfPointer = width / Math.SQRT2 + 10;
+            //判断输入是否合法
+            if (!_.isInteger(Number(pointerLength))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (pointerLength < 0 || pointerLength > maxLengthOfPointer) {
+                toastr.warning('指针长度超出范围');
+                restore();
+                return;
+            }
+
+            if (pointerLength == initObject.level.info.pointerLength) {
+                return;
+            }
+
+            var option = {
+                pointerLength: pointerLength
+            };
+            //console.log(option);
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardPointerLength(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterPointerOffset(type,e) {
-            if (e.keyCode == 13) {
-                //console.log(e,type)
-                var posRotatePointX = $scope.component.object.level.info.posRotatePointX||0;
-                var posRotatePointY = $scope.component.object.level.info.posRotatePointY||0;
-                var width = $scope.component.object.level.info.width;
-                var height = $scope.component.object.level.info.height;
-                
-                //判断输入是否合法
-                if (!_.isInteger(Number(posRotatePointX))||!_.isInteger(Number(posRotatePointY))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (posRotatePointX < 0 || posRotatePointX > width || posRotatePointY < 0 || posRotatePointY > height) {
-                    toastr.warning('指针原点超出范围');
-                    restore();
-                    return;
-                }
-
-                
-
-                var option = {
-                    posRotatePointX: posRotatePointX,
-                    posRotatePointY:posRotatePointY
-                };
-                //console.log(option);
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributePointerOffset(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-                
-
+            
+            //console.log(e,type)
+            var posRotatePointX = $scope.component.object.level.info.posRotatePointX||0;
+            var posRotatePointY = $scope.component.object.level.info.posRotatePointY||0;
+            var width = $scope.component.object.level.info.width;
+            var height = $scope.component.object.level.info.height;
+            
+            //判断输入是否合法
+            if (!_.isInteger(Number(posRotatePointX))||!_.isInteger(Number(posRotatePointY))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (posRotatePointX < 0 || posRotatePointX > width || posRotatePointY < 0 || posRotatePointY > height) {
+                toastr.warning('指针原点超出范围');
+                restore();
+                return;
+            }
+
+            
+
+            var option = {
+                posRotatePointX: posRotatePointX,
+                posRotatePointY:posRotatePointY
+            };
+            //console.log(option);
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributePointerOffset(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+                
+
+            
         }
 
         function enterDashboardInnerRadius(e){
-            if (e.keyCode == 13) {
+            
                 
-                var innerRadius = $scope.component.object.level.info.innerRadius||0;
-                //判断输入是否合法
-                if (!_.isInteger(Number(innerRadius))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                var option = {
-                    innerRadius:innerRadius
-                };
-                //console.log(option);
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeDashboardInnerRadius(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-                
-
+            var innerRadius = $scope.component.object.level.info.innerRadius||0;
+            //判断输入是否合法
+            if (!_.isInteger(Number(innerRadius))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+
+            var option = {
+                innerRadius:innerRadius
+            };
+            //console.log(option);
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardInnerRadius(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+                
+
+            
         }
 
         function enterDashboardMode(e) {
@@ -2173,482 +2202,480 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterMinCoverAngle(e) {
-            if (e.keyCode == 13) {
-                if (!_.isInteger($scope.component.object.level.info.minCoverAngle)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.minCoverAngle < -360 || $scope.component.object.level.info.minCoverAngle > 360 ||
-                    $scope.component.object.level.info.minCoverAngle > $scope.component.object.level.info.maxCoverAngle ||
-                    $scope.component.object.level.info.maxCoverAngle - $scope.component.object.level.info.minCoverAngle > 360) {
-                    toastr.warning('超出范围');
-                    restore();
-                    return;
-                }
-                var option = {
-                    minCoverAngle: $scope.component.object.level.info.minCoverAngle
-                }
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeDashboardCoverAngle(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if (!_.isInteger($scope.component.object.level.info.minCoverAngle)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if ($scope.component.object.level.info.minCoverAngle < -360 || $scope.component.object.level.info.minCoverAngle > 360 ||
+                $scope.component.object.level.info.minCoverAngle > $scope.component.object.level.info.maxCoverAngle ||
+                $scope.component.object.level.info.maxCoverAngle - $scope.component.object.level.info.minCoverAngle > 360) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            var option = {
+                minCoverAngle: $scope.component.object.level.info.minCoverAngle
+            }
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardCoverAngle(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function enterMaxCoverAngle(e) {
-            if (e.keyCode == 13) {
-                if (!_.isInteger($scope.component.object.level.info.maxCoverAngle)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.maxCoverAngle < -360 || $scope.component.object.level.info.maxCoverAngle > 360 ||
-                    $scope.component.object.level.info.maxCoverAngle < $scope.component.object.level.info.minCoverAngle ||
-                    $scope.component.object.level.info.maxCoverAngle - $scope.component.object.level.info.minCoverAngle > 360) {
-                    toastr.warning('超出范围');
-                    restore();
-                    return;
-                }
-                var option = {
-                    maxCoverAngle: $scope.component.object.level.info.maxCoverAngle
-                }
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeDashboardCoverAngle(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
-
+            
+            if (!_.isInteger($scope.component.object.level.info.maxCoverAngle)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if ($scope.component.object.level.info.maxCoverAngle < -360 || $scope.component.object.level.info.maxCoverAngle > 360 ||
+                $scope.component.object.level.info.maxCoverAngle < $scope.component.object.level.info.minCoverAngle ||
+                $scope.component.object.level.info.maxCoverAngle - $scope.component.object.level.info.minCoverAngle > 360) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            var option = {
+                maxCoverAngle: $scope.component.object.level.info.maxCoverAngle
+            }
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeDashboardCoverAngle(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+
+            
         }
 
         function enterMinValue(e) {
 
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger($scope.component.object.level.info.minValue)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                //global limit
-                if ($scope.component.object.level.info.minValue < (-Math.pow(10, 9) + 1)) {
-                    toastr.warning('小于最小临界值');
-                    restore();
-                    return;
-                }
-
-
-
-                //判断是否有变化
-                if ($scope.component.object.level.info.minValue == initObject.level.info.minValue) {
-                    return;
-                }
-                //判断范围
-                if ($scope.component.object.level.info.maxValue <= $scope.component.object.level.info.minValue) {
-                    toastr.warning('不能比最大值大');
-                    restore();
-                    return;
-                }
-
-                if ($scope.component.object.level.type == Type.MyProgress) {
-                    if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.progressValue) {
-                        toastr.warning('不能比当前值大');
-
-                        restore();
-                        return;
-                    }
-                    if ($scope.component.object.level.info.minValue < -30000) {
-                        toastr.warning('不能小于-30000');
-
-                        restore();
-                        return;
-                    }
-                } else if ($scope.component.object.level.type == Type.MyDashboard) {
-                    if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.value) {
-                        toastr.warning('不能比当前值大');
-                        restore();
-                        return;
-                    }
-                } else if ($scope.component.object.level.type == Type.MyNum || $scope.component.object.level.type == Type.MyTexNum) {
-                    //默认是数字框
-                    if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.initValue) {
-                        toastr.warning('不能比当前值大');
-                        restore();
-                        return;
-                    }
-                } else if ($scope.component.object.level.type == Type.MySlideBlock) {
-                    if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.initValue) {
-                        toastr.warning('不能比初始值大');
-                        restore();
-                        return;
-                    }
-                } else if ($scope.component.object.level.type == Type.MyRotateImg) {
-                    if ($scope.component.object.level.info.minValue < 0) {
-                        toastr.warning('不能小于0');
-                        restore();
-                        return;
-                    }
-                }
-
-                var option = {
-                    minValue: $scope.component.object.level.info.minValue
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger($scope.component.object.level.info.minValue)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+
+            //global limit
+            if ($scope.component.object.level.info.minValue < (-Math.pow(10, 9) + 1)) {
+                toastr.warning('小于最小临界值');
+                restore();
+                return;
+            }
+
+
+
+            //判断是否有变化
+            if ($scope.component.object.level.info.minValue == initObject.level.info.minValue) {
+                return;
+            }
+            //判断范围
+            if ($scope.component.object.level.info.maxValue <= $scope.component.object.level.info.minValue) {
+                toastr.warning('不能比最大值大');
+                restore();
+                return;
+            }
+
+            if ($scope.component.object.level.type == Type.MyProgress) {
+                if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.progressValue) {
+                    toastr.warning('不能比当前值大');
+
+                    restore();
+                    return;
+                }
+                if ($scope.component.object.level.info.minValue < -30000) {
+                    toastr.warning('不能小于-30000');
+
+                    restore();
+                    return;
+                }
+            } else if ($scope.component.object.level.type == Type.MyDashboard) {
+                if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.value) {
+                    toastr.warning('不能比当前值大');
+                    restore();
+                    return;
+                }
+            } else if ($scope.component.object.level.type == Type.MyNum || $scope.component.object.level.type == Type.MyTexNum) {
+                //默认是数字框
+                if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.initValue) {
+                    toastr.warning('不能比当前值大');
+                    restore();
+                    return;
+                }
+            } else if ($scope.component.object.level.type == Type.MySlideBlock) {
+                if ($scope.component.object.level.info.minValue > $scope.component.object.level.info.initValue) {
+                    toastr.warning('不能比初始值大');
+                    restore();
+                    return;
+                }
+            } else if ($scope.component.object.level.type == Type.MyRotateImg) {
+                if ($scope.component.object.level.info.minValue < 0) {
+                    toastr.warning('不能小于0');
+                    restore();
+                    return;
+                }
+            }
+
+            var option = {
+                minValue: $scope.component.object.level.info.minValue
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterMaxValue(e) {
-            if (e.keyCode == 13) {
-                var maxValue = $scope.component.object.level.info.maxValue,
-                    type = $scope.component.object.level.type;
+            
+            var maxValue = $scope.component.object.level.info.maxValue,
+                type = $scope.component.object.level.type;
 
-                //判断输入是否合法
-                if (!_.isInteger(parseInt(maxValue))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (maxValue > (Math.pow(10, 9) - 1)) {
-                    toastr.warning('超过最大临界值');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if (maxValue === initObject.level.info.maxValue) {
-                    return;
-                }
-
-                //判断范围
-                if (maxValue <= $scope.component.object.level.info.minValue) {
-                    toastr.warning('不能比最小值小');
-                    restore();
-                    return;
-                }
-                if (type === Type.MyProgress) {
-                    if (maxValue < $scope.component.object.level.info.progressValue) {
-                        toastr.warning('不能比当前值小');
-                        restore();
-                        return;
-                    }
-
-                    if (maxValue > 30000) {
-                        toastr.warning('不能大于30000');
-                        restore();
-                        return;
-                    }
-                } else if (type === Type.MyNum || type == Type.MyTexNum) {
-                    //默认是数字框
-                    if (maxValue < $scope.component.object.level.info.numValue) {
-                        toastr.warning('不能比当前值小');
-                        restore();
-                        return;
-                    }
-                    var numOfDigits = $scope.component.object.level.info.numOfDigits;
-                    var limit = Math.pow(10, numOfDigits) - 1;
-                    if (maxValue > limit) {
-                        toastr.warning('超出范围');
-                        restore();
-                        return;
-                    }
-
-                } else if (type === Type.MySlideBlock) {
-                    if (maxValue < $scope.component.object.level.info.initValue) {
-                        toastr.warning('不能比初始值小');
-                        restore();
-                        return;
-                    }
-                } else if (type === Type.MyRotateImg) {
-                    if (maxValue > 360) {
-                        toastr.warning('不能超过360');
-                        restore();
-                        return;
-                    }
-                }
-
-                var option = {
-                    maxValue: maxValue
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            //判断输入是否合法
+            if (!_.isInteger(parseInt(maxValue))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
-        }
-
-        function enterMinAngle(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(Number($scope.component.object.level.info.minAngle))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                if ($scope.component.object.level.info.minAngle < -360 || $scope.component.object.level.info.minAngle > 360) {
-                    toastr.warning('最小角度应在-360到360之间');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.minAngle == initObject.level.info.minAngle) {
-                    return;
-                }
-                var option = {
-                    minAngle: $scope.component.object.level.info.minAngle
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            if (maxValue > (Math.pow(10, 9) - 1)) {
+                toastr.warning('超过最大临界值');
+                restore();
+                return;
             }
-        }
-
-        function enterMaxAngle(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.maxAngle))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.maxAngle > 360 || $scope.component.object.level.info.maxAngle < $scope.component.object.level.info.minAngle) {
-                    toastr.warning('最大角度不能大于360且不小于最小角');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.maxAngle == initObject.level.info.maxAngle) {
-                    return;
-                }
-                var option = {
-                    maxAngle: $scope.component.object.level.info.maxAngle
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            //判断是否有变化
+            if (maxValue === initObject.level.info.maxValue) {
+                return;
             }
-        }
 
-
-        function enterMinAlert(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.lowAlarmValue))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.lowAlarmValue < (-Math.pow(10, 9) + 1)) {
-                    toastr.warning('小于最小临界值');
-                    restore();
-                    return;
-                }
-
-                //判断是否有变化
-                if ($scope.component.object.level.info.lowAlarmValue == initObject.level.info.lowAlarmValue) {
-                    return;
-                }
-                var option = {
-                    lowAlarmValue: $scope.component.object.level.info.lowAlarmValue
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            //判断范围
+            if (maxValue <= $scope.component.object.level.info.minValue) {
+                toastr.warning('不能比最小值小');
+                restore();
+                return;
             }
-        }
-
-        function enterMaxAlert(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.highAlarmValue))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.highAlarmValue > (Math.pow(10, 9) - 1)) {
-                    toastr.warning('大于最大临界值');
+            if (type === Type.MyProgress) {
+                if (maxValue < $scope.component.object.level.info.progressValue) {
+                    toastr.warning('不能比当前值小');
                     restore();
                     return;
                 }
 
-                if ($scope.component.object.level.info.highAlarmValue == initObject.level.info.highAlarmValue) {
-                    return;
-                }
-                var option = {
-                    highAlarmValue: $scope.component.object.level.info.highAlarmValue
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeValue(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
-            }
-        }
-
-        //输入字符间距
-        function enterSpacing(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var spacing = $scope.component.object.level.info.spacing,
-                    fontSize = $scope.component.object.level.info.fontSize;
-                if (!_.isInteger(spacing)) {
-                    toastr.warning('输入不合法');
+                if (maxValue > 30000) {
+                    toastr.warning('不能大于30000');
                     restore();
                     return;
                 }
-
-                if (spacing === initObject.level.info.spacing) {
+            } else if (type === Type.MyNum || type == Type.MyTexNum) {
+                //默认是数字框
+                if (maxValue < $scope.component.object.level.info.numValue) {
+                    toastr.warning('不能比当前值小');
+                    restore();
                     return;
                 }
-
-                if (spacing < -fontSize || spacing > fontSize) {
+                var numOfDigits = $scope.component.object.level.info.numOfDigits;
+                var limit = Math.pow(10, numOfDigits) - 1;
+                if (maxValue > limit) {
                     toastr.warning('超出范围');
                     restore();
                     return;
                 }
 
-                var option = {
-                    spacing: spacing
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                // console.log("$scope.component.object",$scope.component.object)
-                // if ($scope.component.object.type === "MyNum") {
-
-                // }
-                switch ($scope.component.object.type) {
-                    case "MyNum":
-                        ProjectService.ChangeAttributeNumContent(option, function () {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                        })
-                        break;
-                    case "MyDateTime":
-                        //console.log("MyDateTimeEnterSpacing");
-                        ProjectService.ChangeAttributeOfDateTime(option, function () {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                        })
-                        break;
-                    case "MyTextInput":
-                        ProjectService.ChangeAttributeOfTextInput(option, function () {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                        })
-                        break;
-                    default:
-                        console.log("error!");
+            } else if (type === Type.MySlideBlock) {
+                if (maxValue < $scope.component.object.level.info.initValue) {
+                    toastr.warning('不能比初始值小');
+                    restore();
+                    return;
                 }
+            } else if (type === Type.MyRotateImg) {
+                if (maxValue > 360) {
+                    toastr.warning('不能超过360');
+                    restore();
+                    return;
+                }
+            }
+
+            var option = {
+                maxValue: maxValue
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
+        }
+
+        function enterMinAngle(e) {
+            
+            //判断输入是否合法
+            if (!_.isInteger(Number($scope.component.object.level.info.minAngle))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+
+            if ($scope.component.object.level.info.minAngle < -360 || $scope.component.object.level.info.minAngle > 360) {
+                toastr.warning('最小角度应在-360到360之间');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.minAngle == initObject.level.info.minAngle) {
+                return;
+            }
+            var option = {
+                minAngle: $scope.component.object.level.info.minAngle
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
+        }
+
+        function enterMaxAngle(e) {
+           
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.maxAngle))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if ($scope.component.object.level.info.maxAngle > 360 || $scope.component.object.level.info.maxAngle < $scope.component.object.level.info.minAngle) {
+                toastr.warning('最大角度不能大于360且不小于最小角');
+                restore();
+                return;
+            }
+            //判断是否有变化
+            if ($scope.component.object.level.info.maxAngle == initObject.level.info.maxAngle) {
+                return;
+            }
+            var option = {
+                maxAngle: $scope.component.object.level.info.maxAngle
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
+        }
+
+
+        function enterMinAlert(e) {
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.lowAlarmValue))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if ($scope.component.object.level.info.lowAlarmValue < (-Math.pow(10, 9) + 1)) {
+                toastr.warning('小于最小临界值');
+                restore();
+                return;
+            }
+
+            //判断是否有变化
+            if ($scope.component.object.level.info.lowAlarmValue == initObject.level.info.lowAlarmValue) {
+                return;
+            }
+            var option = {
+                lowAlarmValue: $scope.component.object.level.info.lowAlarmValue
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
+        }
+
+        function enterMaxAlert(e) {
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.highAlarmValue))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+            if ($scope.component.object.level.info.highAlarmValue > (Math.pow(10, 9) - 1)) {
+                toastr.warning('大于最大临界值');
+                restore();
+                return;
+            }
+
+            if ($scope.component.object.level.info.highAlarmValue == initObject.level.info.highAlarmValue) {
+                return;
+            }
+            var option = {
+                highAlarmValue: $scope.component.object.level.info.highAlarmValue
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeValue(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
+        }
+
+        //输入字符间距
+        function enterSpacing(e) {
+            //判断输入是否合法
+            var spacing = $scope.component.object.level.info.spacing,
+            fontSize = $scope.component.object.level.info.fontSize;
+            if (!_.isInteger(spacing)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+
+            if (spacing === initObject.level.info.spacing) {
+                return;
+            }
+
+            if (spacing < -fontSize || spacing > fontSize) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+
+            var option = {
+                spacing: spacing
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            // console.log("$scope.component.object",$scope.component.object)
+            // if ($scope.component.object.type === "MyNum") {
+
+            // }
+            switch ($scope.component.object.type) {
+                case "MyNum":
+                    ProjectService.ChangeAttributeNumContent(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                    })
+                    break;
+                case "MyDateTime":
+                    //console.log("MyDateTimeEnterSpacing");
+                    ProjectService.ChangeAttributeOfDateTime(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                    })
+                    break;
+                case "MyTextInput":
+                    ProjectService.ChangeAttributeOfTextInput(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                    })
+                    break;
+                default:
+                    console.log("error!");
             }
         }
 
 
         //输入半角字符间距
         function enterHalfSpacing(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var halfSpacing = $scope.component.object.level.info.halfSpacing,
-                    fontSize = $scope.component.object.level.info.fontSize;
-                if (!_.isInteger(halfSpacing)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                if (halfSpacing === initObject.level.info.halfSpacing) {
-                    return;
-                }
-
-                if (halfSpacing < -fontSize || halfSpacing > fontSize) {
-                    toastr.warning('超出范围');
-                    restore();
-                    return;
-                }
-
-                var option = {
-                    halfSpacing: halfSpacing
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                // console.log("$scope.component.object",$scope.component.object)
-                // if ($scope.component.object.type === "MyNum") {
-
-                // }
-                switch ($scope.component.object.type) {
-                    
-                    case "MyTextInput":
-                        ProjectService.ChangeAttributeOfTextInput(option, function () {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                        })
-                        break;
-                    default:
-                        console.log("error!");
-                }
+            
+            //判断输入是否合法
+            var halfSpacing = $scope.component.object.level.info.halfSpacing,
+                fontSize = $scope.component.object.level.info.fontSize;
+            if (!_.isInteger(halfSpacing)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+
+            if (halfSpacing === initObject.level.info.halfSpacing) {
+                return;
+            }
+
+            if (halfSpacing < -fontSize || halfSpacing > fontSize) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+
+            var option = {
+                halfSpacing: halfSpacing
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            // console.log("$scope.component.object",$scope.component.object)
+            // if ($scope.component.object.type === "MyNum") {
+
+            // }
+            switch ($scope.component.object.type) {
+                
+                case "MyTextInput":
+                    ProjectService.ChangeAttributeOfTextInput(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                    })
+                    break;
+                default:
+                    console.log("error!");
+            }
+            
         }
 
 
         function enterLineSpacing(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                var lineSpacing = $scope.component.object.level.info.lineSpacing
-                    
-                if (!_.isInteger(lineSpacing)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                if (lineSpacing === initObject.level.info.lineSpacing) {
-                    return;
-                }
-
+            
+            //判断输入是否合法
+            var lineSpacing = $scope.component.object.level.info.lineSpacing
                 
-
-                var option = {
-                    lineSpacing: lineSpacing
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                // console.log("$scope.component.object",$scope.component.object)
-                // if ($scope.component.object.type === "MyNum") {
-
-                // }
-                switch ($scope.component.object.type) {
-                    
-                    case "MyTextInput":
-                        ProjectService.ChangeAttributeOfTextInput(option, function () {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                        })
-                        break;
-                    default:
-                        console.log("error!");
-                }
+            if (!_.isInteger(lineSpacing)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+
+            if (lineSpacing === initObject.level.info.lineSpacing) {
+                return;
+            }
+
+            
+
+            var option = {
+                lineSpacing: lineSpacing
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            // console.log("$scope.component.object",$scope.component.object)
+            // if ($scope.component.object.type === "MyNum") {
+
+            // }
+            switch ($scope.component.object.type) {
+                
+                case "MyTextInput":
+                    ProjectService.ChangeAttributeOfTextInput(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+
+                    })
+                    break;
+                default:
+                    console.log("error!");
+            }
+            
         }
 
         function enterButtonMode(e) {
@@ -2740,42 +2767,42 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterText(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.text == initObject.level.info.text) {
-                    return;
-                }
-
-                var option = {
-                    text: $scope.component.object.level.info.text
-                };
-
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeTextContent(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
+        
+            if ($scope.component.object.level.info.text == initObject.level.info.text) {
+                return;
             }
+
+            var option = {
+                text: $scope.component.object.level.info.text
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeTextContent(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+            
         }
 
         function enterTextContent(e) {
             var ctrlKey = e.ctrlKey || e.metaKey;
-            if (ctrlKey && e.keyCode == 10) {
-                if ($scope.component.object.level.info.textContent == initObject.level.info.textContent) {
-                    return;
-                }
 
-                var option = {
-                    textContent: $scope.component.object.level.info.textContent
-                };
-
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                ProjectService.ChangeAttributeTextContent(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
+            if ($scope.component.object.level.info.textContent == initObject.level.info.textContent) {
+                return;
             }
+
+            var option = {
+                textContent: $scope.component.object.level.info.textContent
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeTextContent(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+            
         }
 
         function selectCharacterSetByIndex(index) {
@@ -2869,85 +2896,85 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function changeNumOfDigits(e) {
-            if (e.keyCode == 13) {
-                var type = $scope.component.object.level.type;
-                if ($scope.component.object.level.info.numOfDigits.toString().indexOf('.') > -1) {
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.numOfDigits == initObject.level.info.numOfDigits) {
-                    return;
-                }
-
-                if ($scope.component.object.level.info.numOfDigits < $scope.component.object.level.info.maxValue.toString().length) {
-                    restore();
-                    toastr.warning('不能低于已设定的最大或最小值位数');
-                    return;
-                }
-                if ($scope.component.object.level.info.numOfDigits < 1 || $scope.component.object.level.info.numOfDigits > 10) {
-                    restore();
-                    toastr.warning('超出范围');
-                    return;
-                }
-                var length = $scope.component.object.level.info.numValue.toString().length + $scope.component.object.level.info.decimalCount;
-                if ($scope.component.object.level.info.numOfDigits <= $scope.component.object.level.info.decimalCount || $scope.component.object.level.info.numOfDigits < length) {
-                    restore();
-                    toastr.warning('超出范围');
-                    return;
-                }
-                var option = {
-                    numOfDigits: $scope.component.object.level.info.numOfDigits
-                };
-                switch (type) {
-                    case Type.MyNum:
-                        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                    case Type.MyTexNum:
-                        ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                }
+            
+            var type = $scope.component.object.level.type;
+            if ($scope.component.object.level.info.numOfDigits.toString().indexOf('.') > -1) {
+                restore();
+                return;
             }
+            if ($scope.component.object.level.info.numOfDigits == initObject.level.info.numOfDigits) {
+                return;
+            }
+
+            if ($scope.component.object.level.info.numOfDigits < $scope.component.object.level.info.maxValue.toString().length) {
+                restore();
+                toastr.warning('不能低于已设定的最大或最小值位数');
+                return;
+            }
+            if ($scope.component.object.level.info.numOfDigits < 1 || $scope.component.object.level.info.numOfDigits > 10) {
+                restore();
+                toastr.warning('超出范围');
+                return;
+            }
+            var length = $scope.component.object.level.info.numValue.toString().length + $scope.component.object.level.info.decimalCount;
+            if ($scope.component.object.level.info.numOfDigits <= $scope.component.object.level.info.decimalCount || $scope.component.object.level.info.numOfDigits < length) {
+                restore();
+                toastr.warning('超出范围');
+                return;
+            }
+            var option = {
+                numOfDigits: $scope.component.object.level.info.numOfDigits
+            };
+            switch (type) {
+                case Type.MyNum:
+                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+            }
+            
         }
 
         function changeDecimalCount(e) {
-            if (e.keyCode == 13) {
-                var type = $scope.component.object.level.type;
-                if ($scope.component.object.level.info.decimalCount.toString().indexOf('.') > -1) {
-                    restore();
-                    return;
-                }
-                if ($scope.component.object.level.info.decimalCount == initObject.level.info.decimalCount) {
-                    return;
-                }
-                //判断小数的位数是否小于0，或者是否大于字符数减numValue位数
-                if ($scope.component.object.level.info.decimalCount < 0 || ($scope.component.object.level.info.decimalCount >= $scope.component.object.level.info.numOfDigits)) {
-                    restore();
-                    toastr.warning('超出范围');
-                    return;
-                }
-
-                var option = {
-                    decimalCount: $scope.component.object.level.info.decimalCount,
-                }
-                var oldOperate = ProjectService.SaveCurrentOperate();
-
-                switch (type) {
-                    case Type.MyNum:
-                        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                    case Type.MyTexNum:
-                        ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                }
+            
+            var type = $scope.component.object.level.type;
+            if ($scope.component.object.level.info.decimalCount.toString().indexOf('.') > -1) {
+                restore();
+                return;
             }
+            if ($scope.component.object.level.info.decimalCount == initObject.level.info.decimalCount) {
+                return;
+            }
+            //判断小数的位数是否小于0，或者是否大于字符数减numValue位数
+            if ($scope.component.object.level.info.decimalCount < 0 || ($scope.component.object.level.info.decimalCount >= $scope.component.object.level.info.numOfDigits)) {
+                restore();
+                toastr.warning('超出范围');
+                return;
+            }
+
+            var option = {
+                decimalCount: $scope.component.object.level.info.decimalCount,
+            }
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            switch (type) {
+                case Type.MyNum:
+                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+            }
+            
         }
 
 
@@ -3037,37 +3064,37 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterNumValue(e) {
-            if (e.keyCode == 13) {
-                var type = $scope.component.object.level.type;
-                var numValue = $scope.component.object.level.info.numValue;
-                var minValue = $scope.component.object.level.info.minValue;
-                var maxValue = $scope.component.object.level.info.maxValue;
-                var numValueStr = numValue.toString();
-                if (numValue == initObject.level.info.numValue) {
-                    return;
-                }
-                if (numValue < minValue || numValue > maxValue || isNaN(numValue) || (numValueStr.indexOf('.') != -1)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                var option = {
-                    numValue: numValue,
-                };
-                switch (type) {
-                    case Type.MyNum:
-                        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                    case Type.MyTexNum:
-                        ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                }
+            
+            var type = $scope.component.object.level.type;
+            var numValue = $scope.component.object.level.info.numValue;
+            var minValue = $scope.component.object.level.info.minValue;
+            var maxValue = $scope.component.object.level.info.maxValue;
+            var numValueStr = numValue.toString();
+            if (numValue == initObject.level.info.numValue) {
+                return;
             }
+            if (numValue < minValue || numValue > maxValue || isNaN(numValue) || (numValueStr.indexOf('.') != -1)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
+            }
+
+            var option = {
+                numValue: numValue,
+            };
+            switch (type) {
+                case Type.MyNum:
+                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+            }
+            
         }
 
         function changeNumAlign() {
@@ -3093,210 +3120,210 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterCharacterW(e) {
-            if (e.keyCode === 13) {
-                var characterW = $scope.component.object.level.info.characterW;
-                var type = $scope.component.object.level.type;
-                if (!_.isInteger(characterW) || characterW <= 0) {
-                    toastr.warning('输入不合法');
-                    return;
-                }
-                if (characterW < 1 || characterW > 2000) {
-                    toastr.warning('超出范围');
-                    return;
-                }
-                var option = {
-                    characterW: characterW,
-                };
-                switch (type) {
-                    case Type.MyTexTime:
-                        ProjectService.ChangeAttributeTexTimeContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                    case Type.MyTexNum:
-                        ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                }
-
+            
+            var characterW = $scope.component.object.level.info.characterW;
+            var type = $scope.component.object.level.type;
+            if (!_.isInteger(characterW) || characterW <= 0) {
+                toastr.warning('输入不合法');
+                return;
             }
+            if (characterW < 1 || characterW > 2000) {
+                toastr.warning('超出范围');
+                return;
+            }
+            var option = {
+                characterW: characterW,
+            };
+            switch (type) {
+                case Type.MyTexTime:
+                    ProjectService.ChangeAttributeTexTimeContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+            }
+
+            
         }
 
         function enterCharacterH(e) {
-            if (e.keyCode === 13) {
-                var characterH = $scope.component.object.level.info.characterH;
-                var type = $scope.component.object.level.type;
-                if (!_.isInteger(characterH) || characterH <= 0) {
-                    toastr.warning('输入不合法');
-                    return;
-                }
-                if (characterH < 1 || characterH > 2000) {
-                    toastr.warning('超出范围');
-                    return;
-                }
-                var option = {
-                    characterH: characterH,
-                };
-                switch (type) {
-                    case Type.MyTexTime:
-                        ProjectService.ChangeAttributeTexTimeContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                    case Type.MyTexNum:
-                        ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
-                            $scope.$emit('ChangeCurrentPage', oldOperate);
-                        });
-                        break;
-                }
+            
+            var characterH = $scope.component.object.level.info.characterH;
+            var type = $scope.component.object.level.type;
+            if (!_.isInteger(characterH) || characterH <= 0) {
+                toastr.warning('输入不合法');
+                return;
             }
+            if (characterH < 1 || characterH > 2000) {
+                toastr.warning('超出范围');
+                return;
+            }
+            var option = {
+                characterH: characterH,
+            };
+            switch (type) {
+                case Type.MyTexTime:
+                    ProjectService.ChangeAttributeTexTimeContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+            }
+            
         }
 
 
         function enterKnobSize(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.knobSize))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.knobSize == initObject.level.info.knobSize) {
-                    return;
-                }
-
-
-                var option = {
-                    knobSize: $scope.component.object.level.info.knobSize
-                };
-                //console.log(option);
-
-                ProjectService.ChangeAttributeKnobSize(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.knobSize))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            //判断是否有变化
+            if ($scope.component.object.level.info.knobSize == initObject.level.info.knobSize) {
+                return;
+            }
+
+
+            var option = {
+                knobSize: $scope.component.object.level.info.knobSize
+            };
+            //console.log(option);
+
+            ProjectService.ChangeAttributeKnobSize(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function enterKnobValue(e) {
-            if (e.keyCode == 13) {
-                //判断输入是否合法
-                if (!_.isInteger(parseInt($scope.component.object.level.info.value))) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                //判断是否有变化
-                if ($scope.component.object.level.info.value == initObject.level.info.value) {
-                    return;
-                }
-
-                //判断是否在范围内
-                if ($scope.component.object.level.info.value < $scope.component.object.level.info.minValue
-                    || $scope.component.object.level.info.value > $scope.component.object.level.info.maxValue) {
-                    toastr.warning('超出范围');
-
-                    restore();
-                    return;
-                }
-                var option = {
-                    value: $scope.component.object.level.info.value
-                };
-
-                //console.log('change attribute dashboard value',option)
-
-                ProjectService.ChangeAttributeKnobValue(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-
-                })
-
+            
+            //判断输入是否合法
+            if (!_.isInteger(parseInt($scope.component.object.level.info.value))) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            //判断是否有变化
+            if ($scope.component.object.level.info.value == initObject.level.info.value) {
+                return;
+            }
+
+            //判断是否在范围内
+            if ($scope.component.object.level.info.value < $scope.component.object.level.info.minValue
+                || $scope.component.object.level.info.value > $scope.component.object.level.info.maxValue) {
+                toastr.warning('超出范围');
+
+                restore();
+                return;
+            }
+            var option = {
+                value: $scope.component.object.level.info.value
+            };
+
+            //console.log('change attribute dashboard value',option)
+
+            ProjectService.ChangeAttributeKnobValue(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+
+            
         }
 
         function changeOscSpacing(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.spacing == initObject.level.info.spacing) {
-                    return;
-                }
-                if ($scope.component.object.level.info.spacing <= 0 ||
-                    $scope.component.object.level.info.spacing > $scope.component.object.level.info.width) {
-                    toastr.warning('超出范围');
-                }
-                var option = {
-                    spacing: $scope.component.object.level.info.spacing
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if ($scope.component.object.level.info.spacing == initObject.level.info.spacing) {
+                return;
             }
+            if ($scope.component.object.level.info.spacing <= 0 ||
+                $scope.component.object.level.info.spacing > $scope.component.object.level.info.width) {
+                toastr.warning('超出范围');
+            }
+            var option = {
+                spacing: $scope.component.object.level.info.spacing
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function changeOscLinWidth(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.lineWidth == initObject.level.info.lineWidth) {
-                    return;
-                }
-                if ($scope.component.object.level.info.lineWidth <= 0 ||
-                    $scope.component.object.level.info.lineWidth > $scope.component.object.level.info.spacing / 2) {
-                    toastr.warning('超出范围');
-                }
-                var option = {
-                    lineWidth: $scope.component.object.level.info.lineWidth
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if ($scope.component.object.level.info.lineWidth == initObject.level.info.lineWidth) {
+                return;
             }
+            if ($scope.component.object.level.info.lineWidth <= 0 ||
+                $scope.component.object.level.info.lineWidth > $scope.component.object.level.info.spacing / 2) {
+                toastr.warning('超出范围');
+            }
+            var option = {
+                lineWidth: $scope.component.object.level.info.lineWidth
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function changeOscGridInitValue(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.gridInitValue == initObject.level.info.gridInitValue) {
-                    return;
-                }
-                var option = {
-                    gridInitValue: $scope.component.object.level.info.gridInitValue
-                }
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if ($scope.component.object.level.info.gridInitValue == initObject.level.info.gridInitValue) {
+                return;
             }
+            var option = {
+                gridInitValue: $scope.component.object.level.info.gridInitValue
+            }
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function changeOscGridUnitX(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.gridUnitX == initObject.level.info.gridUnitX) {
-                    return;
-                }
-                var option = {
-                    gridUnitX: $scope.component.object.level.info.gridUnitX
-                }
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if ($scope.component.object.level.info.gridUnitX == initObject.level.info.gridUnitX) {
+                return;
             }
+            var option = {
+                gridUnitX: $scope.component.object.level.info.gridUnitX
+            }
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function changeOscGridUnitY(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.gridUnitY == initObject.level.info.gridUnitY) {
-                    return;
-                }
-                var option = {
-                    gridUnitY: $scope.component.object.level.info.gridUnitY
-                }
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if ($scope.component.object.level.info.gridUnitY == initObject.level.info.gridUnitY) {
+                return;
             }
+            var option = {
+                gridUnitY: $scope.component.object.level.info.gridUnitY
+            }
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeOscilloscopeForRender(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function changeOscGrid() {
@@ -3316,24 +3343,24 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterBindBit(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.bindBit == initObject.level.info.bindBit) {
-                    return;
-                }
-                if ($scope.component.object.level.info.bindBit < 0 || $scope.component.object.level.info.bindBit > 31) {
-                    toastr.warning('超出范围');
-                    restore();
-                    return;
-                }
-                toastr.info('修改成功');
-                var option = {
-                    bindBit: $scope.component.object.level.info.bindBit,
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeBindBit(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if ($scope.component.object.level.info.bindBit == initObject.level.info.bindBit) {
+                return;
             }
+            if ($scope.component.object.level.info.bindBit < 0 || $scope.component.object.level.info.bindBit > 31) {
+                toastr.warning('超出范围');
+                restore();
+                return;
+            }
+            toastr.info('修改成功');
+            var option = {
+                bindBit: $scope.component.object.level.info.bindBit,
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeBindBit(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         };
 
         /**
@@ -3341,24 +3368,24 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          * @param e
          */
         function enterInitValue(e) {
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info.initValue == initObject.level.info.initValue) {
-                    return;
-                }
-                if ($scope.component.object.level.info.initValue < $scope.component.object.level.info.minValue ||
-                    $scope.component.object.level.info.initValue > $scope.component.object.level.info.maxValue) {
-                    toastr.warning('超出最大或最小范围');
-                    restore();
-                    return;
-                }
-                var option = {
-                    initValue: $scope.component.object.level.info.initValue
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.ChangeAttributeInitValue(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            
+            if ($scope.component.object.level.info.initValue == initObject.level.info.initValue) {
+                return;
             }
+            if ($scope.component.object.level.info.initValue < $scope.component.object.level.info.minValue ||
+                $scope.component.object.level.info.initValue > $scope.component.object.level.info.maxValue) {
+                toastr.warning('超出最大或最小范围');
+                restore();
+                return;
+            }
+            var option = {
+                initValue: $scope.component.object.level.info.initValue
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeInitValue(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function enterDateTimeMode(e) {
@@ -3459,72 +3486,71 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             });
         }
 
-        $scope.enterMaskAttr = function (event, n) {
+        $scope.enterMaskAttr = makeBounceFunc(enterMaskAttr)
+        function enterMaskAttr(event, n) {
             var option = null;
             var _mask = $scope.maskAttr;
-            if (event.keyCode == 13) {
-                switch (n) {
-                    case 'name':
-                        var name = $scope.maskAttr.name;
-                        if (name.match(/\S/) && name.length < 10) {
-                            $scope.maskAttr.name = name.replace(/(^\s*)|(\s*$)/g, "");
-                            option = _mask;
-                            toastr.info('修改成功');
-                        } else {
-                            toastr.warning('不能为空或长度超范围');
-                            initMask();
-                            return false;
-                        }
-                        break;
-                    case 'left':
-                        var posX = Number($scope.maskAttr.left);
-                        if (-2000 < posX && posX < 2000) {
-                            option = _mask;
-                            toastr.info('修改成功');
-                        } else {
-                            toastr.warning('超出范围');
-                            initMask();
-                            return false;
-                        }
-                        break;
-                    case 'top':
-                        var posY = Number($scope.maskAttr.top);
-                        if (-2000 < posY && posY < 2000) {
-                            option = _mask;
-                            toastr.info('修改成功');
-                        } else {
-                            toastr.warning('超出范围');
-                            initMask();
-                            return false
-                        }
-                        break;
-                    case 'width':
-                        var width = Number($scope.maskAttr.width);
-                        if (-2000 < width && width < 2000) {
-                            option = _mask;
-                            toastr.info('修改成功');
-                        } else {
-                            toastr.warning('超出范围');
-                            initMask();
-                            return false
-                        }
-                        break;
-                    case 'height':
-                        var height = Number($scope.maskAttr.height);
-                        if (-2000 < height && height < 2000) {
-                            option = _mask;
-                            toastr.info('修改成功');
-                        } else {
-                            toastr.warning('超出范围');
-                            initMask();
-                            return false
-                        }
-                        break;
-                }
-                $scope.$emit('ChangeMaskAttr', option);
-            } else {
-                return false;
+            
+            switch (n) {
+                case 'name':
+                    var name = $scope.maskAttr.name;
+                    if (name.match(/\S/) && name.length < 10) {
+                        $scope.maskAttr.name = name.replace(/(^\s*)|(\s*$)/g, "");
+                        option = _mask;
+                        toastr.info('修改成功');
+                    } else {
+                        toastr.warning('不能为空或长度超范围');
+                        initMask();
+                        return false;
+                    }
+                    break;
+                case 'left':
+                    var posX = Number($scope.maskAttr.left);
+                    if (-2000 < posX && posX < 2000) {
+                        option = _mask;
+                        toastr.info('修改成功');
+                    } else {
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false;
+                    }
+                    break;
+                case 'top':
+                    var posY = Number($scope.maskAttr.top);
+                    if (-2000 < posY && posY < 2000) {
+                        option = _mask;
+                        toastr.info('修改成功');
+                    } else {
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false
+                    }
+                    break;
+                case 'width':
+                    var width = Number($scope.maskAttr.width);
+                    if (-2000 < width && width < 2000) {
+                        option = _mask;
+                        toastr.info('修改成功');
+                    } else {
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false
+                    }
+                    break;
+                case 'height':
+                    var height = Number($scope.maskAttr.height);
+                    if (-2000 < height && height < 2000) {
+                        option = _mask;
+                        toastr.info('修改成功');
+                    } else {
+                        toastr.warning('超出范围');
+                        initMask();
+                        return false
+                    }
+                    break;
             }
+            $scope.$emit('ChangeMaskAttr', option);
+            
         };
 
         function enterGenerateAttrs(key){
@@ -3547,33 +3573,33 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
         }
 
         function enterGeneralAttrsWithInput(e,key){
-            if (e.keyCode == 13) {
-                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+            
+            if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                return;
+            }
+            
+            if (key == 'xPadding'){
+                if ($scope.component.object.level.info[key] < 0 || $scope.component.object.level.info[key] > $scope.component.object.level.info.width){
+                    toastr.warning('左右边距超出范围(0-宽度)');
+                    restore();
                     return;
                 }
-                
-                if (key == 'xPadding'){
-                    if ($scope.component.object.level.info[key] < 0 || $scope.component.object.level.info[key] > $scope.component.object.level.info.width){
-                        toastr.warning('左右边距超出范围(0-宽度)');
-                        restore();
-                        return;
-                    }
-                }else if (key == 'yPadding') {
-                    if ($scope.component.object.level.info[key] < 0 || $scope.component.object.level.info[key] > $scope.component.object.level.info.height){
-                        toastr.warning('上下边距超出范围(0-高度)');
-                        restore();
-                        return;
-                    }
+            }else if (key == 'yPadding') {
+                if ($scope.component.object.level.info[key] < 0 || $scope.component.object.level.info[key] > $scope.component.object.level.info.height){
+                    toastr.warning('上下边距超出范围(0-高度)');
+                    restore();
+                    return;
                 }
-
-                var option = {
-                    [key]: $scope.component.object.level.info[key]
-                };
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.enterGenerateAttrs(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
             }
+
+            var option = {
+                [key]: $scope.component.object.level.info[key]
+            };
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.enterGenerateAttrs(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         /**
@@ -3613,94 +3639,94 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
          */
 
         function enterGridCellNum(e){
-            if (e.keyCode === 13){
-                var col = $scope.component.object.level.info.col,
-                    row = $scope.component.object.level.info.row,
-                    border = $scope.component.object.level.info.border;
+            
+            var col = $scope.component.object.level.info.col,
+                row = $scope.component.object.level.info.row,
+                border = $scope.component.object.level.info.border;
 
-                if (!_.isInteger(col)||!_.isInteger(row)||!_.isInteger(border)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (col < 1 || col > 100 || row < 1 || row > 100) {
-                    toastr.warning('超出范围(1-100)');
-                    restore();
-                    return;
-                }
-
-                var option = {
-                    row:row,
-                    col:col,
-                    border:border
-                };
-
-                //console.log(option);
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.changeGridCellNum(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            if (!_.isInteger(col)||!_.isInteger(row)||!_.isInteger(border)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (col < 1 || col > 100 || row < 1 || row > 100) {
+                toastr.warning('超出范围(1-100)');
+                restore();
+                return;
+            }
+
+            var option = {
+                row:row,
+                col:col,
+                border:border
+            };
+
+            //console.log(option);
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.changeGridCellNum(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function enterGridCellBorder(e){
-            if (e.keyCode === 13){
-                var border = $scope.component.object.level.info.border;
+            
+            var border = $scope.component.object.level.info.border;
 
-                if (!_.isInteger(border)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-                if (border < 1 || border > 100) {
-                    toastr.warning('超出范围(1-100)');
-                    restore();
-                    return;
-                }
-
-                var option = {
-                    border:border
-                };
-
-                //console.log(option);
-                var oldOperate = ProjectService.SaveCurrentOperate();
-                ProjectService.changeGridCellBorder(option, function () {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            if (!_.isInteger(border)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+            if (border < 1 || border > 100) {
+                toastr.warning('超出范围(1-100)');
+                restore();
+                return;
+            }
+
+            var option = {
+                border:border
+            };
+
+            //console.log(option);
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.changeGridCellBorder(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
 
         function enterGridCellSize(e,type,n){
-            if (e.keyCode === 13) {
+            
 
-                if (!_.isInteger(n)) {
-                    toastr.warning('输入不合法');
-                    restore();
-                    return;
-                }
-
-                if (n < 1 || n > 2000) {
-                    toastr.warning('超出范围(1-2000)');
-                    restore();
-                    return;
-                }
-
-                //判断输入是否合法
-                if (type === 0) {
-                    var cellWidth = $scope.component.object.level.info.cellWidth;
-
-                }else {
-                    var cellHeight = $scope.component.object.level.info.cellHeight;
-                }
-
-                var option = {
-                    cellWidth: cellWidth,
-                    cellHeight: cellHeight
-                };
-
-                ProjectService.changeGridCellSize(option, function (oldOperate) {
-                    $scope.$emit('ChangeCurrentPage', oldOperate);
-                })
+            if (!_.isInteger(n)) {
+                toastr.warning('输入不合法');
+                restore();
+                return;
             }
+
+            if (n < 1 || n > 2000) {
+                toastr.warning('超出范围(1-2000)');
+                restore();
+                return;
+            }
+
+            //判断输入是否合法
+            if (type === 0) {
+                var cellWidth = $scope.component.object.level.info.cellWidth;
+
+            }else {
+                var cellHeight = $scope.component.object.level.info.cellHeight;
+            }
+
+            var option = {
+                cellWidth: cellWidth,
+                cellHeight: cellHeight
+            };
+
+            ProjectService.changeGridCellSize(option, function (oldOperate) {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+            
         }
     }]);
