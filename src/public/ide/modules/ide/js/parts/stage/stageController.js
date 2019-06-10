@@ -81,6 +81,7 @@
 
             $scope.component.subCanvas.node=new fabric.Canvas('c1',{renderOnAddRemove: false });
 
+
             var pageNode=$scope.component.canvas.node;
             CanvasService.setPageNode(pageNode);
             var subLayerNode=$scope.component.subCanvas.node;
@@ -134,6 +135,27 @@
                 'selection:cleared':onSelectionWidgetCleared,
             })
 
+            var highLightOptions = {
+
+                borderColor: '#005599',
+                cornerColor: 'rgb(212,212,212)',
+                borderSize:2,
+                cornerSize: 8,
+                // hasBorder:true,
+                // borderDashArray:[2,0,2,0],
+                transparentCorners: false
+  
+            }
+            
+            $scope.component.canvas.node.on('object:selected', function(o){
+                var activeObj = o.target;
+                // console.log(activeObj)
+                activeObj.set(highLightOptions);
+            });
+            $scope.component.subCanvas.node.on('object:selected', function(o){
+                var activeObj = o.target;
+                activeObj.set(highLightOptions);
+            });
 
 
             //reSetScale();
