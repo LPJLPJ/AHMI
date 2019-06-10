@@ -29,6 +29,7 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             },
             bottom:{
                 page:null,
+                pages:[],
                 selectPage:selectPage,
                 selectLayer:selectLayer,
                 selectSubLayer:selectSubLayer,
@@ -77,6 +78,7 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
     function initProject(){
         $timeout(function () {
             ProjectService.getProjectTo($scope);
+            $scope.component.bottom.pages = $scope.project.pages
             switchCurrentPage();
         });
 
@@ -97,7 +99,7 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
         })
     }
 
-    function selectPage(_pageId){
+    function selectPage(_pageId,cb){
 
         var pageIndex=-1;
         _.forEach($scope.project.pages,function(page,index){
@@ -105,49 +107,95 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
                 pageIndex=index;
             }
         });
+        if(pageIndex===-1){
+            console.log('selected page id error')
+            return
+        }
         console.log('选择了第' + pageIndex + '个页面');
         ProjectService.OnPageSelected(pageIndex,function () {
             $scope.$emit('ChangeCurrentPage',null, function () {
+                cb && cb()
             });
         })
 
     }
 
-    function selectLayer(_layer){
-
-        ProjectService.OnLayerSelected(_layer, function () {
-            $scope.$emit('ChangeCurrentPage');
+    function changePage(_pageId,cb){
+        var pageIndex=-1;
+        _.forEach($scope.project.pages,function(page,index){
+            if (page.id==_pageId){
+                pageIndex=index;
+            }
         });
-
-    }
-
-
-
-    function selectSubLayer(_layer,_subLayer){
-
-        var currentPage=ProjectService.getCurrentPage();
-        var layerIndex= _.indexOf(currentPage.layers,_layer);
-        var subLayerIndex= _.indexOf(_layer.subLayers,_subLayer);
-        ProjectService.OnSubLayerSelected(layerIndex,subLayerIndex, function () {
-            $scope.$emit('ChangeCurrentSubLayer')
-
+        if(pageIndex===-1){
+            console.log('selected page id error')
+            return
+        }
+        ProjectService.changeCurrentPageIndex(pageIndex,function(inSamePage){
+            cb && cb(inSamePage)
         })
     }
 
-    function selectWidget(_layer,_subLayer,_widget){
-        //add by tang
-        ProjectService.getLayerInfo=false;
-        ProjectService.setAbsolutePosition(_widget.info,_layer.info);
 
-        var currentPage=ProjectService.getCurrentPage();
-        var layerIndex= _.indexOf(currentPage.layers,_layer);
-        var subLayerIndex= _.indexOf(_layer.subLayers,_subLayer);
-        var widgetIndex= _.indexOf(_layer.widgets,_subLayer);
-
-        ProjectService.OnWidgetSelected(_widget, function () {
-            $scope.$emit('ChangeCurrentSubLayer',null, function () {
+    function selectLayer(_layer, srcPageId){
+        var cb = function(){
+            ProjectService.OnLayerSelected(_layer, function () {
+                $scope.$emit('ChangeCurrentPage');
             });
-        });
+        }
+        if(srcPageId!==undefined&&$scope.component.bottom.page.id!= srcPageId){
+            //need change page
+            changePage(srcPageId,cb)
+        }else{
+            cb()
+        }
+        
+
+    }
+
+
+
+    function selectSubLayer(_layer,_subLayer, srcPageId){
+        var cb = function(){
+            var currentPage=ProjectService.getCurrentPage();
+            var layerIndex= _.indexOf(currentPage.layers,_layer);
+            var subLayerIndex= _.indexOf(_layer.subLayers,_subLayer);
+            ProjectService.OnSubLayerSelected(layerIndex,subLayerIndex, function () {
+                $scope.$emit('ChangeCurrentSubLayer')
+    
+            })
+        }
+        if(srcPageId!==undefined&&$scope.component.bottom.page.id!= srcPageId){
+            changePage(srcPageId,cb)
+        }else{
+            cb()
+        }
+       
+    }
+
+    function selectWidget(_layer,_subLayer,_widget, srcPageId){
+        var cb = function(){
+            //add by tang
+            ProjectService.getLayerInfo=false;
+            ProjectService.setAbsolutePosition(_widget.info,_layer.info);
+
+            var currentPage=ProjectService.getCurrentPage();
+            var layerIndex= _.indexOf(currentPage.layers,_layer);
+            var subLayerIndex= _.indexOf(_layer.subLayers,_subLayer);
+            var widgetIndex= _.indexOf(_layer.widgets,_subLayer);
+
+            ProjectService.OnWidgetSelected(_widget, function () {
+                $scope.$emit('ChangeCurrentSubLayer',null, function () {
+                });
+            });
+        }
+        
+
+        if(srcPageId!==undefined&&$scope.component.bottom.page.id!= srcPageId){
+            changePage(srcPageId,cb)
+        }else{
+            cb()
+        }
     }
 
 

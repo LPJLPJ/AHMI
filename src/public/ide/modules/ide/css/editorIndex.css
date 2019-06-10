@@ -462,7 +462,7 @@ body {
 }
 
 /*###导航下方显示视图公共样式###*/
-.thumb-wrap, .stage-wrap, .attribute-wrap {
+.leftContainer, .stage-wrap, .attribute-wrap {
     -webkit-transition: height .2s, width .2s;
     -moz-transition: height .2s, width .2s;
     -ms-transition: height .2s, width .2s;
@@ -472,11 +472,62 @@ body {
 }
 
 /*###左侧page缩略图###*/
-.thumb-wrap {
+.leftContainer{
     width: 14%;
     height: calc(100% - 28px);
     background-color: #fcfcfc;
     box-sizing: border-box;
+}
+
+.leftUpperContainer__nav {
+    width: 100%;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid #dcdcdc !important;
+    cursor: pointer;
+}
+
+.leftUpperContainer__navitem {
+    width: 50%;
+    height: 100%;
+    line-height: 30px;
+    float: left;
+    background-color: #bfbfbf;
+    font-size: 0.8em;
+    text-align: center;
+    margin: 0;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.leftUpperContainer__navitem:not(:first-of-type) {
+    border-left: 1px solid #f5f4f6;
+}
+
+.leftUpperContainer__navitem > a {
+    display: block;
+    height: 100%;
+    font-size: 16px;
+    color: #707070;
+    line-height: 30px;
+    margin: 0;
+    padding: 0;
+    border: 0 ;
+    border-radius: 0 ;
+}
+
+.leftUpperContainer__navitem.active > a {
+    border-radius: 1px;
+    background-color: #f5f4f6 ;
+    box-sizing: border-box;
+    color: #005599 ;
+}
+
+.leftUpperContainer__navitem:not(.active) > a:hover {
+    background-color: #dcdcdc;
+    color: white;
 }
 
 .thumb-wrap.top-menu-content-show {

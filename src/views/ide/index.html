@@ -109,6 +109,7 @@
     <script src="../../public/ide/modules/ide/min-js/parts/nav/navController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/recordController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/nav/saveModalController.js"></script>
+    <script src="../../public/ide/modules/ide/min-js/parts/leftContainer/leftContainerController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/thumb/thumbController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/stage/stageController.js"></script>
     <script src="../../public/ide/modules/ide/min-js/parts/attr/attrController.js"></script>
@@ -669,32 +670,111 @@
         </div>
     </div>
 
-    <!--左侧缩略图-->
-    <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow}" data-step="2">
-        <div class="thumb-operate">
-            <div class="thumb-operate__add-page" title="添加新页面" ng-click="component.addPage()">+添加新页面</div>
-            <i class="iconfont function-prompts function-prompts__thumb" title="功能介绍" ng-click="openHelp($event,'thumb','thumb')">&#xe63e;</i>
-        </div>
-        <div ui-tree="component.uitree" class="thumb-content" data-drag-delay="200">
-            <div class="thumb-view view-wrap" ng-click="component.showLeft()">
-                <img class="pack" src="../../public/ide/modules/ide/images/left.png"/>
-                <img class="open" src="../../public/ide/modules/ide/images/right.png"/>
-            </div>
-            <ol ui-tree-nodes="" ng-model="project.pages" class="thumb-content-list">
-                <li class="thumb-content-list__item"
-                    ng-repeat="page in project.pages"
-                    ng-class="{'active':page.selected,'unfocus':page.current&&!page.selected}"
-                    ui-tree-node>
-                    <span class="thumb-content-list__item-index">{{project.pages.indexOf(page)+1}}</span>
-                    <img context-menu="component.menuOptions"
-                         ng-click="component.selectThumb(page)"
-                         class="thumb-content-list__item-img" ui-tree-handle
-                         ng-class="{true:'my-current-thumb'}[$index==project.currentPageIndex]"
-                         ng-src="{{page.url}}">
+    <div class="leftContainer" ng-controller="LeftContainerCtrl" data-step="2">
+        <!-- upper component -->
+        <div class="leftUpperContainer">
+            <!-- tabs -->
+            <ul class="leftUpperContainer__nav">
+                <li class="leftUpperContainer__navitem" ng-repeat="tab in ui.tabs" ng-click="ui.changeTab($index)">
+                    <a>{{tab}}</a>
                 </li>
-            </ol>
+            </ul>
+            <!--左侧缩略图-->
+            <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow}" ng-show="ui.currentTabIdx==0">
+                <div class="thumb-operate">
+                    <div class="thumb-operate__add-page" title="添加新页面" ng-click="component.addPage()">+添加新页面</div>
+                    <i class="iconfont function-prompts function-prompts__thumb" title="功能介绍" ng-click="openHelp($event,'thumb','thumb')">&#xe63e;</i>
+                </div>
+                <div ui-tree="component.uitree" class="thumb-content" data-drag-delay="200">
+                    <div class="thumb-view view-wrap" ng-click="component.showLeft()">
+                        <img class="pack" src="../../public/ide/modules/ide/images/left.png"/>
+                        <img class="open" src="../../public/ide/modules/ide/images/right.png"/>
+                    </div>
+                    <ol ui-tree-nodes="" ng-model="project.pages" class="thumb-content-list">
+                        <li class="thumb-content-list__item"
+                            ng-repeat="page in project.pages"
+                            ng-class="{'active':page.selected,'unfocus':page.current&&!page.selected}"
+                            ui-tree-node>
+                            <span class="thumb-content-list__item-index">{{project.pages.indexOf(page)+1}}</span>
+                            <img context-menu="component.menuOptions"
+                                ng-click="component.selectThumb(page)"
+                                class="thumb-content-list__item-img" ui-tree-handle
+                                ng-class="{true:'my-current-thumb'}[$index==project.currentPageIndex]"
+                                ng-src="{{page.url}}">
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!--右下方图层菜单-->
+            <div class="attribute-bottom-content" ng-show="ui.currentTabIdx==1" ng-controller="AttrCtrl">
+                <div class="layer-menu-view--open" ng-click="showBottom()"><img src="../../public/ide/modules/ide/images/top.png"/></div>
+                
+                <!--page-->
+                <div class="bottom-layer-menu" ng-repeat="page in component.bottom.pages track by $index">
+                    <div class="layer-menu-level layer-menu__page">
+                        <div class="layer-menu-level__title layer-menu-level__page" ng-class="{true:'selected'}[page.selected]"
+                                ng-click="component.bottom.selectPage(page.id)">
+                            <i class="menu-toggle-icon--expend" ng-click="toggleShow(page.id);$event.stopPropagation();" ng-show="page.expand" ></i>
+                            <i class="menu-toggle-icon--collapse" ng-click="toggleShow(page.id);$event.stopPropagation();" ng-show="!page.expand"></i>
+                            <span class="layer-menu-level__title-text">{{page.name}}</span>
+                        </div>
+                    </div>
+
+                    <!--canvas-->
+                    <div class="layer-menu-level__area" ng-show="page.expand" ui-tree="myLayerTree" data-drag-delay="200" data-drag-enabled="true">
+                        <div ui-tree-nodes ng-model="page.layers">
+                            <div ng-repeat="layer in page.layers" ui-tree-node>
+                                <div class="layer-menu-level" ui-tree-handle>
+                                    <div class="layer-menu-level__title layer-menu-level__canvas" ng-class="{true:'selected'}[layer.selected]"
+                                            ng-click="component.bottom.selectLayer(layer,page.id)">
+                                        <i class="menu-toggle-icon--expend" ng-click="toggleShow(layer.id);$event.stopPropagation();" ng-show="layer.expand"></i>
+                                        <i class="menu-toggle-icon--collapse" ng-click="toggleShow(layer.id);$event.stopPropagation();" ng-show="!layer.expand"></i>
+                                        <span class="layer-menu-level__title-text">{{layer.name}}</span>
+                                    </div>
+                                </div>
+
+                                <!--subCanvas-->
+                                <div class="layer-menu-level__area" ng-show="layer.expand" ui-tree-nodes ng-model="layer.subLayers">
+                                    <div ng-repeat="subLayer in layer.subLayers" ui-tree-node>
+                                        <div class="layer-menu-level" ui-tree-handle>
+                                            <div class="layer-menu-level__title layer-menu-level__subcanvas" ng-class="{true:'selected'}[subLayer.selected]"
+                                                    ng-click="component.bottom.selectSubLayer(layer,subLayer,page.id)">
+                                                <i class="menu-toggle-icon--expend" ng-click="toggleShow(subLayer.id);$event.stopPropagation();" ng-show="subLayer.expand"></i>
+                                                <i class="menu-toggle-icon--collapse" ng-click="toggleShow(subLayer.id);$event.stopPropagation();" ng-show="!subLayer.expand"></i>
+                                                <span class="layer-menu-level__title-text">{{subLayer.name}}</span>
+                                            </div>
+                                        </div>
+
+                                        <!--widget-->
+                                        <div class="layer-menu-level__area" ng-show="subLayer.expand" ui-tree-nodes ng-model="subLayer.widgets">
+                                            <div ng-repeat="widget in subLayer.widgets" ui-tree-node>
+                                                <div class="layer-menu-level" ui-tree-handle>
+                                                    <div class="layer-menu-level__title layer-menu-level__widget" ng-class="{true:'selected'}[widget.selected]"
+                                                            ng-click="component.bottom.selectWidget(layer,subLayer,widget,page.id)"
+                                                            ng-init="icon = widgetIcon[widget.type]"
+                                                            ng-mouseover="icon = widgetIcon[widget.type]+'-active'"
+                                                            ng-mouseleave="icon = widgetIcon[widget.type]">
+                                                        <img class="layer-menu-level__widget-icon" ng-src="../../public/ide/modules/ide/images/widget/{{icon}}.png"/>
+                                                        <span class="layer-menu-level__title-text">{{widget.name}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
         </div>
+        <!-- lower component -->
+        <div></div>
     </div>
+    
 
     <!--中间画布区-->
     <div class="stage-wrap" ng-controller="StageCtrl" ng-class="{true:'top-menu-content-show'}[component.out.toolShow]"
