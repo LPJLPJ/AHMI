@@ -530,6 +530,14 @@ body {
     color: white;
 }
 
+.thumb-wrap-show,.attribute-bottom-content-show{
+    display: block;
+}
+
+.thumb-wrap-hide,.attribute-bottom-content-hide{
+    display: none;
+}
+
 .thumb-wrap.top-menu-content-show {
     height: calc(100% - 84px);
 }

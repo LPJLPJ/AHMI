@@ -14,6 +14,10 @@ ide.controller('LeftContainerCtrl', ['$scope', '$timeout',function ($scope, $tim
             currentTabIdx:0,
             tabs:["缩略图","导航栏"],
             changeTab:function(idx){
+                // $scope.ui.currentTabIdx = -1
+                // $timeout(function(){
+                //     $scope.ui.currentTabIdx = idx
+                // },500)
                 $scope.ui.currentTabIdx = idx
             }
         }

@@ -675,12 +675,12 @@
         <div class="leftUpperContainer">
             <!-- tabs -->
             <ul class="leftUpperContainer__nav">
-                <li class="leftUpperContainer__navitem" ng-repeat="tab in ui.tabs" ng-click="ui.changeTab($index)">
+                <li class="leftUpperContainer__navitem" ng-repeat="tab in ui.tabs track by $index" ng-click="ui.changeTab($index)">
                     <a>{{tab}}</a>
                 </li>
             </ul>
             <!--左侧缩略图-->
-            <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow}" ng-show="ui.currentTabIdx==0">
+            <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow,'thumb-wrap-show':ui.currentTabIdx==0,'thumb-wrap-hide':ui.currentTabIdx!=0}">
                 <div class="thumb-operate">
                     <div class="thumb-operate__add-page" title="添加新页面" ng-click="component.addPage()">+添加新页面</div>
                     <i class="iconfont function-prompts function-prompts__thumb" title="功能介绍" ng-click="openHelp($event,'thumb','thumb')">&#xe63e;</i>
@@ -707,7 +707,7 @@
             </div>
 
             <!--右下方图层菜单-->
-            <div class="attribute-bottom-content" ng-show="ui.currentTabIdx==1" ng-controller="AttrCtrl">
+            <div class="attribute-bottom-content" ng-class="{'attribute-bottom-content-show':ui.currentTabIdx==1,'attribute-bottom-content-hide':ui.currentTabIdx!=1}" ng-controller="AttrCtrl">
                 <div class="layer-menu-view--open" ng-click="showBottom()"><img src="../../public/ide/modules/ide/images/top.png"/></div>
                 
                 <!--page-->
