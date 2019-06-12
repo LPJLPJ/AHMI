@@ -477,6 +477,37 @@ body {
     height: calc(100% - 28px);
     background-color: #fcfcfc;
     box-sizing: border-box;
+    position: relative;
+}
+
+.leftUpperContainer,.leftBottomContainer{
+    width:100%;
+    /* height:50%;
+    overflow-y: auto; */
+}
+
+.leftBottomContainer{
+    position: absolute;
+    height: 50%;
+    bottom:0;
+    border:1px solid #ddd;
+    -webkit-transition: height .2s linear;
+    -moz-transition: height .2s linear;
+    -ms-transition: height .2s linear;
+    -o-transition: height .2s linear;
+    transition: height .2s linear;
+}
+
+.leftBottomContainer.leftBottomContainer-shown{
+    height:50%;
+}
+.leftBottomContainer.leftBottomContainer-hide{
+    height: 0;
+    /* overflow: hidden; */
+}
+
+.leftContainer.top-menu-content-show {
+    height: calc(100% - 84px);
 }
 
 .leftUpperContainer__nav {
@@ -530,16 +561,57 @@ body {
     color: white;
 }
 
+.leftBottomContainer__widgetList{
+    position: absolute;
+    left: 50%;
+    overflow-y: scroll;
+    height:calc(100% - 30px);
+    transform: translateX(-50%);
+    width:120px;
+    /* max-width: 100%; */
+    background: #fcfcfc;
+}
+
+@media screen and (min-width:1300px){
+    .leftBottomContainer__widgetList{
+        width:180px;
+    }
+}
+@media screen and (min-width:1920px){
+    .leftBottomContainer__widgetList{
+        width:240px;
+    }
+}
+
+
+/* @media screen and (min-width:) */
+
+.leftBottomContainer__widgetList::-webkit-scrollbar{
+    width: 0;
+}
+
+.leftBottomContainer__addWidgetWrap{
+
+}
+
+.leftBottomContainer__addWidget{
+
+}
+
+.leftBottomContainer__minimize{
+
+}
+
+.leftBottomContainer__indicator{
+    
+}
+
 .thumb-wrap-show,.attribute-bottom-content-show{
     display: block;
 }
 
 .thumb-wrap-hide,.attribute-bottom-content-hide{
     display: none;
-}
-
-.thumb-wrap.top-menu-content-show {
-    height: calc(100% - 84px);
 }
 
 .content-wrap.my-left-hide .thumb-wrap {
@@ -1938,7 +2010,7 @@ body {
 .bottom-layer-menu {
     width: 100%;
     overflow-y: auto;
-    height: calc(100% - 30px);
+    /* height: calc(100% - 30px); */
     background-color: #fcfcfc;
 }
 

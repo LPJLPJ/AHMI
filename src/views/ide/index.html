@@ -670,17 +670,17 @@
         </div>
     </div>
 
-    <div class="leftContainer" ng-controller="LeftContainerCtrl" data-step="2">
+    <div class="leftContainer" ng-controller="LeftContainerCtrl" data-step="2" ng-class="{'top-menu-content-show':component.out.toolShow}">
         <!-- upper component -->
         <div class="leftUpperContainer">
             <!-- tabs -->
             <ul class="leftUpperContainer__nav">
-                <li class="leftUpperContainer__navitem" ng-repeat="tab in ui.tabs track by $index" ng-click="ui.changeTab($index)">
+                <li class="leftUpperContainer__navitem" ng-repeat="tab in ui.tabs track by $index" ng-click="ui.changeTab($index)" ng-class="{'active':ui.currentTabIdx==$index}">
                     <a>{{tab}}</a>
                 </li>
             </ul>
             <!--左侧缩略图-->
-            <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'top-menu-content-show':component.out.toolShow,'thumb-wrap-show':ui.currentTabIdx==0,'thumb-wrap-hide':ui.currentTabIdx!=0}">
+            <div class="thumb-wrap" ng-controller="ThumbCtrl" ng-class="{'thumb-wrap-show':ui.currentTabIdx==0,'thumb-wrap-hide':ui.currentTabIdx!=0}">
                 <div class="thumb-operate">
                     <div class="thumb-operate__add-page" title="添加新页面" ng-click="component.addPage()">+添加新页面</div>
                     <i class="iconfont function-prompts function-prompts__thumb" title="功能介绍" ng-click="openHelp($event,'thumb','thumb')">&#xe63e;</i>
@@ -772,7 +772,27 @@
             </div>
         </div>
         <!-- lower component -->
-        <div></div>
+        <div class="leftBottomContainer" ng-class="{'leftBottomContainer-show':bottomWidgetPanelShown,'leftBottomContainer-hide':!bottomWidgetPanelShown}">
+            <div class="leftBottomContainer__indicator" ng-show="!bottomWidgetPanelShown" ng-click="ui.showBottomWidgetPanel()"><img src="../../public/ide/modules/ide/images/top.png"/></div>
+            <div class="leftBottomContainer__addWidgetWrap">
+                <span class="leftBottomContainer__addWidget">添加控件</span>
+                <div class="leftBottomContainer__minimize" ng-click="ui.showBottomWidgetPanel()">
+                    <span class="layer-menu-view__bar"></span>
+                </div>
+            </div>
+            <ul class="leftBottomContainer__widgetList" ng-controller="addWidgetController">
+                <li class="widget-list__item" ng-repeat="widget in widgets track by $index"
+                    ng-class="{false:'inactive'}[widget.enable]"
+                    ng-click="addWidget($index)"
+                    ng-init="widgetIcon = widget.icon"
+                    ng-mouseover="widgetIcon = widget.icon+'-active'"
+                    ng-mouseleave="widgetIcon = widget.icon">
+                    <img ng-src="../../public/ide/modules/ide/images/widget/{{widgetIcon}}.png" alt="widget icon" />
+                    <i class="iconfont function-prompts function-prompts__widget" title="功能介绍" ng-click="openHelp($event,'widget',widget.name)">&#xe63e;</i>
+                    <p>{{widget.name}}</p>
+                </li>
+            </ul>
+        </div>
     </div>
     
 
@@ -5664,46 +5684,6 @@
                         </div>
 
                         <div ng-show="component.object.type=='MyTextInput'" ng-controller="characterSetCtrl">
-                            <!--<div class=" dropdown attr-item__cell-wrap lg">-->
-                                <!--<p class="attr-item__cell-title">字符集</p>-->
-                                <!--<button type="button"-->
-                                        <!--class="btn btn-default dropdown-toggle form-control"-->
-                                        <!--id="fontMenu"-->
-                                        <!--data-toggle="dropdown"-->
-                                        <!--aria-haspopup="true"-->
-                                        <!--aria-expanded="true">-->
-                                    <!--{{componentOfChar.character.fontName}}-->
-                                    <!--<span class="caret" style="width: 0"></span>-->
-                                <!--</button>-->
-
-                                <!--<ul class="dropdown-menu list-group xiangPage-dropdown" aria-labelledby="fontMenu"-->
-                                    <!--id="characterNameInput">-->
-                                    <!--<li class="list-group-item">-->
-                                        <!--添加样式-->
-                                    <!--<span class="btn btn-default btn-primary badge"-->
-                                          <!--ng-click="component.textInput.addCharacterSet($event)">+</span>-->
-
-                                    <!--</li>-->
-                                    <!--<li ng-repeat="character in componentOfChar.allCharacters track by $index"-->
-                                        <!--class="list-group-item"-->
-                                        <!--style="cursor: pointer;"-->
-                                        <!--ng-click="component.textInput.selectCharacterSetByIndex($index)">-->
-                                        <!--<div ng-click="componentOfChar.selectCharacterByIndex($index)">-->
-                                            <!--<input type="text"-->
-                                                   <!--class=""-->
-                                                   <!--readonly="readonly"-->
-                                                   <!--ng-dblclick="componentOfChar.enableInput($index)"-->
-                                                   <!--ng-blur="componentOfChar.disableInput($index)"-->
-                                                   <!--ng-model="character.fontName">-->
-                                        <!--<span class="btn btn-primary btn-sm badge"-->
-                                              <!--ng-click="component.textInput.deleteCharacterSetByIndex($event,$index)">-->
-                                         <!--×-->
-                                        <!--</span>-->
-                                        <!--</div>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                            <!--</div>-->
-
                             <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">字体</p>
                                 <select class="form-control attr-item__cell-input"

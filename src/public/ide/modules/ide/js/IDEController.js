@@ -92,7 +92,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
             $scope.leftShown = true;
             $scope.rightShown = true;
             $scope.bottomShown = true;
-
+            $scope.bottomWidgetPanelShown = true;
+            
             try {
                 var os = require('os');
                 if (os) {
@@ -783,6 +784,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                     case 2:
                         $scope.bottomShown = !$scope.bottomShown;
                         break;
+                    case 4:
+                        $scope.bottomWidgetPanelShown = !$scope.bottomWidgetPanelShown;
                 }
             });
 

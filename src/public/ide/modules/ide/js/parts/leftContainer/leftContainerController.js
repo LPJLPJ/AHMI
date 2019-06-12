@@ -19,8 +19,21 @@ ide.controller('LeftContainerCtrl', ['$scope', '$timeout',function ($scope, $tim
                 //     $scope.ui.currentTabIdx = idx
                 // },500)
                 $scope.ui.currentTabIdx = idx
+            },
+            showBottomWidgetPanel:function(){
+                $scope.$emit('ChangeShownArea',4)
             }
         }
+        $scope.component = {
+            out:{
+                toolShow:true
+            },
+            showLeft:showLeft
+        }
+
+        $scope.$on('ToolShowChanged', function (event, toolShow) {
+            $scope.component.out.toolShow=toolShow;
+        });
     }
 
     function showLeft() {
