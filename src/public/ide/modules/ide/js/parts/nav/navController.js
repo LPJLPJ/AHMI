@@ -1936,25 +1936,44 @@ ide.controller('validateModalCtl', ['$rootScope', '$scope', '$uibModalInstance',
                     var expectedHash = matches[1]
                 }
 
-                var reader = new FileReader();
+                // var reader = new FileReader();
 
-                reader.onload = function(event) {
-                    var binary = event.target.result;
+                // reader.onload = function(event) {
+                //     var binary = event.target.result;
 
-                    var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(binary)).toString();
+                //     var md5 = CryptoJS.MD5(CryptoJS.enc.Latin1.parse(binary)).toString();
 
-                    $scope.$apply(function () {
-                        $scope.validateResult.hash = md5
-                        if(expectedHash){
-                            $scope.validateResult.valid = (md5 === expectedHash)
-                        }else{
-                            $scope.validateResult.valid = ''
-                        }
-                        $scope.validateResult.canShow = true
-                    });
-                };
+                //     $scope.$apply(function () {
+                //         $scope.validateResult.hash = md5
+                //         if(expectedHash){
+                //             $scope.validateResult.valid = (md5 === expectedHash)
+                //         }else{
+                //             $scope.validateResult.valid = ''
+                //         }
+                //         $scope.validateResult.canShow = true
+                //     });
+                // };
 
-                reader.readAsBinaryString(curFile);
+                // reader.readAsBinaryString(curFile);
+                $scope.validateResult.canShow = true
+                $scope.validateResult.hash = '计算中...'
+                window.CrptoEngine.hashMD5(curFile,function(err,md5){
+                    if(err){
+                        console.log(err)
+                        toastr.err('计算压缩包哈希值出错！')
+                    }else{
+                        $scope.$apply(function () {
+                            $scope.validateResult.hash = md5
+                            if(expectedHash){
+                                $scope.validateResult.valid = (md5 === expectedHash)
+                            }else{
+                                $scope.validateResult.valid = ''
+                            }
+                            
+                        });
+                    }
+                    
+                })
             }
         }
 
