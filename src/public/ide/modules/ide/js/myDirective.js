@@ -175,9 +175,11 @@ ide.directive('myBoolSwitchButton', function () {
         template: "<div id='btn' class='switch-button switch-button-close' ng-click='clickHandler()'><span class='switch-flag'></span></div>",
         scope: {
             status: '=',
+            action:'='
         },
         replace: true,
         link: function ($scope, $element) {
+            // console.log($scope)
             function init() {
                 $scope.status  ? $element.removeClass('switch-button-close') : $element.addClass('switch-button-close');
             }
@@ -191,6 +193,7 @@ ide.directive('myBoolSwitchButton', function () {
                     $scope.status = true;
                     $element.removeClass('switch-button-close')
                 }
+                $scope.action && $scope.action($scope.status)
             };
         }
     }

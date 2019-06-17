@@ -3972,6 +3972,10 @@ ideServices
                     selectObj.level.info.numValue=tempNumValue;
                     arg.numValue=tempNumValue;
                 }
+                if(_option.hasOwnProperty('enableWaitingValue')){
+                    selectObj.level.info.enableWaitingValue=_option.enableWaitingValue;
+                    arg.enableWaitingValue=_option.enableWaitingValue;
+                }
                 if(_option.hasOwnProperty('waitingValue')){
                     selectObj.level.info.waitingValue=_option.waitingValue;
                     arg.waitingValue=_option.waitingValue;
@@ -4081,7 +4085,10 @@ ideServices
                     selectObj.level.info.numValue=tempNumValue;
                     arg.numValue=tempNumValue;
                 }
-
+                if(_option.hasOwnProperty('enableWaitingValue')){
+                    selectObj.level.info.enableWaitingValue=_option.enableWaitingValue;
+                    arg.enableWaitingValue=_option.enableWaitingValue;
+                }
                 if(_option.hasOwnProperty('waitingValue')){
                     selectObj.level.info.waitingValue=_option.waitingValue;
                     arg.waitingValue=_option.waitingValue;

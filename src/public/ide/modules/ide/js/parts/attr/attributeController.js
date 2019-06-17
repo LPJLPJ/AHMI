@@ -191,6 +191,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         enterTransformMode:enterTransformMode
                     },
                     changeNumOfDigits: changeNumOfDigits,
+                    changeEnableWaitingValue:changeEnableWaitingValue,
                     changeWaitingValue:changeWaitingValue,
                     changeDecimalCount: changeDecimalCount,
                     enterNumMode: enterNumMode,
@@ -249,6 +250,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterNumSystem:enterNumSystem,
 
                     changeNumOfDigits: changeNumOfDigits,
+                    changeEnableWaitingValue:changeEnableWaitingValue,
                     changeWaitingValue:changeWaitingValue,
                     changeDecimalCount: changeDecimalCount,
                     enterNumMode: enterNumMode,
@@ -2912,6 +2914,26 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         });
                         break;
                 }
+            }
+        }
+
+        function changeEnableWaitingValue(status) {
+            var type = $scope.component.object.level.type;
+                
+            var option = {
+                enableWaitingValue: status
+            };
+            switch (type) {
+                case Type.MyNum:
+                    ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
+                case Type.MyTexNum:
+                    ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    });
+                    break;
             }
         }
 

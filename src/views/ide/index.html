@@ -2531,7 +2531,7 @@
                         </div>
 
                             <div class="attr-item__cell-wrap">
-                                <p class="attr-item__cell-title">字符数</p>
+                                <p class="attr-item__cell-title">启用等待值</p>
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.info.numOfDigits"
                                        ng-keypress="component.texNum.changeNumOfDigits($event)"
@@ -2546,6 +2546,22 @@
                                    ng-blur="component.restore()"
                                    type="number">
                         </div>
+
+                        <div class="attr-item_cell-wrap lg">
+                            <div class="attr-item__cell-wrap" style="float:left;">
+                                <p class="attr-item__cell-title">启用等待值</p>
+                                <my-bool-switch-button action="component.texNum.changeEnableWaitingValue" status="component.object.level.info.enableWaitingValue" ></my-bool-switch-button>
+                            </div><div class="attr-item__cell-wrap" ng-show="component.object.level.info.enableWaitingValue">
+                                <p class="attr-item__cell-title">等待值</p>
+                                <input class="attr-item__cell-input form-control"
+                                    type="number"
+                                    ng-model="component.object.level.info.waitingValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.texNum.changeWaitingValue($event)">
+                            </div>
+                        </div>
+                        
+
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">开启动画</p>
                                 <select class="attr-item__cell-input form-control"
@@ -2619,14 +2635,7 @@
                                        ng-blur="component.restore()"
                                        ng-keypress="component.texNum.enterNumValue($event)">
                             </div>
-                            <div class="attr-item__cell-wrap lg">
-                                <p class="attr-item__cell-title">等待值</p>
-                                <input class="attr-item__cell-input form-control"
-                                       type="number"
-                                       ng-model="component.object.level.info.waitingValue"
-                                       ng-blur="component.restore()"
-                                       ng-keypress="component.texNum.changeWaitingValue($event)">
-                            </div>
+                            
                         </div>
                         <!--文本-->
                         <div ng-show="component.object.type=='MyTextArea'&&!myMask">

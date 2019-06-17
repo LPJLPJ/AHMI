@@ -4663,6 +4663,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxFontWidth = level.info.maxFontWidth;
             this.characterW = level.info.characterW;
             this.characterH = level.info.characterH;
+            this.enableWaitingValue = level.info.enableWaitingValue
             this.waitingValue = level.info.waitingValue;
             //数字进制
             this.numSystem = level.info.numSystem;
@@ -4723,7 +4724,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if(arg.hasOwnProperty('characterH')){
                     self.characterH = level.info.characterH;
                 }
-
+                if(arg.hasOwnProperty('enableWaitingValue')){
+                    self.enableWaitingValue = level.info.enableWaitingValue
+                }
                 if(arg.hasOwnProperty('waitingValue')){
                     self.waitingValue = level.info.waitingValue
                 }
@@ -4854,7 +4857,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         }
                     }
                     //consider ————
-                    if(this.numValue == this.waitingValue){
+                    if(this.enableWaitingValue && this.numValue == this.waitingValue){
                         tempNumValue = ''
                         if(this.decimalCount>0){
                             for(var i=0;i<this.numOfDigits-this.decimalCount;i++){
