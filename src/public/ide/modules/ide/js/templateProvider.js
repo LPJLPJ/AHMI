@@ -949,6 +949,13 @@ ideServices
                 slices[n].name = hexTex[i];
             }
 
+            //--
+            slices.push({
+                imgSrc:'',
+                color:'',
+                name:'——'
+            })
+
             return {
                 id: Math.random().toString(36).substr(2),
                 info: info,

@@ -3972,6 +3972,10 @@ ideServices
                     selectObj.level.info.numValue=tempNumValue;
                     arg.numValue=tempNumValue;
                 }
+                if(_option.hasOwnProperty('waitingValue')){
+                    selectObj.level.info.waitingValue=_option.waitingValue;
+                    arg.waitingValue=_option.waitingValue;
+                }
                 if(_option.align){
                     var tempAlign = _option.align;
                     selectObj.level.info.align=tempAlign;
@@ -4077,6 +4081,12 @@ ideServices
                     selectObj.level.info.numValue=tempNumValue;
                     arg.numValue=tempNumValue;
                 }
+
+                if(_option.hasOwnProperty('waitingValue')){
+                    selectObj.level.info.waitingValue=_option.waitingValue;
+                    arg.waitingValue=_option.waitingValue;
+                }
+
                 if(_option.align){
                     var tempAlign = _option.align;
                     selectObj.level.info.align=tempAlign;

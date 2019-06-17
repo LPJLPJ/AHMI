@@ -4663,7 +4663,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.maxFontWidth = level.info.maxFontWidth;
             this.characterW = level.info.characterW;
             this.characterH = level.info.characterH;
-
+            this.waitingValue = level.info.waitingValue;
             //数字进制
             this.numSystem = level.info.numSystem;
             this.markingMode = level.info.hexControl.markingMode;
@@ -4672,7 +4672,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
             //初始化数字字符
             this.numObj = [];
-            for(var i=0,il=26;i<il;i++){
+            for(var i=0,il=27;i<il;i++){
                 this.numObj[i] = {};
                 this.numObj[i].color = slices[i].color;
                 this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
@@ -4724,6 +4724,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     self.characterH = level.info.characterH;
                 }
 
+                if(arg.hasOwnProperty('waitingValue')){
+                    self.waitingValue = level.info.waitingValue
+                }
+
                 //设置图层数字控件的宽高
                 if(self.numOfDigits&&self.characterW){
                     //加入符号宽度
@@ -4736,7 +4740,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     var height = self.characterH;
 
                     self.set({width:width,height:height});
-                };
+                }
 
 
                 //console.log('width',width,'maxWidth',maxWidth);
@@ -4849,6 +4853,25 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             tempNumValue='0x'+tempNumValue;
                         }
                     }
+                    //consider ————
+                    if(this.numValue == this.waitingValue){
+                        tempNumValue = ''
+                        if(this.decimalCount>0){
+                            for(var i=0;i<this.numOfDigits-this.decimalCount;i++){
+                                tempNumValue += '_'
+                            }
+                            tempNumValue+='.'
+                            for(i=0;i<this.decimalCount;i++){
+                                tempNumValue += '_'
+                            }
+                        }else{
+                            for(var i=0;i<this.numOfDigits;i++){
+                                tempNumValue += '_'
+                            }
+                        }
+                    }
+                    
+                    
                     //console.log('keke',this.characterW,"Y",this.characterH);
                     drawTexNumByCharacter(ctx,tempNumValue,this.align,this.width,this.characterW,this.characterH,this.decimalCount,this.numObj);
 
@@ -4996,6 +5019,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     break;
                 case 'F':
                     drawNum(25,characterW,height,numObj,xCoordinate,ctx);
+                    break;
+                case '_':
+                    drawNum(26,characterW,height,numObj,xCoordinate,ctx);
                     break;
 
             }

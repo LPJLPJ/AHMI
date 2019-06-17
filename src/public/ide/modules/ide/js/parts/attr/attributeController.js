@@ -191,6 +191,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         enterTransformMode:enterTransformMode
                     },
                     changeNumOfDigits: changeNumOfDigits,
+                    changeWaitingValue:changeWaitingValue,
                     changeDecimalCount: changeDecimalCount,
                     enterNumMode: enterNumMode,
                     enterSymbolMode: enterSymbolMode,
@@ -248,6 +249,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterNumSystem:enterNumSystem,
 
                     changeNumOfDigits: changeNumOfDigits,
+                    changeWaitingValue:changeWaitingValue,
                     changeDecimalCount: changeDecimalCount,
                     enterNumMode: enterNumMode,
                     enterSymbolMode: enterSymbolMode,
@@ -2897,6 +2899,40 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 }
                 var option = {
                     numOfDigits: $scope.component.object.level.info.numOfDigits
+                };
+                switch (type) {
+                    case Type.MyNum:
+                        ProjectService.ChangeAttributeNumContent(option, function (oldOperate) {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+                        });
+                        break;
+                    case Type.MyTexNum:
+                        ProjectService.ChangeAttributeTexNumContent(option, function (oldOperate) {
+                            $scope.$emit('ChangeCurrentPage', oldOperate);
+                        });
+                        break;
+                }
+            }
+        }
+
+        function changeWaitingValue(e) {
+            if (e.keyCode == 13) {
+                var type = $scope.component.object.level.type;
+                
+
+                if ($scope.component.object.level.info.waitingValue > $scope.component.object.level.info.maxValue) {
+                    restore();
+                    toastr.warning('不能不能超过最大值');
+                    return;
+                }
+                if ($scope.component.object.level.info.waitingValue < $scope.component.object.level.info.minValue) {
+                    restore();
+                    toastr.warning('不能低于最小值');
+                    return;
+                }
+                
+                var option = {
+                    waitingValue: $scope.component.object.level.info.waitingValue
                 };
                 switch (type) {
                     case Type.MyNum:
