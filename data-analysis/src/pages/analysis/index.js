@@ -3,7 +3,7 @@ import React, {PureComponent} from 'react';
 import {connect} from 'dva';
 
 // component
-import {Card, Tabs, Row, Col, Avatar, Form, Radio} from 'antd';
+import {Card, Tabs, Row, Col, Avatar, Form, Radio, Table} from 'antd';
 import {Bar, Pie} from '../../components/Charts';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
@@ -16,9 +16,13 @@ import projectImg from '../../assets/project.png'
 // utils
 import {calcTextureSize, calcConfigSize} from '../../utils/utils';
 
+import {sysTags,Tag,mergeTagListToSysTags} from '../../utils/tag';
+
 const {TabPane} = Tabs;
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
+
+
 
 class Analysis extends PureComponent {
 
@@ -77,6 +81,15 @@ class Analysis extends PureComponent {
     })
   };
 
+  parseElementTagUsageInfo(tagUsageMap,element){
+    if(element.tag!==undefined && element.tag!==''){
+      tagUsageMap[element.tag].push({
+        name:element.name,
+        type:element.type
+      })
+    }
+  }
+
   // 解析工程基本信息
   parseBasicInfo = () => {
     const {project} = this.props;
@@ -90,22 +103,33 @@ class Analysis extends PureComponent {
 
     pages = content.pages;
     resourceList = content.resourceList;
+    let tagUsageMap = {}
+    const tagList = mergeTagListToSysTags(content.tagList)
+    tagList.forEach((t)=>{tagUsageMap[t.name]=[]})
 
     pagesCnt = pages.length;
     pages.forEach((page) => {
+      this.parseElementTagUsageInfo(tagUsageMap,page);
       layers = page.layers || [];
       layersCnt += layers.length;
       layers.forEach((layer) => {
+        this.parseElementTagUsageInfo(tagUsageMap,layer);
         subLayers = layer.subLayers || [];
         subLayersCnt += subLayers.length;
         subLayers.forEach((subLayer) => {
+          this.parseElementTagUsageInfo(tagUsageMap,subLayer);
           widgets = subLayer.widgets || [];
           widgetsCnt += widgets.length;
+          widgets.forEach((widget)=>{
+            this.parseElementTagUsageInfo(tagUsageMap,widget);
+          })
         })
       })
     })
 
     resourcesCnt = resourceList.length;
+
+    // console.log(tagUsageMap)
 
     return {
       title,
@@ -116,7 +140,8 @@ class Analysis extends PureComponent {
       widgetsCnt,
       resourcesCnt,
       tagsCnt,
-      timersCnt
+      timersCnt,
+      tagUsageMap
     }
   }
 
@@ -218,7 +243,50 @@ class Analysis extends PureComponent {
   }
 
   render() {
-    const {resourceSize, resFlashSize, cfgFlashSize, configSize, widgetClassCfgSize, textureSize, otherSize} = this.state;
+    const {resourceSize, resFlashSize, cfgFlashSize, configSize, widgetClassCfgSize, textureSize, otherSize,tagUsageMap} = this.state;
+    const tagUsageData = []
+    let count = 1
+    if(tagUsageMap){
+      for(let tagName in tagUsageMap){
+        const relatedElems = tagUsageMap[tagName]
+        relatedElems.forEach((elem,index)=>{
+          tagUsageData.push({
+            key:count++,
+            rowSpan:index===0?relatedElems.length:0,
+            tagName:tagName,
+            ...elem
+          })
+        })
+      }
+
+    }
+  
+    
+    const columns = [
+      {
+        title: '变量名',
+        dataIndex: 'tagName',
+        render: (text, row, index) => {
+          
+          return {
+            children: text,
+            props: {
+              rowSpan:tagUsageData[index].rowSpan||0
+            },
+          };
+        },
+      },
+      {
+        title: '元素名',
+        dataIndex: 'name',
+
+      },
+      {
+        title: '元素类型',
+        dataIndex: 'type',
+        
+      },
+    ];
 
     const resourcesData = [
       {
@@ -365,7 +433,7 @@ class Analysis extends PureComponent {
               bodyStyle={{padding: 24}}
               style={{marginTop: 24, minHeight: 509}}
             >
-
+              <Table columns={columns} dataSource={tagUsageData} />
             </Card>
           </Col>
         </Row>
