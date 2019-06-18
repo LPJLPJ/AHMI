@@ -1178,7 +1178,7 @@ body {
 /*右侧属性栏__上方属性菜单*/
 .attribute-top-content {
     width: 100%;
-    height: 50%;
+    height: 100%;
     -webkit-transition: height .2s linear;
     -moz-transition: height .2s linear;
     -ms-transition: height .2s linear;
