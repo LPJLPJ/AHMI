@@ -773,7 +773,7 @@
         </div>
         <!-- lower component -->
         <div class="leftBottomContainer__indicator" ng-show="!bottomWidgetPanelShown" ng-click="ui.showBottomWidgetPanel()"><img src="../../public/ide/modules/ide/images/top.png"/></div>
-        <div class="leftBottomContainer" ng-class="{'leftBottomContainer-show':bottomWidgetPanelShown,'leftBottomContainer-hide':!bottomWidgetPanelShown}">
+        <div class="leftBottomContainer" ng-controller='NavCtrl' ng-class="{'leftBottomContainer-show':bottomWidgetPanelShown,'leftBottomContainer-hide':!bottomWidgetPanelShown}">
             
             <div class="leftBottomContainer__addWidgetWrap">
                 <span class="leftBottomContainer__addWidget">添加控件</span>
@@ -781,9 +781,9 @@
                     <span class="layer-menu-view__bar"></span>
                 </div>
             </div>
-            <ul class="leftBottomContainer__widgetList" ng-controller="addWidgetController">
-                <li class="widget-list__item" ng-repeat="widget in widgets track by $index"
-                    ng-class="{false:'inactive'}[widget.enable]"
+            <ul class="leftBottomContainer__widgetList"  ng-controller="addWidgetController">
+                <li class="widget-list__item"  ng-repeat="widget in widgets track by $index"
+                    ng-class="{'inactive':widget.enable===false,'forbidden':component.tool.widgetStatus!==true}"
                     ng-click="addWidget($index)"
                     ng-init="widgetIcon = widget.icon"
                     ng-mouseover="widgetIcon = widget.icon+'-active'"
@@ -5841,75 +5841,6 @@
                 </div>
             </div>
 
-            <!--右下方图层菜单-->
-            <div class="attribute-bottom-content" data-step="5" data-step-c1="6-8">
-                <div class="layer-menu-view--open" ng-click="showBottom()"><img src="../../public/ide/modules/ide/images/top.png"/></div>
-                <div class="attribute-bottom-content__title">
-                    <span class="layer-menu-title">导航</span>
-                    <div class="layer-menu-view--pack" ng-click="showBottom()">
-                        <span class="layer-menu-view__bar"></span>
-                    </div>
-                </div>
-                <!--page-->
-                <div class="bottom-layer-menu">
-                    <div class="layer-menu-level layer-menu__page">
-                        <div class="layer-menu-level__title layer-menu-level__page" ng-class="{true:'selected'}[component.bottom.page.selected]"
-                             ng-click="component.bottom.selectPage(component.bottom.page.id)">
-                            <i class="menu-toggle-icon--expend" ng-click="toggleShow(component.bottom.page.id);$event.stopPropagation();" ng-show="component.bottom.page.expand" ></i>
-                            <i class="menu-toggle-icon--collapse" ng-click="toggleShow(component.bottom.page.id);$event.stopPropagation();" ng-show="!component.bottom.page.expand"></i>
-                            <span class="layer-menu-level__title-text">{{component.bottom.page.name}}</span>
-                        </div>
-                    </div>
-
-                    <!--canvas-->
-                    <div class="layer-menu-level__area" ng-show="component.bottom.page.expand" ui-tree="myLayerTree" data-drag-delay="200" data-drag-enabled="true">
-                        <div ui-tree-nodes ng-model="component.bottom.page.layers">
-                            <div ng-repeat="layer in component.bottom.page.layers" ui-tree-node>
-                                <div class="layer-menu-level" ui-tree-handle>
-                                    <div class="layer-menu-level__title layer-menu-level__canvas" ng-class="{true:'selected'}[layer.selected]"
-                                         ng-click="component.bottom.selectLayer(layer)">
-                                        <i class="menu-toggle-icon--expend" ng-click="toggleShow(layer.id);$event.stopPropagation();" ng-show="layer.expand"></i>
-                                        <i class="menu-toggle-icon--collapse" ng-click="toggleShow(layer.id);$event.stopPropagation();" ng-show="!layer.expand"></i>
-                                        <span class="layer-menu-level__title-text">{{layer.name}}</span>
-                                    </div>
-                                </div>
-
-                                <!--subCanvas-->
-                                <div class="layer-menu-level__area" ng-show="layer.expand" ui-tree-nodes ng-model="layer.subLayers">
-                                    <div ng-repeat="subLayer in layer.subLayers" ui-tree-node>
-                                        <div class="layer-menu-level" ui-tree-handle>
-                                            <div class="layer-menu-level__title layer-menu-level__subcanvas" ng-class="{true:'selected'}[subLayer.selected]"
-                                                 ng-click="component.bottom.selectSubLayer(layer,subLayer)">
-                                                <i class="menu-toggle-icon--expend" ng-click="toggleShow(subLayer.id);$event.stopPropagation();" ng-show="subLayer.expand"></i>
-                                                <i class="menu-toggle-icon--collapse" ng-click="toggleShow(subLayer.id);$event.stopPropagation();" ng-show="!subLayer.expand"></i>
-                                                <span class="layer-menu-level__title-text">{{subLayer.name}}</span>
-                                            </div>
-                                        </div>
-
-                                        <!--widget-->
-                                        <div class="layer-menu-level__area" ng-show="subLayer.expand" ui-tree-nodes ng-model="subLayer.widgets">
-                                            <div ng-repeat="widget in subLayer.widgets" ui-tree-node>
-                                                <div class="layer-menu-level" ui-tree-handle>
-                                                    <div class="layer-menu-level__title layer-menu-level__widget" ng-class="{true:'selected'}[widget.selected]"
-                                                         ng-click="component.bottom.selectWidget(layer,subLayer,widget)"
-                                                         ng-init="icon = widgetIcon[widget.type]"
-                                                         ng-mouseover="icon = widgetIcon[widget.type]+'-active'"
-                                                         ng-mouseleave="icon = widgetIcon[widget.type]">
-                                                        <img class="layer-menu-level__widget-icon" ng-src="../../public/ide/modules/ide/images/widget/{{icon}}.png"/>
-                                                        <span class="layer-menu-level__title-text">{{widget.name}}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
         </div>
     </div>
 </div>

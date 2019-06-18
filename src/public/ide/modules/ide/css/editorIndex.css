@@ -418,6 +418,10 @@ body {
     display: none;
 }
 
+.leftBottomContainer__widgetList .inactive{
+    display: none;
+}
+
 .widget-list__item {
     display: inline-block;
     width: 60px;
@@ -505,6 +509,10 @@ body {
 .leftBottomContainer.leftBottomContainer-hide{
     height: 0;
     overflow: hidden;
+}
+
+.leftBottomContainer .forbidden{
+    cursor: not-allowed;
 }
 
 .leftContainer.top-menu-content-show {
