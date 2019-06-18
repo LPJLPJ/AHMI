@@ -97,6 +97,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     addSubLayer: addSubLayer,
                     deleteObject: deleteObject,
                     addWidget: addWidget,
+                    addWidgetByName:addWidgetByName,
                     openProject: openProject,
                     generateDataFile: generateDataFile,
                     play: play,
@@ -879,6 +880,35 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 newWidget = TemplateProvider.getDefaultGrid();
             } else {
                 return;
+            }
+            if (newWidget.name == $scope.oldWidget.name) {
+                $scope.oldWidget.coordinate += 20;
+                newWidget.info.left = $scope.oldWidget.coordinate;
+                newWidget.info.top = $scope.oldWidget.coordinate;
+            } else {
+                $scope.oldWidget.name = newWidget.name;
+                $scope.oldWidget.coordinate = 0;
+            }
+            ProjectService.AddNewWidgetInCurrentSubLayer(newWidget, function () {
+                toastr.info('添加Widget成功');
+                $timeout(function () {
+                    $scope.$emit('ChangeCurrentSubLayer', oldOperate);
+                })
+            }, function (err) {
+            })
+        }
+
+
+        function addWidgetByName(name) {
+            if (!NavService.getWidgetStatus()) {
+                return;
+            }
+            var oldOperate = ProjectService.SaveCurrentOperate();
+            var newWidget = null;
+            var getWidgetFunc = 'getDefault'+name[0].toUpperCase()+name.slice(1)
+            newWidget = TemplateProvider[getWidgetFunc]()
+            if(!newWidget){
+                return
             }
             if (newWidget.name == $scope.oldWidget.name) {
                 $scope.oldWidget.coordinate += 20;

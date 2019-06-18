@@ -427,13 +427,13 @@
                     <img class="default-title" src="../../public/ide/modules/ide/images/canvas.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/canvas-active.png"/>
                     <img class="inactive-title" src="../../public/ide/modules/ide/images/canvas-inactive.png"/>
-                    <p>添加画布</p>
+                    <p>添加窗口</p>
                 </a>
                 <a ng-click="component.tool.addSubLayer()" class="top-menu-content__item-title" ng-class="{false:'inactive'}[component.tool.sublayerStatus]">
                     <img class="default-title" src="../../public/ide/modules/ide/images/sub-canvas.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/sub-canvas-active.png"/>
                     <img class="inactive-title" src="../../public/ide/modules/ide/images/sub-canvas-inactive.png"/>
-                    <p>添加子画布</p>
+                    <p>添加视图</p>
                 </a>
                 <a ng-click="component.tool.undo()" class="top-menu-content__item-title" ng-class="{false:'inactive'}[component.tool.operateQueStatus.undoEnable]">
                     <img class="default-title" src="../../public/ide/modules/ide/images/repeal.png"/>
@@ -784,7 +784,7 @@
             <ul class="leftBottomContainer__widgetList"  ng-controller="addWidgetController">
                 <li class="widget-list__item"  ng-repeat="widget in widgets track by $index"
                     ng-class="{'inactive':widget.enable===false,'forbidden':component.tool.widgetStatus!==true}"
-                    ng-click="addWidget($index)"
+                    ng-click="addWidgetByName(widget.id)"
                     ng-init="widgetIcon = widget.icon"
                     ng-mouseover="widgetIcon = widget.icon+'-active'"
                     ng-mouseleave="widgetIcon = widget.icon">
