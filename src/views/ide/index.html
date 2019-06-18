@@ -471,7 +471,7 @@
                         <ul class="dropdown-menu top-menu-content__widget-list" uib-dropdown-menu>
                             <li class="widget-list__item" ng-repeat="widget in widgets track by $index"
                                 ng-class="{false:'inactive'}[widget.enable]"
-                                ng-click="addWidget($index)"
+                                ng-click="addWidgetByName(widget.id)"
                                 ng-init="widgetIcon = widget.icon"
                                 ng-mouseover="widgetIcon = widget.icon+'-active'"
                                 ng-mouseleave="widgetIcon = widget.icon">
