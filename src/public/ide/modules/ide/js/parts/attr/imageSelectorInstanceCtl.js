@@ -447,14 +447,13 @@ ide.controller('ImageSelectorInstanceCtl', ['$rootScope','$scope','$uibModal','$
             videoName = videoName.split('.')[0]
             if(imgs&&imgs.length){//插入图片
                 var files = imgs.map(function(img,i){
-                    return ResourceService.blobToFile(ResourceService.dataURItoBlob(img),videoName+'-'+i+'.png')
+                    return ResourceService.blobToFile(ResourceService.dataURItoBlob(img),videoName+'-'+(i+1)+'.png')
                 })
                 var count = files.length
                 $scope.processingVideoImg = true
-                for (var i=0;i<files.length;i++){
-                 
+                var i = 0
+                function uploadFileHanlder(i,cb){
                     var translatedFile = uploadingHelperService.transFile(files[i]);
-                    
                     uploadingHelperService.upload(files[i],translatedFile,function(translatedFile){
                         //success
                         $scope.tex.slices.push({
@@ -465,16 +464,16 @@ ide.controller('ImageSelectorInstanceCtl', ['$rootScope','$scope','$uibModal','$
                         $scope.$apply(function(){
                             calPageNum();
                         })
-                       
-                        count--
-                        if(count==0){
-                            //finish uploading
-                            // calPageNum();
-                            $scope.$apply(function(){
-                                $scope.processingVideoImg = false
-                            })
-                            $rootScope.$broadcast('ResourceUpdate');
-                        }
+                        cb && cb(null)
+                        // count--
+                        // if(count==0){
+                        //     //finish uploading
+                        //     // calPageNum();
+                        //     $scope.$apply(function(){
+                        //         $scope.processingVideoImg = false
+                        //     })
+                        //     $rootScope.$broadcast('ResourceUpdate');
+                        // }
                     },function(e){
                        
                         if(e&&e.data&&e.data.errMsg){
@@ -491,13 +490,33 @@ ide.controller('ImageSelectorInstanceCtl', ['$rootScope','$scope','$uibModal','$
                         }else{
                             toastr.error('上传出错！')
                         }
-                        count--
+                        cb && cb(e)
                        
                         
                     },function(e){
                         translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
                     });
                 }
+
+                var uploadConvertedImg = function(){
+                    uploadFileHanlder(i,function(err){
+                        if(i+1<count){
+                            i++
+                            uploadConvertedImg()
+                        }else{
+                            //finish
+                            $scope.$apply(function(){
+                                $scope.processingVideoImg = false
+                            })
+                            $rootScope.$broadcast('ResourceUpdate');
+                        }
+                    })
+                }
+
+                uploadConvertedImg()
+
+                
+                
 
                 
             }

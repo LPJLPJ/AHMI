@@ -746,7 +746,7 @@ ideServices
             var curSize = ResourceService.getCurrentTotalSize();
             var maxSize = ResourceService.getMaxTotalSize();
             if (curSize > maxSize) {
-                toastr.info('资源超过限制');
+                fCB && fCB(new Error('overflow'))
                 // deleteUploadingItem(translatedFile);
                 return;
             }
@@ -837,6 +837,7 @@ ideServices
             if (curSize>maxSize){
                 // toastr.info('资源超过限制');
                 // deleteUploadingItem(translatedFile);
+                fCB && fCB(new Error('overflow'))
                 return;
             }
 

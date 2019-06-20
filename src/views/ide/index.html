@@ -4373,7 +4373,7 @@
                                 <button type="button" ng-show="canBatchAddImg" style="margin-left: 20px" class="attr-default-btn btn btn-default" ng-click="batchSelect()">
                                     批量插入
                                 </button>
-                                <button type="button" ng-show="canAddFromVideo" style="margin-left: 20px" class="attr-default-btn btn btn-default" ng-click="addByVideo()">
+                                <button type="button" ng-disabled="processingVideoImg===true" ng-show="canAddFromVideo" style="margin-left: 20px" class="attr-default-btn btn btn-default" ng-click="addByVideo()">
                                     从视频插入
                                 </button>
                             </span>
