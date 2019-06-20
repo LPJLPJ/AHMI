@@ -4373,6 +4373,9 @@
                                 <button type="button" ng-show="canBatchAddImg" style="margin-left: 20px" class="attr-default-btn btn btn-default" ng-click="batchSelect()">
                                     批量插入
                                 </button>
+                                <button type="button" ng-show="canAddFromVideo" style="margin-left: 20px" class="attr-default-btn btn btn-default" ng-click="addByVideo()">
+                                    从视频插入
+                                </button>
                             </span>
                             <span class="fr">
                                 <button class="modal-btn btn-confirm" type="button" ng-click="save()">保存</button>
@@ -4424,6 +4427,23 @@
                         </span>
                         <span class="my-but-right">
                             <button class="modal-btn btn-confirm" type="button" ng-click="component.add()">添加</button>
+                            <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
+                        </span>
+                        </div>
+                    </script>
+
+                    <script type="text/ng-template" id="addByVideoModal.html">
+                        <div class="modal-header">
+                            <h3 class="modal-title">从视频插入</h3>
+                        </div>
+                        <div class="modal-body batch-select-wrap">
+                            <select ng-model='currentSelectedVideo'>
+                                <option ng-repeat='video in videoList track by $index' value="{{video.id}}">{{video.name}}</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                        <span class="my-but-right">
+                            <button class="modal-btn btn-confirm" type="button" ng-click="confirm()">添加</button>
                             <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                         </span>
                         </div>

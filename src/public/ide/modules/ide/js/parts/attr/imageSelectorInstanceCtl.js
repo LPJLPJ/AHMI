@@ -91,7 +91,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
             initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
         case Type.MyAnimation:
-            initConfigure(true,false,1,widgetInfo.tex,false,false,false,true);
+            initConfigure(true,false,1,widgetInfo.tex,false,false,false,true,true);
             break;
         case Type.MyTexNum:
             initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
@@ -334,6 +334,58 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
     };
 
+
+
+
+    //开机动画从视频插入
+    $scope.addByVideo=function(){
+
+        var modalInstance = $uibModal.open({
+            templateUrl: 'addByVideoModal.html',
+            size :"md",
+            controller: ['$scope','$uibModalInstance','ResourceService',function($scope,$uibModalInstance,ResourceService){
+                init();
+
+                function init(){
+                    $scope.currentSelectedVideo = null
+                    $scope.videoList = ResourceService.getAllVideos()||[]
+                }
+
+                $scope.confirm = function(){
+                    $uibModalInstance.close($scope.currentSelectedVideo)
+                }
+
+
+                $scope.cancel = function () {
+                    $uibModalInstance.close();
+                };
+        }],
+            resolve: {}
+        });
+
+        modalInstance.result.then(function (videoId) {
+            if(videoId){//插入图片
+                ResourceService.convertVideoToImagesAndCache(videoId,function(imgs){
+                    imgs = imgs.map(function (img) {
+                        return {
+                            name:'defaultSlice',
+                            imgSrc:img,
+                            color:'rgba(0,0,0,0)'
+                        }
+                    });
+                    $scope.tex.slices = $scope.tex.slices.concat(imgs);
+                    calPageNum();
+                })
+                
+
+                
+            }
+        }, function () {
+            $uibModalInstance.dismiss('cancel');
+        });
+
+    };
+
     $scope.downloadFile = function (index) {
         var imgSrc=$scope.tex.slices[index].imgSrc;
         if(imgSrc!=''){
@@ -351,7 +403,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
 
 
 
-    function initConfigure(_canAddNewSlice,_canInputText,_sliceNum,_tex,_disableEditName,_disableEditImg,_disableEditColor,_canBatchAddImg){
+    function initConfigure(_canAddNewSlice,_canInputText,_sliceNum,_tex,_disableEditName,_disableEditImg,_disableEditColor,_canBatchAddImg,_canAddFromVideo){
         $scope.canAddNewSlice = _canAddNewSlice;
         $scope.canInputText = _canInputText;
         $scope.sliceNum = _sliceNum;
@@ -361,6 +413,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
         $scope.disableEditImg = _disableEditImg;
         $scope.disableEditColor = _disableEditColor;
         $scope.canBatchAddImg = _canBatchAddImg;
+        $scope.canAddFromVideo = _canAddFromVideo||false
         //分页
         $scope.currentNum = 1;
         $scope.pageIndex = 10;

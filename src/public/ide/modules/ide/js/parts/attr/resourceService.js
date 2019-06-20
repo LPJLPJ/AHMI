@@ -157,6 +157,12 @@ ideServices
             return images = images.concat(templateFiles);
         };
 
+        this.getAllVideos = function(){
+            return _.filter(files, function(file){
+                return file.type && file.type.split('/')[0] == 'video'
+            })
+        }
+
         this.getAllFontResources = function () {
             // console.log(files)
             return _.filter(files,function (file) {
@@ -336,6 +342,39 @@ ideServices
                 request.send();
                 globalResources.push(resourceObj);
 
+            }else if (file.type.match(/video/)) {
+                var timer
+                var video = document.createElement('video')
+                video.setAttribute('preload','auto')
+                video.addEventListener('error',function(e){
+                    toastr.error('视频加载失败！')
+                    clearInterval(timer)
+                })
+                timer = setInterval(function(){
+                    if(video.duration){
+                        try{
+                            var bufferedEnd = video.buffered.end(video.buffered.length - 1)
+                        }catch(e){
+                            console.log(e,video.buffered)
+
+                        }
+                       
+                        if(parseInt( bufferedEnd/ video.duration * 100) >= 100) {
+                            clearInterval(timer)
+                            resourceObj.complete = true
+                            resourceObj.content = video
+                            // document.body.appendChild(video)
+                            // video.style.position = 'absolute'
+                            // video.style.top=0
+                            // video.play()
+                            scb && scb({type:'ok'}, resourceObj);
+                        };
+                    }
+                    
+                },500)
+                video.src = file.src
+
+                globalResources.push(resourceObj);
             }else{
                 //other
                 scb && scb({type:'ok'},{})
@@ -436,6 +475,58 @@ ideServices
             }
             return null;
         };
+
+        //render video to images
+        this.convertVideoToImagesAndCache = function(videoId,cb){
+            var videoRes
+            for(var j=0;j<globalResources.length;j++){
+                if(globalResources[j].id===videoId){
+                    videoRes = globalResources[j]
+                    break
+                }
+            }
+            if(!videoRes){
+                return
+            }
+            var video = videoRes.content
+            var canvas = document.createElement('canvas')
+            canvas.width = video.width
+            canvas.height = video.height
+            var ctx = canvas.getContext('2d')
+            var duration = video.duration * 1000 //ms
+            var fps = 15
+            var interval = 1000.0/15
+            var count = parseInt(fps * duration/1000)
+            var imgs = []
+            var i=0
+            var timer = setInterval(function(){
+                ctx.drawImage(video,0,0,canvas.width,canvas.height)
+                // imgs.push(canvas.toDataURL())
+                var img = new Image()
+                img.src = canvas.toDataURL()
+                var resourceObj = {
+                    id:videoRes.id+'-'+i+'.png',
+                    name:videoRes.name+'-'+i,
+                    // src:img.src,
+                    content:img,
+                    complete:true
+                }
+                imgs.push(resourceObj.id)
+                globalResources.push(resourceObj)
+                i++
+                if(i===count){
+                    clearInterval(timer)
+                    console.log(imgs)
+                    cb && cb(imgs)
+                }
+            },interval)
+
+        }
+
+        
+
+
+
         //资源下载
         this.downloadFile = function (file,projectId) {
             var fileId = file.id;
@@ -561,6 +652,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     case 'woff':
                     //audio
                     case 'mp3':
+                    case 'mp4':
                         return true;
                     default:
                         toastr.warning('不支持'+fileExt+'格式');
