@@ -695,90 +695,163 @@ ideServices
                 }
             }
         }
-    }]);
+    }])
+    .service('uploadingHelperService',['ResourceService','Upload',function(ResourceService,Upload){
+        var path;
+        var fs;
+        var local = false;
+        try {
+            path = require('path');
+            fs = require('fs');
+            local = true;
+        } catch (e) {
 
-ideServices.directive("filereadform", ['uploadingService','idService','ResourceService','Upload',function (uploadingService,idService,ResourceService,Upload) {
-    return {
-        restrict:'AE',
-        template:"<input ngf-select='uploadFiles($files)'  ngf-multiple='true' class='RO__upload-input' type='file'/>",
-        replace:'true',
-        link: function (scope, element, attributes) {
-            var path;
-            var fs;
-            var local = false;
-            try {
-                path = require('path');
-                fs = require('fs');
-                local = true;
-            } catch (e) {
+        }
+        var baseUrl = ResourceService.getResourceUrl()
 
+
+        function isValidFile(file) {
+            var fileExtArray = file.name.split('.');
+            var fileExt = fileExtArray[fileExtArray.length-1].toLowerCase();
+            switch (fileExt){
+                case 'png':
+                case 'jpg':
+                case 'bmp':
+                case 'jpeg':
+                // case 'tiff':
+                case 'ttf':
+                case 'woff':
+                //audio
+                case 'mp3':
+                case 'mp4':
+                    return true;
+                default:
+                    toastr.warning('不支持'+fileExt+'格式');
+                    return false;
             }
-            var baseUrl = ResourceService.getResourceUrl()
+        }
 
-            scope.uploadFiles = function (files) {
-                if (files && files.length){
-                    files = files.filter(isValidFile);
 
-                    for (var i=0;i<files.length;i++){
-                        //加入等待上传数组
-                        var translatedFile = transFile(files[i]);
-                        scope.component.top.uploadingArray.push(translatedFile);
-                        upload(files[i],translatedFile);
+
+        function upload(file, translatedFile,sCB,fCB,pCB) {
+            if (window.local) {
+                uploadLocal(file, translatedFile,sCB,fCB,pCB);
+            } else {
+                uploadServer(file, translatedFile,sCB,fCB,pCB);
+            }
+        }
+
+        function uploadLocal(file, translatedFile,sCB,fCB,pCB) {
+            //overload check
+            var curSize = ResourceService.getCurrentTotalSize();
+            var maxSize = ResourceService.getMaxTotalSize();
+            if (curSize > maxSize) {
+                toastr.info('资源超过限制');
+                // deleteUploadingItem(translatedFile);
+                return;
+            }
+
+            var successHandler = function () {
+
+                ResourceService.appendFileUnique(translatedFile, function (file,files) {
+                    for (var i = 0; i < files.length; i++) {
+                        if (files[i].id == file.id) {
+                            return false;
+                        }
                     }
-                }
-            }
+                    return true;
+                }, function () {
+                    ResourceService.cacheFileToGlobalResources(translatedFile, function () {
+                        //删除scope.uploadingArray中该项
+                        // deleteUploadingItem(translatedFile);
 
-            function isValidFile(file) {
-                var fileExtArray = file.name.split('.');
-                var fileExt = fileExtArray[fileExtArray.length-1].toLowerCase();
-                switch (fileExt){
-                    case 'png':
-                    case 'jpg':
-                    case 'bmp':
-                    case 'jpeg':
-                    // case 'tiff':
-                    case 'ttf':
-                    case 'woff':
-                    //audio
-                    case 'mp3':
-                    case 'mp4':
-                        return true;
-                    default:
-                        toastr.warning('不支持'+fileExt+'格式');
-                        return false;
-                }
-            }
+                        // scope.$emit('ResourceUpdate');
+                        sCB && sCB(translatedFile)
+                    }.bind(this));
+                }.bind(this));
+            };
+
+            var errHandler = function (err) {
+                // translatedFile.progress = '上传失败';
+                // deleteUploadingItem(translatedFile);
+                fCB && fCB(err)
+            };
+
+            /**
+             * 处理进度
+             * @param e
+             */
+            var progressHandler = function (e) {
+                pCB && pCB(e)
+                // translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
+                // console.log(translatedFile.progress);
+            };
 
 
-            function deleteUploadingItem(translatedFile) {
-                var uploadingArray = scope.component.top.uploadingArray;
-                for (var i = 0; i < uploadingArray.length; i++) {
-                    if (uploadingArray[i].id == translatedFile.id) {
-                        uploadingArray.splice(i, 1);
-                        break;
-                    }
-                }
-            }
+            function saveFileAsync(data, dstUrl, successHandler, errHandler, progressHandler) {
 
-            function upload(file, translatedFile) {
-                if (window.local) {
-                    uploadLocal(file, translatedFile);
-                } else {
-                    uploadServer(file, translatedFile);
-                }
-            }
-
-            function uploadLocal(file, translatedFile) {
-                //overload check
-                var curSize = ResourceService.getCurrentTotalSize();
-                var maxSize = ResourceService.getMaxTotalSize();
-                if (curSize > maxSize) {
-                    toastr.info('资源超过限制');
-                    deleteUploadingItem(translatedFile);
+                var dstStream = fs.createWriteStream(dstUrl);
+                var srcStream;
+                var stats;
+                var totalSize;
+                try {
+                    console.log(data);
+                    srcStream = fs.createReadStream(data);
+                    stats = fs.statSync(data);
+                    totalSize = stats.size;
+                } catch (e) {
+                    console.log('err load file', e);
                     return;
                 }
+                dstStream.on('finish', function () {
+                    successHandler && successHandler();
+                });
+                dstStream.on('error', function (err) {
+                    errHandler && errHandler(err);
+                });
+                srcStream.on('data', function (chunk) {
+                    // console.log(arguments);
+                    var e = {
+                        loaded: dstStream.bytesWritten,
+                        total: totalSize
+                    };
+                    progressHandler && progressHandler(e);
+                });
 
-                var successHandler = function () {
+                srcStream.pipe(dstStream);
+            }
+
+            // {file:file,name:translatedFile.id}
+            var resourcePath = ResourceService.getResourceUrl();
+            var filePath = path.join(resourcePath, translatedFile.id);
+            saveFileAsync(file.path, filePath, successHandler, errHandler, progressHandler);
+
+
+        }
+
+        function uploadServer(file, translatedFile,sCB,fCB,pCB) {
+
+            //overload check
+            var curSize = ResourceService.getCurrentTotalSize();
+            var maxSize = ResourceService.getMaxTotalSize();
+            if (curSize>maxSize){
+                // toastr.info('资源超过限制');
+                // deleteUploadingItem(translatedFile);
+                return;
+            }
+
+
+            /**
+             * 上传成功处理
+             * @param data
+             * @param status
+             * @param headers
+             */
+
+            var successHandler = function(e){
+
+                // console.log(e);
+                if (e.status == 200){
 
                     ResourceService.appendFileUnique(translatedFile, function (file,files) {
                         for (var i = 0; i < files.length; i++) {
@@ -790,226 +863,177 @@ ideServices.directive("filereadform", ['uploadingService','idService','ResourceS
                     }, function () {
                         ResourceService.cacheFileToGlobalResources(translatedFile, function () {
                             //删除scope.uploadingArray中该项
-                            deleteUploadingItem(translatedFile);
-
-                            scope.$emit('ResourceUpdate');
+                            // deleteUploadingItem(translatedFile);
+                            // //update
+                            // //scope.component.top.files = ResourceService.getAllImages();
+                            // console.log('updating fonts')
+                            // scope.$emit('ResourceUpdate');
+                            sCB && sCB(translatedFile)
                         }.bind(this));
                     }.bind(this));
-                };
 
-                var errHandler = function (err) {
-                    translatedFile.progress = '上传失败';
-                    deleteUploadingItem(translatedFile);
-
-                };
-
-                /**
-                 * 处理进度
-                 * @param e
-                 */
-                var progressHandler = function (e) {
-
-                    translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
-                    // console.log(translatedFile.progress);
-                };
-
-
-                function saveFileAsync(data, dstUrl, successHandler, errHandler, progressHandler) {
-
-                    var dstStream = fs.createWriteStream(dstUrl);
-                    var srcStream;
-                    var stats;
-                    var totalSize;
-                    try {
-                        console.log(data);
-                        srcStream = fs.createReadStream(data);
-                        stats = fs.statSync(data);
-                        totalSize = stats.size;
-                    } catch (e) {
-                        console.log('err load file', e);
-                        return;
-                    }
-                    dstStream.on('finish', function () {
-                        successHandler && successHandler();
-                    });
-                    dstStream.on('error', function (err) {
-                        errHandler && errHandler(err);
-                    });
-                    srcStream.on('data', function (chunk) {
-                        // console.log(arguments);
-                        var e = {
-                            loaded: dstStream.bytesWritten,
-                            total: totalSize
-                        };
-                        progressHandler && progressHandler(e);
-                    });
-
-                    srcStream.pipe(dstStream);
+                }else{
+                    // console.error(e)
+                    // deleteUploadingItem(translatedFile);
+                    // scope.$emit('ResourceUpdate');
+                    fCB && fCB(new Error('upload error'))
                 }
-
-                // {file:file,name:translatedFile.id}
-                var resourcePath = ResourceService.getResourceUrl();
-                var filePath = path.join(resourcePath, translatedFile.id);
-                saveFileAsync(file.path, filePath, successHandler, errHandler, progressHandler);
-
-
             }
 
-            function uploadServer(file, translatedFile) {
+            var errHandler = function (e) {
+                // console.error(e);
+                // translatedFile.progress ='上传失败';
+                // switch (e.data.errMsg){
+                //     case 'not logged in':
+                //         toastr.info('请重新登录');
+                //         break;
+                //     case 'user not valid':
+                //         toastr.info('请登录');
+                //         break;
+                //     default:
 
-                //overload check
-                var curSize = ResourceService.getCurrentTotalSize();
-                var maxSize = ResourceService.getMaxTotalSize();
-                if (curSize>maxSize){
-                    toastr.info('资源超过限制');
-                    deleteUploadingItem(translatedFile);
-                    return;
-                }
-
-
-                /**
-                 * 上传成功处理
-                 * @param data
-                 * @param status
-                 * @param headers
-                 */
-
-                var successHandler = function(e){
-
-                    // console.log(e);
-                    if (e.status == 200){
-
-                        ResourceService.appendFileUnique(translatedFile, function (file,files) {
-                        //     var unique=true;
-                        //     do {
-                        //         unique=true;
-                        //         for (var i = 0; i < files.length; i++) {
-                        //             if (files[i].id == file.id) {
-                        //                 var separate = file.id.split('.');//从.后缀开始分割我一个字符串数组，数组的第一个元素是id，第二个元素是后缀名。
-                        //                 file.id = separate[0]+(Math.ceil(Math.random() * 10)).toString()+'.'+separate[separate.length-1];
-                        //                 unique=false;
-                        //                 break;
-                        //             }
-                        //         }
-                        //     }while(unique===false);
-                        //     return true;
-                            for (var i = 0; i < files.length; i++) {
-                                if (files[i].id == file.id) {
-                                    return false;
-                                }
-                            }
-                            return true;
-                        }, function () {
-                            ResourceService.cacheFileToGlobalResources(translatedFile, function () {
-                                //删除scope.uploadingArray中该项
-                                deleteUploadingItem(translatedFile);
-                                //update
-                                //scope.component.top.files = ResourceService.getAllImages();
-                                console.log('updating fonts')
-                                scope.$emit('ResourceUpdate');
-                            }.bind(this));
-                        }.bind(this));
-
-                    }else{
-                        console.error(e)
-                        deleteUploadingItem(translatedFile);
-                        scope.$emit('ResourceUpdate');
-                    }
-                }
-
-                var errHandler = function (e) {
-                    console.error(e);
-                    translatedFile.progress ='上传失败';
-                    switch (e.data.errMsg){
-                        case 'not logged in':
-                            toastr.info('请重新登录');
-                            break;
-                        case 'user not valid':
-                            toastr.info('请登录');
-                            break;
-                        default:
-
-                    }
-                    deleteUploadingItem(translatedFile);
-
-                }
-
-                /**
-                 * 处理进度
-                 * @param e
-                 */
-                var progressHandler = function(e){
-                    translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100)+'%';
-
-                }
-                //console.log(ResourceService.getResourceUrl().split('/'))
-                ////console.log('/project/'+ResourceService.getResourceUrl().split('/')[1]+'/upload')
-                //
-                //console.log(file);
-
-                Upload.upload({
-                    //url:baseUrl+'/resource',
-                    //url:'/api/upload',
-                    url: '/project/' + ResourceService.getResourceUrl().split('/')[2] + '/upload',
-                    data: {file: file, name: translatedFile.id}//rename error
-                    //data:{file:file},
-                    //params:{
-                    //    token:window.localStorage.getItem('token'),
-                    //    pid:window.localStorage.getItem('editPid')
-                    //}
-
-
-                }).then(
-                    successHandler,
-                    errHandler,
-                    progressHandler
-                )
-
-
-
-
+                // }
+                // deleteUploadingItem(translatedFile);
+                fCB && fCB(e)
             }
-
-
 
             /**
-             * 处理需要上传的文件,改变其id和名字.
-             * @param uploadingFile
-             * @returns {*}
+             * 处理进度
+             * @param e
              */
+            var progressHandler = function(e){
+                // translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100)+'%';
+                pCB && pCB(e)
+            }
+            //console.log(ResourceService.getResourceUrl().split('/'))
+            ////console.log('/project/'+ResourceService.getResourceUrl().split('/')[1]+'/upload')
+            //
+            //console.log(file);
 
-            var idnum=Math.ceil(Math.random() * 100000);//生成一个0-100000的随机数，作为id编码的起始位置
-            function transFile(uploadingFile){
-                var newSelectFile = {};
-                //process newSelectFile with uploadingFile
-                //every file with a unique id as fileName
-                var _baseUrl;
-                if (local) {
-                    _baseUrl = ResourceService.getResourceNWUrl() + path.sep;
-                } else {
-                    _baseUrl = ResourceService.getResourceUrl();
+            Upload.upload({
+                //url:baseUrl+'/resource',
+                //url:'/api/upload',
+                url: '/project/' + ResourceService.getResourceUrl().split('/')[2] + '/upload',
+                data: {file: file, name: translatedFile.id}//rename error
+                //data:{file:file},
+                //params:{
+                //    token:window.localStorage.getItem('token'),
+                //    pid:window.localStorage.getItem('editPid')
+                //}
+
+
+            }).then(
+                successHandler,
+                errHandler,
+                progressHandler
+            )
+
+
+
+
+        }
+
+
+
+        /**
+         * 处理需要上传的文件,改变其id和名字.
+         * @param uploadingFile
+         * @returns {*}
+         */
+
+        var idnum=Math.ceil(Math.random() * 100000);//生成一个0-100000的随机数，作为id编码的起始位置
+        function transFile(uploadingFile){
+            var newSelectFile = {};
+            //process newSelectFile with uploadingFile
+            //every file with a unique id as fileName
+            var _baseUrl;
+            if (local) {
+                _baseUrl = ResourceService.getResourceNWUrl() + path.sep;
+            } else {
+                _baseUrl = ResourceService.getResourceUrl();
+            }
+            if (!uploadingFile.name) {
+                return null;
+            }
+            var fileNameArray = uploadingFile.name.split('.');//从.后缀开始分割我一个字符串数组，数组的第一个元素是名字，第二个元素是后缀名。
+
+            //生成唯一识别码，作为fileName。
+            var fileName = (idnum++).toString()+'.'+fileNameArray[fileNameArray.length-1];//顺序生成id
+            // var fileName = idService.generateId(uploadingFile.name,Date.now())+'.'+fileNameArray[fileNameArray.length-1];
+            var fd = new FormData();
+            fd.append('file',uploadingFile);
+            fd.append('name',fileName);
+
+            _.extend(newSelectFile,uploadingFile);
+            newSelectFile.id  = fileName;
+            newSelectFile.name = fileNameArray.slice(0,-1).join('');
+            newSelectFile.src = _baseUrl + newSelectFile.id;
+            //console.log(newSelectFile)
+
+            return newSelectFile;
+        }
+        this.isValidFile = isValidFile
+        this.transFile = transFile
+        this.upload = upload
+    
+    }])
+
+ideServices.directive("filereadform", ['uploadingService','idService','uploadingHelperService',function (uploadingService,idService,uploadingHelperService) {
+    return {
+        restrict:'AE',
+        template:"<input ngf-select='uploadFiles($files)'  ngf-multiple='true' class='RO__upload-input' type='file'/>",
+        replace:'true',
+        link: function (scope, element, attributes) {
+           
+
+            scope.uploadFiles = function (files) {
+                if (files && files.length){
+                    files = files.filter(uploadingHelperService.isValidFile);
+
+                    for (var i=0;i<files.length;i++){
+                        //加入等待上传数组
+                        var translatedFile = uploadingHelperService.transFile(files[i]);
+                        scope.component.top.uploadingArray.push(translatedFile);
+                        uploadingHelperService.upload(files[i],translatedFile,function(){
+                            //success
+                            deleteUploadingItem(translatedFile);
+                            scope.$emit('ResourceUpdate');
+                        },function(e){
+                            translatedFile.progress ='上传失败';
+                            if(e&&e.data&&e.data.errMsg){
+                                switch (e.data.errMsg){
+                                    case 'not logged in':
+                                        toastr.info('请重新登录');
+                                        break;
+                                    case 'user not valid':
+                                        toastr.info('请登录');
+                                        break;
+                                    default:
+    
+                                }
+                            }
+                           
+                            deleteUploadingItem(translatedFile);
+                        },function(e){
+                            translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
+                        });
+                    }
                 }
-                if (!uploadingFile.name) {
-                    return null;
+            }
+
+            function deleteUploadingItem(translatedFile) {
+                var uploadingArray = scope.component.top.uploadingArray;
+                for (var i = 0; i < uploadingArray.length; i++) {
+                    if (uploadingArray[i].id == translatedFile.id) {
+                        uploadingArray.splice(i, 1);
+                        break;
+                    }
                 }
-                var fileNameArray = uploadingFile.name.split('.');//从.后缀开始分割我一个字符串数组，数组的第一个元素是名字，第二个元素是后缀名。
-
-                //生成唯一识别码，作为fileName。
-                var fileName = (idnum++).toString()+'.'+fileNameArray[fileNameArray.length-1];//顺序生成id
-                // var fileName = idService.generateId(uploadingFile.name,Date.now())+'.'+fileNameArray[fileNameArray.length-1];
-                var fd = new FormData();
-                fd.append('file',uploadingFile);
-                fd.append('name',fileName);
-
-                _.extend(newSelectFile,uploadingFile);
-                newSelectFile.id  = fileName;
-                newSelectFile.name = fileNameArray.slice(0,-1).join('');
-                newSelectFile.src = _baseUrl + newSelectFile.id;
-                //console.log(newSelectFile)
-
-                return newSelectFile;
             }
         }
+            
+
+
     }
 }]);
 
