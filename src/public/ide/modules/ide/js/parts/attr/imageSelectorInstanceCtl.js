@@ -10,7 +10,7 @@ ide.filter('paging',function () {
     }
 });
 
-ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService','$filter',function ($scope,$uibModal,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService,$filter) {
+ide.controller('ImageSelectorInstanceCtl', ['$rootScope','$scope','$uibModal','$timeout', '$uibModalInstance','ProjectService','Type', 'ResourceService','widgetInfo','TexService','$filter','uploadingHelperService',function ($rootScope,$scope,$uibModal,$timeout, $uibModalInstance,ProjectService,Type, ResourceService,widgetInfo,TexService,$filter,uploadingHelperService) {
 
     $scope.images = ResourceService.getAllImagesAndTemplates();
     $scope.images.unshift({
@@ -37,6 +37,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
     $scope.disableEditImg = false;
     $scope.disableEditColor = false;
     $scope.sliceNum = 0;
+    $scope.processingVideoImg = false;
     switch (widgetInfo.type){
         case Type.MyButton:
             initConfigure(false,false,2,widgetInfo.tex,true,false,false,false);
@@ -429,7 +430,7 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                 }
 
                 $scope.confirm = function(){
-                    $uibModalInstance.close($scope.videoName,$scope.ui.renderedImgs)
+                    $uibModalInstance.close({videoName:$scope.videoName,imgs:$scope.ui.renderedImgs})
                 }
 
 
@@ -440,15 +441,71 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
             resolve: {}
         });
 
-        modalInstance.result.then(function (videoName,imgs) {
+        modalInstance.result.then(function (imgsInfo) {
+            var imgs = imgsInfo.imgs
+            var videoName = imgsInfo.videoName
+            videoName = videoName.split('.')[0]
             if(imgs&&imgs.length){//插入图片
-                
+                var files = imgs.map(function(img,i){
+                    return ResourceService.blobToFile(ResourceService.dataURItoBlob(img),videoName+'-'+i+'.png')
+                })
+                var count = files.length
+                $scope.processingVideoImg = true
+                for (var i=0;i<files.length;i++){
+                 
+                    var translatedFile = uploadingHelperService.transFile(files[i]);
+                    
+                    uploadingHelperService.upload(files[i],translatedFile,function(translatedFile){
+                        //success
+                        $scope.tex.slices.push({
+                            name:'defaultSlice',
+                            imgSrc:translatedFile.src,
+                            color:'rgba(0,0,0,0)'
+                        })
+                        $scope.$apply(function(){
+                            calPageNum();
+                        })
+                       
+                        count--
+                        if(count==0){
+                            //finish uploading
+                            // calPageNum();
+                            $scope.$apply(function(){
+                                $scope.processingVideoImg = false
+                            })
+                            $rootScope.$broadcast('ResourceUpdate');
+                        }
+                    },function(e){
+                       
+                        if(e&&e.data&&e.data.errMsg){
+                            switch (e.data.errMsg){
+                                case 'not logged in':
+                                    toastr.info('请重新登录');
+                                    break;
+                                case 'user not valid':
+                                    toastr.info('请登录');
+                                    break;
+                                default:
+
+                            }
+                        }else{
+                            toastr.error('上传出错！')
+                        }
+                        count--
+                       
+                        
+                    },function(e){
+                        translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
+                    });
+                }
 
                 
             }
         }, function () {
             $uibModalInstance.dismiss('cancel');
         });
+
+        
 
     };
 

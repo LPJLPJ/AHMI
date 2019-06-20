@@ -990,11 +990,10 @@ ideServices.directive("filereadform", ['uploadingService','idService','uploading
                 if (files && files.length){
                     files = files.filter(uploadingHelperService.isValidFile);
 
-                    for (var i=0;i<files.length;i++){
-                        //加入等待上传数组
-                        var translatedFile = uploadingHelperService.transFile(files[i]);
+                    files.forEach(function(file,i) {
+                        var translatedFile = uploadingHelperService.transFile(file);
                         scope.component.top.uploadingArray.push(translatedFile);
-                        uploadingHelperService.upload(files[i],translatedFile,function(){
+                        uploadingHelperService.upload(file,translatedFile,function(){
                             //success
                             deleteUploadingItem(translatedFile);
                             scope.$emit('ResourceUpdate');
@@ -1017,7 +1016,7 @@ ideServices.directive("filereadform", ['uploadingService','idService','uploading
                         },function(e){
                             translatedFile.progress = Math.round(1.0 * e.loaded / e.total * 100) + '%';
                         });
-                    }
+                    });
                 }
             }
 
