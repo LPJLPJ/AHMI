@@ -4437,9 +4437,42 @@
                             <h3 class="modal-title">从视频插入</h3>
                         </div>
                         <div class="modal-body batch-select-wrap">
-                            <select ng-model='currentSelectedVideo'>
-                                <option ng-repeat='video in videoList track by $index' value="{{video.id}}">{{video.name}}</option>
-                            </select>
+                            <div class="btn btn-default" style="cursor:pointer;margin-bottom:1em;" ngf-select="renderVideoToImgs($file)" name="file" 
+                            >请选择MP4视频文件</div>
+                            <uib-progressbar type="info" class="progress-striped active upload-progressbar" value="ui.progress.current"
+                                max="ui.progress.total" >
+                                <span class="upload-progressbar-text">{{ui.progress.current+'/'+ui.progress.total}}</span>
+                            </uib-progressbar>
+                            <table class="table table-bordered attr-item__table">
+                                    <thead>
+                                    <tr align="center">
+                                        <td class="col-xs-2">编号</td>
+                                        <td class="col-xs-2">预览</td>
+                                        <td class="col-xs-1">操作</td>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    <tr class="texRow" ng-repeat="imgIdx in ui.currentPageImgIdx">
+                                        <td align="center" style="vertical-align: middle;">{{imgIdx+1}}</td>
+                            
+                                        <td style="background-color: #B0B0B0" align="center">
+                                            <div style="width:{{200*ui.widthHeightRatio}}px;height:200px;">
+                                                <img ng-src="{{(ui.renderedImgs[imgIdx]||'/public/images/blank.png')}}" width="{{200*ui.widthHeightRatio}}px"
+                                                     height="200px"/>
+                                            </div>
+                                        </td>
+                                        <td align="center" style="vertical-align: middle;">
+                                            <span ng-click="deleteImg(imgIdx)" class="iconfont c-p" style="font-size: 30px">&#xe646;</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+        
+                            <div style="margin-top: 10px;">
+                                <button ng-click="changeNum(0)" ng-disabled="ui.currentPageNum<=1">上一页</button><span style="padding: 0 10px">{{ui.currentPageNum}}</span><button ng-click="changeNum(1)" ng-disabled="ui.currentPageNum>ui.pageNum">下一页</button>
+                                <span style="margin-left: 20px">总页数：{{ui.pageNum}}</span><span style="margin-left: 20px">总数量：{{ui.renderedImgs.length}}</span>
+                            </div>
                         </div>
                         <div class="modal-footer">
                         <span class="my-but-right">

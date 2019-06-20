@@ -350,28 +350,33 @@ ideServices
                     toastr.error('视频加载失败！')
                     clearInterval(timer)
                 })
-                timer = setInterval(function(){
-                    if(video.duration){
-                        try{
-                            var bufferedEnd = video.buffered.end(video.buffered.length - 1)
-                        }catch(e){
-                            console.log(e,video.buffered)
+                // timer = setInterval(function(){
+                //     if(video.duration){
+                //         try{
+                //             var bufferedEnd = video.buffered.end(video.buffered.length - 1)
+                //         }catch(e){
+                //             console.log(e,video.buffered)
 
-                        }
+                //         }
                        
-                        if(parseInt( bufferedEnd/ video.duration * 100) >= 100) {
-                            clearInterval(timer)
-                            resourceObj.complete = true
-                            resourceObj.content = video
-                            // document.body.appendChild(video)
-                            // video.style.position = 'absolute'
-                            // video.style.top=0
-                            // video.play()
-                            scb && scb({type:'ok'}, resourceObj);
-                        };
-                    }
+                //         if(parseInt( bufferedEnd/ video.duration * 100) >= 100) {
+                //             clearInterval(timer)
+                //             resourceObj.complete = true
+                //             resourceObj.content = video
+                //             // document.body.appendChild(video)
+                //             // video.style.position = 'absolute'
+                //             // video.style.top=0
+                //             // video.play()
+                //             scb && scb({type:'ok'}, resourceObj);
+                //         };
+                //     }
                     
-                },500)
+                // },500)
+                waitUntilVideoLoad(video,function(){
+                    resourceObj.complete = true
+                    resourceObj.content = video
+                    scb && scb({type:'ok'}, resourceObj);
+                })
                 video.src = file.src
 
                 globalResources.push(resourceObj);
@@ -381,6 +386,31 @@ ideServices
             }
 
         };
+
+
+        function waitUntilVideoLoad(video,scb){
+            // var timer = setInterval(function(){
+            //     if(video.duration){
+            //         try{
+            //             var bufferedEnd = video.buffered.end(video.buffered.length - 1)
+            //         }catch(e){
+            //             console.log(e,video.buffered)
+
+            //         }
+                   
+            //         if(parseInt( bufferedEnd/ video.duration * 100) >= 100) {
+            //             clearInterval(timer)
+            //             scb && scb()
+            //         };
+            //     }
+                
+            // },500)
+            video.addEventListener('canplaythrough',function(){
+                scb && scb()
+            })
+        }
+
+        this.waitUntilVideoLoad = waitUntilVideoLoad
 
         this.cacheFileToGlobalResources = function (file, scb, fcb) {
             this.cacheFile(file, globalResources, scb, fcb);
@@ -523,6 +553,36 @@ ideServices
 
         }
 
+        //render video to images
+        this.convertVideoToImages = function(video,progressCB,cb){
+            var canvas = document.createElement('canvas')
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            var ctx = canvas.getContext('2d')
+            var duration = video.duration * 1000 //ms
+            var fps = 15
+            var interval = 1000.0/15
+            var count = parseInt(fps * duration/1000)
+            var imgs = []
+            var i=0
+            video.play()
+            var timer = setInterval(function(){
+                ctx.drawImage(video,0,0,canvas.width,canvas.height)
+                // imgs.push(canvas.toDataURL())
+                
+                imgs.push(canvas.toDataURL())
+                progressCB && progressCB(i,count)
+                i++
+                if(i===count){
+                    clearInterval(timer)
+                    video.pause()
+                    video.currentTime = 0
+                    cb && cb(imgs)
+                }
+            },interval)
+
+        }
+
         
 
 
@@ -559,6 +619,35 @@ ideServices
         this.getMaskUrl = function () {
             return maskUrl;
         }
+
+
+        function dataURItoBlob(dataURI) {
+            // convert base64/URLEncoded data component to raw binary data held in a string
+            var byteString;
+            if (dataURI.split(',')[0].indexOf('base64') >= 0)
+                byteString = atob(dataURI.split(',')[1]);
+            else
+                byteString = unescape(dataURI.split(',')[1]);
+    
+            // separate out the mime component
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    
+            // write the bytes of the string to a typed array
+            var ia = new Uint8Array(byteString.length);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+    
+            return new Blob([ia], {type:mimeString});
+        }
+        this.dataURItoBlob = dataURItoBlob
+
+        function blobToFile(blob, fileName){
+            blob.lastModifiedDate =new Date();
+            blob.name = fileName;
+            return blob;
+        }
+        this.blobToFile = blobToFile
 
     }])
     .factory('uploadingService', ['$http', function ($http) {

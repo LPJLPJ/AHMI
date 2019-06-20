@@ -347,12 +347,89 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
                 init();
 
                 function init(){
-                    $scope.currentSelectedVideo = null
-                    $scope.videoList = ResourceService.getAllVideos()||[]
+                    // $scope.currentPageNum = 1
+                    // $scope.pageNUm = 1
+                    // $scope.totalImgNum = 0
+                    // $scope.progress = 0
+                    // $scope.renderedImgs = []
+                    // $scope.currentPageImgIdx = []
+                    $scope.numInSinglePage = 20
+                    $scope.ui = {
+                        currentPageNum:1,
+                        pageNum:1,
+                        currentPageImgIdx:[],
+                        renderedImgs:[],
+                        progress:{
+                            current:0,
+                            total:1000
+                        },
+                        widthHeightRatio:1
+                    }
+                }
+
+                function showPage(index){
+                    var start = (index-1) * $scope.numInSinglePage
+                    var end = start + $scope.numInSinglePage - 1
+                    end = Math.min(end,$scope.ui.renderedImgs.length-1)
+                    var idx = []
+                    for(var i=start;i<=end;i++){
+                        idx.push(i)
+                    }
+                    $scope.ui.currentPageImgIdx = idx
+                }
+
+                $scope.renderVideoToImgs = function(videoFile){
+                    if(!videoFile){
+                        return
+                    }
+                    $scope.videoName = videoFile.name
+                    var video = document.createElement('video')
+                    video.setAttribute('preload','auto')
+                    document.body.appendChild(video)
+                    video.style.position='absolute'
+                    video.style.top = 0
+                    var url = URL.createObjectURL(videoFile)
+                    video.src = url
+                    ResourceService.waitUntilVideoLoad(video,function(){
+                        ResourceService.convertVideoToImages(video,function(curIdx,total){
+                            $scope.ui.progress = {
+                                current:curIdx+1,
+                                total:total
+                            }
+                            $scope.$apply()
+                        },function(imgs){
+                            //update image ratio
+                            
+                            $scope.ui.widthHeightRatio = (video.videoWidth/video.height).toFixed(2)
+                            $scope.ui.renderedImgs = imgs
+                            $scope.ui.pageNum = Math.ceil($scope.ui.renderedImgs.length/$scope.numInSinglePage)
+                            $scope.$apply(function(){
+                                showPage(1)
+                            })
+                            
+                            URL.revokeObjectURL(url)
+                        })
+                    })
+                    
+                    
+                }
+
+                $scope.changeNum = function(direction){
+                    var nextPageNum = $scope.ui.currentPageNum + (!!direction ? 1 : -1)
+                    if(nextPageNum > $scope.ui.pageNum||nextPageNum < 1){
+                        return
+                    }
+                    $scope.ui.currentPageNum = nextPageNum
+                    showPage(nextPageNum)
+                }
+
+                $scope.deleteImg = function(imgIdx){
+                    $scope.ui.renderedImgs.splice(imgIdx,1)
+                    $scope.ui.pageNum = Math.ceil($scope.ui.renderedImgs.length/$scope.numInSinglePage)
                 }
 
                 $scope.confirm = function(){
-                    $uibModalInstance.close($scope.currentSelectedVideo)
+                    $uibModalInstance.close($scope.videoName,$scope.ui.renderedImgs)
                 }
 
 
@@ -363,19 +440,8 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
             resolve: {}
         });
 
-        modalInstance.result.then(function (videoId) {
-            if(videoId){//插入图片
-                ResourceService.convertVideoToImagesAndCache(videoId,function(imgs){
-                    imgs = imgs.map(function (img) {
-                        return {
-                            name:'defaultSlice',
-                            imgSrc:img,
-                            color:'rgba(0,0,0,0)'
-                        }
-                    });
-                    $scope.tex.slices = $scope.tex.slices.concat(imgs);
-                    calPageNum();
-                })
+        modalInstance.result.then(function (videoName,imgs) {
+            if(imgs&&imgs.length){//插入图片
                 
 
                 
