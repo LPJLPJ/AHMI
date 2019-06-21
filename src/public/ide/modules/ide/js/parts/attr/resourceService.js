@@ -405,9 +405,11 @@ ideServices
             //     }
                 
             // },500)
-            video.addEventListener('canplaythrough',function(){
+            var handler = function(){
+                video.removeEventListener('loadeddata',handler)
                 scb && scb()
-            })
+            }
+            video.addEventListener('loadeddata',handler)
         }
 
         this.waitUntilVideoLoad = waitUntilVideoLoad
@@ -723,7 +725,7 @@ ideServices
                 case 'woff':
                 //audio
                 case 'mp3':
-                case 'mp4':
+                // case 'mp4':
                     return true;
                 default:
                     toastr.warning('不支持'+fileExt+'格式');
