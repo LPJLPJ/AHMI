@@ -500,6 +500,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$rootScope','$scope','$uibModal','$
 
                 var uploadConvertedImg = function(){
                     uploadFileHanlder(i,function(err){
+                        if(err){
+                            console.log
+                        }
                         if(i+1<count){
                             i++
                             uploadConvertedImg()

@@ -902,7 +902,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
             //判断是否和初始一样
             if ($scope.component.object.level.name == initObject.level.name) {
-                th.component.object.level.name = $scope.component.object.level.name;
+                $scope.component.object.level.name = $scope.component.object.level.name;
                 return;
             }
             var validation = ProjectService.inputValidate($scope.component.object.level.name);

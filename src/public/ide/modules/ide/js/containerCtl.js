@@ -5,12 +5,21 @@
 ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'ProjectService', '$document', function ($scope, KeydownService, NavService, ProjectService, $document,ViewService) {
     $scope.$on('GlobalProjectReceived', function () {
 
-
+        initFocus();
         initHelpPrompt();
         initListeningKeyDown();
         initListeningMouseWheel();
         $scope.$emit('LoadUp');
     });
+
+    function initFocus(){
+        $scope.handleFocus = function(){
+            $scope.focused = true
+        }
+        $scope.handleBlur = function(){
+            $scope.focused = false
+        }
+    }
 
     function initHelpPrompt() {
         $scope.helpDocs = {
@@ -96,6 +105,9 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
             var currentKey = KeydownService.currentKeydown(e);
             $scope.currentKey = currentKey;
             //console.log('this is current keyStr',currentKey);
+            if(!$scope.focused){
+                return
+            }
             if(_.indexOf(KeydownService.getActionKeys(),currentKey)>=0){
                 //如果点击的键是热键,则屏蔽浏览器的默认按键
                 e.preventDefault();
@@ -111,6 +123,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
                 switch (currentKey){
                     case 'Cmd-C':
                     case 'Ctrl-C':
+                        console.log(window.focus,document.activeElement)
                         NavService.DoCopy(function () {
                             $scope.$emit('DoCopy');
 
@@ -156,6 +169,7 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
                     break;
 
                     case 'Ctrl-Z':
+                    case 'Cmd-Z':
                         console.log('撤销');
                         var oldOperate=ProjectService.SaveCurrentOperate();
 
@@ -168,6 +182,10 @@ ide.controller('ContainerCtl', ['$scope', 'KeydownService', 'NavService', 'Proje
                     case 'Ctrl-Down':
                     case 'Ctrl-Left':
                     case 'Ctrl-Right':
+                    case 'Cmd-Up':
+                    case 'Cmd-Down':
+                    case 'Cmd-Left':
+                    case 'Cmd-Right':
                     case 'Shift-Up':
                     case 'Shift-Down':
                     case 'Shift-Left':
