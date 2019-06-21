@@ -319,8 +319,24 @@
 
         function getContextMenu(){
             var selectObj=ProjectService.getCurrentSelectObject();
+            //lockable
+            var locked
+            if(selectObj && selectObj.level && selectObj.level.info){
+                locked = !!selectObj.level.info.locked
+                var lockMenuItem = locked?['解锁',function(){
+                    changeObjectLock(false)
+                }]:['锁定',function(){
+                    changeObjectLock(true)
+                }]
+            }
+            
             if (selectObj.type==Type.MyLayer||Type.isWidget(selectObj.type)){
-                return $scope.component.menuOptions.allMenuItems;
+                if(locked!==undefined){
+                    return $scope.component.menuOptions.allMenuItems.concat([null,lockMenuItem])
+                }else{
+                    return $scope.component.menuOptions.allMenuItems
+                }
+                
             }
             if(selectObj.type==Type.MyGroup){
                 return $scope.component.menuOptions.alignMenuItems;
@@ -689,6 +705,7 @@
              * 在Ctrl模式下的处理
              */
             function clickHandle(){
+                console.log(ProjectService.getCurrentSelectObject(),CanvasService.getPageNode())
                 var clickedFabLayer=null;
                     var eventlocationX=null,
                         eventlocationY=null;
@@ -834,6 +851,10 @@
 
             }
 
+        }
+
+        function changeObjectLock(shouldLock){
+            ProjectService.ChangeAttributeLock({lock:shouldLock});
         }
 
         function changeGroupAlign(alignModeId) {

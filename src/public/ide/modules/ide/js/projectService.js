@@ -4380,6 +4380,48 @@ ideServices
 
             };
 
+            this.ChangeAttributeLock=function(_option,_successCallback){
+                var currentOperate=SaveCurrentOperate();
+                var pageNode=CanvasService.getPageNode();
+                var subLayerNode=CanvasService.getSubLayerNode();
+                var object = _self.getCurrentSelectObject();
+                var target = object.target;
+                object.level.info.locked = _option.lock
+                
+                // target.selectable = !_option.lock
+                var fabLayer
+                if(object.type == Type.MyLayer){
+                    _.forEach(pageNode.getObjects(), function (_fabObj) {
+                        if (_fabObj.id == target.id) {
+                            fabLayer = _fabObj;
+                        }
+                    });
+                    if(fabLayer){
+                        fabLayer.selectable = !_option.lock
+                    }
+                    pageNode.deactivateAll();
+                    pageNode.renderAll();
+                }else if(Type.isWidget(object.type)){
+                    _.forEach(subLayerNode.getObjects(), function (_fabObj) {
+                        if (_fabObj.id == target.id) {
+                            fabLayer = _fabObj;
+                        }
+                    });
+                    if(fabLayer){
+                        fabLayer.selectable = !_option.lock
+                    }
+                    subLayerNode.deactivateAll();
+                    subLayerNode.renderAll();
+                }
+                
+                
+                // _self.ReleaseObject({});
+                
+                
+                _successCallback && _successCallback(currentOperate);
+
+            };
+
             //改变仪表盘模式，相应地改变此仪表盘控件的的slice内容
             this.ChangeAttributeDashboardModeId = function(_option,_successCallback){
                 var templateId = TemplateProvider.getTemplateId();

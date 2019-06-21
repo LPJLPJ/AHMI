@@ -87,9 +87,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     Y:1
                 }
             }
+            
+            
             this.callSuper('initialize', options);
             this.loadAll(layerId);
             this.layerId = layerId;
+            var level = ProjectService.getLevelById(layerId)
+            this.selectable = !level.info.locked
             this.lockRotation=true;
             this.hasRotatingPoint=false;
             // this.backgroundImg =
