@@ -14,4 +14,12 @@ ide.
 
                 });
         }
+
+        $scope.changeGroupAlign = function(alignModeId){
+            var option = {
+                align: alignModeId
+            };
+            // var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeGroupAlign(option);
+        }
     }]);

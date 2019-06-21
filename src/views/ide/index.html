@@ -511,6 +511,22 @@
                         </ul>
                     </div>
                 </a>
+                <a class="top-menu-content__item-title-group" ng-controller="arrangeCtr" ng-class="{false:'inactive'}[!component.tool.pageStatus]">
+                        <div class="" uib-dropdown>
+                            <div class="dropdown top-menu-content__item-title-g" uib-dropdown-toggle ng-class="{false:'inactive'}[!component.tool.pageStatus]">
+                                <img class="default-title" src="../../public/ide/modules/ide/images/align.png"/>
+                                <img class="active-title" src="../../public/ide/modules/ide/images/align-active.png"/>
+                                <img class="inactive-title" src="../../public/ide/modules/ide/images/align-inactive.png"/>
+                                <p>对齐</p>
+                            </div>
+                            <ul class="dropdown-menu change-index-wrap" uib-dropdown-menu>
+                                <li ng-click="changeGroupAlign('top')">上对齐</li>
+                                <li ng-click="changeGroupAlign('bottom')">下对齐</li>
+                                <li ng-click="changeGroupAlign('left')">左对齐</li>
+                                <li ng-click="changeGroupAlign('right')">右对齐</li>
+                            </ul>
+                        </div>
+                    </a>
                 <a ng-click="component.tool.selectAll()" class="top-menu-content__item-title" ng-class="">
                     <img class="default-title" src="../../public/ide/modules/ide/images/select-all.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/select-all-active.png"/>

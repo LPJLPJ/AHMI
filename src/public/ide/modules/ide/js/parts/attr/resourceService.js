@@ -410,6 +410,7 @@ ideServices
                 video.removeEventListener('loadeddata',handler)
                 scb && scb()
             }
+            console.log('will wait for video')
             video.addEventListener('loadeddata',handler)
         }
 

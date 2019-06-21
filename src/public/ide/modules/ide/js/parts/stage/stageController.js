@@ -57,7 +57,8 @@
                 // },
                 menuOptions:{
                     contextMenu:null,
-                    allMenuItems:[]
+                    allMenuItems:[],
+                    alignMenuItems:[]
                 },
                 animationEditor:{
                     show:false
@@ -112,6 +113,23 @@
                 }]
 
             ];
+            $scope.component.menuOptions.alignMenuItems=[
+                ['上对齐', function () {
+                    changeGroupAlign('top');
+                }],
+                null,
+                ['下对齐', function () {
+                    changeGroupAlign('bottom');
+                }],
+                null,
+                ['左对齐',function () {
+                    changeGroupAlign('left');
+                }],
+                null,
+                ['右对齐',function () {
+                    changeGroupAlign('right');
+                }]
+            ]
             $scope.component.menuOptions.contextMenu=getContextMenu;
 
             $scope.component.canvas.node.on({
@@ -303,6 +321,9 @@
             var selectObj=ProjectService.getCurrentSelectObject();
             if (selectObj.type==Type.MyLayer||Type.isWidget(selectObj.type)){
                 return $scope.component.menuOptions.allMenuItems;
+            }
+            if(selectObj.type==Type.MyGroup){
+                return $scope.component.menuOptions.alignMenuItems;
             }
             return [];
         }
@@ -813,6 +834,14 @@
 
             }
 
+        }
+
+        function changeGroupAlign(alignModeId) {
+            var option = {
+                align: alignModeId
+            };
+            // var oldOperate = ProjectService.SaveCurrentOperate();
+            ProjectService.ChangeAttributeGroupAlign(option);
         }
 
         function changeZIndex(_op){
