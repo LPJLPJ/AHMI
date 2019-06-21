@@ -386,9 +386,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$rootScope','$scope','$uibModal','$
                     $scope.videoName = videoFile.name
                     var video = document.createElement('video')
                     video.setAttribute('preload','auto')
-                    document.body.appendChild(video)
-                    video.style.position='absolute'
-                    video.style.top = 0
+                    // document.body.appendChild(video)
+                    // video.style.position='absolute'
+                    // video.style.top = 0
                     var url = URL.createObjectURL(videoFile)
                     video.src = url
                     ResourceService.waitUntilVideoLoad(video,function(){
@@ -501,18 +501,25 @@ ide.controller('ImageSelectorInstanceCtl', ['$rootScope','$scope','$uibModal','$
                 var uploadConvertedImg = function(){
                     uploadFileHanlder(i,function(err){
                         if(err){
-                            console.log
-                        }
-                        if(i+1<count){
-                            i++
-                            uploadConvertedImg()
-                        }else{
-                            //finish
+                            console.log(err)
+                            toastr.error('上传图片错误')
                             $scope.$apply(function(){
                                 $scope.processingVideoImg = false
                             })
                             $rootScope.$broadcast('ResourceUpdate');
+                        }else{
+                            if(i+1<count){
+                                i++
+                                uploadConvertedImg()
+                            }else{
+                                //finish
+                                $scope.$apply(function(){
+                                    $scope.processingVideoImg = false
+                                })
+                                $rootScope.$broadcast('ResourceUpdate');
+                            }
                         }
+                        
                     })
                 }
 

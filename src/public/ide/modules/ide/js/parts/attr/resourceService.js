@@ -373,12 +373,13 @@ ideServices
                     
                 // },500)
                 waitUntilVideoLoad(video,function(){
+                    console.log('finish waiting video')
                     resourceObj.complete = true
                     resourceObj.content = video
                     scb && scb({type:'ok'}, resourceObj);
                 })
                 video.src = file.src
-
+                video.load()
                 globalResources.push(resourceObj);
             }else{
                 //other
