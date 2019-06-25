@@ -62,6 +62,9 @@
                 },
                 animationEditor:{
                     show:false
+                },
+                actionEditor:{
+                    show:false
                 }
 
             };
@@ -87,6 +90,8 @@
             CanvasService.setPageNode(pageNode);
             var subLayerNode=$scope.component.subCanvas.node;
             CanvasService.setSubLayerNode(subLayerNode);
+
+            
 
         }
 
@@ -226,7 +231,13 @@
                 $scope.component.animationEditor.show = shouldShow
             })
 
+            $scope.$on('updateActionPanel',function(e,index){
+                $scope.component.actionEditor.show = true
+            })
 
+            $scope.$on('saveAction',function(){
+                $scope.component.actionEditor.show = false
+            })
         }
 
 

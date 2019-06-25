@@ -828,7 +828,7 @@
             </div>
             <p>{{project.name}}</p>
         </div>
-        <div class="stage-content-wrap" id="ruler-wrap">
+        <div class="stage-content-wrap" id="ruler-wrap" ng-class="{'stage-content-wrap-half':component.animationEditor.show||component.actionEditor.show}">
             <div class="stage-content" ng-show="status.editPage" id="myStageTable">
                 <table width="100%" height="100%">
                     <tr>
@@ -921,6 +921,135 @@
                         <option ng-repeat="easing in EasingFunctions track by $index" value=""></option>
                     </select> -->
                     <canvas class="animationEditor__easingCanvas" width="100" height="100"></canvas>
+                </div>
+            </div>
+            <div class="actionEditor__wrapper action-setting-wrap" ng-controller="ActionPanelCtrl" ng-show="ui.show">
+                <div class="modal-header">
+                    <h4 class="modal-title" >动作</h4>
+                </div>
+                <div class="modal-body" >
+                    <div class="form-group">
+                        <span for="actionName" class="attr-item__cell-title-inline">动作名称</span>
+                        <input class="form-control attr-item__cell-input-inline"
+                               id="actionName"
+                               type="text"
+                               ng-model="action.title"
+                               ng-focus="store(this)"
+                               ng-blur="enterName(this)"
+                               ng-keypress="enterPress($event,this)">
+                    </div>
+
+                    <div class="form-group">
+                        <span class="attr-item__cell-title-inline">触发条件</span>
+                        <select class="form-control attr-item__cell-input-inline" ng-model="action.trigger"
+                                ng-options="trigger.value as trigger.name for trigger in triggers">
+                            <option value="">----</option>
+                        </select>
+                    </div>
+
+                    <table class="table action-operate-table">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <div class="form-group">
+                                    <p class="attr-item__cell-title">操作</p>
+                                    <select class="form-control attr-item__cell-input h-30" ng-model="chosenCmd[0]"
+                                            ng-options="op as op.symbol for op in ops track by op.symbol" ng-change="changeTagShowState()"></select>
+                                </div>
+
+                                <p class="attr-item__cell-title">快捷添加定时器</p>
+                                <div class="form-group input-group">
+                                    <select class="form-control tagSelect__select" ng-model="shortcutTimer">
+                                        <option ng-repeat="timer in timerTags"
+                                                value="{{timer}}">{{timer}}</option>
+                                    </select>
+                                <span class="input-group-btn tagSelect__title">
+                                    <button class="btn btn-default" ng-click="shortcutAddTimer()">添加</button>
+                                </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <p class="attr-item__cell-title">操作数1</p>
+                                    <div class="action-operate__cell">
+                                        <div>
+                                            <span  class="my-action-span my-action-span-width">变量</span>
+                                            <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
+                                        </div>
+                                        <!--<div ng-show="!selectedTagObjArray[0].useTag">
+                                        <span  class="my-action-span my-action-span-width">值</span>
+                                        <input class="form-control modelPart my-action-input-value" type="text"
+                                               ng-model="chosenCmd[1].value"/>
+                                    </div>-->
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <p class="attr-item__cell-title">操作数2</p>
+                                    <div class="action-operate__cell">
+                                        <div>
+                                            <span  class="action-operate__title-inline">启用变量</span>
+                                            <input type="checkbox" ng-model='selectedTagObjArray[1].useTag' ng-change="usetagSwitch(1)"
+                                                   class="action-operate__check-box">
+                                        </div>
+                                        <div ng-show="selectedTagObjArray[1].useTag">
+                                            <span  class="my-action-span my-action-span-width">变量</span>
+                                            <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[1]" action-function="actionFunction(1)"></tag-select>
+                                        </div>
+                                        <div  ng-show="!selectedTagObjArray[1].useTag">
+                                            <p  class="attr-item__cell-title">值</p>
+                                            <input class="form-control attr-item__cell-input h-30" ng-trim="false" type="text"
+                                                   ng-model="chosenCmd[2].value"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <button type="button" class="btn btn-default attr-default-btn h-30" ng-click="addNewCmd()">添加指令</button>
+                    </div>
+                    <div class="action-item__list">
+                        <table class="table table-hover action-item__list-table">
+                            <thead>
+                                <tr align="center">
+                                    <td class="col-xs-1">#</td>
+                                    <td class="col-xs-2">操作</td>
+                                    <td class="col-xs-2">操作数1</td>
+                                    <td class="col-xs-2">操作数2</td>
+                                    <td class="col-xs-1">删除</td>
+                                    <td class="col-xs-1">提示</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-class="{'op-selected':$index==currentChosenIdx}"
+                                ng-repeat="cmd in action.commands" ng-click="chooseCmd($index)">
+                                <td align="center">{{$index+1}}</td>
+                                <td>{{cmd[0].symbol}}</td>
+                                <td>{{cmd[1].tag||cmd[1].value}}</td>
+                                <td align="center">{{cmd[2].tag||cmd[2].value}}</td>
+                                <td align="center"><i class="iconfont c-p" ng-click="deleteCmd($index)">
+                                    &#xe627;</i></td>
+                                <td align="center">
+                                    <span class="label label-danger"
+                                          ng-show="!validateArr[$index].pass"
+                                          tooltip-placement="top"
+                                          uib-tooltip="{{validateArr[$index].tooltip}}"
+                                          style="cursor: pointer;">!</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">保存</button>
+                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                 </div>
             </div>
         </div>
@@ -4543,7 +4672,7 @@
                     <div ng-controller="ActionCtl" ng-show="showActionPanel&&!myMask" class="attr-item__cell-wrap lg action-wrap">
                         <div>
                             <span class="attr-item__action-title">动作列表</span>
-                            <button type="button" class="btn btn-default attr-default-btn action-item__add-action" ng-click="openPanel(-1)">
+                            <button type="button" class="btn btn-default attr-default-btn action-item__add-action" ng-click="openActionPanel(-1)">
                                 添加新动作
                             </button>
                         </div>
@@ -4552,7 +4681,7 @@
                         <div class="glyphicon" style="display: block" ng-click="collapse($event)"
                              ng-class="{'glyphicon-chevron-down':!status.collapsed,'glyphicon-chevron-right':status.collapsed}"></div>
                         <ul uib-collapse="status.collapsed " class="action-item__action-list">
-                            <li ng-repeat="action in actions" ng-click="openPanel($index)">
+                            <li ng-repeat="action in actions" ng-click="openActionPanel($index)">
                                 <span>{{action.title}}</span>
                                 <i class="iconfont" ng-click="deleteAction($index)">&#xe627;</i>
                             </li>

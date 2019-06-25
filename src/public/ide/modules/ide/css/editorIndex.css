@@ -857,6 +857,11 @@ body {
     position: relative;
 }
 
+.stage-content-wrap-half{
+    height: 50%;
+    overflow-y: auto;
+}
+
 .stage-content {
     width: 100%;
     height: 100%;
@@ -881,7 +886,9 @@ body {
 
 .stage__tools {
     width: 100%;
-    background-color: rgba(0, 0, 0, .1);
+    max-height: 50%;
+    overflow-y: auto;
+    background-color:#f5f4f6;
     box-sizing: border-box;
     text-align: center;
     font-size: 14px;

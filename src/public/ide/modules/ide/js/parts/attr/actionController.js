@@ -2,7 +2,7 @@
  * Created by Zzen1ss on 23/3/2016
  */
 
-ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','ProjectService', 'Type','OperationService',function ($scope, ActionService,TagService,$uibModal,ProjectService,Type,OperationService) {
+ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService','$uibModal','ProjectService', 'Type','OperationService',function ($rootScope,$scope, ActionService,TagService,$uibModal,ProjectService,Type,OperationService) {
 
     $scope.$on('GlobalProjectReceived', function () {
 
@@ -19,9 +19,15 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
     });
 
     function initUserInterface(){
+        console.log('inited controller: ',new Date())
         $scope.status={
             collapsed : false
         };
+        $scope.component = {
+            ui:{
+                show:false
+            }
+        }
         readActionInfo();
         $scope.tags = TagService.getAllCustomTags();
         $scope.timerTags = TagService.getAllTimerTags();
@@ -32,6 +38,51 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
 
         };
         $scope.animationsEnabled = true;
+
+        $scope.openActionPanel = function (index) {
+            $scope.selectedIdx = index;
+            // $scope.component.ui.show = true
+            // console.log($scope.tags);
+            var targetAction ;
+            if (index == -1){
+                //newAction
+                targetAction = ActionService.getNewAction();
+                targetAction.newAction=true;
+            }else if (index>=0&&index<$scope.actions.length){
+                targetAction = _.cloneDeep($scope.actions[index]);
+                targetAction.newAction=false;
+            }
+            //console.log('targetAction',targetAction);
+            var actionNames=[];
+            for(var i=0;i<$scope.actions.length;i++){
+                actionNames.push($scope.actions[i].title);
+            }
+
+            $rootScope.$broadcast('updateActionPanel',index)
+            
+
+        }
+
+
+
+        $scope.$on('saveAction',function(e,newAction){
+            if ($scope.selectedIdx == -1){
+                //new action
+                ActionService.appendAction(newAction, function () {
+                    $scope.actions = ActionService.getAllActions();
+                }.bind(this))
+            }else if ($scope.selectedIdx>=0 && $scope.selectedIdx<$scope.actions.length){
+                //update
+                ActionService.updateActionByIndex(newAction,$scope.selectedIdx, function () {
+                    $scope.actions = ActionService.getAllActions();
+                }.bind(this))
+            }
+
+        })
+
+        $scope.test = function(){
+            $scope.component.test = true
+        }
     }
 
 
@@ -186,6 +237,8 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
                 console.log('Modal dismissed at: ' + new Date());
             });
         }
+
+        
     }
 
 }])
@@ -352,6 +405,419 @@ ide.controller('ActionCtl',['$scope', 'ActionService','TagService','$uibModal','
         //取消
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
+        };
+
+        var restoreValue=$scope.action.title;
+
+        var validation=true;
+
+        //保存旧值
+        $scope.store=function(th){
+            restoreValue=th.action.title;
+        };
+
+        //恢复旧值
+        $scope.restore = function (th) {
+            th.action.title=restoreValue;
+        };
+
+        //验证新值
+        $scope.enterName=function(th){
+            //判断是否和初始一样
+            if (th.action.title===restoreValue){
+                return;
+            }
+            //输入有效性检测
+            validation=ProjectService.inputValidate(th.action.title,true);
+            if(!validation||!duplicate(th)){
+                $scope.restore(th);
+                return;
+            }
+            toastr.info('修改成功');
+            restoreValue=th.action.title;
+        };
+
+        //验证重名
+        function duplicate(th){
+            var tempArray=$scope.actionNames;
+            for(var i=0;i<tempArray.length;i++){
+                if(th.action.title===tempArray[i]){
+                    toastr.info('重复的动作名');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //验证enter键
+        $scope.enterPress=function(e,th){
+            if (e.keyCode==13){
+                $scope.enterName(th);
+            }
+        };
+
+        //tagSelect Obj
+        $scope.selectedTagObjArray=[
+            {
+                tagName:null,
+                useTag:true
+            },
+            {
+                tagName:null,
+                useTag:true
+            }
+        ];
+
+        //tagSelect 回调
+        $scope.actionFunction=function(index){
+            $scope.chosenCmd[index+1].tag=$scope.selectedTagObjArray[index].tagName;
+        };
+
+        //启用变量
+        $scope.usetagSwitch=function(index){
+            $scope.selectedTagObjArray[index].tagName='';
+            $scope.actionFunction(index);
+        };
+
+
+        /**
+         * 对所有的指令在保存前进行一次校验
+         * @param cmds 所有指令
+         * @param tags  所有tag
+         * @returns {boolean} 是否通过检查
+         */
+        function validateCmds(cmds,tags){
+            var errTooltip = {
+                SET_STR:"操作数1必须是变量，且类型为'字符串'型",
+                CONCAT_STR:"操作数1必须是变量，且类型为'字符串'型",
+                DEL_STR_FROM_TAIL:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
+                DEL_STR_FROM_HEAD:"操作是1必须是变量，且类型为'字符串'型，操作数2必须为'数字'类型的变量或数字值",
+                GET_STR_LEN:"操作数1必须是变量，且类型为'数字'型,操作数2必须是变量，且类型为'字符串'型",
+                EMPTY:"操作符不能为空",
+                NOT_NUMBER:"操作数2的值必须为数字类型",
+                NOT_TAG:"操作数1必须为变量",
+                NEGATIVE:'值不能是负数',
+                NO_ZERO_INTEGER:'值只能是非0整数'
+            };
+            var getTagValueType = function(tagName){
+                for(var i=0,il=tags.length;i<il;i++){
+                    if(tags[i].name===tagName){
+                        return tags[i].valueType;
+                    }
+                }
+                return -1;
+            };
+            var validateArr = $scope.validateArr;
+            var pass = true;
+            cmds.forEach(function(cmd,index){
+                if(cmd[0].name===""){
+                    validateArr[index].pass = false;
+                    validateArr[index].tooltip = errTooltip['EMPTY'];
+                    pass = false;
+                    return;
+                }
+                switch(cmd[0].name){
+                    case 'SET_STR':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['SET_STR'];
+                            pass = false;
+                        }
+                        break;
+                    case 'CONCAT_STR':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['SET_STR'];
+                            pass = false;
+                        }
+                        break;
+                    case 'DEL_STR_FROM_TAIL':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1||(cmd[2].tag&&getTagValueType(cmd[2].tag)!==0)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['DEL_STR_FROM_TAIL'];
+                            pass = false;
+                        }
+                        break;
+                    case 'DEL_STR_FROM_HEAD':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==1||(cmd[2].tag&&getTagValueType(cmd[2].tag)!==0)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['DEL_STR_FROM_TAIL'];
+                            pass = false;
+                        }
+                        break;
+                    case 'GET_STR_LEN':
+                        if(!cmd[1].tag||getTagValueType(cmd[1].tag)!==0||(cmd[2].tag&&getTagValueType(cmd[2].tag)!==1)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['DEL_STR_FROM_TAIL'];
+                            pass = false;
+                        }
+                        break;
+                    case 'ANIMATE':
+                        if(!cmd[1].tag){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NOT_TAG']
+                            pass = false
+                        }
+                    break;
+                    case 'DELAY':
+                    case 'SET_TIMER_START':
+                    case 'SET_TIMER_STOP':
+                    case 'SET_TIMER_STEP':
+                    case 'SET_TIMER_INTERVAL':
+                    case 'SET_TIMER_CURVAL':
+                    case 'SET_TIMER_MODE':
+                        if(cmd[2].value<0){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NEGATIVE'];
+                            pass = false;
+                        }
+                        break;
+                    case 'GOTO':
+                        var integerReg = /^-?[1-9]\d*$/;
+                        if(!integerReg.test(cmd[2].value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NO_ZERO_INTEGER'];
+                            pass = false;
+                        }
+                        break;
+                    case 'PLAY_SOUND':
+                    case 'PAUSE_SOUND':
+                    case 'RESUME_SOUND':
+                    case 'STOP_SOUND':
+                        var integerReg = /^\d+$/;
+                        if(!integerReg.test(cmd[2].value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
+                            pass = false;
+                        }
+                        break;
+                    default:
+                        var value = cmd[2].value;
+                        var tagName = cmd[2].tag;
+                        var reg =/^(\-|\+)?\d+(\.\d+)?$/;
+                        if(tagName===''&&value!==''&&!reg.test(value)){
+                            validateArr[index].pass = false;
+                            validateArr[index].tooltip = errTooltip['NOT_NUMBER'];
+                            pass = false;
+                            return;
+                        }
+                        break;
+                }
+            });
+            return pass;
+        }
+    }])
+    .controller('ActionPanelCtrl',['$rootScope','$scope','ProjectService','OperationService', 'ActionService','TagService',function ($rootScope,$scope,ProjectService,OperationService,ActionService,TagService) {
+        // action,triggers,tags,timerTags,actionNames
+        $scope.$on('updateActionPanel',function(e,index){
+            
+            var targetAction
+            if (index == -1){
+                //newAction
+                targetAction = ActionService.getNewAction();
+                targetAction.newAction=true;
+            }else if (index>=0&&index<$scope.actions.length){
+                targetAction = _.cloneDeep($scope.actions[index]);
+                targetAction.newAction=false;
+            }
+            //console.log('targetAction',targetAction);
+            
+    
+            $scope.action = targetAction;
+            
+            $scope.ui.show = true
+            updateScope()
+        })
+
+        function init(){
+            $scope.ui = {
+                show:false
+            }
+            $scope.action = ActionService.getNewAction();
+            updateScope()
+        }
+
+        function updateScope(){
+            
+            $scope.actions = ActionService.getAllActions();
+            var selectedObj = ProjectService.getCurrentSelectObject()
+            if(selectedObj && selectedObj.level){
+                $scope.triggers = ActionService.getTriggers(selectedObj.level.type);
+            }else{
+                $scope.triggers = []
+            }
+            
+            $scope.tags = TagService.getAllCustomTags();
+            $scope.timerTags = TagService.getAllTimerTags();
+            var actionNames=[];
+            for(var i=0;i<$scope.actions.length;i++){
+                actionNames.push($scope.actions[i].title);
+            }
+            $scope.actionNames = actionNames
+
+            
+
+            $scope.ops = OperationService.getOperations();
+
+            $scope.tags=_.map($scope.tags.filter(function(item){
+                return item.bindMod=='default';
+
+            }),'name');
+
+            $scope.timerTags = _.map($scope.timerTags,function(timerTags){
+                return timerTags.name;
+            });
+
+        
+
+            $scope.currentChosenIdx = $scope.action.commands.length-1;
+            if ($scope.currentChosenIdx>0){
+                $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
+            }else{
+                $scope.chosenCmd = _.cloneDeep(blankCmd);
+            }
+
+            $scope.showCustomTags = true;
+
+            $scope.validateArr = $scope.action.commands.map(function(cmd){
+                return {
+                    pass:true,
+                    tooltip:''
+                }
+            });
+        }
+
+        init()
+        
+
+        var blankCmd = [{name:'',symbol:''}, {tag:'', value:''}, {tag:'', value:''}];
+
+
+        $scope.changeTagShowState = function(){
+            var operation = $scope.chosenCmd[0].symbol;
+            if(operation.indexOf('setTimer')!==-1){
+                $scope.showCustomTags = false;
+            }else{
+                $scope.showCustomTags = true;
+            }
+        };
+
+        //检查输入值是否为整数
+        $scope.checkValueIsInt = function () {
+            var value = $scope.chosenCmd[2].value;
+            if(!!value&&!_.isInteger(value)){
+                toastr.warning('值只能为整数');
+                $scope.chosenCmd[2].value = parseInt(value);
+            }
+        };
+
+        //选择指令
+        $scope.chooseCmd = function (index) {
+            var operation = $scope.action.commands[index][0].symbol||'';
+            if(operation.indexOf('setTimer')!==-1){
+                $scope.showCustomTags = false;
+            }else{
+                $scope.showCustomTags = true;
+            }
+            $scope.currentChosenIdx = index;
+            $scope.chosenCmd = $scope.action.commands[index];
+
+            //selectedTag
+            $scope.selectedTagObjArray[0].tagName=$scope.chosenCmd[1].tag;
+        };
+
+        //增加新指令
+        $scope.addNewCmd = function () {
+            if($scope.action.trigger==''){
+                toastr.error('未选择触发方式！');
+                return;
+            }
+
+            $scope.action.commands.splice($scope.currentChosenIdx + 1, 0, _.cloneDeep(blankCmd));
+            $scope.currentChosenIdx += 1;
+            $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
+
+            //selectedTag
+            $scope.selectedTagObjArray[0].tagName=$scope.chosenCmd[1].tag;
+
+            $scope.validateArr.push({
+                pass:true,
+                tooltip:''
+            });
+
+            $scope.$broadcast('ResetTagChoose');
+        };
+
+        //删除指令
+        $scope.deleteCmd = function (index) {
+            $scope.action.commands.splice(index,1);
+            $scope.currentChosenIdx -= 1;
+        };
+
+        //快捷添加定时器
+        $scope.shortcutTimer = $scope.timerTags==''?'':$scope.timerTags[0];
+          $scope.shortcutAddTimer = function (){
+            if($scope.action.trigger==''){
+                toastr.error('未选择触发方式！');
+                return;
+            }
+            if($scope.shortcutTimer==''){
+                toastr.error('未添加定时器！');
+                return;
+            }
+            var defaultTimers=[
+                {name: "SET_TIMER_START", symbol: "setTimerStart", value:"0"},
+                {name: "SET_TIMER_STOP", symbol: "setTimerStop", value:""},
+                {name: "SET_TIMER_STEP", symbol: "setTimerStep", value:"1"},
+                {name: "SET_TIMER_INTERVAL", symbol: "setTimerInterval", value:""},
+                {name: "SET_TIMER_CURVAL", symbol: "setTimerCurVal", value:"0"},
+                {name: "SET_TIMER_MODE", symbol: "setTimerMode", value:""}
+            ];
+            _.forEach(defaultTimers,function(timer){
+                var customTimer = [{name:timer.name,symbol:timer.symbol}, {tag:$scope.shortcutTimer, value:''}, {tag:'', value:timer.value}];
+                $scope.action.commands.push(customTimer);
+                $scope.validateArr.push({
+                    pass:true,
+                    tooltip:''
+                });
+            });
+            $scope.currentChosenIdx += 6;
+            $scope.chosenCmd = $scope.action.commands[$scope.currentChosenIdx];
+        }
+        ;
+
+        //保存
+        $scope.save = function (th) {
+
+            if(!validateCmds($scope.action.commands,tags)){
+                toastr.error('指令有误，请根据提示检查');
+                return;
+            }
+
+            //判断指令数量，若无指令则取消触发方式
+            if($scope.action.commands.length == 0){
+                $scope.action.trigger = '';
+            }
+
+            $scope.ui.show = false
+
+            //判断是否和初始一样
+            if(th.action.newAction===false){
+                if (th.action.title===restoreValue){
+                    $rootScope.$broadcast('saveAction',$scope.action)
+                    return;
+                }
+            }
+            if(validation&&duplicate(th)){
+                $rootScope.$broadcast('saveAction',$scope.action)
+            }
+
+        };
+
+        //取消
+        $scope.cancel = function () {
+            $scope.ui.show = false
+            $rootScope.$broadcast('saveAction',null)
         };
 
         var restoreValue=$scope.action.title;
