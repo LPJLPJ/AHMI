@@ -899,11 +899,16 @@ body {
 
 /* animationEditor */
 
+.animationEditor__animationWrapper{
+
+}
+
 .animationEditor__body {
     /* display: table; */
     clear: both;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
+    margin-bottom: 1em;
 }
 
 .animationEditor__row {
@@ -914,7 +919,7 @@ body {
     height: 50px;
     background-color: dodgerblue; */
     /* height: 30px; */
-    min-width: 1200px;
+    /* min-width: 1200px; */
 }
 
 .animationEditor__col {
@@ -1030,7 +1035,7 @@ body {
     /* height:22px; */
     padding: 0;
     padding-left: 50px;
-    min-width: 660px;
+    /* min-width: 660px; */
 }
 
 /* .animationEditor__timeLineMarker{
@@ -1081,7 +1086,7 @@ body {
 
 .animationEditor__tickUnit {
     display: inline-block;
-    width: 100px;
+    /* width: 100px; */
     position: relative;
     height: 20px;
     vertical-align: bottom;

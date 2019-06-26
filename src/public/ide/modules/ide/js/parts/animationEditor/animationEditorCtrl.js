@@ -17,6 +17,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
 
     $scope.component = {
         ui:{
+            step:50,
             paddingLeft:50,
             selectedAnimationIdx:0,
             changeAnimationIdx:changeAnimationIdx,
@@ -81,6 +82,32 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         easingCtx = easingCanvas.getContext('2d')
 
         $scope.EasingFunctions = EasingFunctions
+
+        calculateStep()
+
+        var delayID
+        window.onresize = function(){
+            if(delayID){
+                clearTimeout(delayID)
+            }
+            delayID = setTimeout(function(){
+                calculateStep()
+            },100)
+        }
+    }
+
+    function calculateStep(){
+        var wrapper = document.querySelectorAll(".animationEditor__wrapper")[0]
+        if(wrapper){
+            var curTimeLineWidth = wrapper.clientWidth * 0.75 * 0.75
+            var nextStep = parseInt((curTimeLineWidth-50)/7)||50
+            // if(nextStep>100){}
+            $scope.$apply(function(){
+                $scope.component.ui.step = nextStep
+            })
+            
+        }
+       
     }
 
     $scope.$on('AttributeChanged',function () {
@@ -133,8 +160,12 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
         selectedObj = ProjectService.getCurrentSelectObject();
         if(selectedObj.type == Type.MyLayer && selectedObj.level.animations && selectedObj.level.animations.length){
             //show
+            
             $scope.component.ui.show = true
-
+            $timeout(function(){
+                calculateStep()
+            },0)
+            
             if(lastSelectedObj && selectedObj != lastSelectedObj){
                 pauseAnimation()
                 //turn off layer animation
@@ -268,7 +299,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
             e.currentTarget.onmousemove = function(e){
                 
     //             target.style.left = (e.clientX - d) + 'px'
-                var nextTime = parseFloat(((e.clientX - $scope.component.ui.paddingLeft -d)/100.0).toFixed(3))
+                var nextTime = parseFloat(((e.clientX - $scope.component.ui.paddingLeft -d)/$scope.component.ui.step).toFixed(3))
                 nextTime = nextTime < 0 ? 0 : nextTime
                 nextTime = nextTime > 5 ? 5 : nextTime
                 
@@ -295,14 +326,14 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
     function timeLineOnMouseDown(e){
         // console.log(e)
         var clientRect = e.currentTarget.getBoundingClientRect()
-        var d = parseFloat(((e.clientX - $scope.component.ui.paddingLeft - clientRect.left)/100.0).toFixed(3))
+        var d = parseFloat(((e.clientX - $scope.component.ui.paddingLeft - clientRect.left)/$scope.component.ui.step).toFixed(3))
         d = d<0?0:d
         $scope.component.timeLine.position = d
         //update animation
         // console.log(getCurrentAnimation())
         updateAnimationOnLayer()
         e.currentTarget.onmousemove = function(e){
-            d = parseFloat(((e.clientX - $scope.component.ui.paddingLeft - parseInt(clientRect.left))/100.0).toFixed(3))
+            d = parseFloat(((e.clientX - $scope.component.ui.paddingLeft - parseInt(clientRect.left))/$scope.component.ui.step).toFixed(3))
             d = d < 0 ? 0 : d
             $scope.component.timeLine.position = d
             updateAnimationOnLayer()

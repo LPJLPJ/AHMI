@@ -860,68 +860,73 @@
                         <button class="animationEditor__save animationEditor__save-right" ng-click="component.ui.save()" ng-class="{'animationEditor__save-saving':component.ui.savingStatus=='saving','animationEditor__save-saved':component.ui.savingStatus=='saved' }" ng-disabled="component.ui.savingStatus=='saving'" >保存</button>
                 </div>
                 <div class="animationEditor__body">
-                    <div class="row animationEditor__row">
-                        <div class="animationEditor__buttons col-md-3 animationEditor__col">
-                            <button class="animationEditor__button " ng-click="component.animationOptions.start()">
-                                >>
-                            </button>
-                            <button class="animationEditor__button " ng-click="component.animationOptions.pause()">
-                                ||
-                            </button>
-                            <div class="animationEditor__button">
-                                {{component.animation.keyFrames[component.animationOptions.curKeyFrameIdx].time}}
+                    <div class="col-lg-9">
+                        <div class="row animationEditor__row">
+                            <div class="animationEditor__buttons col-md-3 animationEditor__col">
+                                <button class="animationEditor__button " ng-click="component.animationOptions.start()">
+                                    >>
+                                </button>
+                                <button class="animationEditor__button " ng-click="component.animationOptions.pause()">
+                                    ||
+                                </button>
+                                <div class="animationEditor__button">
+                                    {{component.animation.keyFrames[component.animationOptions.curKeyFrameIdx].time}}
+                                </div>
+                            </div>
+                            <div class="animationEditor__timeLine col-md-9 animationEditor__col" 
+                                ng-mousedown="component.timeLine.onMouseDown($event)"
+                                ng-mousemove="component.timeLine.onMouseMove($event)"
+                                ng-mouseup="component.timeLine.onMouseUp($event)"
+                                
+                                >
+                                <div class="animationEditor__handler" ng-style="{left:component.timeLine.position*component.ui.step-1+50}">{{component.timeLine.position}}</div>
+                                <div class="animationEditor__ruler">
+                                        <div class="animationEditor__tickUnit" ng-style="{width:component.ui.step}" ng-repeat="tick in ['00:00','01:00','02:00','03:00','04:00','05:00']">
+                                            <div class="animationEditor__tick"></div>
+                                            <div class="animationEditor__unit">{{tick}}</div>
+                                        </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="animationEditor__timeLine col-md-7 animationEditor__col" 
-                            ng-mousedown="component.timeLine.onMouseDown($event)"
-                            ng-mousemove="component.timeLine.onMouseMove($event)"
-                            ng-mouseup="component.timeLine.onMouseUp($event)"
-                            
-                            >
-                            <div class="animationEditor__handler" ng-style="{left:component.timeLine.position*100.0-1+50}">{{component.timeLine.position}}</div>
-                            <div class="animationEditor__ruler">
-                                    <div class="animationEditor__tickUnit" ng-repeat="tick in ['00:00','01:00','02:00','03:00','04:00','05:00']">
-                                        <div class="animationEditor__tick"></div>
-                                        <div class="animationEditor__unit">{{tick}}</div>
+                        <div class="animationEditor__animationWrapper">
+                            <div class="row animationEditor__row">
+                                <div class="animationEditor__attribute col-md-3 animationEditor__col">
+                                    <select class="animationEditor__animationName" ng-model="component.ui.selectedAnimationIdx" ng-change="component.ui.changeAnimationIdx()">
+                                        <option ng-repeat="title in component.animations" value={{$index}}>{{title}}</option>
+                                    </select>
+                                </div>
+                                <div class="animationEditor__hold col-md-9 animationEditor__col"></div>
+                            </div>
+                            <div class="row animationEditor__row" ng-repeat="attribute in component.animationOptions.attributes" >
+                                <div class="animationEditor__attribute col-md-3 animationEditor__col">
+                                    <div class="animationEditor__attributeLabel">
+                                        {{attribute}}
                                     </div>
+                                    <input class="animationEditor__attributeValue" type="number" ng-model="component.animation.keyFrames[component.animationOptions.curKeyFrameIdx][attribute]" />
+                                </div>
+                                <div class="animationEditor__timeLineMarker col-md-9 animationEditor__col"
+                                        ng-mousedown="component.marker.onMouseDown($event)"
+                                        ng-mousemove="component.marker.onMouseMove($event)"
+                                        ng-mouseup="component.marker.onMouseUp($event)">
+                                    <!-- <div class="animationEditor__marker"  style="left:50px"></div>
+                                    <div class="animationEditor__marker" style="left:150px"></div> -->
+                                    <!-- <div class="animationEditor__marker" style="left:150px" ></div> -->
+                                    <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animationOptions.curKeyFrameIdx),'animationEditor__marker-disabled':keyFrame.fixed}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*component.ui.step-4 +50}"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="animationEditor__animationWrapper">
-                        <div class="row animationEditor__row">
-                            <div class="animationEditor__attribute col-md-3 animationEditor__col">
-                                <select class="animationEditor__animationName" ng-model="component.ui.selectedAnimationIdx" ng-change="component.ui.changeAnimationIdx()">
-                                   <option ng-repeat="title in component.animations" value={{$index}}>{{title}}</option>
-                                </select>
-                            </div>
-                            <div class="animationEditor__hold col-md-7 animationEditor__col"></div>
-                        </div>
-                        <div class="row animationEditor__row" ng-repeat="attribute in component.animationOptions.attributes" >
-                            <div class="animationEditor__attribute col-md-3 animationEditor__col">
-                                <div class="animationEditor__attributeLabel">
-                                    {{attribute}}
-                                </div>
-                                <input class="animationEditor__attributeValue" type="number" ng-model="component.animation.keyFrames[component.animationOptions.curKeyFrameIdx][attribute]" />
-                            </div>
-                            <div class="animationEditor__timeLineMarker col-md-7 animationEditor__col"
-                                    ng-mousedown="component.marker.onMouseDown($event)"
-                                    ng-mousemove="component.marker.onMouseMove($event)"
-                                    ng-mouseup="component.marker.onMouseUp($event)">
-                                <!-- <div class="animationEditor__marker"  style="left:50px"></div>
-                                <div class="animationEditor__marker" style="left:150px"></div> -->
-                                <!-- <div class="animationEditor__marker" style="left:150px" ></div> -->
-                                <div class="animationEditor__marker" ng-class="{'animationEditor__marker-highlight':(id==component.animationOptions.curKeyFrameIdx),'animationEditor__marker-disabled':keyFrame.fixed}" data-id="{{id}}" ng-repeat="(id,keyFrame) in component.animation.keyFrames" ng-style="{left:keyFrame.time*100-4 +50}"></div>
-                            </div>
-                        </div>
+                    <div class="animationEditor__easingGraph col-lg-3">
+                        <!-- <select class="animationEditor__easingFunc">
+                            <option ng-repeat="easing in EasingFunctions track by $index" value=""></option>
+                        </select> -->
+                        <canvas class="animationEditor__easingCanvas" width="100" height="100"></canvas>
                     </div>
                     
+                    
+                    
                 </div>
-                <div class="animationEditor__easingGraph">
-                    <!-- <select class="animationEditor__easingFunc">
-                        <option ng-repeat="easing in EasingFunctions track by $index" value=""></option>
-                    </select> -->
-                    <canvas class="animationEditor__easingCanvas" width="100" height="100"></canvas>
-                </div>
+                
             </div>
             <div class="actionEditor__wrapper action-setting-wrap" ng-controller="ActionPanelCtrl" ng-show="ui.show">
                 <div class="modal-body" >
