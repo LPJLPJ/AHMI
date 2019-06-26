@@ -894,6 +894,7 @@ body {
     font-size: 14px;
     position: absolute;
     bottom: 0;
+    border:1px solid #e5e5e5;
 }
 
 /* animationEditor */
@@ -1112,7 +1113,7 @@ body {
 .form-group-inline{
     display: inline-block;
     margin-top:0;
-    margin-bottom: 0;
+    margin-bottom: 2px;
 }
 
 
@@ -1746,12 +1747,16 @@ body {
 
 .action-item__list {
     margin-top: 10px;
-    max-height: 300px;
+    /* max-height: 300px; */
     overflow-y: auto;
 }
 
 .action-item__list-table > thead > tr > td, .action-item__list-table > tbody > tr > td, .action-item__list-table {
     border: 1px solid #a9a9a9;
+}
+
+.action-item__list-table > thead > tr > td,.action-item__list-table > tbody > tr > td{
+    padding:2px;
 }
 
 .op-selected {
