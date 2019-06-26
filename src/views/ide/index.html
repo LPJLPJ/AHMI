@@ -973,7 +973,7 @@
                                 <div class="form-group input-group">
                                     <select class="form-control tagSelect__select" ng-model="shortcutTimer">
                                         <option ng-repeat="timer in timerTags"
-                                                value="{{timer}}">{{timer}}</option>
+                                                value="{{timer.name}}">{{timer.name}}</option>
                                     </select>
                                 <span class="input-group-btn tagSelect__title">
                                     <button class="btn btn-default" ng-click="shortcutAddTimer()">添加</button>

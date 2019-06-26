@@ -677,9 +677,9 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
 
             }),'name');
 
-            $scope.timerTags = _.map($scope.timerTags,function(timerTags){
-                return timerTags.name;
-            });
+            // $scope.timerTags = _.map($scope.timerTags,function(timerTags){
+            //     return timerTags.name;
+            // });
 
         
 
