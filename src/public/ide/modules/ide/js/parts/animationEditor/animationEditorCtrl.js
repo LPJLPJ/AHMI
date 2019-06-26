@@ -71,6 +71,7 @@ ide.controller('AnimationEditorCtrl', ['$scope','$timeout', 'ProjectService','Ty
             onMouseOut:timeLineOnMouseOut
         }
     }
+    $scope.timingFuns = ['linear',  'easeInCubic', 'easeOutCubic', 'easeInOutCubic'];
     
     var easingCanvas, easingCtx
 

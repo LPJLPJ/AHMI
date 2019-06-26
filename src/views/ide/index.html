@@ -920,6 +920,10 @@
                         <!-- <select class="animationEditor__easingFunc">
                             <option ng-repeat="easing in EasingFunctions track by $index" value=""></option>
                         </select> -->
+                        <select class="form-control"
+                            ng-model="component.animation.keyFrames[component.animationOptions.curKeyFrameIdx].timingFun"
+                            ng-options="timingFun for timingFun in timingFuns">
+                        </select>
                         <canvas class="animationEditor__easingCanvas" width="100" height="100"></canvas>
                     </div>
                     

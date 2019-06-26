@@ -1110,6 +1110,10 @@ body {
     height:20px; */
 }
 
+.animationEditor__easingCanvas{
+    margin-top: 1em;
+}
+
 
 /* .actionEditor__wrapper{
 
