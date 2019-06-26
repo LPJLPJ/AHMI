@@ -639,7 +639,7 @@ body {
     display: none;
 }
 
-.content-wrap.my-left-hide .thumb-wrap {
+.content-wrap.my-left-hide .leftContainer {
     width: 0;
 }
 
@@ -723,7 +723,7 @@ body {
     display: none;
 }
 
-.thumb-wrap:hover .thumb-view, .content-wrap.my-left-hide .thumb-view, .content-wrap.my-left-hide .thumb-view > .open {
+.leftContainer:hover .thumb-view, .content-wrap.my-left-hide .thumb-view, .content-wrap.my-left-hide .thumb-view > .open {
     display: block !important;
 }
 

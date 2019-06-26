@@ -689,6 +689,10 @@
 
     <div class="leftContainer" ng-controller="LeftContainerCtrl" data-step="2" ng-class="{'top-menu-content-show':component.out.toolShow}">
         <!-- upper component -->
+        <div class="thumb-view view-wrap" ng-click="component.showLeft()">
+            <img class="pack" src="../../public/ide/modules/ide/images/left.png"/>
+            <img class="open" src="../../public/ide/modules/ide/images/right.png"/>
+        </div>
         <div class="leftUpperContainer">
             <!-- tabs -->
             <ul class="leftUpperContainer__nav">
@@ -703,10 +707,7 @@
                     <i class="iconfont function-prompts function-prompts__thumb" title="功能介绍" ng-click="openHelp($event,'thumb','thumb')">&#xe63e;</i>
                 </div>
                 <div ui-tree="component.uitree" class="thumb-content" data-drag-delay="200">
-                    <div class="thumb-view view-wrap" ng-click="component.showLeft()">
-                        <img class="pack" src="../../public/ide/modules/ide/images/left.png"/>
-                        <img class="open" src="../../public/ide/modules/ide/images/right.png"/>
-                    </div>
+                    
                     <ol ui-tree-nodes="" ng-model="project.pages" class="thumb-content-list">
                         <li class="thumb-content-list__item"
                             ng-repeat="page in project.pages"

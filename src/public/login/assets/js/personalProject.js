@@ -836,7 +836,7 @@ $(function(){
         '<option value="defaultTemplate">默认模板</option>' +
         collectedTemplateOption;
         $('#basicinfo-template').html(basicOptions)
-        $('#basicinfo-template').attr('disabled',false).val('');
+        $('#basicinfo-template').attr('disabled',false).val('defaultTemplate');
         $('.basicinfo-template-options').hide();
         $('#basicinfo-supportTouch').attr('disabled',false);
         $('#basicinfo-encoding').val('ascii');
@@ -890,7 +890,7 @@ $(function(){
             //create
             project.name = title.val().trim();
             project.author = author.val().trim();
-            project.template = template.val().trim();
+            project.template = template.val().trim()||'defaultTemplate';
             if(project.template == 'collectedTemplate'){project.template=''}
             project.ideVersion = ideVersion.val()&&ideVersion.val().trim()||'';
             project.supportTouch = supportTouch.val().trim();
