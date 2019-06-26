@@ -953,6 +953,10 @@
                         </select>
                     </div>
 
+                    <button class="modal-btn actionEditor__cancelBtn-right" type="button" ng-click="cancel()">取消</button>
+                    <button class="modal-btn btn-confirm actionEditor__saveBtn-right" type="button" ng-click="save(this)">保存</button>
+                    
+
                     <table class="table action-operate-table">
                         <tbody>
                         <tr>
@@ -1051,10 +1055,7 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button class="modal-btn btn-confirm" type="button" ng-click="save(this)">保存</button>
-                    <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
-                </div>
+
             </div>
         </div>
     </div>

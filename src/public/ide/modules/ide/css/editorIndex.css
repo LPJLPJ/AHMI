@@ -1114,6 +1114,13 @@ body {
     margin-top: 1em;
 }
 
+.actionEditor__saveBtn-right{
+    float: right;
+}
+
+.actionEditor__cancelBtn-right{
+    float: right;
+}
 
 /* .actionEditor__wrapper{
 
