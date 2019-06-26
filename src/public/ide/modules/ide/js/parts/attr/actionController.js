@@ -66,6 +66,9 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
 
 
         $scope.$on('saveAction',function(e,newAction){
+            if(!newAction){
+                return
+            }
             if ($scope.selectedIdx == -1){
                 //new action
                 ActionService.appendAction(newAction, function () {
@@ -610,7 +613,7 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
     .controller('ActionPanelCtrl',['$rootScope','$scope','ProjectService','OperationService', 'ActionService','TagService',function ($rootScope,$scope,ProjectService,OperationService,ActionService,TagService) {
         // action,triggers,tags,timerTags,actionNames
         $scope.$on('updateActionPanel',function(e,index){
-            
+            $scope.actions = ActionService.getAllActions();
             var targetAction
             if (index == -1){
                 //newAction
@@ -628,18 +631,23 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
             $scope.ui.show = true
             updateScope()
         })
-
+        var tags
+        var restoreValue
+        var validation
         function init(){
             $scope.ui = {
                 show:false
             }
+            $scope.actions = ActionService.getAllActions();
             $scope.action = ActionService.getNewAction();
             updateScope()
         }
 
         function updateScope(){
+            restoreValue=$scope.action.title;
+
+            validation=true;
             
-            $scope.actions = ActionService.getAllActions();
             var selectedObj = ProjectService.getCurrentSelectObject()
             if(selectedObj && selectedObj.level){
                 $scope.triggers = ActionService.getTriggers(selectedObj.level.type);
@@ -648,6 +656,7 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
             }
             
             $scope.tags = TagService.getAllCustomTags();
+            tags = $scope.tags
             $scope.timerTags = TagService.getAllTimerTags();
             var actionNames=[];
             for(var i=0;i<$scope.actions.length;i++){
@@ -820,9 +829,7 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
             $rootScope.$broadcast('saveAction',null)
         };
 
-        var restoreValue=$scope.action.title;
-
-        var validation=true;
+        
 
         //保存旧值
         $scope.store=function(th){

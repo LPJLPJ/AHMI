@@ -924,11 +924,8 @@
                 </div>
             </div>
             <div class="actionEditor__wrapper action-setting-wrap" ng-controller="ActionPanelCtrl" ng-show="ui.show">
-                <div class="modal-header">
-                    <h4 class="modal-title" >动作</h4>
-                </div>
                 <div class="modal-body" >
-                    <div class="form-group">
+                    <div class="form-group form-group-inline">
                         <span for="actionName" class="attr-item__cell-title-inline">动作名称</span>
                         <input class="form-control attr-item__cell-input-inline"
                                id="actionName"
@@ -939,7 +936,7 @@
                                ng-keypress="enterPress($event,this)">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group form-group-inline">
                         <span class="attr-item__cell-title-inline">触发条件</span>
                         <select class="form-control attr-item__cell-input-inline" ng-model="action.trigger"
                                 ng-options="trigger.value as trigger.name for trigger in triggers">
@@ -974,7 +971,7 @@
                                     <p class="attr-item__cell-title">操作数1</p>
                                     <div class="action-operate__cell">
                                         <div>
-                                            <span  class="my-action-span my-action-span-width">变量</span>
+                                            <!-- <span  class="my-action-span my-action-span-width">变量</span> -->
                                             <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[0]" action-function="actionFunction(0)"></tag-select>
                                         </div>
                                         <!--<div ng-show="!selectedTagObjArray[0].useTag">
@@ -988,19 +985,18 @@
 
                             <td>
                                 <div class="form-group">
-                                    <p class="attr-item__cell-title">操作数2</p>
+                                    <span class="attr-item__cell-title">操作数2</span>
+                                    <span  class="action-operate__title-inline">启用变量</span>
+                                    <input type="checkbox" ng-model='selectedTagObjArray[1].useTag' ng-change="usetagSwitch(1)"
+                                                class="action-operate__check-box">
                                     <div class="action-operate__cell">
-                                        <div>
-                                            <span  class="action-operate__title-inline">启用变量</span>
-                                            <input type="checkbox" ng-model='selectedTagObjArray[1].useTag' ng-change="usetagSwitch(1)"
-                                                   class="action-operate__check-box">
-                                        </div>
+                                        
                                         <div ng-show="selectedTagObjArray[1].useTag">
-                                            <span  class="my-action-span my-action-span-width">变量</span>
+                                            <!-- <span  class="my-action-span my-action-span-width">变量</span> -->
                                             <tag-select  class="my-action-tag-select" bind="selectedTagObjArray[1]" action-function="actionFunction(1)"></tag-select>
                                         </div>
                                         <div  ng-show="!selectedTagObjArray[1].useTag">
-                                            <p  class="attr-item__cell-title">值</p>
+                                            <!-- <p  class="attr-item__cell-title">值</p> -->
                                             <input class="form-control attr-item__cell-input h-30" ng-trim="false" type="text"
                                                    ng-model="chosenCmd[2].value"/>
                                         </div>
@@ -1010,14 +1006,13 @@
                         </tr>
                         </tbody>
                     </table>
-                    <div>
-                        <button type="button" class="btn btn-default attr-default-btn h-30" ng-click="addNewCmd()">添加指令</button>
-                    </div>
                     <div class="action-item__list">
                         <table class="table table-hover action-item__list-table">
                             <thead>
                                 <tr align="center">
-                                    <td class="col-xs-1">#</td>
+                                    <td class="col-xs-1">
+                                        <button type="button" class="btn btn-default attr-default-btn h-30" ng-click="addNewCmd()">添加指令</button>
+                                    </td>
                                     <td class="col-xs-2">操作</td>
                                     <td class="col-xs-2">操作数1</td>
                                     <td class="col-xs-2">操作数2</td>

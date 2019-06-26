@@ -1104,6 +1104,18 @@ body {
     height:20px; */
 }
 
+
+/* .actionEditor__wrapper{
+
+} */
+
+.form-group-inline{
+    display: inline-block;
+    margin-top:0;
+    margin-bottom: 0;
+}
+
+
 .drawEngine-hide {
     position: absolute;
     right: 0;
@@ -1523,10 +1535,10 @@ body {
 }
 
 .action-operate__cell {
-    border: 1px solid #a9a9a9;
-    padding: 10px;
+    /* border: 1px solid #a9a9a9; */
+    padding:0 10px;
     border-radius: 5px;
-    min-height: 144px;
+    /* min-height: 144px; */
 }
 
 /*滤波器*/
@@ -1603,6 +1615,7 @@ body {
 
 .attr-item__cell-input-inline {
     width: 30%;
+    min-width: 100px;
     border: 1px solid #a9a9a9;
 }
 
@@ -1704,6 +1717,11 @@ body {
     width: 100%;
     table-layout: fixed;
     border-bottom: 1px solid #cccccc;
+}
+
+.action-operate-table > tbody > tr > td{
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .action-operate-table > tbody > tr > td:not(:first-of-type) {
