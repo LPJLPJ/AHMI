@@ -748,6 +748,7 @@
                                         <i class="menu-toggle-icon--expend" ng-click="toggleShow(layer.id);$event.stopPropagation();" ng-show="layer.expand"></i>
                                         <i class="menu-toggle-icon--collapse" ng-click="toggleShow(layer.id);$event.stopPropagation();" ng-show="!layer.expand"></i>
                                         <span class="layer-menu-level__title-text">{{layer.name}}</span>
+                                        <i class="menu-lock-icon" ng-show="layer.info.locked"></i>
                                     </div>
                                 </div>
 

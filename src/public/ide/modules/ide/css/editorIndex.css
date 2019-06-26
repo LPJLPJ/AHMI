@@ -2107,6 +2107,13 @@ body {
     background: url("../images/menu-collapse-active.png");
 }
 
+.menu-lock-icon{
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    background: url("../images/menu-lock.png");
+}
+
 .layer-menu-level {
     height: 30px;
     width: 100%;
