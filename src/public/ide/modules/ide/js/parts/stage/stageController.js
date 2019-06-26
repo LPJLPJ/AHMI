@@ -238,6 +238,10 @@
             $scope.$on('saveAction',function(){
                 $scope.component.actionEditor.show = false
             })
+
+            $scope.$on('closeActionPanel',function(){
+                $scope.component.actionEditor.show = false
+            })
         }
 
 

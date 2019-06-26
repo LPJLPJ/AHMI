@@ -97,6 +97,7 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
             console.warn('空!');
             return;
         }
+        $rootScope.$broadcast('closeActionPanel')
         // console.log(ProjectService.getCurrentSelectObject())
         var curLevel = ProjectService.getCurrentSelectObject().level;
         var _actions = _.cloneDeep(curLevel.actions);
@@ -630,6 +631,9 @@ ide.controller('ActionCtl',['$rootScope','$scope', 'ActionService','TagService',
             
             $scope.ui.show = true
             updateScope()
+        })
+        $scope.$on('closeActionPanel',function(){
+            $scope.ui.show = false
         })
         var tags
         var restoreValue
