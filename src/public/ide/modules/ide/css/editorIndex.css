@@ -714,7 +714,7 @@ body {
 
 .thumb-view {
     top: calc(50% - 40px);
-    right: 0;
+    right: -16px;
     border-radius: 3px 0 0 3px;
     box-shadow: -1px 1px 1px #cccccc;
 }
