@@ -1412,24 +1412,24 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     angleOfPointer=angleOfPointer+rotateAngle;
                     var innerW = this.innerRadius * Math.sin(rotateRad)
                     var innerH = this.innerRadius * Math.cos(rotateRad)
-                    // if(!(this.minCoverAngle==this.maxCoverAngle)){
-                    //     var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
-                    //     var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
-                    //     ctx.save();
-                    //     ctx.beginPath();
-                    //     ctx.moveTo(0,0);
-                    //     ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
-                    //     ctx.closePath();
-                    //     ctx.fillStyle='rgba(244,244,244,0.3)';
-                    //     ctx.fill();
-                    //     ctx.restore();
-                    //     ctx.beginPath();
-                    //     ctx.moveTo(0,0);
-                    //     ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
-                    //     ctx.closePath();
-                    //     //ctx.stroke();
-                    //     ctx.clip();
-                    // }
+                    if(!(this.minCoverAngle==this.maxCoverAngle)){
+                        var newMinCoverAngle=translateAngle(this.minCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                        var newMaxCoverAngle=translateAngle(this.maxCoverAngle,this.scaleX,this.scaleY)+Math.PI/2;
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(0,0);
+                        ctx.arc(0,0,this.width/2,newMinCoverAngle,newMaxCoverAngle,false);
+                        ctx.closePath();
+                        ctx.fillStyle='rgba(244,244,244,0.3)';
+                        ctx.fill();
+                        ctx.restore();
+                        ctx.beginPath();
+                        ctx.moveTo(0,0);
+                        ctx.arc(0,0,this.width/2,newMaxCoverAngle,newMinCoverAngle,false);
+                        ctx.closePath();
+                        //ctx.stroke();
+                        ctx.clip();
+                    }
                     ctx.scale(1/this.scaleX,1/this.scaleY);
                     //var rotateAngle = Math.atan(this.pointerImageElement.width/this.pointerImageElement.height)*180/Math.PI;
                     //ctx.save()

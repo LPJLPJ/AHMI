@@ -725,7 +725,7 @@ body {
 
 .stage__tools {
     width: 100%;
-    background-color: rgba(0, 0, 0, .1);
+    background-color: rgba(0, 0, 0, .2);
     box-sizing: border-box;
     text-align: center;
     font-size: 14px;
@@ -738,8 +738,12 @@ body {
 .animationEditor__body {
     /* display: table; */
     clear: both;
-    overflow-x: scroll;
+    overflow-x: auto;
     overflow-y: hidden;
+}
+
+.animationEditor__body::-webkit-scrollbar{
+    display: none;
 }
 
 .animationEditor__row {
