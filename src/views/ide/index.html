@@ -4368,13 +4368,13 @@
                                 <div>
                                     <select ng-model="selectedTag.tagName" ng-change="action()" ng-focus="component.syncTagClasses()"
                                             class="tagSelect__select form-control"
-                                            ng-options="customTag.name as (customTag.name + ' -- '+customTag.indexOfRegister) for customTag in component.curTagArray"
+                                            
                                             >
-                                        <option value="{{selectedTag.tagName}}" ng-if="selectedTag.tagName" style="color: red">{{(selectedTag.tagName + ' -- ' +selectedTag.indexOfRegister||'----'}}</option>
-                                        <option value="">----</option>
-                                        <!-- <option ng-repeat="customTag in component.curTagArray"
+                                        <!-- <option label='{{selectedTag.tagName + " -- " + selectedTag.indexOfRegister}}' value="{{selectedTag.tagName}}" ng-if="selectedTag.tagName" style="color: red">{{(selectedTag.tagName + ' -- ' +selectedTag.indexOfRegister)||'----'}}</option> -->
+                                        <option label="----" value="">----</option>
+                                        <option label='{{customTag.name + " -- " +customTag.indexOfRegister}}' ng-repeat="customTag in component.curTagArray"
                                                 value="{{customTag.name}}">{{customTag.name + " -- " +customTag.indexOfRegister}}
-                                        </option> -->
+                                        </option>
                                     </select>
                                 </div>
                             </div>
