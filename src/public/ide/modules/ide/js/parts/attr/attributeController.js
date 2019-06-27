@@ -2894,7 +2894,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     return;
                 }
                 var length = $scope.component.object.level.info.numValue.toString().length + $scope.component.object.level.info.decimalCount;
-                if ($scope.component.object.level.info.numOfDigits <= $scope.component.object.level.info.decimalCount || $scope.component.object.level.info.numOfDigits < length) {
+                if ($scope.component.object.level.info.numOfDigits <= $scope.component.object.level.info.decimalCount /*|| $scope.component.object.level.info.numOfDigits < length*/) {
                     restore();
                     toastr.warning('超出范围');
                     return;
