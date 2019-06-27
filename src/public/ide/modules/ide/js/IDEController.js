@@ -1365,8 +1365,8 @@ ide.controller('IDECtrl', ['$scope', '$timeout', '$http', '$interval', 'ProjectS
                         }
                     }
                     var slices = widget.texList[0].slices;
-                    if (slices.length < 26) {
-                        var hexTex = ['x', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'];
+                    if (slices.length < 27) {
+                        var hexTex = ['x', 'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F','——'];
                         for (var i = 0; i < hexTex.length; i++) {
                             var n = i + 13;
                             slices[n] = {};

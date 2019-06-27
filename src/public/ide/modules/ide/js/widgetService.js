@@ -4674,9 +4674,12 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             //初始化数字字符
             this.numObj = [];
             for(var i=0,il=27;i<il;i++){
-                this.numObj[i] = {};
-                this.numObj[i].color = slices[i].color;
-                this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+                if(slices[i]){
+                    this.numObj[i] = {};
+                    this.numObj[i].color = slices[i].color;
+                    this.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+                }
+                
             }
 
             //修改数字纹理
@@ -4684,10 +4687,13 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var slices=arg.level.texList[0].slices;
                 var _callback=arg.callback;
 
-                for(var i=0,il=26;i<il;i++){
-                    self.numObj[i] = {};
-                    self.numObj[i].color = slices[i].color;
-                    self.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+                for(var i=0,il=27;i<il;i++){
+                    if(slices[i]){
+                        self.numObj[i] = {};
+                        self.numObj[i].color = slices[i].color;
+                        self.numObj[i].img = ResourceService.getResourceFromCache(slices[i].imgSrc);
+                    }
+                    
                 }
 
                 var subLayerNode=CanvasService.getSubLayerNode();
