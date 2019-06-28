@@ -1037,14 +1037,14 @@ module.exports = React.createClass({
                     page.transform = math.multiply(math.multiply(afterTranslateMatrix,beforeScaleMatrix),beforeTranslateMatrix)
                     options.pageAnimate = true
                     page.animating = true
-                    if (unloadPage){
-                        unloadPage.transform = [
-                            [1,0,0],
-                            [0,1,0],
-                            [0,0,1]
-                        ]
-                        unloadPage.animating = true
-                    }
+                    // if (unloadPage){
+                    //     unloadPage.transform = [
+                    //         [1,0,0],
+                    //         [0,1,0],
+                    //         [0,0,1]
+                    //     ]
+                    //     unloadPage.animating = true
+                    // }
                     AnimationManager.stepObj(this.matrixToObj(beforeScaleMatrix),this.matrixToObj(afterScaleMatrix),duration,frames,easing,function (deltas) {
 
                         if (!flag){
@@ -6256,9 +6256,9 @@ module.exports = React.createClass({
                 break;
             case 'enter':
                 this.setTagByName(widget.targetTag, Number(widget.curValue));
-                this.draw(null, {
-                    updatedTagName: widget.targetTag
-                });
+                // this.draw(null, {
+                //     updatedTagName: widget.targetTag
+                // });
                 this.setTagByName(project.tag, widget.returnPageId);
                 this.draw(null, {
                     updatedTagName: project.tag
