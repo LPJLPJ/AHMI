@@ -51,7 +51,7 @@ ideServices.service('AnimationService', ['ProjectService', 'Type', function (Pro
     var swipeV = new Transition('SWIPE_V','垂直滑动',1);
     var fadeInFadeOut = new Transition('FADE-IN_FADE-OUT','淡入淡出',1);
     var scale = new Transition('SCALE', '缩放', 1);
-    var transition = [noTransition,moveLR,moveRL,moveBT,moveTB,scale];
+    var transition = [noTransition,moveLR,moveRL,moveBT,moveTB,scale,swipeH];
 
 
     var tempAnimation = new Animation('动画', null, null, null, 1, 1, 0, 0, 1, 1, 0);
