@@ -898,9 +898,9 @@
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">动画效果</p>
                                 <select class="attr-item__cell-input form-control"
-                                        ng-options="transition.name as transition.show for transition in component.transitionMode"
+                                        ng-options="transition.name as transition.show for transition in component.pageTransitionMode"
                                         ng-model="component.transitionName"
-                                        ng-change="component.changeTransitionName()"
+                                        ng-change="component.changeTransitionName('page')"
                                         ng-disabled="animationsDisabled">
                                 </select>
                             </div>
@@ -915,7 +915,7 @@
                                 </select>
                             </div>
                             
-                            <div class="attr-item__cell-wrap lg">
+                            <div class="attr-item__cell-wrap lg" ng-hide="component.transitionName=='NO_TRANSITION'||component.transitionName==null">
                                 <p class="attr-item__cell-title">持续时间(ms)</p>
                                 <input class="attr-item__cell-input form-control"
                                        ng-model="component.object.level.transition.duration"
@@ -992,14 +992,14 @@
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">切换动画</p>
                                 <select class="attr-item__cell-input form-control"
-                                        ng-options="transition.name as transition.show for transition in component.transitionMode"
+                                        ng-options="transition.name as transition.show for transition in component.canvasTransitionMode"
                                         ng-model="component.transitionName"
-                                        ng-change="component.changeTransitionName()"
+                                        ng-change="component.changeTransitionName('canvas')"
                                         ng-disabled="animationsDisabled">
                                 </select>
                             </div>
 
-                            <div class="attr-item__cell-wrap lg" ng-hide="component.transitionName=='NO_TRANSITION'||component.transitionName==null">
+                            <div class="attr-item__cell-wrap lg" ng-hide="component.transitionName=='NO_TRANSITION'||component.transitionName==null||component.transitionName==null||component.transitionName=='SWIPE_H'||component.transitionName=='SWIPE_V'">
                                 <p class="attr-item__cell-title">时间曲线</p>
                                 <select class="attr-item__cell-input form-control"
                                         ng-options="timingFun as timingFun for timingFun in component.timingFuns"
@@ -1009,7 +1009,7 @@
                                 </select>
                             </div>
 
-                            <div class="attr-item__cell-wrap lg">
+                            <div class="attr-item__cell-wrap lg" ng-hide="component.transitionName=='NO_TRANSITION'||component.transitionName==null">
                                 <p class="attr-item__cell-title">持续时间(ms)</p>
                                 <input class="attr-item__cell-input form-control"
                                        ng-blur="component.restore()"

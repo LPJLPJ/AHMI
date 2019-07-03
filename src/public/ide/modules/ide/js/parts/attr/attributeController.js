@@ -28,6 +28,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 type: '',
                 onAttributeChanged: onAttributeChanged,
                 transitionMode: AnimationService.getAllTransititon(),
+                pageTransitionMode:AnimationService.getPageTransition(),
+                canvasTransitionMode:AnimationService.getCanvasTransition(),
                 transitionName: null,
                 timingFun: '',
                 timingFuns: ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'],
@@ -817,11 +819,18 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             })
         }
 
-        function changeTransitionName() {
+        function changeTransitionName(mode) {
+            //mode: page, canvas
             var option = {
                 name: $scope.component.transitionName
             };
-            for (var i = 0; i < $scope.component.transitionMode.length; i++) {
+            var transitionMode
+            if(mode=='canvas'){
+                transitionMode = $scope.component.canvasTransitionMode
+            }else{
+                transitionMode = $scope.component.pageTransitionMode
+            }
+            for (var i = 0; i < transitionMode.length; i++) {
                 if ($scope.component.transitionMode[i].name == $scope.component.transitionName) {
                     option.show = $scope.component.transitionMode[i].show;
                     break;

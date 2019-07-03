@@ -6636,7 +6636,7 @@ module.exports = React.createClass({
                 if(processed){
                     break
                 }
-                console.log('widget')
+                // console.log('widget')
 
             }else if(targets[i].type == 'MyLayer'){
                 //process canvas
@@ -6646,7 +6646,7 @@ module.exports = React.createClass({
                 }
             }else if(targets[i].type == 'MyPage'){
                 //process page
-                console.log('page')
+                // console.log('page')
             }
         }
     },
@@ -7237,7 +7237,7 @@ module.exports = React.createClass({
             startY = 0
         }
         var frames = this.fps
-        var duration = this.defaultDuration
+        var duration = canvas.transition.duration||this.defaultDuration
         var easing = 'linear'
 
         window.swipingSC = subCanvas
