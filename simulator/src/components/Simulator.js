@@ -215,6 +215,8 @@ module.exports = React.createClass({
         //if resource.complete == false  content set to be blank
         this.fps = 30
         this.defaultDuration = 1000
+        this.defaultStifness = 183
+        this.defaultDamping = 26
 
         imageList = window.cachedResourceList;
         this.state.imageList = imageList;
@@ -2130,8 +2132,10 @@ module.exports = React.createClass({
 
                         subCanvas.animating = true
 
+                        var springLen = canvas.w
+
                         var self = this
-                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{x:-100},{x:0},duration,(startX+100)/100)
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,this.defaultDamping,this.defaultStifness,{x:-springLen},{x:0},duration,(startX+springLen)/springLen)
                         swipeAnime.onFrameCB = function () {
 
 
@@ -2175,9 +2179,9 @@ module.exports = React.createClass({
                         var startY = subCanvas.translate && subCanvas.translate.y || 0
 
                         subCanvas.animating = true
-
+                        var springLen = canvas.w
                         var self = this
-                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{y:-100},{y:0},duration,(startY+100)/100)
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,this.defaultDamping,this.defaultStifness,{y:-springLen},{y:0},duration,(startY+springLen)/springLen)
                         swipeAnime.onFrameCB = function () {
 
 
@@ -6850,7 +6854,7 @@ module.exports = React.createClass({
     },
     startBounceAnimation:function (elem,animation,offset,initialVelocity,zeroPos,onePos,duration,startPos) {
         var self = this
-        elem[animation] = new AnimationAPI.SpringAnimation(null,'x',initialVelocity,26,170,{x:zeroPos},{x:onePos},duration,startPos)
+        elem[animation] = new AnimationAPI.SpringAnimation(null,'x',initialVelocity,this.defaultDamping,this.defaultStifness,{x:zeroPos},{x:onePos},duration,startPos)
         elem[animation].onFrameCB = function () {
             elem[offset] = this.state.curValue.x
             // elem.shouldShowScrollBar = true
@@ -7121,9 +7125,16 @@ module.exports = React.createClass({
                             var targetTag = this.findTagByName(canvas.tag);
 
                             var anchor = false
-                            if(elem.translate.x > 0.5*canvas.w){
+                            if(leftTranslateX>0){
+                                anchor = false
+                            }else if(rightTranslateX<0){
                                 anchor = true
+                            }else{
+                                if(elem.translate.x > 0.5*canvas.w){
+                                    anchor = true
+                                }
                             }
+                            
 
                             if (targetTag) {
                                 if (targetTag.value == pos){
@@ -7170,9 +7181,21 @@ module.exports = React.createClass({
                             }
                             var pos = this.findClosetSubCanvas(canvas,'y')
                             var targetTag = this.findTagByName(canvas.tag);
+
+                            var anchor = false
+                            if(leftTranslateY>0){
+                                anchor = false
+                            }else if(rightTranslateY<0){
+                                anchor = true
+                            }else{
+                                if(elem.translate.x > 0.5*canvas.w){
+                                    anchor = true
+                                }
+                            }
+
                             if (targetTag) {
                                 if (targetTag.value == pos){
-                                    this.startSwipeAnimation(canvas,subCanvas,true)
+                                    this.startSwipeAnimation(canvas,subCanvas,true,anchor)
                                 }else{
                                     this.setTagByTag(targetTag, pos)
                                     this.draw(null,{updatedTagName:canvas.tag})
@@ -7180,7 +7203,7 @@ module.exports = React.createClass({
 
 
                             }else{
-                                this.startSwipeAnimation(canvas,subCanvas,true)
+                                this.startSwipeAnimation(canvas,subCanvas,true,anchor)
                             }
 
 
@@ -7224,19 +7247,21 @@ module.exports = React.createClass({
         
 
         var springLen
+        var initialVelocity
 
         var swipeAnime
         var self = this
         if (!vertical){
             springLen = canvas.w
+            initialVelocity = (subCanvas.stepX*1000/self.fps||0)/springLen
             if(anchor){
                 //right
-                swipeAnime = new AnimationAPI.SpringAnimation(null,'x',subCanvas.stepX*1000/self.fps||0,26,170,{x:-springLen},{x:0},duration,(canvas.w-startX+springLen)/springLen)
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'x',-initialVelocity,this.defaultDamping,this.defaultStifness,{x:springLen},{x:0},duration,(springLen-startX+springLen)/springLen)
                 swipeAnime.onFrameCB = function () {
                     subCanvas.animating = true
     
                     subCanvas.translate = {
-                        x:canvas.w-this.state.curValue.x,
+                        x:this.state.curValue.x,
                         y:0
                     }
                     // console.log(this.state.curValue.x)
@@ -7245,7 +7270,7 @@ module.exports = React.createClass({
                 }
             }else{
                 //left
-                swipeAnime = new AnimationAPI.SpringAnimation(null,'x',subCanvas.stepX*1000/self.fps||0,26,170,{x:-springLen},{x:0},duration,(startX+springLen)/springLen)
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'x',initialVelocity,this.defaultDamping,this.defaultStifness,{x:-springLen},{x:0},duration,(startX+springLen)/springLen)
                 swipeAnime.onFrameCB = function () {
                     subCanvas.animating = true
     
@@ -7262,17 +7287,35 @@ module.exports = React.createClass({
             
         }else {
             springLen = canvas.h
-            swipeAnime = new AnimationAPI.SpringAnimation(null,'y',subCanvas.stepY*1000/self.fps||0,26,170,{y:-springLen},{y:0},duration,(startY)/springLen)
-            swipeAnime.onFrameCB = function () {
-                subCanvas.animating = true
-
-                subCanvas.translate = {
-                    x:0,
-                    y:this.state.curValue.y
+            initialVelocity = (subCanvas.stepY*1000/self.fps||0)/springLen
+            if(anchor){
+                //right
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'y',-initialVelocity,this.defaultDamping,this.defaultStifness,{y:springLen},{y:0},duration,(springLen-startY+springLen)/springLen)
+                swipeAnime.onFrameCB = function () {
+                    subCanvas.animating = true
+    
+                    subCanvas.translate = {
+                        x:0,
+                        y:this.state.curValue.y
+                    }
+                    // console.log(this.state.curValue.x)
+    
+                    self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
                 }
-                // console.log(this.state.curValue.x)
-
-                self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
+            }else{
+                //left
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'y',initialVelocity,this.defaultDamping,this.defaultStifness,{y:-springLen},{y:0},duration,(startY+springLen)/springLen)
+                swipeAnime.onFrameCB = function () {
+                    subCanvas.animating = true
+    
+                    subCanvas.translate = {
+                        x:0,
+                        y:this.state.curValue.y
+                    }
+                    // console.log(this.state.curValue.x)
+    
+                    self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
+                }
             }
         }
 
