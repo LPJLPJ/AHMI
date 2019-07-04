@@ -117,6 +117,9 @@ ide.controller('ImageSelectorInstanceCtl', ['$scope','$uibModal','$timeout', '$u
         case Type.MyGrid:
             initConfigure(false,false,1,widgetInfo.tex,true,false,false,false);
             break;
+        case Type.MySelector:
+            initConfigure(false,true,1,widgetInfo.tex,true,false,false,false);
+            break;
         default:
             initConfigure(true,false,1,widgetInfo.tex,false,false,false,false);
             break;

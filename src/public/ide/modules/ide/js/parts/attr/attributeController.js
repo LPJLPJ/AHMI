@@ -366,6 +366,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterGridCellSize:enterGridCellSize,
                     enterGridCellBorder:enterGridCellBorder,
                 },
+                //选择器
+                selector:{
+                    enterSelectorCount:enterSelectorCount,
+                    enterSelectorShowCount:enterSelectorShowCount,
+                    enterSelectorCurValue:enterSelectorCurValue
+                },
                 group: {
                     align: [
                         {id: 'top', name: '上对齐'},
@@ -3632,6 +3638,78 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         return;
                     }
                 }
+
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+        }
+
+        function enterSelectorCount(e){
+            if (e.keyCode == 13) {
+                var key = 'count'
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
+                if($scope.component.object.level.info[key]<1){
+                    toastr.warning('至少为1')
+                    restore()
+                    return
+                }
+                if($scope.component.object.level.info[key]>999999999){
+                    toastr.warning('超出范围')
+                    restore()
+                    return
+                }
+
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    ProjectService.ChangeTexSlicesCount({texIdx:0,count:option.count},function(){
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    })
+                    
+                })
+            }
+        }
+
+        function enterSelectorShowCount(e){
+            if (e.keyCode == 13) {
+                var key = 'showCount'
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
+                if($scope.component.object.level.info[key]<1||$scope.component.object.level.info[key]>9){
+                    toastr.warning('范围为1 ~ 9')
+                    restore()
+                    return
+                }
+
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+        }
+
+        function enterSelectorCurValue(e){
+            if (e.keyCode == 13) {
+                var key = 'curValue'
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
 
                 var option = {
                     [key]: $scope.component.object.level.info[key]

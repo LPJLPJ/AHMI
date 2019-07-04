@@ -40,7 +40,7 @@ ideServices.
         this.MyClock = 'MyClock';
         this.MyChart = 'MyChart';
         this.MyGrid = 'MyGrid';
-
+        this.MySelector = 'MySelector';
 
     this.getFabWidgetByName= function (_typeStr) {
         switch (_typeStr){
@@ -80,7 +80,8 @@ ideServices.
             this.MyButtonSwitch,
             this.MyClock,
             this.MyChart,
-            this.MyGrid
+            this.MyGrid,
+            this.MySelector
         ];
         for(var i=0;i<widgets.length;i++){
             if(widgets[i]==_typeStr){

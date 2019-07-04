@@ -4176,7 +4176,86 @@
                             </div>
 
                         </div>
+                        <!-- selector -->
+                        <div ng-show="component.object.type=='MySelector'&&!myMask">
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">名称</p>
+                                <input class="attr-item__cell-input form-control"
+                                        type="text"
+                                        ng-model="component.object.level.name"
+                                        ng-blur="component.restore()"
+                                        ng-keypress="component.enterName($event)">
+                            </div>
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                        ng-model="component.object.level.info.left"
+                                        ng-blur="component.restore()"
+                                        ng-keypress="component.enterX($event)"
+                                        type="number">
+                            </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">坐标Y</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.top"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterY($event)"
+                                    type="number">
+                            </div>
 
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标X</p>
+                                <input class="attr-item__cell-input form-control"
+                                        ng-model="position.absoluteX"
+                                        ng-blur="position.absoluteX=position.initAbsoluteX"
+                                        ng-keypress="component.enterAbsoluteX($event)"
+                                        type="number">
+                            </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">绝对坐标Y</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="position.absoluteY"
+                                    ng-blur="position.absoluteY=position.initAbsoluteY"
+                                    ng-keypress="component.enterAbsoluteY($event)"
+                                    type="number">
+                            </div>
+                            <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">宽度</p>
+                                <input class="attr-item__cell-input form-control"
+                                        ng-model="component.object.level.info.width"
+                                        ng-blur="component.restore()"
+                                        ng-keypress="component.enterWidth($event)"
+                                        type="number">
+                            </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">高度</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.height"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.enterHeight($event)"
+                                    type="number">
+                                </div>
+                                <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">元素数</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.count"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.selector.enterSelectorCount($event)"
+                                    type="number">
+                                </div><div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">显示元素数</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.showCount"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.selector.enterSelectorShowCount($event)"
+                                    type="number">
+                                </div>
+                                <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">当前值</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.curValue"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.selector.enterSelectorCurValue($event)"
+                                    type="number">
+                                </div>
+                        </div>
 
                         <!-- 纹理压缩 -->
                         <div class="attr-item__cell-wrap lg" ng-show="component.isWidget()&&!myMask">
@@ -5795,6 +5874,42 @@
                                        class="form-control attr-item__cell-input"/>
                             </div>
                         </div>
+
+                        <div ng-show="component.object.type=='MySelector'">
+                                <div class="attr-item__cell-wrap" ng-controller="characterSetCtrl">
+                                    <p class="attr-item__cell-title">字体</p>
+                                    <select class="form-control attr-item__cell-input"
+                                            ng-model="component.object.level.info.fontFamily"
+                                            ng-change="component.enterFontFamily()">
+                                        <!--<option value="宋体" ng-selected="true">宋体</option>-->
+                                        <!--<option value="times">Times</option>-->
+                                        <option ng-repeat="fontF in  componentOfChar.fontFamilies" value="{{fontF.name}}">{{fontF.name}}</option>
+                                    </select>
+                                </div><div class="attr-item__cell-wrap">
+                                <a class="font-item__font-style"
+                                   ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontBold=='bold']"
+                                   ng-click="component.enterFontBold()"><span class="iconfont icon">&#xe618;</span></a>
+                                <a class="font-item__font-style"
+                                   ng-class="{true:'active',false:'inactive'}[component.object.level.info.fontItalic=='italic']"
+                                   ng-click="component.enterFontItalic()"><span class="iconfont icon">&#xe641;</span></a>
+                            </div>
+    
+                                <div class="attr-item__cell-wrap lg">
+                                    <p class="attr-item__cell-title">字体大小</p>
+                                    <input class="form-control attr-item__cell-input"
+                                           ng-model="component.object.level.info.fontSize"
+                                           type="number"
+                                           ng-blur="component.restore()"
+                                           ng-keypress="component.enterFontSize($event)">
+                                </div>
+                                <div class="attr-item__cell-wrap lg">
+                                    <p class="attr-item__cell-title xiangPage-title">字体颜色</p>
+                                    <input colorpicker="rgba"
+                                           ng-model="component.object.level.info.fontColor"
+                                           type="text"
+                                           class="form-control attr-item__cell-input"/>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
