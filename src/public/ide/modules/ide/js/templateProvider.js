@@ -11,7 +11,7 @@ ideServices
             this.duration=duration;
         }
 
-        var defaultTransition=new Transition('NO_TRANSITION','无动画',0);
+        var defaultTransition=new Transition('NO_TRANSITION','无动画',1000);
         var _self = this;
         var project,
             defaultButton={

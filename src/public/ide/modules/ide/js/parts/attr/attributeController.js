@@ -791,6 +791,15 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     case Type.MyRotateImg:
                         $scope.component.rotateImg.clockwise = $scope.component.object.level.info.clockwise;
                         break;
+                    case Type.MySelector:
+                        if ($scope.component.object.level.info.enableAnimation === false ||$scope.component.object.level.info.enableAnimation === undefined) {
+                            $scope.component.selector.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.selector.enableAnimationModeId = '0'
+                        }
+                    
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
+                        break;
                 }
 
             })
@@ -1399,6 +1408,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectEnableAnimationMode = $scope.component.gallery.enableAnimationModeId;
             } else if(selectObj.type === Type.MyButtonSwitch){
                 selectEnableAnimationMode = $scope.component.buttonSwitch.enableAnimationModeId;
+            }else if(selectObj.type === Type.MySelector){
+                selectEnableAnimationMode = $scope.component.selector.enableAnimationModeId;
             }
             var option = {
                 enableAnimationModeId: selectEnableAnimationMode

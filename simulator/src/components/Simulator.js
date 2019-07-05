@@ -5533,16 +5533,20 @@ module.exports = React.createClass({
         var offset = widget.translateY||0
 
         var oldValue = widget.oldValue || 0
+        
 
         if(oldValue !== curValue || offset){
             //should move
-            offset = (curValue - oldValue) * elementHeight + offset
-            var duration = 1000
-            if(widget.animationKey){
-
-            }else{
+            if(widget.info.enableAnimation){
+                var duration = (widget.transition && widget.transition.duration) || 0;
+                var easingFunc = (widget.transition && widget.transition.timingFun) || 'easeInOutCubic';
+                offset = (curValue - oldValue) * elementHeight + offset
+                if(widget.animationKey){
+                    clearInterval(widget.animationKey)
+                    widget.animationKey = null
+                }
                 widget.translateY = offset
-                widget.animationKey = AnimationManager.stepValue(offset, 0, duration, 30, null, function (obj) {
+                widget.animationKey = AnimationManager.stepValue(offset, 0, duration, 30, easingFunc, function (obj) {
                     widget.translateY = obj.curX;
                     // this.draw()
                 }.bind(this), function () {
@@ -5550,7 +5554,10 @@ module.exports = React.createClass({
                     clearInterval(widget.animationKey)
                     widget.animationKey = null
                 }.bind(this));
+            }else{
+                widget.translateY = 0
             }
+            
         }
 
         widget.oldValue = curValue
