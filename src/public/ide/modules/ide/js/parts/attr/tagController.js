@@ -1325,6 +1325,7 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
             case Type.MyButtonSwitch:
             // case Type.MyClock:
             case Type.MyChart:
+            case Type.MySelector:
                 $scope.component.showTagPanel = true;
                 break;
             default:

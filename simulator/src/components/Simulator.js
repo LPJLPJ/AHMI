@@ -5511,7 +5511,130 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+    drawSelector: function (curX, curY, widget, options, cb) {
+        if(widget.mouseState&&(widget.mouseState.state=='dragging'||widget.mouseState.state=='press')){
+            return
+        }
+        var height = widget.info.height
+        var showCount = widget.info.showCount
+        if((showCount&1) === 0){
+            showCount++
+        }
+        var count = widget.info.count
+       
+        var elementHeight = height/showCount
+        var curTag = this.findTagByName(widget.tag);
+        var curValue = (curTag && curTag.value) || 0
+        if(curValue >= widget.info.count){
+            curValue = widget.info.count - 1
+        }
+        widget.curValue = curValue
 
+        var offset = widget.translateY||0
+
+        var oldValue = widget.oldValue || 0
+
+        if(oldValue !== curValue || offset){
+            //should move
+            offset = (curValue - oldValue) * elementHeight + offset
+            var duration = 1000
+            if(widget.animationKey){
+
+            }else{
+                widget.translateY = offset
+                widget.animationKey = AnimationManager.stepValue(offset, 0, duration, 30, null, function (obj) {
+                    widget.translateY = obj.curX;
+                    // this.draw()
+                }.bind(this), function () {
+                    widget.translateY = 0;
+                    clearInterval(widget.animationKey)
+                    widget.animationKey = null
+                }.bind(this));
+            }
+        }
+
+        widget.oldValue = curValue
+        
+
+    },
+    paintSelector: function (curX, curY, widget, options, cb,ctx) {
+        var info = widget.info
+        if (widget.texList) {
+            var hori = widget.info.arrange == 'horizontal';
+            var width = info.width
+            var height = info.height
+            var showCount = info.showCount
+            if((showCount&1) === 0){
+                showCount++
+            }
+            var count = info.count
+            var curValue = widget.curValue||0
+            var elementHeight = height/showCount
+            var elementWidth = width
+            var centerIdx = parseInt(showCount/2)
+            var elementTex = widget.texList[0].slices
+            var notChosenOverTex = widget.texList[2].slices[0]
+            var chosenOverTex = widget.texList[1].slices[0]
+            var halfWidth = width / 2
+            var halfHeight = height / 2
+            ctx.textBaseline = 'middle'
+            ctx.textAlign = 'center'
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            // var fontString=info.fontItalic+" "+info.fontBold+" "+info.fontSize+"px"+" "+info.fontFamily;
+            // ctx.font = fontString
+            var offsetY = widget.translateY || 0
+            // for(var i=0;i<showCount;i++){
+            //     var curElementIdx = curValue - centerIdx + i
+            //     var curElementTex = elementTex[curElementIdx]
+            //     if(curElementTex){
+            //         this.drawBg(curX, curY+i*elementHeight+offsetY, elementWidth,elementHeight, curElementTex.imgSrc, curElementTex.color,ctx);
+            //         if(curElementTex.text){
+            //             // ctx.fillStyle = this.fontColor
+            //             // var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
+            //             // ctx.fillText(curElementTex.text,0,fontY)
+            //             this.drawTextByTempCanvas(ctx,curX, curY+i*elementHeight+offsetY, elementWidth, elementHeight, curElementTex.text, font);
+            //         }
+                    
+            //     }
+            // }
+            for(var i=0;i<count;i++){
+                var curElementTex = elementTex[i]
+                var curElementTop = (centerIdx - curValue + i)*elementHeight + offsetY
+                var curElementBottom = curElementTop + elementHeight
+                if(curElementBottom < 0 || curElementTop > height){
+                    //overflow
+                }else{
+                    //paint
+                    this.drawBg(curX, curY+curElementTop, elementWidth,elementHeight, curElementTex.imgSrc, curElementTex.color,ctx);
+                    if(curElementTex.text){
+                        // ctx.fillStyle = this.fontColor
+                        // var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
+                        // ctx.fillText(curElementTex.text,0,fontY)
+                        this.drawTextByTempCanvas(ctx,curX, curY+curElementTop, elementWidth, elementHeight, curElementTex.text, font);
+                    }
+                }
+            }
+
+            ctx.save()
+            ctx.beginPath()
+            ctx.rect(0,0,width,centerIdx*elementHeight)
+            ctx.rect(0,(centerIdx+1)*elementHeight, elementWidth, centerIdx*elementHeight)
+            ctx.clip()
+            
+            this.drawBg(curX, curY, width,height, notChosenOverTex.imgSrc, notChosenOverTex.color,ctx);
+            ctx.restore()
+            
+            this.drawBg(curX, curY+centerIdx*elementHeight, elementWidth,elementHeight, chosenOverTex.imgSrc, chosenOverTex.color,ctx);
+            ctx.restore()
+
+        }
+        cb && cb();
+    },
     //oscilloscope
     drawOscilloscope: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
@@ -6307,6 +6430,13 @@ module.exports = React.createClass({
             this.setTagByTag(curTag,curValue)
         }
     },
+    handleSelectorDrag:function(widget,relativeX,yStep){
+        if(widget.translateY===undefined||widget.translateY===null){
+            widget.translateY = 0
+        }
+        widget.translateY += yStep
+        
+    },
     handlePress: function (e) {
         // console.log(e);
         // console.log(e.target.scrollLeft,e.targetTag.scrollTop);
@@ -6631,7 +6761,7 @@ module.exports = React.createClass({
         var processed = false
         for (var i = 0; i < targets.length; i++) {
             if (targets[i].type == 'widget') {
-                processed = this.handleWidgetDrag(targets[i], mouseState);
+                processed = this.handleWidgetDrag(targets[i], mouseState,lastMouseState);
                 this.handleTargetAction(targets[i], 'drag');
                 if(processed){
                     break
@@ -6863,7 +6993,7 @@ module.exports = React.createClass({
         }
         elem[animation].start()
     },
-    handleWidgetDrag: function (widget, mouseState) {
+    handleWidgetDrag: function (widget, mouseState,lastMouseState) {
         var subType = widget.subType;
         var left = widget.info.left;
         var top = widget.info.top;
@@ -6881,6 +7011,11 @@ module.exports = React.createClass({
                 this.handleTouchTrackInnerPress(widget, relativeX, relativeY);
                 widget.mouseState = mouseState;
                 needRedraw = true;
+                break
+            case 'MySelector':
+                this.handleSelectorDrag(widget,relativeX,mouseState.position.y - lastMouseState.position.y)
+                widget.mouseState = mouseState
+                needRedraw = true
                 break
         }
 
@@ -6947,7 +7082,14 @@ module.exports = React.createClass({
 
                 break;
             // case 'MyInputKeyboard':
-
+            case 'MySelector':
+                if(widget.animationKey){
+                    clearInterval(widget.animationKey)
+                    widget.animationKey = null
+                }
+                widget.mouseState = mouseState;
+                needRedraw = true;
+                break;
             default:
                 widget.mouseState = mouseState;
                 needRedraw = true;
@@ -7407,6 +7549,37 @@ module.exports = React.createClass({
                         elem.mouseState = mouseState;
                         /*var targetTag = this.findTagByName(elem.tag);
                         this.setTagByTag(targetTag, 1);*/
+                        needRedraw = true;
+                        break;
+                    case 'MySelector':
+                        elem.mouseState = mouseState;
+                        var targetTag = this.findTagByName(elem.tag);
+                        var minAbsD = Infinity
+                        var height = elem.info.height
+                        var showCount = elem.info.showCount
+                        if((showCount&1) === 0){
+                            showCount++
+                        }
+                        var count = elem.info.count
+                        var curValue = elem.curValue||0
+                        var elementHeight = height/showCount
+                        // var elementWidth = width
+                        var centerIdx = parseInt(showCount/2)
+                        var centerTop = elementHeight * centerIdx
+                        var offsetY = elem.translateY || 0
+                        var minPos
+                        for(var i=0;i<count;i++){
+                            
+                            var curElementTop = (centerIdx - curValue + i)*elementHeight + offsetY
+                            var curD = Math.abs(curElementTop - centerTop)
+                            if(curD<minAbsD){
+                                minAbsD = curD
+                                minPos = i
+                            }
+                            
+                        }
+                        // elem.translateY = 0;
+                        this.setTagByTag(targetTag, minPos);
                         needRedraw = true;
                         break;
                 }
