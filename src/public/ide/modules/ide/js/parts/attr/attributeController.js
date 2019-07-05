@@ -1358,10 +1358,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     break;
                 case Type.MySwitch:
                 case Type.MySlide:
-                case Type.MyButton:
+                case Type.MyButton:                
                     ProjectService.ChangeAttributeFontStyle(option, function () {
                         $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
+                    break;
+                case Type.MySelector:
+                    var oldOperate = ProjectService.SaveCurrentOperate();
+                    ProjectService.enterGenerateAttrs(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    })
                     break;
                 default:
                     console.error('not match in change font color!');

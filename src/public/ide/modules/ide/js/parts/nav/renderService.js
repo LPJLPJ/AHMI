@@ -2000,6 +2000,130 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
 
     };
 
+
+    renderer.prototype.renderSelector = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
+        var info = widget.info;
+        if (!!info){
+            //font
+            var text = '';
+            var style = {};
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            style.color = font['font-color'];
+            style.font = (font['font-style']||'')+' '+(font['font-variant']||'')+' '+(font['font-weight']||'')+' '+(font['font-size']||24)+'px'+' '+(font['font-family']||'arial');
+            style.textAlign = 'center';
+            style.textBaseline = 'middle';
+
+            //trans each slide
+            var width = info.width;
+            var height = info.height;
+
+            var showCount = info.showCount
+            if((showCount&1) === 0){
+                showCount++
+            }
+            var count = info.count
+           
+            var elementHeight = height/showCount
+            var elementWidth = width
+
+            var elementTex = widget.texList[0];
+            var totalSlices = []
+            elementTex.slices.forEach(function(slice){
+                totalSlices.push(slice)
+            })
+            totalSlices.push(widget.texList[1].slices[0])
+            totalSlices.push(widget.texList[2].slices[0])
+            var totalSlicesNum = totalSlices.length
+            var allNum = totalSlicesNum
+            totalSlices.forEach(function (slice,i) {
+                var curSlice = slice
+                var sliceWidth
+                var sliceHeight
+                if(i==allNum-1){
+                    //unChosen
+                    sliceWidth = width
+                    sliceHeight =height
+                }else{
+                    //chosen
+                    sliceWidth = elementWidth
+                    sliceHeight = elementHeight
+                }
+                var canvas = new Canvas(sliceWidth,sliceHeight);
+                var ctx = canvas.getContext('2d');
+                
+                var curText = curSlice.text;
+                // console.log('slice: ',i,' canas ',canvas,' slice: ',curSlice,width,height);
+                ctx.clearRect(0,0,sliceWidth,sliceHeight);
+                ctx.save();
+                //render color
+                renderingX.renderColor(ctx,new Size(sliceWidth,sliceHeight),new Pos(),curSlice.color);
+                //render image;
+                var imgSrc = curSlice.imgSrc;
+                if (imgSrc!==''){
+                    var imgUrl = path.join(srcRootDir,imgSrc);
+                    var targetImageObj = this.getTargetImage(imgUrl);
+                    if (!targetImageObj){
+                        //not added to images
+                        var imgObj = new Image();
+                        try{
+                            imgObj.src = loadImageSync(imgUrl);
+                            this.addImage(imgUrl,imgObj);
+                            targetImageObj = imgObj;
+                        }catch (err){
+                            targetImageObj = null;
+                        }
+
+                    }
+                    renderingX.renderImage(ctx,new Size(sliceWidth,sliceHeight),new Pos(),targetImageObj,new Pos(),new Size(sliceWidth,sliceHeight));
+                }
+
+                //render font --20170705
+                text = curSlice.text;
+                if(!!text && i<allNum-2){
+                    renderingX.renderText(ctx,new Size(sliceWidth,sliceHeight),new Pos(),text,style,true,null,this.customFonts);
+                }
+
+                //output
+                // var imgName = widget.id.split('.').join('-');
+                // var outputFilename = imgName +'-'+ i+'.png';
+                var outputFilename = makeOutputFilenameFromId(widget.id,i)
+                var outpath = path.join(dstDir,outputFilename);
+                canvas.output(outpath,function (err) {
+                    if (err){
+                        cb && cb(err);
+                    }else{
+                        this.trackedRes.push(new ResTrack(imgSrc,curSlice.color,new TextInfo(curText,style),outputFilename,sliceWidth,sliceHeight,curSlice))
+                        // console.log(_.cloneDeep(this.trackedRes))
+                        //write widget
+                        curSlice.originSrc = curSlice.imgSrc;
+                        curSlice.imgSrc = path.join(imgUrlPrefix||'',outputFilename);
+                        //if last trigger cb
+                        totalSlicesNum -= 1;
+                        if (totalSlicesNum<=0){
+                            cb && cb();
+                        }
+                    }
+                }.bind(this));
+
+                ctx.restore();
+            }.bind(this));
+
+            function renderCover(){
+                var unChosenSlice = widget.texList[2].slices[0]
+                var chosenSlice = widget.texList[2].slices[1]
+            }
+
+        }else{
+            cb&&cb();
+        }
+
+    };
+
     renderer.prototype.renderWidget = function (widget,srcRootDir,dstDir,imgUrlPrefix,cb) {
         switch (widget.subType){
             case 'MyButton':
@@ -2062,6 +2186,10 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             case 'MyGrid':
                 widget.subType = 'MySlide';
                 this.renderGrid(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
+                break;
+            case 'MySelector':
+                widget.subType = 'MySelector';
+                this.renderSelector(widget,srcRootDir,dstDir,imgUrlPrefix,cb);
                 break;
             default:
                 cb&&cb();
