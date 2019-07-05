@@ -3094,16 +3094,16 @@ module.exports = React.createClass({
             for (var i = 0; i < text.length; i++) {
                 tempctx.fillText(text[i], xCoordinate, yCoordinate);
                 if(i+1 < text.length){
-                    /*lastLetterType = this.getLetterType(text[i])
+                    lastLetterType = this.getLetterType(text[i])
                     curLetterType = this.getLetterType(text[i+1])
 
                     if(lastLetterType === 0){
                         curSpacing = curLetterType ? (spacing + halfSpacing)/2 : halfSpacing
                     }else{
                         curSpacing = curLetterType ? spacing : (spacing + halfSpacing)/2
-                    }*/
+                    }
 
-                    xCoordinate += spacing || 0;
+                    xCoordinate += curSpacing || 0;
                     xCoordinate += maxFontWidth;
                 }
                 
