@@ -5609,6 +5609,10 @@ module.exports = React.createClass({
                     
             //     }
             // }
+            ctx.save()
+            ctx.beginPath()
+            ctx.rect(0,0,width,height)
+            ctx.clip()
             for(var i=0;i<count;i++){
                 var curElementTex = elementTex[i]
                 var curElementTop = (centerIdx - curValue + i)*elementHeight + offsetY
@@ -5626,6 +5630,8 @@ module.exports = React.createClass({
                     }
                 }
             }
+
+            ctx.restore()
 
             ctx.save()
             ctx.beginPath()
