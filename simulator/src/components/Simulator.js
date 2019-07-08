@@ -3921,7 +3921,7 @@ module.exports = React.createClass({
         //draw
         //this.drawTextByTempCanvas(curX,curY,width,height,dateTimeString,font,widget.info.arrange);
         //逐字渲染字符串
-        this.drawTextByTempCanvas(ctx,curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, spacing, paddingRatio,ctx);
+        this.drawTextByTempCanvas(ctx,curX, curY, width, height, dateTimeString, font, widget.info.arrange, true, widget.info.fontSize, {spacing:spacing,halfSpacing:spacing}, paddingRatio,ctx);
         var offcanvas = this.refs.offcanvas;
         var offctx = this.offctx;
         var tempcanvas = this.refs.tempcanvas;
