@@ -6244,8 +6244,149 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
         }
     }
 
+    var MySelector = {
+        widgetType:Type.MySelector,
+        info:{
+            count:1,
+            showCount:1,
+            curValue:0,
+            fontFamily:'宋体',
+            fontSize:24,
+            fontColor:'rgba(255,255,255,1)',
+            fontBold:"100",
+            fontItalic:""
+        },
+        funcAttrs:{
+            
+            elementTex:function(level){
+                return level.texList[0].slices.map(function(slice){
+                    return {
+                        image:ResourceService.getResourceFromCache(slice.imgSrc),
+                        color:slice.color,
+                        text:slice.text
+                    }
+                })
+            },
+            chosenOverTex:function(level){
+                return {
+                    image:ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc),
+                    color:level.texList[1].slices[0].color
+                }
+            },
+            notChosenOverTex:function(level){
+                return {
+                    image:ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc),
+                    color:level.texList[2].slices[0].color
+                }
+            }
+
+        },
+        triggers:{
+            
+            changeTex:function(arg){
+
+                this.elementTex = arg.level.texList[0].slices.map(function(slice){
+                    return {
+                        image:ResourceService.getResourceFromCache(slice.imgSrc),
+                        color:slice.color,
+                        text:slice.text
+                    }
+                })
+
+                this.chosenOverTex = {
+                    image:ResourceService.getResourceFromCache(arg.level.texList[1].slices[0].imgSrc),
+                    color:arg.level.texList[1].slices[0].color
+                }
+                this.notChosenOverTex = {
+                    image:ResourceService.getResourceFromCache(arg.level.texList[2].slices[0].imgSrc),
+                    color:arg.level.texList[2].slices[0].color
+                }
+                reRender()
+                arg.callback && arg.callback()
+            },
+            changeGeneralAttrs:function(arg){
+                for(var key in arg.attrs){
+                    this[key] = arg.attrs[key]
+                }
+                reRender()
+                arg.callback && arg.callback()
+
+            },
+            
+        },
+        render:function(ctx){
+            try{
+                ctx.save()
+                var width = this.width
+                var height = this.height
+                var showCount = this.showCount
+                if((showCount&1) === 0){
+                    showCount++
+                }
+                var count = this.count
+                var curValue = this.curValue
+                var elementHeight = height/showCount
+                var elementWidth = width
+                var centerIdx = parseInt(showCount/2)
+                var elementTex = this.elementTex
+                var halfWidth = width / 2
+                var halfHeight = height / 2
+                ctx.textBaseline = 'middle'
+                ctx.textAlign = 'center'
+                var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
+                ctx.font = fontString
+                for(var i=0;i<showCount;i++){
+                    var curElementIdx = curValue - centerIdx + i
+                    var curElementTex = elementTex[curElementIdx]
+                    if(curElementTex){
+                        if(curElementTex.color){
+                            ctx.fillStyle = curElementTex.color
+                            ctx.fillRect(-halfWidth,i*elementHeight - halfHeight,elementWidth,elementHeight)
+                        }
+                        if(curElementTex.image){
+                            ctx.drawImage(curElementTex.image, -halfWidth,i*elementHeight - halfHeight,elementWidth,elementHeight)
+                        }
+                        if(curElementTex.text){
+                            ctx.fillStyle = this.fontColor
+                            var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
+                            ctx.fillText(curElementTex.text,0,fontY)
+                        }
+                        
+                    }
+                }
+
+                ctx.save()
+                ctx.beginPath()
+                ctx.rect(-halfWidth,-halfHeight,width,centerIdx*elementHeight)
+                ctx.rect(-halfWidth,(centerIdx+1)*elementHeight - halfHeight, elementWidth, centerIdx*elementHeight)
+                ctx.clip()
+                if(this.notChosenOverTex.color){
+                    ctx.fillStyle = this.notChosenOverTex.color
+                    ctx.fillRect(-halfWidth,- halfHeight,width,height)
+                }
+                if(this.notChosenOverTex.image){
+                    ctx.drawImage(this.notChosenOverTex.image,-halfWidth,- halfHeight, width, height)
+                }
+                ctx.restore()
+                if(this.chosenOverTex.color){
+                    ctx.fillStyle = this.chosenOverTex.color
+                    ctx.fillRect(-halfWidth,centerIdx*elementHeight - halfHeight,elementWidth,elementHeight)
+                }
+                if(this.chosenOverTex.image){
+                    ctx.drawImage(this.chosenOverTex.image,-halfWidth,centerIdx*elementHeight - halfHeight, elementWidth, elementHeight)
+                }
+                ctx.restore()
+            
+            }catch(err){
+                console.log('错误描述',err);
+                toastr.warning('渲染'+this.type+'出错');
+            }
+        }
+    }
+
     widgetPrototypes.push(MyGallery)
     widgetPrototypes.push(MyChart)
+    widgetPrototypes.push(MySelector)
     for(var i=0;i<widgetPrototypes.length;i++){
         generateFabricWidget(widgetPrototypes[i])
     }

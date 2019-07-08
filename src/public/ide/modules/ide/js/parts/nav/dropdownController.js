@@ -26,7 +26,8 @@ ide.controller('addWidgetController', ['$scope', 'Type', function ($scope, Type)
         {name:"按钮开关",icon:"button-switch"},
         {name:"时钟",icon:"time"},
         {name:"图表",icon:"chart",enable:false},
-        {name:"表格",icon:"grid"}
+        {name:"表格",icon:"grid"},
+        {name:"选择器",icon:"selector"}
     ];
     $scope.addWidget = function (index) {
         var widgets = $scope.widgets;

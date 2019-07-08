@@ -51,9 +51,9 @@ ideServices.service('AnimationService', ['ProjectService', 'Type', function (Pro
     var swipeV = new Transition('SWIPE_V','垂直滑动',1);
     var fadeInFadeOut = new Transition('FADE-IN_FADE-OUT','淡入淡出',1);
     var scale = new Transition('SCALE', '缩放', 1);
-    var transition = [noTransition,moveLR,moveRL,moveBT,moveTB,scale];
-
-
+    var transition = [noTransition,moveLR,moveRL,moveBT,moveTB,scale,swipeH,swipeV];
+    var pageTransition = [noTransition,moveLR,moveRL,moveBT,moveTB,scale];
+    var canvasTransition = [noTransition,moveLR,moveRL,moveBT,moveTB,scale,swipeH,swipeV];
     var tempAnimation = new Animation('动画', null, null, null, 1, 1, 0, 0, 1, 1, 0);
     var defaultAnimation = [tempAnimation];
 
@@ -105,8 +105,16 @@ ideServices.service('AnimationService', ['ProjectService', 'Type', function (Pro
         return _.cloneDeep(transition);
     };
 
+    this.getPageTransition = function(){
+        return _.cloneDeep(pageTransition)
+    }
+
+    this.getCanvasTransition = function(){
+        return _.cloneDeep(canvasTransition)
+    }
+
     this.getDefaultTransition = function () {
-        return new Transition('NO_TRANSITION', '无动画', 0);
+        return new Transition('NO_TRANSITION', '无动画', 1000);
     };
 
 }]);

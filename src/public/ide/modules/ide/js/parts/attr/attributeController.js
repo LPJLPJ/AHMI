@@ -28,6 +28,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 type: '',
                 onAttributeChanged: onAttributeChanged,
                 transitionMode: AnimationService.getAllTransititon(),
+                pageTransitionMode:AnimationService.getPageTransition(),
+                canvasTransitionMode:AnimationService.getCanvasTransition(),
                 transitionName: null,
                 timingFun: '',
                 timingFuns: ['linear', 'easeInCubic', 'easeOutCubic', 'easeInOutCubic'],
@@ -363,6 +365,12 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     enterGridCellNum:enterGridCellNum,
                     enterGridCellSize:enterGridCellSize,
                     enterGridCellBorder:enterGridCellBorder,
+                },
+                //选择器
+                selector:{
+                    enterSelectorCount:enterSelectorCount,
+                    enterSelectorShowCount:enterSelectorShowCount,
+                    enterSelectorCurValue:enterSelectorCurValue
                 },
                 group: {
                     align: [
@@ -783,6 +791,15 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     case Type.MyRotateImg:
                         $scope.component.rotateImg.clockwise = $scope.component.object.level.info.clockwise;
                         break;
+                    case Type.MySelector:
+                        if ($scope.component.object.level.info.enableAnimation === false ||$scope.component.object.level.info.enableAnimation === undefined) {
+                            $scope.component.selector.enableAnimationModeId = '1'
+                        } else if ($scope.component.object.level.info.enableAnimation === true) {
+                            $scope.component.selector.enableAnimationModeId = '0'
+                        }
+                    
+                        $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
+                        break;
                 }
 
             })
@@ -817,11 +834,18 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
             })
         }
 
-        function changeTransitionName() {
+        function changeTransitionName(mode) {
+            //mode: page, canvas
             var option = {
                 name: $scope.component.transitionName
             };
-            for (var i = 0; i < $scope.component.transitionMode.length; i++) {
+            var transitionMode
+            if(mode=='canvas'){
+                transitionMode = $scope.component.canvasTransitionMode
+            }else{
+                transitionMode = $scope.component.pageTransitionMode
+            }
+            for (var i = 0; i < transitionMode.length; i++) {
                 if ($scope.component.transitionMode[i].name == $scope.component.transitionName) {
                     option.show = $scope.component.transitionMode[i].show;
                     break;
@@ -1334,10 +1358,16 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     break;
                 case Type.MySwitch:
                 case Type.MySlide:
-                case Type.MyButton:
+                case Type.MyButton:                
                     ProjectService.ChangeAttributeFontStyle(option, function () {
                         $scope.$emit('ChangeCurrentPage', oldOperate);
                     });
+                    break;
+                case Type.MySelector:
+                    var oldOperate = ProjectService.SaveCurrentOperate();
+                    ProjectService.enterGenerateAttrs(option, function () {
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    })
                     break;
                 default:
                     console.error('not match in change font color!');
@@ -1384,6 +1414,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 selectEnableAnimationMode = $scope.component.gallery.enableAnimationModeId;
             } else if(selectObj.type === Type.MyButtonSwitch){
                 selectEnableAnimationMode = $scope.component.buttonSwitch.enableAnimationModeId;
+            }else if(selectObj.type === Type.MySelector){
+                selectEnableAnimationMode = $scope.component.selector.enableAnimationModeId;
             }
             var option = {
                 enableAnimationModeId: selectEnableAnimationMode
@@ -3623,6 +3655,78 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                         return;
                     }
                 }
+
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+        }
+
+        function enterSelectorCount(e){
+            if (e.keyCode == 13) {
+                var key = 'count'
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
+                if($scope.component.object.level.info[key]<1){
+                    toastr.warning('至少为1')
+                    restore()
+                    return
+                }
+                if($scope.component.object.level.info[key]>999999999){
+                    toastr.warning('超出范围')
+                    restore()
+                    return
+                }
+
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    ProjectService.ChangeTexSlicesCount({texIdx:0,count:option.count},function(){
+                        $scope.$emit('ChangeCurrentPage', oldOperate);
+                    })
+                    
+                })
+            }
+        }
+
+        function enterSelectorShowCount(e){
+            if (e.keyCode == 13) {
+                var key = 'showCount'
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
+                if($scope.component.object.level.info[key]<1||$scope.component.object.level.info[key]>9){
+                    toastr.warning('范围为1 ~ 9')
+                    restore()
+                    return
+                }
+
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+        }
+
+        function enterSelectorCurValue(e){
+            if (e.keyCode == 13) {
+                var key = 'curValue'
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
 
                 var option = {
                     [key]: $scope.component.object.level.info[key]

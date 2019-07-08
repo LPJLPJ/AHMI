@@ -11,7 +11,7 @@ ideServices
             this.duration=duration;
         }
 
-        var defaultTransition=new Transition('NO_TRANSITION','无动画',0);
+        var defaultTransition=new Transition('NO_TRANSITION','无动画',1000);
         var _self = this;
         var project,
             defaultButton={
@@ -145,6 +145,57 @@ ideServices
                         color:'rgba(70,70,70,1)',
                         imgSrc:'',
                         name:'点'
+                    }]
+                }]
+            },
+            defaultSelector={
+                info:{
+                    width: 250,
+                    height: 250,
+                    left: 0, top: 0,
+                    originX: 'center', originY: 'center',
+                    count:3,
+                    showCount:3,
+                    curValue:0,
+                    fontFamily:'宋体',
+                    fontSize:24,
+                    fontColor:'rgba(255,255,255,1)',
+                    fontBold:"100",
+                    fontItalic:"",
+                    },
+                texList:[{
+                    currentSliceIdx:0,
+                    name:'元素',
+                    slices:[{
+                        color:'rgba(60,60,60,1)',
+                        imgSrc:'',
+                        name:'元素'
+                    },
+                    {
+                        color:'rgba(60,0,60,1)',
+                        imgSrc:'',
+                        name:'元素'
+                    },
+                    {
+                        color:'rgba(60,60,0,1)',
+                        imgSrc:'',
+                        name:'元素'
+                    }]
+                 },{
+                    currentSliceIdx:0,
+                    name:'选中高亮',
+                    slices:[{
+                        color:'rgba(0,70,70,0.1)',
+                        imgSrc:'',
+                        name:'选中'
+                    }]
+                },{
+                    currentSliceIdx:0,
+                    name:'未选中遮盖',
+                    slices:[{
+                        color:'rgba(0,70,70,0.5)',
+                        imgSrc:'',
+                        name:'未选中'
                     }]
                 }]
             },
@@ -776,6 +827,14 @@ ideServices
             }
         };
 
+        this.getDefaultSlice = function(){
+            return {
+                color:_getRandomColor(),
+                imgSrc:'',
+                name:'纹理'
+            }
+        }
+
         // 进度条
         this.getDefaultProgress= function () {
             var info = _.cloneDeep(defaultProgress.info);
@@ -806,6 +865,24 @@ ideServices
                 info: info,
                 name: 'NewChart',
                 type: Type.MyChart,
+                expand:true,
+                url:'',
+                zIndex:0,
+                texList:texList,
+                transition:_.cloneDeep(defaultTransition)
+            }
+        };
+
+         // 图表
+         this.getDefaultSelector= function () {
+            var info = _.cloneDeep(defaultSelector.info);
+            var texList = _.cloneDeep(defaultSelector.texList);
+
+            return {
+                id: Math.random().toString(36).substr(2),
+                info: info,
+                name: '新选择器',
+                type: Type.MySelector,
                 expand:true,
                 url:'',
                 zIndex:0,

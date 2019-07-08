@@ -213,6 +213,10 @@ module.exports = React.createClass({
 
 
         //if resource.complete == false  content set to be blank
+        this.fps = 30
+        this.defaultDuration = 1000
+        this.defaultStifness = 183
+        this.defaultDamping = 26
 
         imageList = window.cachedResourceList;
         this.state.imageList = imageList;
@@ -2128,8 +2132,10 @@ module.exports = React.createClass({
 
                         subCanvas.animating = true
 
+                        var springLen = canvas.w
+
                         var self = this
-                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{x:-100},{x:0},duration,(startX+100)/100)
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,this.defaultDamping,this.defaultStifness,{x:-springLen},{x:0},duration,(startX+springLen)/springLen)
                         swipeAnime.onFrameCB = function () {
 
 
@@ -2173,9 +2179,9 @@ module.exports = React.createClass({
                         var startY = subCanvas.translate && subCanvas.translate.y || 0
 
                         subCanvas.animating = true
-
+                        var springLen = canvas.w
                         var self = this
-                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,26,170,{y:-100},{y:0},duration,(startY+100)/100)
+                        var swipeAnime = new AnimationAPI.SpringAnimation(null,'x',0,this.defaultDamping,this.defaultStifness,{y:-springLen},{y:0},duration,(startY+springLen)/springLen)
                         swipeAnime.onFrameCB = function () {
 
 
@@ -5505,7 +5511,137 @@ module.exports = React.createClass({
         cb && cb();
 
     },
+    drawSelector: function (curX, curY, widget, options, cb) {
+        if(widget.mouseState&&(widget.mouseState.state=='dragging'||widget.mouseState.state=='press')){
+            return
+        }
+        var height = widget.info.height
+        var showCount = widget.info.showCount
+        if((showCount&1) === 0){
+            showCount++
+        }
+        var count = widget.info.count
+       
+        var elementHeight = height/showCount
+        var curTag = this.findTagByName(widget.tag);
+        var curValue = (curTag && curTag.value) || 0
+        if(curValue >= widget.info.count){
+            curValue = widget.info.count - 1
+        }
+        widget.curValue = curValue
 
+        var offset = widget.translateY||0
+
+        var oldValue = widget.oldValue || 0
+        
+
+        if(oldValue !== curValue || offset){
+            //should move
+            if(widget.info.enableAnimation){
+                var duration = (widget.transition && widget.transition.duration) || 0;
+                var easingFunc = (widget.transition && widget.transition.timingFun) || 'easeInOutCubic';
+                offset = (curValue - oldValue) * elementHeight + offset
+                if(widget.animationKey){
+                    clearInterval(widget.animationKey)
+                    widget.animationKey = null
+                }
+                widget.translateY = offset
+                widget.animationKey = AnimationManager.stepValue(offset, 0, duration, 30, easingFunc, function (obj) {
+                    widget.translateY = obj.curX;
+                    // this.draw()
+                }.bind(this), function () {
+                    widget.translateY = 0;
+                    clearInterval(widget.animationKey)
+                    widget.animationKey = null
+                }.bind(this));
+            }else{
+                widget.translateY = 0
+            }
+            
+        }
+
+        widget.oldValue = curValue
+        
+
+    },
+    paintSelector: function (curX, curY, widget, options, cb,ctx) {
+        var info = widget.info
+        if (widget.texList) {
+            var hori = widget.info.arrange == 'horizontal';
+            var width = info.width
+            var height = info.height
+            var showCount = info.showCount
+            if((showCount&1) === 0){
+                showCount++
+            }
+            var count = info.count
+            var curValue = widget.curValue||0
+            var elementHeight = height/showCount
+            var elementWidth = width
+            var centerIdx = parseInt(showCount/2)
+            var elementTex = widget.texList[0].slices
+            var notChosenOverTex = widget.texList[2].slices[0]
+            var chosenOverTex = widget.texList[1].slices[0]
+            var halfWidth = width / 2
+            var halfHeight = height / 2
+            ctx.textBaseline = 'middle'
+            ctx.textAlign = 'center'
+            var font = {};
+            font['font-style'] = widget.info.fontItalic;
+            font['font-weight'] = widget.info.fontBold;
+            font['font-size'] = widget.info.fontSize;
+            font['font-family'] = widget.info.fontFamily;
+            font['font-color'] = widget.info.fontColor;
+            // var fontString=info.fontItalic+" "+info.fontBold+" "+info.fontSize+"px"+" "+info.fontFamily;
+            // ctx.font = fontString
+            var offsetY = widget.translateY || 0
+            // for(var i=0;i<showCount;i++){
+            //     var curElementIdx = curValue - centerIdx + i
+            //     var curElementTex = elementTex[curElementIdx]
+            //     if(curElementTex){
+            //         this.drawBg(curX, curY+i*elementHeight+offsetY, elementWidth,elementHeight, curElementTex.imgSrc, curElementTex.color,ctx);
+            //         if(curElementTex.text){
+            //             // ctx.fillStyle = this.fontColor
+            //             // var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
+            //             // ctx.fillText(curElementTex.text,0,fontY)
+            //             this.drawTextByTempCanvas(ctx,curX, curY+i*elementHeight+offsetY, elementWidth, elementHeight, curElementTex.text, font);
+            //         }
+                    
+            //     }
+            // }
+            for(var i=0;i<count;i++){
+                var curElementTex = elementTex[i]
+                var curElementTop = (centerIdx - curValue + i)*elementHeight + offsetY
+                var curElementBottom = curElementTop + elementHeight
+                if(curElementBottom < 0 || curElementTop > height){
+                    //overflow
+                }else{
+                    //paint
+                    this.drawBg(curX, curY+curElementTop, elementWidth,elementHeight, curElementTex.imgSrc, curElementTex.color,ctx);
+                    if(curElementTex.text){
+                        // ctx.fillStyle = this.fontColor
+                        // var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
+                        // ctx.fillText(curElementTex.text,0,fontY)
+                        this.drawTextByTempCanvas(ctx,curX, curY+curElementTop, elementWidth, elementHeight, curElementTex.text, font);
+                    }
+                }
+            }
+
+            ctx.save()
+            ctx.beginPath()
+            ctx.rect(0,0,width,centerIdx*elementHeight)
+            ctx.rect(0,(centerIdx+1)*elementHeight, elementWidth, centerIdx*elementHeight)
+            ctx.clip()
+            
+            this.drawBg(curX, curY, width,height, notChosenOverTex.imgSrc, notChosenOverTex.color,ctx);
+            ctx.restore()
+            
+            this.drawBg(curX, curY+centerIdx*elementHeight, elementWidth,elementHeight, chosenOverTex.imgSrc, chosenOverTex.color,ctx);
+            ctx.restore()
+
+        }
+        cb && cb();
+    },
     //oscilloscope
     drawOscilloscope: function (curX, curY, widget, options, cb) {
         var lowAlarm = widget.info.lowAlarmValue;
@@ -6301,6 +6437,13 @@ module.exports = React.createClass({
             this.setTagByTag(curTag,curValue)
         }
     },
+    handleSelectorDrag:function(widget,relativeX,yStep){
+        if(widget.translateY===undefined||widget.translateY===null){
+            widget.translateY = 0
+        }
+        widget.translateY += yStep
+        
+    },
     handlePress: function (e) {
         // console.log(e);
         // console.log(e.target.scrollLeft,e.targetTag.scrollTop);
@@ -6319,6 +6462,8 @@ module.exports = React.createClass({
                 this.handleWidgetPress(targets[i], _.cloneDeep(this.mouseState));
                 this.handleTargetAction(targets[i], 'Press');
 
+            }else if (targets[i].type == 'MyLayer'){
+                this.handleCanvasPress(targets[i],_.cloneDeep(this.mouseState))
             }
         }
 
@@ -6598,13 +6743,19 @@ module.exports = React.createClass({
         if (!this.mouseState) {
             return;
         }
+        var lastMouseState = _.cloneDeep(this.mouseState)
+        // console.log(lastMouseState,this.mouseState)
 
         this.mouseState.position.x = x;
         this.mouseState.position.y = y;
+        this.mouseState.timeStamp = Date.now()
+        var timeD = (this.mouseState.timeStamp - lastMouseState.timeStamp)/1000.0
+        this.mouseState.speedX = parseInt((this.mouseState.position.x - lastMouseState.position.x)/timeD) || 0
+        this.mouseState.speedY = parseInt((this.mouseState.position.y - lastMouseState.position.y)/timeD) || 0
 
         if (this.mouseState.state === 'press' || this.mouseState.state === 'dragging') {
             this.mouseState.state = 'dragging';
-            this.handleDragging(_.cloneDeep(this.mouseState));
+            this.handleDragging(_.cloneDeep(this.mouseState),lastMouseState);
         } else {
             this.mouseState.state = 'move';
         }
@@ -6612,17 +6763,244 @@ module.exports = React.createClass({
     handleHolding: function () {
 
     },
-    handleDragging: function (mouseState) {
+    handleDragging: function (mouseState,lastMouseState) {
         var targets = this.state.currentPressedTargets;
+        var processed = false
         for (var i = 0; i < targets.length; i++) {
             if (targets[i].type == 'widget') {
-                this.handleWidgetDrag(targets[i], mouseState);
+                processed = this.handleWidgetDrag(targets[i], mouseState,lastMouseState);
                 this.handleTargetAction(targets[i], 'drag');
+                if(processed){
+                    break
+                }
+                // console.log('widget')
 
+            }else if(targets[i].type == 'MyLayer'){
+                //process canvas
+                processed = this.handleCanvasDrag(targets[i],mouseState,lastMouseState)
+                if(processed){
+                    break
+                }
+            }else if(targets[i].type == 'MyPage'){
+                //process page
+                // console.log('page')
             }
         }
     },
-    handleWidgetDrag: function (widget, mouseState) {
+    handleCanvasPress:function (canvas,mouseState) {
+        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
+        if (subCanvas.scrollXTimerId){
+            clearInterval(subCanvas.scrollXTimerId)
+        }
+        if (subCanvas.scrollYTimerId){
+            clearInterval(subCanvas.scrollYTimerId)
+        }
+        // if (subCanvas.scrollBarHideAnime){
+        //     subCanvas.scrollBarHideAnime.stop()
+        //     subCanvas.scrollBarHideAnime = null
+        //     subCanvas.scrollBarAlpha = 1.0
+        //     console.log('cancel anime')
+        // }
+        if(subCanvas.hideScrollBarTimerId){
+            clearTimeout(subCanvas.hideScrollBarTimerId)
+        }
+
+        if (subCanvas.swipeXTimerId){
+            clearInterval(subCanvas.swipeXTimerId)
+        }
+
+        if (subCanvas.swipeYTimerId){
+            clearInterval(subCanvas.swipeYTimerId)
+        }
+
+        if (subCanvas.swipeAnimation){
+            subCanvas.swipeAnimation.stop()
+        }
+        this.stopBounceAnimation(subCanvas,'bounceAnimeX','bounceAnimeY')
+
+        subCanvas.pressedOffsetX = subCanvas.contentOffsetX || 0
+        subCanvas.pressedOffsetY = subCanvas.contentOffsetY || 0
+        //prepare img cache
+        this.prepareSubCanvasCaches(canvas)
+
+    },
+    prepareSubCanvasCaches:function (canvas) {
+        for(var i=0;i<canvas.subCanvasList.length;i++){
+            canvas.subCanvasList[i].curSubCanvasImg = this.generateSubCanvasCopy(canvas.subCanvasList[i],canvas.w,canvas.h)
+        }
+    },
+
+    handleCanvasDrag:function (canvas,mouseState,lastMouseState) {
+
+
+        // var originalPointX = canvas.innerX || 0
+        // var originalPointY = canvas.innerY || 0
+        this.dragTarget = canvas
+        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
+        //transition
+        var curTransition = canvas.transition
+        var method = curTransition && curTransition.name
+        var handled = false
+        if (!((subCanvas.info && (subCanvas.info.scrollHEnabled||scrollVEnabled)) || method == 'SWIPE_H' || method == 'SWIPE_V')){
+            return handled
+        }
+
+        var lastMousePointX = lastMouseState.position.x || 0
+        var lastMousePointY = lastMouseState.position.y || 0
+        var mousePointX = mouseState.position.x || 0
+        var mousePointY = mouseState.position.y || 0
+        var offsetX = mousePointX - lastMousePointX
+        var offsetY = mousePointY - lastMousePointY
+        var pressedPos = mouseState.pressedPosition||{x:0,y:0}
+
+        
+
+        //reset scrollbar
+
+        if(subCanvas.hideScrollBarTimerId){
+            clearTimeout(subCanvas.hideScrollBarTimerId)
+        }
+
+        if (subCanvas.scrollBarHideAnime){
+            subCanvas.scrollBarHideAnime.stop()
+            subCanvas.scrollBarHideAnime = null
+            subCanvas.scrollBarAlpha = 1.0
+        }
+
+
+        if (subCanvas.scrollXTimerId){
+            clearInterval(subCanvas.scrollXTimerId)
+        }
+        if (subCanvas.scrollYTimerId){
+            clearInterval(subCanvas.scrollYTimerId)
+        }
+
+
+        this.stopBounceAnimation(subCanvas,'bounceAnimeX','bounceAnimeY')
+
+
+        subCanvas.width = subCanvas.info && subCanvas.info.width || canvas.w
+        subCanvas.height = subCanvas.info && subCanvas.info.height || canvas.h
+
+        
+        // method = 'SWIPE_H'
+
+
+        //scroll
+
+        var leftLimit = canvas.w - subCanvas.width
+        var rightLimit = 0
+        var topLimit = canvas.h-subCanvas.height
+        var bottomLimit = 0
+
+        var mouseMovementX = mousePointX - pressedPos.x
+        var mouseMovementY = mousePointY - pressedPos.y
+
+        subCanvas.contentOffsetX =  subCanvas.contentOffsetX || 0
+        subCanvas.contentOffsetY  = subCanvas.contentOffsetY || 0
+        var lastContentOffsetX = subCanvas.contentOffsetX
+        var lastContentOffsetY = subCanvas.contentOffsetY
+
+        var nextContentOffsetX = subCanvas.pressedOffsetX + mouseMovementX
+        var nextContentOffsetY = subCanvas.pressedOffsetY + mouseMovementY
+
+
+        var timeD = (mouseState.timeStamp - lastMouseState.timeStamp)
+        timeD = timeD < 1 ? 1:timeD
+        timeD = timeD/1000.0
+
+
+
+        //horizontal scroll
+        if (subCanvas.info &&subCanvas.info.scrollHEnabled){
+            // console.log('dragging')
+
+            subCanvas.shouldShowScrollBarH = true
+            subCanvas.scrollBarAlpha = 1.0
+            if (nextContentOffsetX>rightLimit ){
+                // offsetX = this.calMovementWithFaction(offsetX,subCanvas.contentOffsetX-rightLimit,100)
+                subCanvas.contentOffsetX = rightLimit+this.calMovementWithFaction(nextContentOffsetX-rightLimit,canvas.w)
+                // console.log('rubber banding',subCanvas.contentOffsetX)
+            }else if (nextContentOffsetX<leftLimit ){
+                subCanvas.contentOffsetX = leftLimit- this.calMovementWithFaction(leftLimit-nextContentOffsetX,canvas.w)
+            }else {
+                subCanvas.contentOffsetX = nextContentOffsetX
+            }
+
+            subCanvas.speedX =  ((subCanvas.contentOffsetX - lastContentOffsetX)/timeD) || 0
+        }else{
+            //swipe transition
+            if (method == 'SWIPE_H'){
+                subCanvas.translate = subCanvas.translate||{x:0,y:0}
+                subCanvas.translate.x += offsetX
+                //rest sc
+                this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true)
+                subCanvas.animating = true
+
+                subCanvas.speedX = (offsetX/timeD) || 0
+            }
+        }
+
+
+        //vertical scroll
+        if (subCanvas.info && subCanvas.info.scrollVEnabled){
+            // console.log('dragging')
+            subCanvas.shouldShowScrollBarV = true
+            subCanvas.scrollBarAlpha = 1.0
+            if (nextContentOffsetY>bottomLimit){
+                subCanvas.contentOffsetY = bottomLimit+this.calMovementWithFaction(nextContentOffsetY-bottomLimit,canvas.h)
+            }else if (nextContentOffsetY<topLimit){
+                subCanvas.contentOffsetY = topLimit - this.calMovementWithFaction(topLimit-nextContentOffsetY,canvas.h)
+            }else{
+                subCanvas.contentOffsetY += offsetY
+            }
+
+            subCanvas.speedY = ((subCanvas.contentOffsetY - lastContentOffsetY)/timeD) || 0
+        }else{
+            if (method == 'SWIPE_V'){
+                subCanvas.translate = subCanvas.translate||{x:0,y:0}
+                subCanvas.translate.y += offsetY
+                //rest sc
+                this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,false,true)
+                subCanvas.animating = true
+                subCanvas.speedX = (offsetY/timeD) || 0
+            }
+        }
+
+
+
+        handled = true
+        return handled
+
+
+
+
+    },
+    calMovementWithFaction:function (x,d) {
+        var c = 0.55
+        return (1.0 - (1.0 / ((x * c / d) + 1.0))) * d
+
+    },
+    stopBounceAnimation:function (elem) {
+        for(var i=1;i<arguments.length;i++){
+            if (elem[arguments[i]]){
+                elem[arguments[i]].stop()
+                elem[arguments[i]] = null
+            }
+        }
+    },
+    startBounceAnimation:function (elem,animation,offset,initialVelocity,zeroPos,onePos,duration,startPos) {
+        var self = this
+        elem[animation] = new AnimationAPI.SpringAnimation(null,'x',initialVelocity,this.defaultDamping,this.defaultStifness,{x:zeroPos},{x:onePos},duration,startPos)
+        elem[animation].onFrameCB = function () {
+            elem[offset] = this.state.curValue.x
+            // elem.shouldShowScrollBar = true
+            self.addHideScrollBarTimeout(elem)
+
+        }
+        elem[animation].start()
+    },
+    handleWidgetDrag: function (widget, mouseState,lastMouseState) {
         var subType = widget.subType;
         var left = widget.info.left;
         var top = widget.info.top;
@@ -6641,10 +7019,18 @@ module.exports = React.createClass({
                 widget.mouseState = mouseState;
                 needRedraw = true;
                 break
+            case 'MySelector':
+                this.handleSelectorDrag(widget,relativeX,mouseState.position.y - lastMouseState.position.y)
+                widget.mouseState = mouseState
+                needRedraw = true
+                break
         }
 
         if (needRedraw) {
             this.drawAfterMouseAction(mouseState);
+            return true
+        }else{
+            return false
         }
     },
     handleWidgetPress: function (widget, mouseState) {
@@ -6703,7 +7089,14 @@ module.exports = React.createClass({
 
                 break;
             // case 'MyInputKeyboard':
-
+            case 'MySelector':
+                if(widget.animationKey){
+                    clearInterval(widget.animationKey)
+                    widget.animationKey = null
+                }
+                widget.mouseState = mouseState;
+                needRedraw = true;
+                break;
             default:
                 widget.mouseState = mouseState;
                 needRedraw = true;
@@ -6731,9 +7124,18 @@ module.exports = React.createClass({
     handleRelease: function (e) {
         var x = Math.round(e.pageX - e.target.offsetLeft);
         var y = Math.round(e.pageY - e.target.offsetTop);
+        var lastMouseState = _.cloneDeep(this.mouseState)
         this.mouseState.state = 'release';
         this.mouseState.position.x = x;
         this.mouseState.position.y = y;
+        this.mouseState.timeStamp = Date.now()
+        this.mouseState.speedX = 0
+        this.mouseState.speedY = 0
+
+
+        if (lastMouseState.state == 'dragging'){
+            this.handleDraggingEnd(_.cloneDeep(this.mouseState),lastMouseState)
+        }
 
         var pressedTargets = this.state.currentPressedTargets;
 
@@ -6744,6 +7146,397 @@ module.exports = React.createClass({
         this.state.currentPressedTargets = []
 
 
+    },
+    handleDraggingEnd:function (mouseState,lastMouseState) {
+        var pressedTargets = this.state.currentPressedTargets;
+        var canvas = this.dragTarget
+        if (canvas.type !== 'MyLayer'){
+            return
+        }
+
+        var subCanvas = canvas.subCanvasList[canvas.curSubCanvasIdx]
+        var stepX = subCanvas.speedX/(1000/30) ||0
+        var stepY = subCanvas.speedY/(1000/30) ||0
+        var factor = 2
+        var signX  = (stepX>=0)?1:-1
+        var signY = (stepY>0)?1:-1
+        if ((subCanvas.info&&subCanvas.info.scrollHEnabled) || (subCanvas.info&&subCanvas.info.scrollVEnabled)){
+            //canvas scroll effect
+            var elem = subCanvas
+
+
+            // console.log(stepX,stepY)
+            elem.scrollXTimerId = setInterval(function () {
+
+                var leftLimit = canvas.w - subCanvas.width
+                var rightLimit = 0
+                var topLimit = canvas.h-subCanvas.height
+                var bottomLimit = 0
+
+                // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+                // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+                elem.contentOffsetX = elem.contentOffsetX + stepX
+                this.addHideScrollBarTimeout(elem)
+
+                var bounceDuration = 2000
+                var bounceLimit = 100
+                //test x bounce
+                if (elem.contentOffsetX>0 ){
+                    clearInterval(elem.scrollXTimerId)
+
+                    this.startBounceAnimation(elem,'bounceAnimeX','contentOffsetX',stepX,-bounceLimit,0,bounceDuration,elem.contentOffsetX/bounceLimit + 1)
+
+                }else if (elem.contentOffsetX<canvas.w - subCanvas.width){
+                    clearInterval(elem.scrollXTimerId)
+                    //left
+
+                    this.startBounceAnimation(elem,'bounceAnimeX','contentOffsetX',stepX,leftLimit-bounceLimit,leftLimit,bounceDuration,(elem.contentOffsetX-leftLimit)/bounceLimit + 1)
+                }
+
+
+
+
+                stepX -= factor * signX
+                // stepY -= factor * signY
+                stepX = (stepX * signX <= 0 ? 0 : stepX)
+
+                if (stepX==0 ){
+                    clearInterval(elem.scrollXTimerId)
+                }
+
+            }.bind(this),1000/this.fps)
+
+
+            elem.scrollYTimerId = setInterval(function () {
+
+                var leftLimit = canvas.w - subCanvas.width
+                var rightLimit = 0
+                var topLimit = canvas.h-subCanvas.height
+                var bottomLimit = 0
+
+                // elem.contentOffsetX =  this.limitValueBetween(elem.contentOffsetX + stepX,canvas.w - subCanvas.width,0)
+                // elem.contentOffsetY = this.limitValueBetween(elem.contentOffsetY+stepY,canvas.h - subCanvas.height,0)
+
+                elem.contentOffsetY = elem.contentOffsetY + stepY
+
+                this.addHideScrollBarTimeout(elem)
+
+                var bounceDuration = 2000
+                var bounceLimit = 100
+                //test x bounce
+
+
+                if (elem.contentOffsetY>0 ){
+                    clearInterval(elem.scrollYTimerId)
+
+                    console.log('stepY',stepY,'-bounceLimit',-bounceLimit,'bounceDuration',bounceDuration,'elem.contentOffsetY',elem.contentOffsetY);
+                    this.startBounceAnimation(elem,'bounceAnimeY','contentOffsetY',stepY,-bounceLimit,0,bounceDuration,elem.contentOffsetY/bounceLimit + 1)
+
+
+                }else if (elem.contentOffsetY<canvas.h - subCanvas.height ){
+                    clearInterval(elem.scrollYTimerId)
+                    //left
+                    console.log('stepY',stepY,'-bounceLimit',-bounceLimit,'bounceDuration',bounceDuration,'elem.contentOffsetY',elem.contentOffsetY);
+
+                    this.startBounceAnimation(elem,'bounceAnimeY','contentOffsetY',stepY,topLimit-bounceLimit,topLimit,bounceDuration,(elem.contentOffsetY-topLimit)/bounceLimit + 1)
+                }
+
+
+                // stepX -= factor * signX
+                stepY -= factor * signY
+                // console.log('stepY',stepY)
+
+                stepY = (stepY * signY) <= 0 ? 0 : stepY
+                if (stepY == 0){
+                    clearInterval(elem.scrollYTimerId)
+                }
+
+            }.bind(this),this.fps)
+        }else{
+            var method = canvas.transition && canvas.transition.name
+            // method = 'SWIPE_H'
+            var elem = subCanvas
+            switch (method){
+                case 'SWIPE_H':
+                    elem.stepX = 0
+
+                    elem.swipeXTimerId = setInterval(function () {
+                        var curTranslateXABS = math.abs(elem.translate&&elem.translate.x||0)
+                        var leftTranslateX = canvas.subCanvasList[0].translate && canvas.subCanvasList[0].translate.x ||0
+                        var rightTranslateX = canvas.subCanvasList[canvas.subCanvasList.length-1].translate && canvas.subCanvasList[canvas.subCanvasList.length-1].translate.x ||0
+                        if (stepX==0 ||curTranslateXABS>0.5*canvas.w||leftTranslateX>0||rightTranslateX<0){
+                            clearInterval(elem.swipeXTimerId)
+                            elem.stepX = stepX
+                            for(var i=0;i<canvas.subCanvasList.length;i++){
+                                canvas.subCanvasList[i].animating = false
+                            }
+                            var pos = this.findClosetSubCanvas(canvas,'x')
+                            var targetTag = this.findTagByName(canvas.tag);
+
+                            var anchor = false
+                            if(leftTranslateX>0){
+                                anchor = false
+                            }else if(rightTranslateX<0){
+                                anchor = true
+                            }else{
+                                if(elem.translate.x > 0.5*canvas.w){
+                                    anchor = true
+                                }
+                            }
+                            
+
+                            if (targetTag) {
+                                if (targetTag.value == pos){
+                                    this.startSwipeAnimation(canvas,subCanvas,false,anchor)
+                                }else{
+                                    this.setTagByTag(targetTag, pos)
+                                    this.draw(null,{updatedTagName:canvas.tag})
+                                }
+
+
+                            }else{
+                                this.startSwipeAnimation(canvas,subCanvas,false,anchor)
+                            }
+
+
+                        }
+                        elem.translate.x += stepX
+
+                        this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,true)
+
+
+                        stepX -= factor * signX
+                        // stepY -= factor * signY
+                        stepX = (stepX * signX <= 0 ? 0 : stepX)
+                        // console.log(stepX)
+
+
+                    }.bind(this),1000/this.fps)
+
+
+
+                    break;
+                case 'SWIPE_V':
+                    elem.stepY = 0
+                    elem.swipeYTimerId = setInterval(function () {
+                        var curTranslateYABS = math.abs(elem.translate&&elem.translate.y||0)
+                        var leftTranslateY = canvas.subCanvasList[0].translate && canvas.subCanvasList[0].translate.y ||0
+                        var rightTranslateY = canvas.subCanvasList[canvas.subCanvasList.length-1].translate && canvas.subCanvasList[canvas.subCanvasList.length-1].translate.y ||0
+                        if (stepY==0 ||curTranslateYABS>0.5*canvas.w||leftTranslateY>0||rightTranslateY<0){
+                            clearInterval(elem.swipeYTimerId)
+                            elem.stepY = stepY
+                            for(var i=0;i<canvas.subCanvasList.length;i++){
+                                canvas.subCanvasList[i].animating = false
+                            }
+                            var pos = this.findClosetSubCanvas(canvas,'y')
+                            var targetTag = this.findTagByName(canvas.tag);
+
+                            var anchor = false
+                            if(leftTranslateY>0){
+                                anchor = false
+                            }else if(rightTranslateY<0){
+                                anchor = true
+                            }else{
+                                if(elem.translate.x > 0.5*canvas.w){
+                                    anchor = true
+                                }
+                            }
+
+                            if (targetTag) {
+                                if (targetTag.value == pos){
+                                    this.startSwipeAnimation(canvas,subCanvas,true,anchor)
+                                }else{
+                                    this.setTagByTag(targetTag, pos)
+                                    this.draw(null,{updatedTagName:canvas.tag})
+                                }
+
+
+                            }else{
+                                this.startSwipeAnimation(canvas,subCanvas,true,anchor)
+                            }
+
+
+                        }
+                        elem.translate.y += stepY
+
+                        this.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,false,true)
+
+
+                        // stepX -= factor * signX
+                        stepY -= factor * signY
+                        stepY = (stepY * signY <= 0 ? 0 : stepY)
+                        // console.log(stepX)
+
+
+                    }.bind(this),1000/this.fps)
+
+
+                    break;
+            }
+        }
+
+    },
+    startSwipeAnimation:function (canvas,subCanvas,vertical,anchor) {
+        vertical = !!vertical
+        var startX = subCanvas.translate && subCanvas.translate.x || 0
+        var startY = subCanvas.translate && subCanvas.translate.y || 0
+        if (vertical){
+            startX = 0
+        }else{
+            startY = 0
+        }
+        var frames = this.fps
+        var duration = canvas.transition.duration||this.defaultDuration
+        var easing = 'linear'
+
+        window.swipingSC = subCanvas
+
+
+        subCanvas.animating = true
+        
+
+        var springLen
+        var initialVelocity
+
+        var swipeAnime
+        var self = this
+        if (!vertical){
+            springLen = canvas.w
+            initialVelocity = (subCanvas.stepX*1000/self.fps||0)/springLen
+            if(anchor){
+                //right
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'x',-initialVelocity,this.defaultDamping,this.defaultStifness,{x:springLen},{x:0},duration,(springLen-startX+springLen)/springLen)
+                swipeAnime.onFrameCB = function () {
+                    subCanvas.animating = true
+    
+                    subCanvas.translate = {
+                        x:this.state.curValue.x,
+                        y:0
+                    }
+                    // console.log(this.state.curValue.x)
+    
+                    self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
+                }
+            }else{
+                //left
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'x',initialVelocity,this.defaultDamping,this.defaultStifness,{x:-springLen},{x:0},duration,(startX+springLen)/springLen)
+                swipeAnime.onFrameCB = function () {
+                    subCanvas.animating = true
+    
+                    subCanvas.translate = {
+                        x:this.state.curValue.x,
+                        y:0
+                    }
+                    // console.log(this.state.curValue.x)
+    
+                    self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
+                }
+            }
+            
+            
+        }else {
+            springLen = canvas.h
+            initialVelocity = (subCanvas.stepY*1000/self.fps||0)/springLen
+            if(anchor){
+                //right
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'y',-initialVelocity,this.defaultDamping,this.defaultStifness,{y:springLen},{y:0},duration,(springLen-startY+springLen)/springLen)
+                swipeAnime.onFrameCB = function () {
+                    subCanvas.animating = true
+    
+                    subCanvas.translate = {
+                        x:0,
+                        y:this.state.curValue.y
+                    }
+                    // console.log(this.state.curValue.x)
+    
+                    self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
+                }
+            }else{
+                //left
+                swipeAnime = new AnimationAPI.SpringAnimation(null,'y',initialVelocity,this.defaultDamping,this.defaultStifness,{y:-springLen},{y:0},duration,(startY+springLen)/springLen)
+                swipeAnime.onFrameCB = function () {
+                    subCanvas.animating = true
+    
+                    subCanvas.translate = {
+                        x:0,
+                        y:this.state.curValue.y
+                    }
+                    // console.log(this.state.curValue.x)
+    
+                    self.syncSubCanvasOffsetForSwipe(canvas,canvas.curSubCanvasIdx,!vertical,vertical)
+                }
+            }
+        }
+
+        swipeAnime.didStopCB = function () {
+            for(var i=0;i<canvas.subCanvasList.length;i++){
+                var curSC = canvas.subCanvasList[i]
+                // curSC.translate = null
+                curSC.animating = false
+            }
+            // self.draw()
+        }
+        if (subCanvas.swipeAnimation){
+            subCanvas.swipeAnimation.stop()
+        }
+        subCanvas.swipeAnimation = swipeAnime
+        swipeAnime.start()
+
+
+
+    },
+    findClosetSubCanvas:function (canvas,direction) {
+        var min
+        var pos = 0
+        direction = direction||'x'
+        for(var i=0;i<canvas.subCanvasList.length;i++){
+            var curSC = canvas.subCanvasList[i]
+            var curD = curSC.translate && curSC.translate[direction]
+            curD = math.abs(curD)
+            if (min === undefined){
+                min = curD
+                pos = i
+            }else{
+                if (curD < min){
+                    min = curD
+                    pos = i
+                }
+            }
+        }
+        return pos
+    },
+    addHideScrollBarTimeout:function (elem) {
+
+
+        if (elem.scrollBarHideAnime){
+            elem.scrollBarHideAnime.stop()
+            elem.scrollBarHideAnime = null
+            elem.scrollBarAlpha = 1.0
+
+        }
+
+      if(elem.hideScrollBarTimerId){
+          clearTimeout(elem.hideScrollBarTimerId)
+      }
+        // console.log('added ')
+      elem.hideScrollBarTimerId = setTimeout(function () {
+
+          this.easeOutScrollBar(elem)
+      }.bind(this),100)
+    },
+    easeOutScrollBar:function (elem) {
+
+        elem.scrollBarHideAnime =  new AnimationAPI.Animation(null,'alpha',1.0,0.0,500)
+        elem.scrollBarHideAnime.onFrameCB = function () {
+            elem.scrollBarAlpha = this.state.curValue
+
+        }
+        // elem.scrollBarHideAnime.timingFunction = AnimationAPI.timingFunctions.easeOutCubic
+        elem.scrollBarHideAnime.start()
+        if (!window.animes){
+            window.animes = []
+        }
+        window.animes.push(elem.scrollBarHideAnime)
     },
     handleElementRelease: function (elem, mouseState) {
         var needRedraw = false;
@@ -6763,6 +7556,37 @@ module.exports = React.createClass({
                         elem.mouseState = mouseState;
                         /*var targetTag = this.findTagByName(elem.tag);
                         this.setTagByTag(targetTag, 1);*/
+                        needRedraw = true;
+                        break;
+                    case 'MySelector':
+                        elem.mouseState = mouseState;
+                        var targetTag = this.findTagByName(elem.tag);
+                        var minAbsD = Infinity
+                        var height = elem.info.height
+                        var showCount = elem.info.showCount
+                        if((showCount&1) === 0){
+                            showCount++
+                        }
+                        var count = elem.info.count
+                        var curValue = elem.curValue||0
+                        var elementHeight = height/showCount
+                        // var elementWidth = width
+                        var centerIdx = parseInt(showCount/2)
+                        var centerTop = elementHeight * centerIdx
+                        var offsetY = elem.translateY || 0
+                        var minPos
+                        for(var i=0;i<count;i++){
+                            
+                            var curElementTop = (centerIdx - curValue + i)*elementHeight + offsetY
+                            var curD = Math.abs(curElementTop - centerTop)
+                            if(curD<minAbsD){
+                                minAbsD = curD
+                                minPos = i
+                            }
+                            
+                        }
+                        // elem.translateY = 0;
+                        this.setTagByTag(targetTag, minPos);
                         needRedraw = true;
                         break;
                 }

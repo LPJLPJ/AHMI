@@ -4554,6 +4554,35 @@ ideServices
                 }
 
             }
+
+            this.ChangeTexSlicesCount = function(_option, _successCallback){
+                var selectObj=_self.getCurrentSelectObject();
+                var targetTex = selectObj.level.texList[_option.texIdx]
+                if(targetTex){
+                    var targetCount = _option.count
+                    var i
+                    if(targetCount > targetTex.slices.length){
+                        for(i=0;i<targetCount-targetTex.slices.length;i++){
+                            targetTex.slices.push(TemplateProvider.getDefaultSlice())
+                        }
+                    }else if(targetCount < targetTex.slices.length){
+                        for(i=0;i<targetTex.slices.length - targetCount;i++){
+                            targetTex.slices.pop()
+                        }
+                    }else{
+                        return
+                    }
+                }else{
+                    return
+                }
+                
+
+                selectObj.target.fire('changeTex',{
+                    level:selectObj.level,
+                    callback:_successCallback
+                });
+            }
+
             this.ChangeAttributePosition= function (_option, _successCallback) {
                 var currentOperate=SaveCurrentOperate();
                 var object=_self.getCurrentSelectObject();
