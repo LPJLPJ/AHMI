@@ -149,7 +149,8 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                     selectCharacterSetByName: selectCharacterSetByName,
                     addCharacterSet: addCharacterSet,
                     deleteCharacterSetByIndex: deleteCharacterSetByIndex,
-                    enterArrange: enterArrange
+                    enterArrange: enterArrange,
+                    enterAlign:enterTextInputAlign
                 },
                 num: {
                     numModeId: '0',//目前无用
@@ -2748,6 +2749,23 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
             var option = {
                 mode: $scope.component.object.level.info.mode
+            };
+
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            ProjectService.ChangeAttributeTextContent(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+
+            })
+        }
+
+        function enterTextInputAlign(e) {
+            if ($scope.component.object.level.info.align == initObject.level.info.align) {
+                return;
+            }
+
+            var option = {
+                align: $scope.component.object.level.info.align
             };
 
             var oldOperate = ProjectService.SaveCurrentOperate();
