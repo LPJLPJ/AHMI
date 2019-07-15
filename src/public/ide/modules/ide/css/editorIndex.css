@@ -2654,6 +2654,10 @@ div.wrapper-custom {
     font-weight: 600;
 }
 
+#tag-table .focused{
+    border:2px solid #008CEE;
+}
+
 /*资源上传*/
 .resource-drop-wrap {
     margin: 0;

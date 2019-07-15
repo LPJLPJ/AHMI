@@ -1,7 +1,7 @@
 /**
  * Created by lixiang on 16/3/17.
  */
-ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService','GenerateTagService', 'Type', '$uibModal','$http','$q', function ($rootScope, $scope, TagService, ProjectService,GenerateTagService,Type, $uibModal,$http,$q) {
+ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService','GenerateTagService', 'Type', '$uibModal','$http','$q','$timeout', function ($rootScope, $scope, TagService, ProjectService,GenerateTagService,Type, $uibModal,$http,$q,$timeout) {
     $scope.selectedIdx = -1;
     $scope.animationsEnabled = true;
     $scope.component = {
@@ -55,6 +55,12 @@ ide.controller('TagCtrl', ['$rootScope', '$scope', 'TagService', 'ProjectService
         readTagClasses();
     });
 
+    $scope.$on('locateTag',function(event,tagName){
+        $scope.focusedTagName = tagName
+        $timeout(function(){
+            $scope.focusedTagName = null
+        },5000)
+    })
 
     function initProject() {
         readTagsInfo();

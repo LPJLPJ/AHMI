@@ -5544,7 +5544,7 @@
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="tag in component.curTagClass.tagArray track by $index"
-                                        ng-class="{'selected':selected==$id}" id="tag-{{tag.name}}">
+                                        ng-class="{'selected':selected==$id,'focused':focusedTagName==tag.name}" id="tag-{{tag.name}}">
                                         <td ng-click="component.openPanel($index,'custom')" align="left" valign="middle">
                                             <div ng-mouseover="component.showTagBindStatus($index)" 
                                                 class="tagName c-p"
