@@ -2994,7 +2994,7 @@ module.exports = React.createClass({
                 }
     
                 var paragraphAttrs = {
-                    align:'left',
+                    align:info.align,
                         // indentationLeft:0,
                         // indentationRight:0,
                         // firstLineIndentation:0,
