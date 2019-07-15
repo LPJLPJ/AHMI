@@ -64,6 +64,25 @@ ide.controller('AttrCtrl', ['$scope','$timeout', 'ProjectService',function ($sco
             MyGrid:'grid',
             MySelector:'selector'
         };
+
+        $scope.$on('locateTag',function(e,tagName){
+            //open tag panel
+            
+            $timeout(function(){
+                $scope.component.top.currentNav=2;
+                var container = document.getElementsByClassName('attr-panel-item')[2]
+                
+                $timeout(function(){
+                    var target = document.getElementById('tag-'+tagName)
+                    var containerTop = container.getClientRects()[0].top
+                    var targetTop = target.getClientRects()[0].top
+                    var offset = containerTop - targetTop
+                    container.scrollTop -= offset
+                })
+                
+            })
+            
+        })
     }
 
     $scope.showRight = function() {

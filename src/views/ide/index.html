@@ -4491,7 +4491,7 @@
 
                     <!--变量面板-->
                     <div ng-show="component.showTagPanel&&!myMask"  class="attr-item__cell-wrap lg" ng-controller='TagSelectCtl'>
-                        <p class="attr-item__cell-title">变量</p>
+                        <p class="attr-item__cell-title">变量<button type="button" ng-show="selectedTagObj.tagName&&selectedTagObj.tagName.indexOf('Sys')==-1" class="btn btn-default attr-default-btn action-item__add-action" ng-click="component.locateToTag()">定位变量</button></p>
                         <tag-select bind="selectedTagObj" action-function="component.selectedTagFun()"></tag-select>
                     </div>
 
@@ -5544,7 +5544,7 @@
                                     </thead>
                                     <tbody>
                                     <tr ng-repeat="tag in component.curTagClass.tagArray track by $index"
-                                        ng-class="{'selected':selected==$id}">
+                                        ng-class="{'selected':selected==$id}" id="tag-{{tag.name}}">
                                         <td ng-click="component.openPanel($index,'custom')" align="left" valign="middle">
                                             <div ng-mouseover="component.showTagBindStatus($index)" 
                                                 class="tagName c-p"

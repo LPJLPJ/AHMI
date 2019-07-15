@@ -1242,13 +1242,14 @@ ide.controller('TagInstanceCtrl', ['$scope', '$uibModalInstance', 'TagService', 
  * Created by lixiang on 17/3/5.
  * tag选择框控制器，在属性栏里用于给对象绑定tag
  */
-ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type', function ($scope, TagService, ProjectService, Type) {
+ide.controller('TagSelectCtl', ['$rootScope','$scope', 'TagService', 'ProjectService', 'Type', function ($rootScope,$scope, TagService, ProjectService, Type) {
     $scope.component = {
         showTagPanel: false,
         selectedTag: null,
         allCustomTags: null,
         allTimerTags: null,
         selectedTagFun: selectedTagFun,
+        locateToTag:locateToTag
     };
     $scope.selectedTagObj = {tagName: null};
 
@@ -1345,5 +1346,12 @@ ide.controller('TagSelectCtl', ['$scope', 'TagService', 'ProjectService', 'Type'
         ProjectService.ChangeAttributeTag($scope.component.selectedTag, function (oldOperate) {
             $scope.$emit('ChangeCurrentPage', oldOperate);
         });
+    }
+
+    function locateToTag(){
+        if($scope.selectedTagObj && $scope.selectedTagObj.tagName){
+            $rootScope.$broadcast('locateTag',$scope.selectedTagObj.tagName)
+
+        }
     }
 }]);
