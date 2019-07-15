@@ -2796,7 +2796,6 @@
                                    ng-keypress="component.enterHeight($event)"
                                    type="number">
                         </div>
-
                         <div class="attr-item__cell-wrap">
                             <p class="attr-item__cell-title">字符间距</p>
                             <input class="attr-item__cell-input form-control"
@@ -5712,45 +5711,6 @@
                         </div>
 
                         <div ng-show="component.object.type=='MyTextInput'" ng-controller="characterSetCtrl">
-                            <!--<div class=" dropdown attr-item__cell-wrap lg">-->
-                                <!--<p class="attr-item__cell-title">字符集</p>-->
-                                <!--<button type="button"-->
-                                        <!--class="btn btn-default dropdown-toggle form-control"-->
-                                        <!--id="fontMenu"-->
-                                        <!--data-toggle="dropdown"-->
-                                        <!--aria-haspopup="true"-->
-                                        <!--aria-expanded="true">-->
-                                    <!--{{componentOfChar.character.fontName}}-->
-                                    <!--<span class="caret" style="width: 0"></span>-->
-                                <!--</button>-->
-
-                                <!--<ul class="dropdown-menu list-group xiangPage-dropdown" aria-labelledby="fontMenu"-->
-                                    <!--id="characterNameInput">-->
-                                    <!--<li class="list-group-item">-->
-                                        <!--添加样式-->
-                                    <!--<span class="btn btn-default btn-primary badge"-->
-                                          <!--ng-click="component.textInput.addCharacterSet($event)">+</span>-->
-
-                                    <!--</li>-->
-                                    <!--<li ng-repeat="character in componentOfChar.allCharacters track by $index"-->
-                                        <!--class="list-group-item"-->
-                                        <!--style="cursor: pointer;"-->
-                                        <!--ng-click="component.textInput.selectCharacterSetByIndex($index)">-->
-                                        <!--<div ng-click="componentOfChar.selectCharacterByIndex($index)">-->
-                                            <!--<input type="text"-->
-                                                   <!--class=""-->
-                                                   <!--readonly="readonly"-->
-                                                   <!--ng-dblclick="componentOfChar.enableInput($index)"-->
-                                                   <!--ng-blur="componentOfChar.disableInput($index)"-->
-                                                   <!--ng-model="character.fontName">-->
-                                        <!--<span class="btn btn-primary btn-sm badge"-->
-                                              <!--ng-click="component.textInput.deleteCharacterSetByIndex($event,$index)">-->
-                                         <!--×-->
-                                        <!--</span>-->
-                                        <!--</div>-->
-                                    <!--</li>-->
-                                <!--</ul>-->
-                            <!--</div>-->
 
                             <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">字体</p>
@@ -5775,6 +5735,16 @@
                                        type="number"
                                        ng-blur="component.restore()"
                                        ng-keypress="component.enterFontSize($event)">
+                            </div>
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">对齐方式</p>
+                                <select class="form-control attr-item__cell-input"
+                                        ng-model="component.object.level.info.align"
+                                        ng-change="component.textInput.enterAlign()">
+                                    <option value="left" ng-selected="true">左对齐</option>
+                                    <option value="center">居中</option>
+                                    <option value="right">右对齐</option>
+                                </select>
                             </div>
                             <div class="attr-item__cell-wrap lg">
                                 <p class="attr-item__cell-title">字体颜色</p>

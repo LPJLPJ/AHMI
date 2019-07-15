@@ -3967,7 +3967,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
             this.spacing = level.info.spacing||0
             this.halfSpacing = level.info.halfSpacing||0
             this.lineSpacing = level.info.lineSpacing||0
-
+            this.align = level.info.align
             this.backgroundImageElement = ResourceService.getResourceFromCache(level.texList[0].slices[0].imgSrc);
             if (this.backgroundImageElement) {
                 this.loaded = true;
@@ -4012,6 +4012,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 }
                 if(arg.mode!==undefined){
                     self.mode = arg.mode;
+                }
+                if(arg.align!==undefined){
+                    self.align = arg.align;
                 }
                 if(arg.hasOwnProperty('fontItalic')){
                     self.fontItalic=arg.fontItalic;
@@ -4119,7 +4122,40 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         //draw with byte mode
                         var maxWidth = this.fontSize;
                         var centerX = 0
+                        var totalWidth = 0
                         centerX = 0.5*maxWidth  - (this.width/2)
+                        for(var i=0;i<this.text.length;i++){
+                            curLetterType = getLetterType(this.text[i])
+                            if(lastLetterType === undefined){
+                                curSpacing = 0
+                            }else if(lastLetterType === 0){
+                                curSpacing = curLetterType ? (this.spacing + this.halfSpacing)/2 : this.halfSpacing
+                                curSpacing += maxWidth
+                            }else{
+                                curSpacing = curLetterType ? this.spacing : (this.spacing + this.halfSpacing)/2
+                                curSpacing += maxWidth
+                            }
+                            totalWidth += curSpacing
+                            
+                            lastLetterType = curLetterType
+
+                        }
+                        curSpacing = 0
+                        lastLetterType = undefined
+                        totalWidth += maxWidth
+                        //compare offset for align
+                        switch(this.align){
+                            case 'center':
+                                centerX += (this.width - totalWidth)/2
+                                break;
+                            case 'right':
+                                centerX += this.width - totalWidth
+                                break;
+                            default:
+                                //left
+
+                        }
+                        
                         for(var i=0;i<this.text.length;i++){
                             curLetterType = getLetterType(this.text[i])
                             if(lastLetterType === undefined){
@@ -4160,9 +4196,9 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                             fontHalfSpacing:Number(this.halfSpacing)||0,
                             // fontVerticalOffset:0
                         }
-    
+                        var align = this.align||'left'
                         var paragraphAttrs = {
-                            align:'left',
+                            align:align,
                                 // indentationLeft:0,
                                 // indentationRight:0,
                                 // firstLineIndentation:0,

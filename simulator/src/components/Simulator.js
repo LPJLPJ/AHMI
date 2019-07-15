@@ -2976,7 +2976,7 @@ module.exports = React.createClass({
                 font['font-size'] = info.fontSize;
                 font['font-family'] = info.fontFamily;
                 font['font-color'] = info.fontColor;
-                font['text-align'] = 'left';
+                font['text-align'] = info.align;
                 this.drawTextByTempCanvas(ctx,curX, curY, width, height, widget.curValue, font, arrange,true,info.fontSize,{
                     spacing:info.spacing||0,
                     halfSpacing:info.halfSpacing||0
@@ -3079,15 +3079,37 @@ module.exports = React.createClass({
             var xCoordinate
             tempctx.textAlign = 'center'
             var targetAlign = font['text-align'] || 'center';
+            var totalWidth = 0
+            for (var i = 0; i < text.length; i++) {
+                totalWidth += maxFontWidth;
+                if(i+1 < text.length){
+                    lastLetterType = this.getLetterType(text[i])
+                    curLetterType = this.getLetterType(text[i+1])
+                    curSpacing = 0
+                    if(lastLetterType === 0){
+                        curSpacing = curLetterType ? (spacing + halfSpacing)/2 : halfSpacing
+                    }else{
+                        curSpacing = curLetterType ? spacing : (spacing + halfSpacing)/2
+                    }
+
+                    totalWidth += curSpacing || 0;
+                    
+                }
+                
+
+            }
+            curSpacing = 0
+
+            xCoordinate = maxFontWidth / 2
             switch(targetAlign){
                 case 'center':
-                    xCoordinate = (maxFontWidth * text.length > width) ? maxFontWidth / 2 : ((width - maxFontWidth * text.length) + maxFontWidth) / 2;//如果装不下字符串，从maxFontWidth处开始显示
+                    xCoordinate += (width - totalWidth)/2
                 break;
                 case 'left':
-                    xCoordinate = maxFontWidth/2
+                    xCoordinate += 0
                 break;
                 case 'right':
-                    xCoordinate = width - maxFontWidth/2 - (text.length - 1) * maxFontWidth
+                    xCoordinate += width - totalWidth
                 break;
             }
             
