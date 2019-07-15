@@ -1620,7 +1620,7 @@ body {
 }
 
 .tag-item__timer-count {
-    max-width: 50%;
+    /* max-width: 50%; */
     padding: 5px 1em;
     font-size: 14px;
     color: #7d7d7d;
@@ -1628,7 +1628,7 @@ body {
 }
 
 .tag-item__timer-num-manage {
-    width: 50%;
+    /* width: 50%; */
     vertical-align: 2px;
 }
 
