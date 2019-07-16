@@ -1,11 +1,13 @@
 /**
  * Created by tang on 2018/8/20.
  */
+var defaultLogType = 'ide'
 var mongoose=require('mongoose');
 var UpdateLogSchema=new mongoose.Schema({
     userId:mongoose.Schema.Types.ObjectId,
     author:String,
     title:String,
+    type:{type:String,default:defaultLogType},
     explain:String,
     content:[String],
     createTime:{type:Date,default:Date.now},
@@ -32,6 +34,20 @@ UpdateLogSchema.statics={
             .sort({'createTime':-1})
             .exec(cb)
     },
+    fetchByType:function(type,cb){
+        type = type || defaultLogType
+        return this
+                .find({type:type})
+                .sort({'createTime':-1})
+                .exec(cb)
+    },
+    countByType:function(type,cb){
+        type = type || defaultLogType
+        return this
+                .find({type:type})
+                .count()
+                .exec(cb)
+    },
     findById:function(id,cb){
         return this
             .findOne({_id:id})
@@ -49,6 +65,15 @@ UpdateLogSchema.statics={
             .limit(10)
             .sort({'createTime':-1})
             .exec(cb)
+    },
+    findByPageAndType:function(type,page,cb){
+        type = type || defaultLogType
+        return this
+                .find({type:type})
+                .skip((page-1)*10)
+                .limit(10)
+                .sort({'createTime':-1})
+                .exec(cb)
     }
 };
 
