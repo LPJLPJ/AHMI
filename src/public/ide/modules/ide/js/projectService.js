@@ -4127,6 +4127,18 @@ ideServices
                 _successCallback&&_successCallback();
             };
 
+            this.ChangeAttributeSwitchFlashDur = function(_option,_successCallback){
+                var selectObj = _self.getCurrentSelectObject();
+                selectObj.level.info.flashDur=_option.flashDur;
+                _successCallback&&_successCallback();
+            };
+
+            this.ChangeAttributeSwitchModeId = function(_option,_successCallback){
+                var selectObj = _self.getCurrentSelectObject();
+                selectObj.level.info.mode=_option.mode;
+                _successCallback&&_successCallback();
+            };
+
             //改变字体样式，适用于开关控件，图层控件
             this.ChangeAttributeFontStyle=function(_option,_successCallback){
                 var selectObj=_self.getCurrentSelectObject();

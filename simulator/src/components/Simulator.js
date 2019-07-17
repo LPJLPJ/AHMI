@@ -14,6 +14,7 @@ var AudioManager = require('../utils/audioManager')
 var math = require('mathjs');
 var StringConverter = require('./StringConverter')
 var WaveFilterManager = require('./WaveFilterManager')
+var FreeTimerManager = require('../utils/freeTimerManager')
 var env = 'dev' //dev or build
 var lg = (function () {
     if (env === 'dev') {
@@ -73,6 +74,7 @@ module.exports = React.createClass({
         this.simState = {};
         VideoSource.pause();
         AnimationManager.clearAllAnimationKeys();
+        FreeTimerManager.clearAll();
         WaveFilterManager.reset()
         cancelAnimationFrame(this.paintKey)
     },
@@ -369,7 +371,7 @@ module.exports = React.createClass({
         }
         //reset wave filters
         WaveFilterManager.reset()
-
+        FreeTimerManager.clearAll()
         // this.initProject();
         // console.log('receive new project data', this.state.project)
 
@@ -2835,6 +2837,11 @@ module.exports = React.createClass({
     //switch
     drawSwitch: function (curX, curY, widget, options, cb) {
         var bindTagValue = this.getValueByTagName(widget.tag, 0);
+        
+        var mode = widget.info.mode
+        var flashDur = widget.info.flashDur || 10
+        flashDur = flashDur / 2
+        // console.log(mode)
         var switchState;
         var bindBit = parseInt(widget.info.bindBit);
         if (bindBit < 0 || bindBit > 31) {
@@ -2842,7 +2849,26 @@ module.exports = React.createClass({
         } else {
             switchState = bindTagValue & (Math.pow(2, bindBit));
         }
-        widget.curSwitchState = switchState;
+        if(mode == 1){
+            if(switchState == 0){
+                //clear timer
+                if(widget.flashTimerId){
+                    FreeTimerManager.clearTimerId(widget.flashTimerId)
+                    widget.flashTimerId = null
+                }
+                widget.curSwitchState = switchState;
+            }else{
+                if(!widget.flashTimerId){
+                    widget.flashTimerId = setInterval(function(){
+                        widget.curSwitchState = widget.curSwitchState == 0 ? 1:0
+                    },flashDur)
+                    FreeTimerManager.addTimerId(widget.flashTimerId)
+                }
+            }
+        }else{
+            widget.curSwitchState = switchState;
+        }
+        
     },
     paintSwitch: function (curX, curY, widget, options, cb,ctx) {
         // console.log(widget);
