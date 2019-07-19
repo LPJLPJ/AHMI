@@ -4519,12 +4519,15 @@ ideServices
                 if(targetTex){
                     var targetCount = _option.count
                     var i
+                    var changeNum
                     if(targetCount > targetTex.slices.length){
-                        for(i=0;i<targetCount-targetTex.slices.length;i++){
+                        changeNum = targetCount-targetTex.slices.length
+                        for(i=0;i<changeNum;i++){
                             targetTex.slices.push(TemplateProvider.getDefaultSlice())
                         }
                     }else if(targetCount < targetTex.slices.length){
-                        for(i=0;i<targetTex.slices.length - targetCount;i++){
+                        changeNum = targetTex.slices.length - targetCount
+                        for(i=0;i<changeNum;i++){
                             targetTex.slices.pop()
                         }
                     }else{
