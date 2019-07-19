@@ -119,6 +119,27 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
        
     }
 
+    function uploadFileToMemory(blob,name,scb,fcb) {
+        // var blob = dataURItoBlob(dataURI);
+
+        var successHandler = function () {
+            // console.log('save tex ok')
+            scb && scb()
+        }
+
+        var errHandler = function (err) {
+            console.log(err)
+            fcb && fcb()
+        }
+
+        window.renderedTex = window.renderedTex||{}
+
+        window.renderedTex[name] = blob
+
+        successHandler()
+       
+    }
+
 
     function prepareCachedRes() {
         var curRes = ResourceService.getGlobalResources();
@@ -2087,6 +2108,13 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
         return needRemoveFiles;
     };
 
+    //render sound
+    renderer.prototype.renderSound = function(aduioSrc,srcRootDir,dstDir,imgUrlPrefix,cb){
+        var file = ResourceService.getResourceObjFromCache(aduioSrc,'src').originalBuffer
+        var curFileNameParts = aduioSrc.split('[\\|\/]')
+        var curFileName = curFileNameParts[curFileNameParts.length-1]
+        uploadFileToMemory(file,curFileName,cb,cb)
+    }
 
     // add by lixiang in 2017/12/7
     renderer.prototype.renderFontPng = function(font,srcRootDir,dstDir,imgUrlPrefix,cb){
@@ -2413,7 +2441,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             }
         }
         var fontList =  FontGeneratorService.getFontCollections(allWidgets),
-            totalNum = allPageList.length+allWidgets.length+fontList.length,
+            trackList = dataStructure.trackList ||[],
+            totalNum = allPageList.length+allWidgets.length+fontList.length+trackList.length,
             m = 0,
             curWidget = null,
             curFont = null,
@@ -2503,6 +2532,11 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
                     for(m=0;m<allPageList.length;m++){
                         curRenderPage = allPageList[m]
                         Renderer.renderPage(dataStructure.size.width,dataStructure.size.height,curRenderPage,'/',ResourceUrl,ResourceUrl,cb)
+                    }
+                }
+                if(trackList.length){
+                    for(m=0;m<trackList.length;m++){
+                        Renderer.renderSound(trackList[m].src,'/',ResourceUrl,ResourceUrl,cb);
                     }
                 }
                 //生成不同种类的字符列表

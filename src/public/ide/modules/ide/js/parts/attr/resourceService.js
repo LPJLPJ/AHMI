@@ -328,6 +328,7 @@ ideServices
                     audioCtx.decodeAudioData(request.response, function(buffer) {
                         resourceObj.complete = true
                         resourceObj.content = buffer
+                        resourceObj.originalBuffer = request.response
                         scb && scb({type:'ok'}, resourceObj);
 
                     });
