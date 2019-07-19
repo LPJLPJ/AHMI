@@ -3049,6 +3049,24 @@
                                        ng-blur="component.restore()"
                                        ng-keypress="component.switchWidget.enterBindBit($event)"/>
                             </div>
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">模式</p>
+                                <select class="attr-item__cell-input form-control"
+                                        ng-model="component.object.level.info.mode"
+                                        ng-change="component.switchWidget.enterMode($event)">
+                                    <option ng-repeat="mode in component.switchWidget.modes" value="{{mode.id}}">
+                                        {{mode.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="attr-item__cell-wrap lg">
+                                <p class="attr-item__cell-title">闪烁间隔(ms)</p>
+                                <input type="number"
+                                       class="attr-item__cell-input form-control"
+                                       ng-model="component.object.level.info.flashDur"
+                                       ng-blur="component.restore()"
+                                       ng-keypress="component.switchWidget.enterFlashDur($event)"/>
+                            </div>
                         </div>
                         <!--旋转图-->
                         <div ng-show="component.object.type=='MyRotateImg'&&!myMask">

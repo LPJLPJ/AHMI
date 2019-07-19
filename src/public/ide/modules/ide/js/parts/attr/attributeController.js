@@ -287,7 +287,13 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
 
                 //开关
                 switchWidget: {
-                    enterBindBit: enterBindBit
+                    enterBindBit: enterBindBit,
+                    modes:[
+                        {id:'0',name:'普通模式'},
+                        {id:'1',name:'闪烁模式'}
+                    ],
+                    enterFlashDur:enterFlashDur,
+                    enterMode:enterSwitchMode
                 },
                 //旋转
                 rotateImg: {
@@ -3443,6 +3449,44 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 })
             }
         };
+
+
+        function enterFlashDur(e) {
+
+            if (e.keyCode == 13) {
+                if ($scope.component.object.level.info.flashDur == initObject.level.info.flashDur) {
+                    return;
+                }
+                if ($scope.component.object.level.info.flashDur < 10 || $scope.component.object.level.info.flashDur > 100000) {
+                    toastr.warning('范围为10 ~ 100000');
+                    restore();
+                    return;
+                }
+                toastr.info('修改成功');
+                var oldOperate = ProjectService.SaveCurrentOperate();
+
+                var option = {
+                    flashDur: $scope.component.object.level.info.flashDur
+                };
+                ProjectService.ChangeAttributeSwitchFlashDur(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+            
+            
+        }
+
+        function enterSwitchMode(e) {
+            
+            var oldOperate = ProjectService.SaveCurrentOperate();
+
+            var option = {
+                mode: $scope.component.object.level.info.mode
+            };
+            ProjectService.ChangeAttributeSwitchModeId(option, function () {
+                $scope.$emit('ChangeCurrentPage', oldOperate);
+            })
+        }
 
         /**
          * 输入初始值
