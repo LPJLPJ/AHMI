@@ -6,14 +6,15 @@ var UpdateLogRoute = {};
 
 UpdateLogRoute.getLogIndex = function (req,res){
     var pageOn = req.query.page?req.query.page:1;
+    var type = req.query.type || 'ide'
     pageOn = parseInt(pageOn);
 
-    UpdateLogModel.count(function(err,count){
+    UpdateLogModel.countByType(type,function(err,count){
         if(err){
             console.log(err)
         }else{
             //分页显示，显示5个页码，每页10条数据
-            UpdateLogModel.findByPage(pageOn,function(err,data){
+            UpdateLogModel.findByPageAndType(type,pageOn,function(err,data){
                 var pageTotal = Math.ceil(count/10);
                 var pageStart,pageEnd;
 
@@ -45,6 +46,7 @@ UpdateLogRoute.getLogIndex = function (req,res){
                     var logItem = {};
                     logItem.author = log.author;
                     logItem.title = log.title;
+                    logItem.type = log.type;
                     logItem.explain = log.explain;
                     logItem.content = log.content.map(function(item){
                         return JSON.parse(item)
@@ -52,7 +54,7 @@ UpdateLogRoute.getLogIndex = function (req,res){
                     logItem.createTime = moment(log.createTime).format('YYYY年MM月DD日 HH时mm分');
                     return logItem;
                 });
-                res.render('updateLog/index.html',{logData:logData,page:page})
+                res.render('updateLog/index.html',{logData:logData,page:page,type:type})
             })
         }
     });
@@ -68,6 +70,9 @@ UpdateLogRoute.saveUpdateLog = function(req,res){
     logData.userId = req.session.user.id;
     logData.author = req.session.user.username;
     logData.title = data.title;
+    if(data.type){
+        logData.type = data.type
+    }
     logData.explain = data.explain;
     logData.content = data.content;
     var newLog = new UpdateLogModel(logData);
@@ -91,6 +96,7 @@ UpdateLogRoute.getLogEditIndex = function(req,res){
                 logItem.id = log._id;
                 logItem.author = log.author;
                 logItem.title = log.title;
+                logItem.type = log.type;
                 logItem.explain = log.explain;
                 logItem.content = log.content.map(function(item){
                     return JSON.parse(item)
@@ -124,6 +130,7 @@ UpdateLogRoute.editUpdateLog = function(req,res){
             logData.id = data._id;
             logData.author = data.author;
             logData.title = data.title;
+            logData.type = data.type;
             logData.explain = data.explain;
             logData.content = data.content.map(function(item){
                 return JSON.parse(item)

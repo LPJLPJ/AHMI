@@ -14,7 +14,14 @@
         <% include header.html %>
     </header>
     <div class="container-fluid update-log-headline">
-        <p>IDE&nbsp;-&nbsp;更新日志</p>
+        <p>更新日志</p>
+        <div class="col-lg-2" style="float: right;">
+            <select name="type" id="release-type-options" class="form-control">
+                <option value="ide" <%= type=='ide'?'selected':'' %> >IDE</option>
+                <option value="imp" <%= type=='imp'?'selected':'' %> >一体化</option>
+                <option value="emb" <%= type=='emb'?'selected':'' %> >嵌入式</option>
+            </select>
+        </div>
     </div>
     <div class="container update-log-body">
         <ul class="update-log-list">
@@ -61,8 +68,8 @@
     </div>
     <% } %>
 
-    <footer class="footer">
-        <p>版权所有 2011-2018 苏州速显微电子科技有限公司 保留一切权力 浙ICP备11061412</p>
-    </footer>
+    <!-- <footer class="footer">
+        <% include ../all/footer-short.html %>
+    </footer> -->
 </body>
 </html>

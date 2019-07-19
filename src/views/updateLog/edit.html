@@ -25,6 +25,16 @@
                     <input type="text" id="release-log-title" class="form-control" maxlength="50" value="<%= logData.title %>"/>
                 </div>
                 <div class="row release-form-item">
+                    <div><label>类型</label></div>
+                    <div class="col-lg-2">
+                        <select name="type" id="release-type" class="form-control" >
+                            <option value="ide" <%= logData.type=='ide'?'selected':'' %>>IDE</option>
+                            <option value="imp" <%= logData.type=='imp'?'selected':'' %>>一体化</option>
+                            <option value="emb" <%= logData.type=='emb'?'selected':'' %>>嵌入式</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row release-form-item">
                     <label for="release-log-explain">说明</label>
                     <textarea name="explain" id="release-log-explain" cols="50" rows="5" maxlength="250" class="form-control"><%= logData.explain %></textarea>
                 </div>

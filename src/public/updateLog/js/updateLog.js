@@ -12,6 +12,15 @@ $(function () {
     (function($){
 
         /**
+         * 更改日志类型
+         */
+        var updateType = $('#release-type-options')
+        updateType.on('change',function(e){
+            //update release type
+            window.location.href = '/update-log?type='+e.target.value
+        })
+
+        /**
          * 发布日志
          */
         var releaseLogContent = $('#release-log-content');
@@ -34,6 +43,7 @@ $(function () {
 
         $(document).on('click','#confirm-release',function(){
             var title = $('#release-log-title').val();
+            var type = $('#release-type').val();
             var explain = $('#release-log-explain').val();
             var content = [];
 
@@ -59,6 +69,7 @@ $(function () {
 
             var data = {
                 title:title,
+                type:type,
                 explain:explain,
                 content:content
             };
@@ -118,6 +129,7 @@ $(function () {
 
         $('#confirm-edit').on('click',function(){
             var title = $('#release-log-title').val();
+            var type = $('#release-type').val();
             var explain = $('#release-log-explain').val();
             var id =releaseLogContent.attr('data-id');
             var content = [];
@@ -145,6 +157,7 @@ $(function () {
             var data = {
                 id:id,
                 title:title,
+                type:type,
                 explain:explain,
                 content:content
             };
