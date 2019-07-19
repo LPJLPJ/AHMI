@@ -325,10 +325,11 @@ ideServices
                 request.open('get', file.src, true);
                 request.responseType = 'arraybuffer';
                 request.onload = function() {
+                    var originalBuffer = _.cloneDeep(request.response)
                     audioCtx.decodeAudioData(request.response, function(buffer) {
                         resourceObj.complete = true
                         resourceObj.content = buffer
-                        resourceObj.originalBuffer = request.response
+                        resourceObj.originalBuffer = originalBuffer
                         scb && scb({type:'ok'}, resourceObj);
 
                     });
