@@ -269,7 +269,8 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
         options = options||{};
         //add padding
         var paddingRatio = options.paddingRatio||1.0;
-        var paddingFontSize= Math.ceil(paddingRatio*fontSize);
+        var padding = Math.ceil((paddingRatio-1)*fontSize/2)
+        var paddingFontSize= fontSize + padding * 2
         var totalChars 
         var charRanges = []
         var limitOfEachPNG = 1024;
@@ -382,10 +383,11 @@ ideServices.service('FontGeneratorService',['Type',function(Type){
             widget.originFont.src = '\\'+fontFamily+'-'+info.fontSize+'-'+info.fontBold+'-'+(info.fontItalic||'null')+'-'+(info['fullFont']?'full':'short')+'.png';
             widget.originFont.w = info.fontSize;
             widget.originFont.h = info.fontSize;
-            widget.originFont.W = Math.ceil(info.fontSize*paddingRatio);
-            widget.originFont.H = Math.ceil(info.fontSize*paddingRatio);
             widget.originFont.paddingX = Math.ceil(info.fontSize*(paddingRatio-1)/2);
             widget.originFont.paddingY = Math.ceil(info.fontSize*(paddingRatio-1)/2);
+            widget.originFont.W = info.fontSize + 2 * widget.originFont.paddingX;
+            widget.originFont.H = info.fontSize + 2 * widget.originFont.paddingY;
+            
 
             
 
