@@ -17,7 +17,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
     'ProjectTransformService',
     'RenderSerive',
     'LinkPageWidgetsService',
-    'NavModalCANConfigService',
+    'NavModalCANConfigService','NameIncrementer',
     function ($scope, $timeout,
               GlobalService,
               NavService,
@@ -37,7 +37,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
               ProjectTransformService,
               RenderSerive,
               LinkPageWidgetsService,
-              NavModalCANConfigService) {
+              NavModalCANConfigService,
+              NameIncrementer) {
 
         var path, fs, __dirname, fse;
         initLocalPref();
@@ -872,6 +873,8 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
             var oldOperate = ProjectService.SaveCurrentOperate();
             var defaultLayer = TemplateProvider.getDefaultLayer();
+            // var currentPage=ProjectService.getCurrentPage();
+            // defaultLayer.name = NameIncrementer.getNewName(defaultLayer.name,(currentPage.layers||[]).map(function(l){return l.name}))
             ProjectService.AddNewLayerInCurrentPage(defaultLayer, function () {
                 $timeout(function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);

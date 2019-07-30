@@ -14,7 +14,8 @@ ideServices
         'Type',
         'ResourceService',
         'TrackService',
-        'TagService',function ($rootScope,$timeout,
+        'TagService',
+        'NameIncrementer',function ($rootScope,$timeout,
                                     CanvasService,
                                     GlobalService,
                                     Preference,
@@ -23,7 +24,8 @@ ideServices
                                     Type,
                                     ResourceService,
                                     TrackService,
-                                    TagService) {
+                                    TagService,
+                                    NameIncrementer) {
 
 
             var _self=this;
@@ -936,7 +938,8 @@ ideServices
                         color:'rgba(0,0,0,0.4)',blur:2
                     }
                 };
-
+                //make name unique
+                _newLayer.name = NameIncrementer.getNewName(_newLayer.name,(currentPage.layers||[]).map(function(l){return l.name}))
                 currentPage.layers.push(_newLayer);
 
                 var fabLayer=new fabric.MyLayer(_newLayer.id,initiator);
@@ -960,6 +963,8 @@ ideServices
                 var newSubLayer = _.cloneDeep(_newSubLayer);
                 var currentLayer=getCurrentLayer();
                 var currentLayerIndex= _indexById(_self.getCurrentPage().layers,currentLayer);
+                //make name unique
+                newSubLayer.name = NameIncrementer.getNewName(newSubLayer.name,(currentLayer.subLayers||[]).map(function(s){return s.name}))
                 currentLayer.subLayers.push(newSubLayer);
                 var newSubLayerIndex=currentLayer.subLayers.length - 1;
 
@@ -976,6 +981,7 @@ ideServices
                 var currentSubLayer=getCurrentSubLayer();
                 //init zindex
                 _newWidget.zIndex = subLayerNode.getObjects().length;
+                _newWidget.name = NameIncrementer.getNewName(_newWidget.name,(currentSubLayer.widgets||[]).map(function(s){return s.name}))
                 var initiator = {
                     width: _newWidget.info.width,
                     height: _newWidget.info.height,
@@ -1720,6 +1726,8 @@ ideServices
              */
             function _getCopyLayer(_layer){
                 var copyLayer= _.cloneDeep(_layer);
+                //change name
+                copyLayer.name += '副本'
                 copyLayer.id=_genUUID();
                 if(copyLayer&&copyLayer.info){
                     copyLayer.info.left+=10;
@@ -1753,6 +1761,7 @@ ideServices
             //subLayer拷贝 tang
             function _getCopySubLayer(_subLayer){
                 var copySubLayer= _.cloneDeep(_subLayer);
+                copySubLayer.name += '副本'
                 copySubLayer.id=_genUUID();
 
                 copySubLayer.widgets&&copySubLayer.widgets.forEach(function(_widget,index){
@@ -1822,6 +1831,7 @@ ideServices
              */
             function _getCopyWidget(_widget){
                 var copyWidget= _.cloneDeep(_widget);
+                copyWidget.name += '副本'
                 copyWidget.id=_genUUID();
                 if(copyWidget&&copyWidget.info){
                     copyWidget.info.left+=5;
@@ -2025,7 +2035,7 @@ ideServices
                 function addLayers(_index,_callback){
 
                     var layer=_getCopyLayer(shearPlate.objects[_index]);
-                    console.log('layer',layer,_index,shearPlate.objects);
+                    layer.name += '副本'
                     layer.$$hashKey=undefined;
                     _self.AddNewLayerInCurrentPage(layer, function (_fabLayer) {
                         //如果不是Group中最后一个Layer,继续添加下一个
@@ -2046,6 +2056,7 @@ ideServices
                  */
                 function addWidgets(_index,_callback){
                     var widget=_getCopyWidget(shearPlate.objects[_index]);
+                    widget.name += '副本'
                     widget.$$hashKey=undefined;
                     _self.AddNewWidgetInCurrentSubLayer(widget, function (_fabWidget) {
                         //如果不是Group中最后一个Layer,继续添加下一个
