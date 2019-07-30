@@ -2074,7 +2074,9 @@ ideServices
                     console.warn('当前剪切板中不是页面');
                     return;
                 }
+                //change copied page name
                 var pastePage = _getCopyPage(shearPagePlate.objects[0]);
+                pastePage.name = pastePage.name+'副本'
 
                 this.AddNewPage(pastePage, function () {
                     _successCallback && _successCallback();
