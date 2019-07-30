@@ -577,6 +577,9 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         project.resolution = result.saveAsResolution;
                     }
 
+                    if (result.pullingRatio) {
+                        copyProject.content = resolutionPulling(copyProject.content, data.pullingRatio);
+                    }
 
                     project.createTime = new Date().toLocaleString();
                     project.lastModifiedTime = new Date().toLocaleString();
@@ -610,7 +613,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 })
             } else {
                 modalInstance.result.then(function (result) {
-                    //console.log('result',result);
+                    console.log('result',result);
                     showSpinner();
                     $http({
                         method: 'POST',
@@ -681,6 +684,16 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                                     }
                                     if (type == "MyDashboard") {
                                         widgetInfo.pointerLength = Math.round(widgetInfo.pointerLength * widthProportion);
+                                        //reset pointer center to center of widget
+                                        widgetInfo.posRotatePointX = Math.round(widgetInfo.width/2)
+                                        widgetInfo.posRotatePointY = Math.round(widgetInfo.height/2)
+                                        widgetInfo.innerRadius = Math.round(widthProportion*widgetInfo.innerRadius)||0
+                                    }
+                                    //rotate img
+                                    if (type == "MyRotateImg"){
+                                        //set center proportionally
+                                        widgetInfo.posRotatePointX = Math.round(widgetInfo.posRotatePointX * widthProportion)
+                                        widgetInfo.posRotatePointY = Math.round(widgetInfo.posRotatePointY * heightProportion)
                                     }
                                 }
                             }
@@ -727,6 +740,87 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             return JSON.stringify(content);
         }
 
+        function resolutionPulling(content, pullingRatio) {
+            var newContent = JSON.parse(content);
+            var widthRatio = pullingRatio.widthRatio;
+            var heightRatio = pullingRatio.heightRatio;
+        
+            _.forEach(newContent.pages, function (page) {//page
+                if (page.layers) {
+                    _.forEach(page.layers, function (layer) {//layer
+                        var layerInfo = layer.info;
+                        console.log(layerInfo.top, layerInfo.height);
+        
+                        layerInfo.left += -Math.round((layerInfo.width * (widthRatio - 1)) / 2);
+                        layerInfo.top += -Math.round((layerInfo.height * (heightRatio - 1)) / 2);
+                        layerInfo.width = Math.round(layerInfo.width * widthRatio);
+                        layerInfo.height = Math.round(layerInfo.height * heightRatio);
+                        //console.log(layerInfo.left,layerInfo.width);
+                        console.log(layerInfo.top, layerInfo.height);
+        
+                        if (layer.subLayers) {//sublayer
+                            _.forEach(layer.subLayers, function (subLayer) {
+        
+                                if (subLayer.widgets) {//widget
+                                    _.forEach(subLayer.widgets, function (widget) {
+                                        var widgetInfo = widget.info;
+                                        widgetInfo.left += -Math.round((widgetInfo.width * (widthRatio - 1)) / 2);
+                                        widgetInfo.top += -Math.round((widgetInfo.height * (heightRatio - 1)) / 2);
+                                        widgetInfo.width = Math.round(widgetInfo.width * widthRatio);
+                                        widgetInfo.height = Math.round(widgetInfo.height * heightRatio);
+                                        //process specific widget
+                                        var type = widget.type
+                                        if (type == "MyButton" || type == 'MyTextArea') {
+                                            widgetInfo.fontSize = Math.round(widgetInfo.fontSize * widthRatio);
+                                        }
+                                        if (type == 'MyTexNum' || type == 'MyTexTime') {
+                                            widgetInfo.characterW = Math.round(widgetInfo.characterW * widthRatio);
+                                            widgetInfo.characterH = Math.round(widgetInfo.characterH * heightRatio);
+                                        }
+                                        //added by LH in 2017/12/20
+                                        if (type == 'MyTexTime') {
+                                            widgetInfo.characterW = Math.round(widgetInfo.characterW * widthRatio);
+                                            widgetInfo.characterH = Math.round(widgetInfo.characterH * heightRatio);
+                                        }
+                                        if (type == "MyDateTime" || type == 'MyNum') {
+                                            widgetInfo.fontSize = Math.round(widgetInfo.fontSize * widthRatio);
+                                            widgetInfo.maxFontWidth = Math.round(widgetInfo.maxFontWidth * widthRatio);
+                                            widgetInfo.spacing = Math.round((widgetInfo.spacing || 0) * widthRatio);
+                                        }
+                                        if (type == "MyDashboard") {
+                                            widgetInfo.pointerLength = Math.round(widgetInfo.pointerLength * widthRatio);
+                                            //reset pointer center to center of widget
+                                            widgetInfo.posRotatePointX = Math.round(widgetInfo.width/2)
+                                            widgetInfo.posRotatePointY = Math.round(widgetInfo.height/2)
+                                            widgetInfo.innerRadius = Math.round(widthRatio*widgetInfo.innerRadius)||0
+                                        }
+                                        //rotate img
+                                        if (type == "MyRotateImg"){
+                                            //set center proportionally
+                                            widgetInfo.posRotatePointX = Math.round(widgetInfo.posRotatePointX * widthRatio)
+                                            widgetInfo.posRotatePointY = Math.round(widgetInfo.posRotatePointY * heightRatio)
+                                        }
+                                    })
+                                }
+                            })
+                        }
+        
+                        if (layer.showSubLayer) {//show
+                            _.forEach(layer.showSubLayer.widgets, function (widget) {
+                                var widgetInfo = widget.info;
+                                widgetInfo.left += -Math.round((widgetInfo.width * (widthRatio - 1)) / 2);
+                                widgetInfo.top += -Math.round((widgetInfo.height * (heightRatio - 1)) / 2);
+                                widgetInfo.width = Math.round(widgetInfo.width * widthRatio);
+                                widgetInfo.height = Math.round(widgetInfo.height * heightRatio);
+                            })
+                        }
+                    })
+                }
+            });
+        
+            return JSON.stringify(newContent);
+        }
+        
         /**
          * 改变nav
          * @param index nav序号
