@@ -3,11 +3,11 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
     'ProjectService',
     'GlobalService',
     'TemplateProvider',
-    'OperateQueService',function ($scope, $timeout,
+    'OperateQueService','NameIncrementer',function ($scope, $timeout,
                                       ProjectService,
                                       GlobalService,
                                       TemplateProvider,
-                                      OperateQueService) {
+                                      OperateQueService,NameIncrementer) {
 
 
     $scope.$on('GlobalProjectReceived', function () {
@@ -171,7 +171,11 @@ ide.controller('ThumbCtrl', ['$scope', '$timeout',
         var oldOperate=ProjectService.SaveCurrentOperate();
         //TODO:测试时生成随机页
         var randomPage = TemplateProvider.getDefaultPage();
-
+        
+        var pageNames = $scope.project.pages.map(function(p){
+            return p.name
+        })
+        randomPage.name = NameIncrementer.getNewName(randomPage.name,pageNames)
         ProjectService.AddNewPage(randomPage, function () {
             $scope.$emit('AddNewPage', oldOperate, function () {
 
