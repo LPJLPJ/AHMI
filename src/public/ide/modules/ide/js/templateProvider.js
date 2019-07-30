@@ -1319,7 +1319,7 @@ ideServices
                 width:215,height:110,
                 left:0,top:0,
                 originX: 'center', originY: 'center',
-                source:'HDMI',scale:'1',
+                source:'CVBS',scale:'1',
             };
             return {
                 id:Math.random().toString(36).substr(2),
