@@ -976,6 +976,16 @@ function saveAsReset(newResolution, oldResolution, content) {
                             }
                             if (type == "MyDashboard") {
                                 widgetInfo.pointerLength = Math.round(widgetInfo.pointerLength * widthProportion);
+                                //reset pointer center to center of widget
+                                widgetInfo.posRotatePointX = Math.round(widgetInfo.width/2)
+                                widgetInfo.posRotatePointY = Math.round(widgetInfo.height/2)
+                                widgetInfo.innerRadius = Math.round(widthProportion*widgetInfo.innerRadius)||0
+                            }
+                            //rotate img
+                            if (type == "MyRotateImg"){
+                                //set center proportionally
+                                widgetInfo.posRotatePointX = Math.round(widgetInfo.posRotatePointX * widthProportion)
+                                widgetInfo.posRotatePointY = Math.round(widgetInfo.posRotatePointY * heightProportion)
                             }
 
                         }
@@ -1052,6 +1062,38 @@ function resolutionPulling(content, pullingRatio) {
                                 widgetInfo.top += -Math.round((widgetInfo.height * (heightRatio - 1)) / 2);
                                 widgetInfo.width = Math.round(widgetInfo.width * widthRatio);
                                 widgetInfo.height = Math.round(widgetInfo.height * heightRatio);
+                                //process specific widget
+                                var type = widget.type
+                                if (type == "MyButton" || type == 'MyTextArea') {
+                                    widgetInfo.fontSize = Math.round(widgetInfo.fontSize * widthRatio);
+                                }
+                                if (type == 'MyTexNum' || type == 'MyTexTime') {
+                                    widgetInfo.characterW = Math.round(widgetInfo.characterW * widthRatio);
+                                    widgetInfo.characterH = Math.round(widgetInfo.characterH * heightRatio);
+                                }
+                                //added by LH in 2017/12/20
+                                if (type == 'MyTexTime') {
+                                    widgetInfo.characterW = Math.round(widgetInfo.characterW * widthRatio);
+                                    widgetInfo.characterH = Math.round(widgetInfo.characterH * heightRatio);
+                                }
+                                if (type == "MyDateTime" || type == 'MyNum') {
+                                    widgetInfo.fontSize = Math.round(widgetInfo.fontSize * widthRatio);
+                                    widgetInfo.maxFontWidth = Math.round(widgetInfo.maxFontWidth * widthRatio);
+                                    widgetInfo.spacing = Math.round((widgetInfo.spacing || 0) * widthRatio);
+                                }
+                                if (type == "MyDashboard") {
+                                    widgetInfo.pointerLength = Math.round(widgetInfo.pointerLength * widthRatio);
+                                    //reset pointer center to center of widget
+                                    widgetInfo.posRotatePointX = Math.round(widgetInfo.width/2)
+                                    widgetInfo.posRotatePointY = Math.round(widgetInfo.height/2)
+                                    widgetInfo.innerRadius = Math.round(widthRatio*widgetInfo.innerRadius)||0
+                                }
+                                //rotate img
+                                if (type == "MyRotateImg"){
+                                    //set center proportionally
+                                    widgetInfo.posRotatePointX = Math.round(widgetInfo.posRotatePointX * widthRatio)
+                                    widgetInfo.posRotatePointY = Math.round(widgetInfo.posRotatePointY * heightRatio)
+                                }
                             })
                         }
                     })
