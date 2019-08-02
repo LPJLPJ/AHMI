@@ -42,6 +42,7 @@ module.exports = function (req, res) {
                             info.lastModifiedTime = moment(project.lastModifiedTime).format('YYYY-MM-DD HH:mm');
                             info.supportTouch = project.supportTouch;
                             info.encoding = project.encoding;
+                            info.audioSampleRate = project.audioSampleRate;
                             info.author = project.author;
                             var thumbnail = project.thumbnail;
                             return {

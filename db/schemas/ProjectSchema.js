@@ -15,6 +15,7 @@ var ProjectSchema = new mongoose.Schema({
     originalSite:String,
     supportTouch:String,
     encoding:String,
+    audioSampleRate:String,
     curSize:String,
     maxSize:String,
     thumbnail:String,

@@ -775,6 +775,7 @@ $(function(){
         var template = $('#basicinfo-template');
         var supportTouch = $('#basicinfo-supportTouch');
         var encoding = $('#basicinfo-encoding');
+        var audioSampleRate = $('#basicinfo-audiosamplerate');
         title.val(project.name);
         author.val(project.author);
         if(identifyCustomResolution(project.resolution)){
@@ -813,6 +814,7 @@ $(function(){
         supportTouch.val(project.supportTouch);
         supportTouch.attr('disabled',true);
         encoding.val(project.encoding);
+        audioSampleRate.val(project.audioSampleRate);
         $('#project-info-modal').modal('show');
     }
 
@@ -840,6 +842,7 @@ $(function(){
         $('.basicinfo-template-options').hide();
         $('#basicinfo-supportTouch').attr('disabled',false);
         $('#basicinfo-encoding').val('ascii');
+        $('#basicinfo-audiosamplerate').val('11.7');
         $('#basicinfo-resolution').val('800*480');
         $('#basicinfo-ideversion').val(curIDEVersion);
         //trigger change
@@ -879,6 +882,7 @@ $(function(){
         var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
         var encoding = $('#basicinfo-encoding');
+        var audioSampleRate = $('#basicinfo-audiosamplerate')
         var resolution = $('#basicinfo-resolution');
         var customWidth = $('#customWidth');
         var customHeight = $('#customHeight');
@@ -895,6 +899,7 @@ $(function(){
             project.ideVersion = ideVersion.val()&&ideVersion.val().trim()||'';
             project.supportTouch = supportTouch.val().trim();
             project.encoding = encoding.val()&&encoding.val().trim()||'';
+            project.audioSampleRate = audioSampleRate.val() && audioSampleRate.val().trim()||'';
             if (!checkName({value:project.name,empty:false},{value:project.author,empty:true})){
                 //invalid name
                 return;
@@ -1089,9 +1094,10 @@ $(function(){
         var ideVersion = $('#basicinfo-ideversion');
         var supportTouch = $('#basicinfo-supportTouch');
         var encoding = $('#basicinfo-encoding');
+        var audioSampleRate = $('#basicinfo-audiosamplerate');
         var thumbnailDOM = curPanel.find('.project-thumb');
         var thumbnail = thumbnailDOM && thumbnailDOM.attr('src') ||null;
-        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val() || project.ideVersion != ideVersion.val()||project.encoding!=encoding.val()){
+        if (project.name != title.val().trim() || project.author != author.val().trim()|| project.resolution != resolution.val() || project.ideVersion != ideVersion.val()||project.encoding!=encoding.val()||project.audioSampleRate!=audioSampleRate.val()){
             //changed
             project.name = title.val().trim();
             project.author = author.val().trim();
@@ -1114,6 +1120,7 @@ $(function(){
             project.ideVersion = ideVersion.val().trim()||'';
             project.supportTouch = supportTouch.val().trim();
             project.encoding = encoding.val()&&encoding.val().trim()||'';
+            project.audioSampleRate = audioSampleRate.val()&&audioSampleRate.val().trim()||'';
             var updateSuccess = false;
             if (local){
                 var projectPath = path.join(localProjectDir,String(project._id),'project.json');

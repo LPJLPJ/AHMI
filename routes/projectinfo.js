@@ -621,6 +621,7 @@ function getProjectInfo(newProject) {
     info.lastModifiedTime = moment(newProject.lastModifiedTime).format('YYYY-MM-DD HH:mm');
     info.supportTouch = newProject.supportTouch;
     info.encoding = newProject.encoding;
+    info.audioSampleRate = newProject.audioSampleRate;
     info.author = newProject.author;
     return info
 }
@@ -881,7 +882,7 @@ projectRoute.saveProjectAs = function (req, res) {
                     copyProject.content = project.content;
                     copyProject.originalSite = project.originalSite||data.currentOriginalSite;
                     copyProject.encoding = project.encoding||'ascii';
-
+                    copyProject.audioSampleRate = project.audioSampleRate;
                     copyProject.name = data.saveAsName ? (data.saveAsName) : (copyProject.name + "副本");
                     copyProject.author = data.saveAsAuthor ? (data.saveAsAuthor) : (copyProject.author);
                     //改变另存为分辨率 重新设置大小
@@ -1231,6 +1232,7 @@ projectRoute.generateLocalProject = function (req, res) {
                 tempPro.ideVersion = project.ideVersion;
                 tempPro.originalSite = project.originalSite||'';
                 tempPro.encoding = project.encoding||'ascii';
+                tempPro.audioSampleRate = project.audioSampleRate;
                 tempPro._id = project._id;
                 tempPro.createTime = new Date().toLocaleString();
                 tempPro.lastModifiedTime = new Date().toLocaleString();

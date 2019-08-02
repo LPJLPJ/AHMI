@@ -74,6 +74,7 @@ ideServices.service('ProjectTransformService',['Type',function(Type){
         targetProject.name = rawProject.name || 'default project';
         targetProject.author = rawProject.author || 'author';
         targetProject.encoding = rawProject.encoding
+        targetProject.audioSampleRate = rawProject.audioSampleRate
         targetProject.size = rawProject.initSize;
         targetProject.supportTouch = rawProject.supportTouch
         curProjectEncoding = rawProject.encoding;
