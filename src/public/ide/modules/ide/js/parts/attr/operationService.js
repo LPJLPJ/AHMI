@@ -33,7 +33,7 @@ ideServices.service('OperationService',[function () {
         ['GTE','>='],
         ['LTE','<='],
         ['AND','&'],
-        ['OR','||'],
+        ['OR','|'],
         ['XOR','^'],
         ['NOT','!'],
         ['SL','<<'],
