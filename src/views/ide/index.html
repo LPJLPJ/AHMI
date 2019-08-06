@@ -4935,7 +4935,7 @@
                                             <div class="file-thumb__audio" ng-show="component.top.imageType(file)==3">
                                                 <img class="file-thumb__audio-img"
                                                      ng-class="{'file-thumb--animate':file.playing}"
-                                                     ng-src="{{file.albumCoverSrc}}"/>
+                                                     ng-src="{{file.albumCoverSrc||'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NkAAIAAAoAAggA9GkAAAAASUVORK5CYII='}}"/>
                                                 <span class="iconfont audio-play" title="播放" style="left: 18px" ng-show="!file.playing" ng-click="component.top.playMusic(file)">&#xe6dd;</span>
                                                 <span class="iconfont audio-play" title="停止" ng-show="file.playing" ng-click="component.top.playMusic(file)">&#xe76b;</span>
                                             </div>
