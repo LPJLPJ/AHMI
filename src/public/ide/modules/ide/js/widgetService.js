@@ -2090,11 +2090,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if (this.backgroundImageElement){
                     ctx.drawImage(this.backgroundImageElement, -this.width / 2, -this.height / 2,this.width,this.height);
                 }
+                var slideWidth = this.slideImageElement && this.slideImageElement.width||0
+                var slideHeight = this.slideImageElement && this.slideImageElement.height || 0
+                var progressTargetWidth
+                var progressTargetHeight
                 if(this.progressImageElement){
                     if(this.arrange == 'horizontal'){
-                        ctx.drawImage(this.progressImageElement, 0, 0,this.progressImageElement.width*progress,this.progressImageElement.height,-this.width / 2, -this.height / 2,this.width*progress,this.height);
+                        progressTargetWidth = (this.width - slideWidth) * progress + slideWidth/2
+                        progressTargetHeight = this.height
+                        ctx.drawImage(this.progressImageElement, 0, 0,this.progressImageElement.width*(progressTargetWidth/this.width),this.progressImageElement.height,-this.width / 2, -this.height / 2,progressTargetWidth,progressTargetHeight);
                     }else{
-                        ctx.drawImage(this.progressImageElement,0,this.progressImageElement.height*(1-progress),this.progressImageElement.width,this.progressImageElement.height*progress, -this.width / 2, this.height / 2-this.height*progress,this.width,this.height*progress);
+                        progressTargetWidth = this.width
+                        progressTargetHeight = (this.height - slideHeight) * progress + slideHeight/2
+                        ctx.drawImage(this.progressImageElement,0,this.progressImageElement.height*(1-progressTargetHeight/this.height),this.progressImageElement.width,this.progressImageElement.height*(progressTargetHeight/this.height), -this.width / 2, this.height / 2-progressTargetHeight,progressTargetWidth,progressTargetHeight);
                     }
                 }
                 if(this.slideImageElement){

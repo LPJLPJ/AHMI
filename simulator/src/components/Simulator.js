@@ -3682,7 +3682,7 @@ module.exports = React.createClass({
                 switch (widget.info.arrange) {
                     case 'vertical':
                         if(progressImg){
-                            this.drawBgClip(curX, curY, width, height, curX, curY + height * (1.0 - curScale), width, height * curScale, progressSlice.imgSrc, progressSlice.color,ctx);
+                            this.drawBgClip(curX, curY, width, height, curX, curY + height - (height - slideImg.height) * curScale - slideImg.height/2, width, (height - slideImg.height) * curScale + slideImg.height/2, progressSlice.imgSrc, progressSlice.color,ctx);
                         }
                         //this.drawCursor(curX, curY + height - curScale * (height - slideImg.height), width, height, false, height - curScale * (height - slideImg.height), slideSlice.imgSrc, slideSlice.color);
                         this.drawCursorWithoutLimit(curX, curY + height - curScale * (height - slideImg.height)-slideImg.height,width,height,false, slideSlice.imgSrc, slideSlice.color,ctx)
@@ -3690,7 +3690,7 @@ module.exports = React.createClass({
                     case 'horizontal':
                     default:
                         if(progressImg){
-                            this.drawBgClip(curX, curY, width, height, curX, curY, width * curScale, height, progressSlice.imgSrc, progressSlice.color,ctx);
+                            this.drawBgClip(curX, curY, width, height, curX, curY, (width - slideImg.width) * curScale + slideImg.width/2, height, progressSlice.imgSrc, progressSlice.color,ctx);
                         }
                         //this.drawCursor(curScale * (width - slideImg.width) + curX, curY, width, height, true, width - curScale * (width - slideImg.width), slideSlice.imgSrc, slideSlice.color);
                         this.drawCursorWithoutLimit(curScale * (width - slideImg.width) + curX, curY ,width,height,true, slideSlice.imgSrc, slideSlice.color,ctx)
