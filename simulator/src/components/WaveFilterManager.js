@@ -173,11 +173,13 @@ WaveFilter.prototype.startFilterTagToNewValue = function(tag,lastValue,value, cb
     curTagStatus.target = value
     var innerTime = 0
     var d = parseInt(1000/this.frequence)
+    var frames = parseInt(this.duration * this.frequence/1000)
     curTagStatus.timerId = setInterval(function(){
         this.filter(curTagStatus)
         //process stop
-        innerTime += d
-        if(innerTime >= this.duration){
+        // innerTime += d
+        frames--
+        if(frames===0){
             //finish
             clearInterval(curTagStatus.timerId)
             curTagStatus.timerId = 0
