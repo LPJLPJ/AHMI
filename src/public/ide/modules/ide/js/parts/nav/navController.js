@@ -1507,9 +1507,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 //process save
                 //local gen acf
                 if(local){
-                    chooseSaveDir(function(saveDirUrl){
-                        generateDataFile(result.format,result.physicalPixelRatio,saveDirUrl);
-                    })
+                    generateDataFile(result.format,result.physicalPixelRatio,result.saveDirUrl);
                     
                 }else{
                     generateDataFile(result.format,result.physicalPixelRatio);
@@ -1843,6 +1841,7 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         }
     ];
     $scope.verticalPixelRatio = 1
+    $scope.saveDirUrl = ''
     var localFormat = {
         type: 'local',
         name: '本地'
@@ -1866,11 +1865,35 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         $scope.formats[4] = estimateFormat
     }
     $scope.generateFormat = 'normal';
+
+    $scope.chooseSaveDir = function($event){
+        console.log($event)
+    }
+
     $scope.ok = function () {
-        $uibModalInstance.close({
-            format: $scope.generateFormat,
-            physicalPixelRatio:'1:'+($scope.verticalPixelRatio||1)
-        });
+        if(local){
+            var saveDirUrl = ''
+            if(angular.element('#acf-dir').prop('files')&&angular.element('#acf-dir').prop('files')[0]&&angular.element('#acf-dir').prop('files')[0].path){
+                saveDirUrl = angular.element('#acf-dir').prop('files')[0].path
+            }
+            if(saveDirUrl){
+                $uibModalInstance.close({
+                    format: $scope.generateFormat,
+                    physicalPixelRatio:'1:'+($scope.verticalPixelRatio||1),
+                    saveDirUrl:saveDirUrl
+                });
+            }else{
+                toastr.error('需要选择保存位置！')
+                return
+            }
+        }else{
+            $uibModalInstance.close({
+                format: $scope.generateFormat,
+                physicalPixelRatio:'1:'+($scope.verticalPixelRatio||1)
+            });
+        }
+        
+        
     };
 
     //取消

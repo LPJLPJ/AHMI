@@ -298,7 +298,6 @@
                 <a ng-click="component.tool.openPanel()" class="top-menu-content__item-title" ng-class="">
                     <img class="default-title" src="../../public/ide/modules/ide/images/generate.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/generate-active.png"/>
-                    <input type="file" id="acf-dir"  nwdirectory nwdirectorydesc="请选择保存路径" style="display: none;" />
                     <p>生成压缩包</p>
                 </a>
                 <a ng-click="component.tool.openShare()" class="top-menu-content__item-title" ng-show="!local">
@@ -329,6 +328,10 @@
                         <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
                             <span class="modal-label col-lg-4">纵横比&nbsp;1&nbsp;:</span>
                             <input type="number" class="modal-input col-lg-8" ng-model="verticalPixelRatio">
+                        </div>
+                        <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                            <span class="modal-label col-lg-4">保存位置</span>
+                            <input id="acf-dir" type="file" ng-model="saveDirUrl" ng-change="chooseSaveDir($event)" class="modal-input col-lg-8" nwdirectory nwdirectorydesc="请选择保存路径">
                         </div>
                     </div>
                     <div class="modal-footer">
