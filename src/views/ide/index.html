@@ -298,7 +298,7 @@
                 <a ng-click="component.tool.openPanel()" class="top-menu-content__item-title" ng-class="">
                     <img class="default-title" src="../../public/ide/modules/ide/images/generate.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/generate-active.png"/>
-                    <p>生成压缩包</p>
+                    <p>生成{{component.genFileZip?"压缩包":"烧写文件"}}</p>
                 </a>
                 <a ng-click="component.tool.openShare()" class="top-menu-content__item-title" ng-show="!local">
                     <img class="default-title" src="../../public/ide/modules/ide/images/share.png"/>
@@ -311,11 +311,11 @@
                     <img class="active-title" src="../../public/ide/modules/ide/images/checkout-active.png"/>
                     <p>校验</p>
                 </a>
-                <a ng-click="component.tool.GenACF()" class="top-menu-content__item-title" ng-class="" id = "ACF">
+                <!-- <a ng-click="component.tool.GenACF()" class="top-menu-content__item-title" ng-class="" id = "ACF">
                     <img class="default-title" src="../../public/ide/modules/ide/images/generate.png"/>
                     <img class="active-title" src="../../public/ide/modules/ide/images/generate-active.png"/>
                     <p>生成烧写文件</p>
-                </a>
+                </a> -->
                 <script type="text/ng-template" id="navModal.html">
                     <div class="modal-header">
                         <h4 class="modal-title">导出工程</h4>
