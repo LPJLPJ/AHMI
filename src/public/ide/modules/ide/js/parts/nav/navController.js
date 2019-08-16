@@ -100,6 +100,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     addWidget: addWidget,
                     openProject: openProject,
                     generateDataFile: generateDataFile,
+                    // chooseACFDir:chooseACFDir,
                     play: play,
                     showActionVisualization:showActionVisualization,
                     openPanel: openPanel,
@@ -1080,7 +1081,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
          * 生成符合格式的数据结构
          */
 
-        function generateDataFile(format,physicalPixelRatio) {
+        function generateDataFile(format,physicalPixelRatio,saveDirUrl) {
             if (format == 'local' || format == 'localCompatible') {
                 var curScope = {};
                 var postFun = function () {
@@ -1158,6 +1159,12 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     RenderSerive.renderProject(window.projectData, function () {
                         toastr.info('生成成功');
                         window.spinner && window.spinner.hide();
+                        //if local, gen acf
+                        if(local){
+                            GenACF(saveDirUrl)
+                            
+                        }
+                        
                     }, function () {
                         toastr.info('生成失败');
                         window.spinner && window.spinner.hide();
@@ -1442,77 +1449,46 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             });
         }
 
-        function GenACF(){
-            var cmd=require('node-cmd');
-            // console.log('cmd',cmd)
-            if(window.zipfilename == undefined){
-                toastr.error("请点击生成按钮，生成新的zip文件！");
-            }
-            else {
-                showSpinner()
-                // cmd.get(
-                // 'AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2', function(err,data){
-                //     if(err){
-                //         toastr.error('生成ACF失败',err)
-                //     }else{
-                //         toastr.info('生成ACF成功！')
-                //         console.log(data)
-                //         var gui = require('nw.gui');
-                //         gui.Shell.openItem(path.join(__dirname,'ACF'));
-                //     }
-                //     hideSpinner()
-                // })
-                // var spawn = require('child_process').spawn
-                // var gen  = spawn('AHMISimGenDemo.exe', ['-f', '.\\localproject\\'+$scope.project.projectId+'\\'+window.zipfilename,'-m',2],{
-                //     shell:true
-                // });
-                // gen.stdout.on('data', function(data){
-                //     console.log(data+'')
-                // });
-                
-                // gen.stderr.on('data', function(data){
-                //     console.log(data+'')
-                // });
-                
-                // gen.on('close',function(code){
-                //     if(code){
-                //         toastr.error('生成ACF失败')
-                //     }else{
-                //         toastr.error('生成ACF成功')
-                //     }
-                //     hideSpinner()
-                // });
-                // var exec = require('child_process').exec
-                // exec('AHMISimGenDemo.exe -f ".\\localproject\\' + $scope.project.projectId + '\\' + window.zipfilename +  '" -m 2',function(err,data,errData){
-                //     if(err){
-                //         console.log(err)
-                //         hideSpinner()
-                //     }else{
-                //         console.log(data+'',errData+'')
-                //         hideSpinner()
-                //     }
-                // })
-                setTimeout(function(){
-                    var spawn = require('child_process').spawnSync
-                    var gen  = spawn('AHMISimGenDemo.exe', ['-f', '.\\localproject\\'+$scope.project.projectId+'\\'+window.zipfilename,'-m',2]);
-                    if(gen.error){
-                        console.log(gen.error)
-                        toastr.error("生成ACF失败")
-                    }else{
-                        console.log(gen.stdout+'')
-                        console.log(gen.stderr+'')
-                        toastr.info("生成ACF成功")
-                        var gui = require('nw.gui');
-                        gui.Shell.openItem(path.join(__dirname,'ACF'));
-                    }
-                    hideSpinner()
+        function GenACF(saveDirUrl){
+    
+            showSpinner()
+            
+            $timeout(function(){
+                var spawn = require('child_process').spawnSync
+                var gen  = spawn('AHMISimGenDemo.exe', ['-f', '.\\localproject\\'+$scope.project.projectId+'\\'+window.zipfilename,'-m',2,'-o',saveDirUrl]);
+                if(gen.error){
+                    console.log(gen.error)
+                    toastr.error("生成ACF失败")
+                }else{
+                    console.log(gen.stdout+'')
+                    console.log(gen.stderr+'')
+                    toastr.info("生成ACF成功")
+                    var gui = require('nw.gui');
+                    gui.Shell.openItem(path.join(saveDirUrl));
+                }
+                hideSpinner()
 
-                })
+            })
                 
                 
                 
-            }
+            
         }
+
+    
+
+        function chooseSaveDir(cb){
+            function chooseFile(name) {
+                var chooser = document.querySelector(name);
+                chooser.addEventListener("change", function(evt) {
+                  cb && cb(this.value)
+                }, false);
+            
+                chooser.click();  
+            }
+            chooseFile('#acf-dir');
+        }
+
         function openPanel() {
             /**
              * 利用$uiModal服务，制作模态窗口
@@ -1529,7 +1505,17 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 // console.log('new action');
                 // console.log(newAction);
                 //process save
-                generateDataFile(result.format,result.physicalPixelRatio);
+                //local gen acf
+                if(local){
+                    chooseSaveDir(function(saveDirUrl){
+                        generateDataFile(result.format,result.physicalPixelRatio,saveDirUrl);
+                    })
+                    
+                }else{
+                    generateDataFile(result.format,result.physicalPixelRatio);
+                }
+                
+                
             }, function () {
                 console.log('Modal dismissed at: ' + new Date());
             });
