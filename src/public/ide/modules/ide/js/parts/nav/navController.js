@@ -126,7 +126,11 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                     show:false
                 }
             };
-
+            if(local){
+                $scope.component.genFileZip = false
+            }else{
+                $scope.component.genFileZip = true
+            }
 
             //init DoSave
             NavService.DoSave = saveProject.bind(null, null, true)
@@ -1841,6 +1845,7 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         }
     ];
     $scope.verticalPixelRatio = 1
+    $scope.local = window.local
     $scope.saveDirUrl = ''
     var localFormat = {
         type: 'local',

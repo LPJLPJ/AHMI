@@ -49,9 +49,9 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
     }
 
 
-    if(!local){
-            document.getElementById("ACF").style.visibility="hidden";
-        }
+    // if(!local){
+    //         document.getElementById("ACF").style.visibility="hidden";
+    //     }
     function dataURItoBlob(dataURI) {
         // convert base64/URLEncoded data component to raw binary data held in a string
         var byteString;
