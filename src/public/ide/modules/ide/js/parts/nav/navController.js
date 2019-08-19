@@ -1085,7 +1085,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
          * 生成符合格式的数据结构
          */
 
-        function generateDataFile(format,physicalPixelRatio,saveDirUrl) {
+        function generateDataFile(format,productInfo,physicalPixelRatio,saveDirUrl) {
             if (format == 'local' || format == 'localCompatible') {
                 var curScope = {};
                 var postFun = function () {
@@ -1159,7 +1159,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                         window.spinner.setBackgroundColor('rgba(0,0,0,0.5)');
                         showSpinner();
                     }
-                    generateData(format,physicalPixelRatio);
+                    generateData(format,productInfo,physicalPixelRatio);
                     RenderSerive.renderProject(window.projectData, function () {
                         toastr.info('生成成功');
                         window.spinner && window.spinner.hide();
@@ -1176,7 +1176,7 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 } else {
                     saveProject(function () {
                         showSpinner();
-                        generateData(format,physicalPixelRatio);
+                        generateData(format,productInfo,physicalPixelRatio);
                         $http({
                             method: 'POST',
                             url: '/project/' + $scope.project.projectId + '/generate',
@@ -1208,11 +1208,13 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             }
         }
 
-        function generateData(format,physicalPixelRatio) {
+        function generateData(format,productInfo,physicalPixelRatio) {
             var temp = {};
             ProjectService.getProjectCopyTo(temp);
             temp.project = ProjectTransformService.transDataFile(temp.project);
             temp.project.format = format;
+            
+            
             temp.project.ideVersion = window.ideVersion;
             temp.project.physicalPixelRatio = physicalPixelRatio;
             temp.project.resourceList = _.cloneDeep(ResourceService.getAllResource());
@@ -1223,6 +1225,23 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
             temp.project.tagList = TagService.getAllTagsWithSystemTagSorted();
             temp.project.timers = TagService.getTimerNum();
             temp.project.CANId = NavModalCANConfigService.getCANId();
+            if(productInfo){
+                temp.project.productType = productInfo.productType;
+                temp.project.compressLevel = productInfo.compressLevel;
+                //set backlight and buzzer
+                for(var i=0;i<temp.project.tagList.length;i++){
+                    if(temp.project.tagList[i].name == '背光'){
+                        temp.project.tagList[i].initValue = productInfo.backlight
+                        break
+                    }
+                }
+                for(var i=0;i<temp.project.tagList.length;i++){
+                    if(temp.project.tagList[i].name == '蜂鸣器'){
+                        temp.project.tagList[i].initValue = productInfo.buzzer
+                        break
+                    }
+                }
+            }
             //link widgets
             for (var i = 0; i < temp.project.pageList.length; i++) {
                 LinkPageWidgetsService.linkPageAllWidgets(temp.project.pageList[i]);
@@ -1511,10 +1530,10 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
                 //process save
                 //local gen acf
                 if(local){
-                    generateDataFile(result.format,result.physicalPixelRatio,result.saveDirUrl);
+                    generateDataFile(result.format,result.productInfo,result.physicalPixelRatio,result.saveDirUrl);
                     
                 }else{
-                    generateDataFile(result.format,result.physicalPixelRatio);
+                    generateDataFile(result.format,result.productInfo,result.physicalPixelRatio);
                 }
                 
                 
@@ -1844,7 +1863,22 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
             name: '压缩'
         }
     ];
+    $scope.products = [
+        {
+            type: '9001',
+            name: '天功9001'
+        },
+        {
+            type: '9003',
+            name: '天功9003'
+        }
+    ]
+    $scope.compressLevels = [0,1,2]
+
+    $scope.compressLevel = 0
     $scope.verticalPixelRatio = 1
+    $scope.backlight = 75
+    $scope.buzzer = 50
     $scope.local = window.local
     $scope.saveDirUrl = ''
     var localFormat = {
@@ -1869,6 +1903,7 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         $scope.formats[3] = templateFormat
         $scope.formats[4] = estimateFormat
     }
+    $scope.showAdvancedOptions = false
     $scope.generateFormat = 'normal';
 
     $scope.chooseSaveDir = function($event){
@@ -1884,6 +1919,12 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
             if(saveDirUrl){
                 $uibModalInstance.close({
                     format: $scope.generateFormat,
+                    productInfo:{
+                        productType:$scope.productType,
+                        compressLevel:$scope.compressLevel,
+                        backlight:$scope.backlight,
+                        buzzer:$scope.buzzer
+                    },
                     physicalPixelRatio:'1:'+($scope.verticalPixelRatio||1),
                     saveDirUrl:saveDirUrl
                 });
@@ -1892,8 +1933,25 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
                 return
             }
         }else{
+            if($scope.generateFormat == 'normal'||$scope.generateFormat == 'dxt3'){
+                //consider backlight
+                if($scope.backlight < 0 || $scope.backlight > 100){
+                    toastr.error('背光值为0-100')
+                    return
+                }
+                if($scope.buzzer < 0 || $scope.buzzer > 100){
+                    toastr.error('蜂鸣器为0-100')
+                    return
+                }
+            }
             $uibModalInstance.close({
                 format: $scope.generateFormat,
+                productInfo:{
+                    productType:$scope.productType,
+                    compressLevel:$scope.compressLevel,
+                    backlight:$scope.backlight,
+                    buzzer:$scope.buzzer
+                },
                 physicalPixelRatio:'1:'+($scope.verticalPixelRatio||1)
             });
         }

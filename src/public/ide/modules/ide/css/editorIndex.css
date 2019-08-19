@@ -2583,6 +2583,16 @@ div.wrapper-custom {
     border: 1px solid #005599 !important;
 }
 
+.modal-delimiter{
+    height: 0;
+    border-bottom: 1px solid  #A9A9A9;
+    top:15px;
+}
+
+.modal-clickable{
+    cursor: pointer;
+}
+
 .modal-checkbox {
     cursor: pointer;
     vertical-align: -2px;

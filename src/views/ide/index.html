@@ -327,12 +327,35 @@
                         </div>
                         <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
                             <span class="modal-label col-lg-4">纵横比&nbsp;1&nbsp;:</span>
-                            <input type="number" class="modal-input col-lg-8" ng-model="verticalPixelRatio">
+                            <input type="number" class="modal-input col-lg-8" ng-model="verticalPixelRatio" />
                         </div>
                         <div class="modal-row" ng-show="(generateFormat === 'normal'||generateFormat==='dxt3')&&local">
                             <span class="modal-label col-lg-4">保存位置</span>
-                            <input id="acf-dir" type="file" ng-model="saveDirUrl" ng-change="chooseSaveDir($event)" class="modal-input col-lg-8" nwdirectory nwdirectorydesc="请选择保存路径">
+                            <input id="acf-dir" type="file" ng-model="saveDirUrl" ng-change="chooseSaveDir($event)" class="modal-input col-lg-8" nwdirectory nwdirectorydesc="请选择保存路径" />
                         </div>
+                        <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                            <span class="modal-label col-lg-4 modal-clickable" ng-click="showAdvancedOptions = !showAdvancedOptions;">高级</span>
+                            <span class="col-lg-8 modal-delimiter" ></span>
+                        </div>
+                        <div class="advance-options-wrapper" ng-show="showAdvancedOptions">
+                            <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                                <span class="modal-label col-lg-4">设备型号</span>
+                                <select class="modal-input col-lg-8" ng-model="productType" ng-options="product.type as product.name for product in products">{{product}}</select>
+                            </div>
+                            <div class="modal-row" ng-show="generateFormat==='dxt3'">
+                                <span class="modal-label col-lg-4">压缩等级</span>
+                                <select class="modal-input col-lg-8" ng-model="compressLevel" ng-options="compressLevel for compressLevel in compressLevels">{{compressLevel}}</select>
+                            </div>
+                            <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                                <span class="modal-label col-lg-4">背光</span>
+                                <input type="number"  class="modal-input col-lg-8" ng-model="backlight" placeholder="0-100" />
+                            </div>
+                            <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
+                                <span class="modal-label col-lg-4">蜂鸣器</span>
+                                <input type="number" class="modal-input col-lg-8" ng-model="buzzer" placeholder="0-100" />
+                            </div>
+                        </div>
+                        
                     </div>
                     <div class="modal-footer">
                         <button class="modal-btn btn-confirm" type="button" ng-click="ok()">确认</button>
