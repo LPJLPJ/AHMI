@@ -362,6 +362,23 @@
                         <button class="modal-btn" type="button" ng-click="cancel()">取消</button>
                     </div>
                 </script>
+
+                <script type="text/ng-template" id="navACFModal.html">
+                    <div class="modal-header">
+                        <h4 class="modal-title">生成烧写文件</h4>
+                    </div>
+                    <div class="modal-body">
+                        <pre style="white-space:pre-line;">
+                            {{acfInfo}} 
+                        </pre>
+                        
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <button class="modal-btn btn-confirm" type="button" ng-click="ok()">确认</button> -->
+                        <button class="modal-btn" type="button" ng-click="cancel()">关闭</button>
+                    </div>
+                </script>
                 <script type="text/ng-template" id="shareModal.html">
                     <div class="modal-header">
                         <h4 class="modal-title">分享工程</h4>

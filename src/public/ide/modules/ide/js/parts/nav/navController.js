@@ -1474,24 +1474,26 @@ ide.controller('NavCtrl', ['$scope', '$timeout',
 
         function GenACF(saveDirUrl){
     
-            showSpinner()
-            
-            $timeout(function(){
-                var spawn = require('child_process').spawnSync
-                var gen  = spawn('AHMISimGenDemo.exe', ['-f', '.\\localproject\\'+$scope.project.projectId+'\\'+window.zipfilename,'-m',2,'-o',saveDirUrl]);
-                if(gen.error){
-                    console.log(gen.error)
-                    toastr.error("生成ACF失败")
-                }else{
-                    console.log(gen.stdout+'')
-                    console.log(gen.stderr+'')
-                    toastr.info("生成ACF成功")
-                    var gui = require('nw.gui');
-                    gui.Shell.openItem(path.join(saveDirUrl));
+            // showSpinner()
+            var zipUrl = '.\\localproject\\'+$scope.project.projectId+'\\'+window.zipfilename
+            var modalInstance = $uibModal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'navACFModal.html',
+                controller: 'navACFModalCtl',
+                size: 'md',
+                backdrop: 'static',
+                resolve: {
+                    saveDirUrl:function(){
+                        return saveDirUrl
+                    },
+                    zipUrl:function(){
+                        return zipUrl
+                    }
                 }
-                hideSpinner()
+            });
 
-            })
+        
+            
                 
                 
                 
@@ -2152,12 +2154,82 @@ ide.controller('validateModalCtl', ['$rootScope', '$scope', '$uibModalInstance',
     }
 }]);
 
-
 ide.controller('NavModalCloseWindwoCtl', ['$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
 
     $scope.ok = function () {
         $uibModalInstance.close();
     };
+
+    //取消
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    };
+}]);
+
+ide.controller('navACFModalCtl', ['$scope', '$uibModalInstance', '$timeout','saveDirUrl','zipUrl',function ($scope, $uibModalInstance,$timeout,saveDirUrl,zipUrl) {
+    $scope.acfInfo = ''
+    $timeout(function(){
+        var spawn = require('child_process').spawn
+        var gen  = spawn('AHMISimGenDemo.exe', ['-f', zipUrl,'-m',2,'-o',saveDirUrl]);
+        var decoder = new TextDecoder('gb18030')
+        gen.stdout.on('data',function(data){
+            $scope.$apply(function(){
+            	var u8Array = []
+                for(var j=0;j<data.byteLength;j++){
+                	u8Array.push(data[j])
+                }
+                
+                var str = decoder.decode(new Uint8Array(u8Array));
+
+                while (str&&str.search(/\r[^\n]/)!==-1) {
+                	var rPos = str.search(/\r[^\n]/)
+                	for (var i = $scope.acfInfo.length - 1; i >= 0; i--) {
+                		if($scope.acfInfo[i] === '\n'){
+                			//hit
+                			$scope.acfInfo = $scope.acfInfo.slice(0,i+1) + str.slice(0,rPos)
+                			break
+                		}
+                	}
+                	str = str.slice(rPos+1)
+                }
+
+                if (str) {
+                	 $scope.acfInfo += str
+                }
+               
+               
+            })
+            
+            gen.stdin.write("13")
+            gen.stdin.end()
+        })
+        gen.stderr.on('data',function(data){
+            
+            $scope.$apply(function(){
+                $scope.acfInfo += data
+            })
+        })
+
+        gen.on('error',function(err){
+            $scope.$apply(function(){
+                $scope.acfInfo += err
+            })
+        })
+
+        gen.on('close',function(code){
+            if(code!==0){
+                //error
+                toastr.error("生成ACF失败")
+            }else{
+                toastr.info("生成ACF成功")
+                // $scope.acfInfo = ''
+                var gui = require('nw.gui');
+                gui.Shell.openItem(path.join(saveDirUrl));
+            }
+        })
+
+
+    })
 
     //取消
     $scope.cancel = function () {
