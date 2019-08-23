@@ -342,9 +342,9 @@
                                 <span class="modal-label col-lg-4">设备型号</span>
                                 <select class="modal-input col-lg-8" ng-model="productType" ng-options="product.type as product.name for product in products">{{product}}</select>
                             </div>
-                            <div class="modal-row" ng-show="generateFormat==='dxt3'">
+                            <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
                                 <span class="modal-label col-lg-4">压缩等级</span>
-                                <select class="modal-input col-lg-8" ng-model="compressLevel" ng-options="compressLevel for compressLevel in compressLevels">{{compressLevel}}</select>
+                                <select class="modal-input col-lg-8" ng-model="compressLevel" ng-options="compressLevel.type as compressLevel.name for compressLevel in compressLevels">{{compressLevel}}</select>
                             </div>
                             <div class="modal-row" ng-show="generateFormat === 'normal'||generateFormat==='dxt3'">
                                 <span class="modal-label col-lg-4">背光</span>

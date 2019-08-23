@@ -1859,11 +1859,11 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         {
             type: 'normal',
             name: '常规'
-        },
-        {
-            type: 'dxt3',
-            name: '压缩'
         }
+        // {
+        //     type: 'dxt3',
+        //     name: '压缩'
+        // }
     ];
     $scope.products = [
         {
@@ -1875,7 +1875,16 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
             name: '天功9003'
         }
     ]
-    $scope.compressLevels = [0,1,2]
+    $scope.compressLevels = [
+        {
+            type:0,
+            name:'不压缩'
+        },
+        {
+            type:1,
+            name:'资源压缩'
+        }
+    ]
 
     $scope.compressLevel = 0
     $scope.verticalPixelRatio = 1
@@ -1900,10 +1909,11 @@ ide.controller('NavModalCtl', ['$scope', '$uibModalInstance', function ($scope, 
         name:'预估生成文件大小'
     };
     if (!window.local) {
-        $scope.formats[2] = localFormat;
-        /*$scope.formats[3] = localFormatCompatible*/
-        $scope.formats[3] = templateFormat
-        $scope.formats[4] = estimateFormat
+        $scope.formats.push(localFormat)
+        // $scope.formats.push(localFormatCompatible)
+        $scope.formats.push(templateFormat)
+        $scope.formats.push(estimateFormat)
+       
     }
     $scope.showAdvancedOptions = false
     $scope.generateFormat = 'normal';
