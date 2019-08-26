@@ -5593,7 +5593,9 @@ module.exports = React.createClass({
                     clearInterval(widget.animationKey)
                     widget.animationKey = null
                 }
+                this.resetHideAnimation(widget)
                 widget.translateY = offset
+                
                 widget.animationKey = AnimationManager.stepValue(offset, 0, duration, 30, easingFunc, function (obj) {
                     widget.translateY = obj.curX;
                     // this.draw()
@@ -5601,16 +5603,53 @@ module.exports = React.createClass({
                     widget.translateY = 0;
                     clearInterval(widget.animationKey)
                     widget.animationKey = null
+                    this.startHideAnimation(widget)
                 }.bind(this));
             }else{
                 widget.translateY = 0
+                if(widget.alpha){
+                    this.startHideAnimation(widget)
+                }
             }
             
+        }else{
+            //no move but pressed
+            if(widget.alpha){
+                this.startHideAnimation(widget)
+            }
         }
 
         widget.oldValue = curValue
         
 
+    },
+    startHideAnimation:function(widget){
+        if(widget.alpha){
+            if(widget.hideAnimationKey){
+                clearInterval(widget.hideAnimationKey)
+                widget.hideAnimationKey = null
+            }
+            widget.hideAnimationKey = AnimationManager.stepValue(widget.alpha, 0, 1000, 30, 'linear', function (obj) {
+                widget.alpha = obj.curX;
+                // console.log(widget.alpha)
+                // this.draw()
+            }.bind(this), function () {
+                
+                clearInterval(widget.hideAnimationKey)
+                widget.hideAnimationKey = null
+                widget.alpha = 0;
+            
+            }.bind(this));
+        }
+        
+    },
+    resetHideAnimation:function(widget){
+        if(widget.hideAnimationKey){
+            clearInterval(widget.hideAnimationKey)
+            widget.hideAnimationKey = null
+            
+        }
+        widget.alpha =  100
     },
     paintSelector: function (curX, curY, widget, options, cb,ctx) {
         var info = widget.info
@@ -5643,24 +5682,16 @@ module.exports = React.createClass({
             // var fontString=info.fontItalic+" "+info.fontBold+" "+info.fontSize+"px"+" "+info.fontFamily;
             // ctx.font = fontString
             var offsetY = widget.translateY || 0
-            // for(var i=0;i<showCount;i++){
-            //     var curElementIdx = curValue - centerIdx + i
-            //     var curElementTex = elementTex[curElementIdx]
-            //     if(curElementTex){
-            //         this.drawBg(curX, curY+i*elementHeight+offsetY, elementWidth,elementHeight, curElementTex.imgSrc, curElementTex.color,ctx);
-            //         if(curElementTex.text){
-            //             // ctx.fillStyle = this.fontColor
-            //             // var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
-            //             // ctx.fillText(curElementTex.text,0,fontY)
-            //             this.drawTextByTempCanvas(ctx,curX, curY+i*elementHeight+offsetY, elementWidth, elementHeight, curElementTex.text, font);
-            //         }
-                    
-            //     }
-            // }
-            ctx.save()
-            ctx.beginPath()
-            ctx.rect(0,0,width,height)
-            ctx.clip()
+            //draw selector to offline canvas
+            if(!this.selectorCanvas){
+                this.selectorCanvas = document.createElement('canvas')
+            }
+            this.selectorCanvas.width = width
+            this.selectorCanvas.height = height
+            var selectorCtx = this.selectorCanvas.getContext('2d')
+            selectorCtx.clearRect(0,0,width,height)
+            //draw selector
+
             for(var i=0;i<count;i++){
                 var curElementTex = elementTex[i]
                 var curElementTop = (centerIdx - curValue + i)*elementHeight + offsetY
@@ -5669,27 +5700,37 @@ module.exports = React.createClass({
                     //overflow
                 }else{
                     //paint
-                    this.drawBg(curX, curY+curElementTop, elementWidth,elementHeight, curElementTex.imgSrc, curElementTex.color,ctx);
+                    this.drawBg(0, curElementTop, elementWidth,elementHeight, curElementTex.imgSrc, curElementTex.color,selectorCtx);
                     if(curElementTex.text){
                         // ctx.fillStyle = this.fontColor
                         // var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
                         // ctx.fillText(curElementTex.text,0,fontY)
-                        this.drawTextByTempCanvas(ctx,curX, curY+curElementTop, elementWidth, elementHeight, curElementTex.text, font);
+                        this.drawTextByTempCanvas(selectorCtx,0, curElementTop, elementWidth, elementHeight, curElementTex.text, font);
                     }
                 }
             }
-
-            ctx.restore()
+            //draw back to ctx
+            if(widget.alpha===undefined||widget.alpha===null){
+                widget.alpha = 0
+            }
 
             ctx.save()
+            //clip upper and bottom
             ctx.beginPath()
             ctx.rect(0,0,width,centerIdx*elementHeight)
             ctx.rect(0,(centerIdx+1)*elementHeight, elementWidth, centerIdx*elementHeight)
             ctx.clip()
-            
+            //draw upper and bottom with alpha
+            ctx.save()
+            ctx.globalAlpha = widget.alpha/100.0
+            ctx.drawImage(this.selectorCanvas,0,0,width,height,0,0,width,height)
+            ctx.restore()
+            //draw unchosen
             this.drawBg(curX, curY, width,height, notChosenOverTex.imgSrc, notChosenOverTex.color,ctx);
             ctx.restore()
-            
+            //draw middle
+            ctx.save()
+            ctx.drawImage(this.selectorCanvas,0,centerIdx*elementHeight,elementWidth,elementHeight,0,centerIdx*elementHeight,elementWidth,elementHeight)
             this.drawBg(curX, curY+centerIdx*elementHeight, elementWidth,elementHeight, chosenOverTex.imgSrc, chosenOverTex.color,ctx);
             ctx.restore()
 
@@ -7148,6 +7189,7 @@ module.exports = React.createClass({
                     clearInterval(widget.animationKey)
                     widget.animationKey = null
                 }
+                this.resetHideAnimation(widget)
                 widget.mouseState = mouseState;
                 needRedraw = true;
                 break;
