@@ -4,7 +4,7 @@ echo "start to empty tempFolder" &&
 rm -rf tempFolder/ &&
 
 echo "start to copy public , views and manifest.json  to tempFolder" &&
-rsync -av -q --exclude blog/ --exclude download/ --exclude ide/modules/ide/js/ ../public tempFolder && 
+rsync -av -q --exclude blog/ --exclude download/ --exclude resources/  --exclude ide/modules/ide/js/ ../public tempFolder && 
 rsync -av -q --exclude blog/ --exclude download/ ../views tempFolder &&
 cp ../manifest.json tempFolder &&
 
