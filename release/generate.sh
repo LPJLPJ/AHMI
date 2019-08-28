@@ -14,6 +14,12 @@ node emptyEJS.js &&
 echo "start to zip update" &&
 cd tempFolder && zip -q -r updFiles.zip * && mv updFiles.zip ../update/updFiles.zip && cd .. &&
 
+echo "start to empty package.nw public view" &&
+rm -rf ./complete/IDENW/package.nw/public/* &&
+rm -rf ./complete/IDENW_XP/package.nw/public/* &&
+rm -rf ./complete/IDENW/package.nw/views/* &&
+rm -rf ./complete/IDENW_XP/package.nw/views/* &&
+
 echo "start to copy tempFolder to complete folder" && 
 cp -rf tempFolder/* ./complete/IDENW/package.nw/ &&
 cp -rf tempFolder/* ./complete/IDENW_XP/package.nw/ &&

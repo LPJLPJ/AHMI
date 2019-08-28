@@ -2234,7 +2234,7 @@ ide.controller('navACFModalCtl', ['$scope', '$uibModalInstance', '$timeout','sav
                 toastr.info("生成ACF成功")
                 // $scope.acfInfo = ''
                 var gui = require('nw.gui');
-                gui.Shell.openItem(path.join(saveDirUrl));
+                gui.Shell.openItem(saveDirUrl);
             }
         })
 
