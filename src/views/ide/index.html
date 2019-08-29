@@ -4285,6 +4285,14 @@
                                     </select>
                                 </div>
                                 <div class="attr-item__cell-wrap">
+                                <p class="attr-item__cell-title">未选中透明度</p>
+                                <input class="attr-item__cell-input form-control"
+                                    ng-model="component.object.level.info.alpha"
+                                    ng-blur="component.restore()"
+                                    ng-keypress="component.selector.enterSelectorAlpha($event)"
+                                    type="number">
+                                </div>
+                                <div class="attr-item__cell-wrap">
                                 <p class="attr-item__cell-title">元素数</p>
                                 <input class="attr-item__cell-input form-control"
                                     ng-model="component.object.level.info.count"

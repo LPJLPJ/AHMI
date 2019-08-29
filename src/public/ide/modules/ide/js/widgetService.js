@@ -6291,6 +6291,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
     var MySelector = {
         widgetType:Type.MySelector,
         info:{
+            alpha:255,
             count:1,
             showCount:1,
             curValue:0,
@@ -6310,19 +6311,19 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                         text:slice.text
                     }
                 })
-            },
-            chosenOverTex:function(level){
-                return {
-                    image:ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc),
-                    color:level.texList[1].slices[0].color
-                }
-            },
-            notChosenOverTex:function(level){
-                return {
-                    image:ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc),
-                    color:level.texList[2].slices[0].color
-                }
             }
+            // chosenOverTex:function(level){
+            //     return {
+            //         image:ResourceService.getResourceFromCache(level.texList[1].slices[0].imgSrc),
+            //         color:level.texList[1].slices[0].color
+            //     }
+            // },
+            // notChosenOverTex:function(level){
+            //     return {
+            //         image:ResourceService.getResourceFromCache(level.texList[2].slices[0].imgSrc),
+            //         color:level.texList[2].slices[0].color
+            //     }
+            // }
 
         },
         triggers:{
@@ -6337,14 +6338,14 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                     }
                 })
 
-                this.chosenOverTex = {
-                    image:ResourceService.getResourceFromCache(arg.level.texList[1].slices[0].imgSrc),
-                    color:arg.level.texList[1].slices[0].color
-                }
-                this.notChosenOverTex = {
-                    image:ResourceService.getResourceFromCache(arg.level.texList[2].slices[0].imgSrc),
-                    color:arg.level.texList[2].slices[0].color
-                }
+                // this.chosenOverTex = {
+                //     image:ResourceService.getResourceFromCache(arg.level.texList[1].slices[0].imgSrc),
+                //     color:arg.level.texList[1].slices[0].color
+                // }
+                // this.notChosenOverTex = {
+                //     image:ResourceService.getResourceFromCache(arg.level.texList[2].slices[0].imgSrc),
+                //     color:arg.level.texList[2].slices[0].color
+                // }
                 reRender()
                 arg.callback && arg.callback()
             },
@@ -6367,6 +6368,10 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 if((showCount&1) === 0){
                     showCount++
                 }
+                var alpha = this.alpha
+                if(alpha === undefined || alpha === null){
+                    alpha = 255
+                }
                 var count = this.count
                 var curValue = this.curValue
                 var elementHeight = height/showCount
@@ -6375,51 +6380,80 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
                 var elementTex = this.elementTex
                 var halfWidth = width / 2
                 var halfHeight = height / 2
-                ctx.textBaseline = 'middle'
-                ctx.textAlign = 'center'
+
+                if(!window.selectorCanvas){
+                    window.selectorCanvas = document.createElement('canvas')
+                    document.body.appendChild(window.selectorCanvas)
+                }
+                var selectorCanvas = window.selectorCanvas
+                selectorCanvas.width = width
+                selectorCanvas.height = height
+                var selectorCtx = selectorCanvas.getContext('2d')
+                selectorCtx.save()
+                // selectorCtx.translate(halfWidth,halfHeight)
+                selectorCtx.clearRect(0,0,width,height)
+
+                selectorCtx.textBaseline = 'middle'
+                selectorCtx.textAlign = 'center'
                 var fontString=this.fontItalic+" "+this.fontBold+" "+this.fontSize+"px"+" "+this.fontFamily;
-                ctx.font = fontString
+                selectorCtx.font = fontString
                 for(var i=0;i<showCount;i++){
                     var curElementIdx = curValue - centerIdx + i
                     var curElementTex = elementTex[curElementIdx]
                     if(curElementTex){
                         if(curElementTex.color){
-                            ctx.fillStyle = curElementTex.color
-                            ctx.fillRect(-halfWidth,i*elementHeight - halfHeight,elementWidth,elementHeight)
+                            selectorCtx.fillStyle = curElementTex.color
+                            selectorCtx.fillRect(0,i*elementHeight,elementWidth,elementHeight)
                         }
                         if(curElementTex.image){
-                            ctx.drawImage(curElementTex.image, -halfWidth,i*elementHeight - halfHeight,elementWidth,elementHeight)
+                            selectorCtx.drawImage(curElementTex.image, 0,i*elementHeight,elementWidth,elementHeight)
                         }
                         if(curElementTex.text){
-                            ctx.fillStyle = this.fontColor
-                            var fontY = parseInt((i+0.5)*elementHeight-halfHeight)
-                            ctx.fillText(curElementTex.text,0,fontY)
+                            selectorCtx.fillStyle = this.fontColor
+                            var fontY = parseInt((i+0.5)*elementHeight)
+                            selectorCtx.fillText(curElementTex.text,halfWidth,fontY)
                         }
                         
                     }
                 }
+                selectorCtx.restore()
 
                 ctx.save()
                 ctx.beginPath()
                 ctx.rect(-halfWidth,-halfHeight,width,centerIdx*elementHeight)
                 ctx.rect(-halfWidth,(centerIdx+1)*elementHeight - halfHeight, elementWidth, centerIdx*elementHeight)
                 ctx.clip()
-                if(this.notChosenOverTex.color){
-                    ctx.fillStyle = this.notChosenOverTex.color
-                    ctx.fillRect(-halfWidth,- halfHeight,width,height)
-                }
-                if(this.notChosenOverTex.image){
-                    ctx.drawImage(this.notChosenOverTex.image,-halfWidth,- halfHeight, width, height)
-                }
+                //draw upper and bottom with alpha
+                ctx.save()
+                ctx.globalAlpha = alpha/255.0
+                ctx.drawImage(selectorCanvas,-halfWidth,-halfHeight,width,height)
                 ctx.restore()
-                if(this.chosenOverTex.color){
-                    ctx.fillStyle = this.chosenOverTex.color
-                    ctx.fillRect(-halfWidth,centerIdx*elementHeight - halfHeight,elementWidth,elementHeight)
-                }
-                if(this.chosenOverTex.image){
-                    ctx.drawImage(this.chosenOverTex.image,-halfWidth,centerIdx*elementHeight - halfHeight, elementWidth, elementHeight)
-                }
+                //draw unchosen
+                // ctx.save()
+                // if(this.notChosenOverTex.color){
+                //     ctx.fillStyle = this.notChosenOverTex.color
+                //     ctx.fillRect(-halfWidth,- halfHeight,width,height)
+                // }
+                // if(this.notChosenOverTex.image){
+                //     ctx.drawImage(this.notChosenOverTex.image,-halfWidth,- halfHeight, width, height)
+                // }
+                // ctx.restore()
+                //restore clip
                 ctx.restore()
+                //draw middle
+                ctx.save()
+                ctx.translate(-halfWidth,-halfHeight)
+                ctx.drawImage(selectorCanvas,0,centerIdx*elementHeight,elementWidth,elementHeight,0,centerIdx*elementHeight,elementWidth,elementHeight)
+                ctx.restore()
+                // ctx.save()
+                // if(this.chosenOverTex.color){
+                //     ctx.fillStyle = this.chosenOverTex.color
+                //     ctx.fillRect(-halfWidth,centerIdx*elementHeight - halfHeight,elementWidth,elementHeight)
+                // }
+                // if(this.chosenOverTex.image){
+                //     ctx.drawImage(this.chosenOverTex.image,-halfWidth,centerIdx*elementHeight - halfHeight, elementWidth, elementHeight)
+                // }
+                // ctx.restore()
             
             }catch(err){
                 console.log('错误描述',err);

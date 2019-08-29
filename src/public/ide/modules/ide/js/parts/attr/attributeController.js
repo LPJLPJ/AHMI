@@ -375,6 +375,7 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 },
                 //选择器
                 selector:{
+                    enterSelectorAlpha:enterSelectorAlpha,
                     enterSelectorCount:enterSelectorCount,
                     enterSelectorShowCount:enterSelectorShowCount,
                     enterSelectorCurValue:enterSelectorCurValue
@@ -803,6 +804,10 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                             $scope.component.selector.enableAnimationModeId = '1'
                         } else if ($scope.component.object.level.info.enableAnimation === true) {
                             $scope.component.selector.enableAnimationModeId = '0'
+                        }
+                        //alpha
+                        if($scope.component.object.level.info.alpha === undefined || $scope.component.object.level.info.alpha === null){
+                            $scope.component.object.level.info.alpha = 255
                         }
                     
                         $scope.component.timingFun = $scope.component.object.level.transition.timingFun;
@@ -3724,6 +3729,35 @@ ide.controller('AttributeCtrl', ['$scope', '$rootScope', '$timeout',
                 var oldOperate = ProjectService.SaveCurrentOperate();
                 ProjectService.enterGenerateAttrs(option, function () {
                     $scope.$emit('ChangeCurrentPage', oldOperate);
+                })
+            }
+        }
+
+        function enterSelectorAlpha(e){
+            if (e.keyCode == 13) {
+                var key = 'alpha'
+                if ($scope.component.object.level.info[key] == initObject.level.info[key]) {
+                    return;
+                }
+                
+                if($scope.component.object.level.info[key]<0){
+                    toastr.warning('范围是0-255')
+                    restore()
+                    return
+                }
+                if($scope.component.object.level.info[key]>255){
+                    toastr.warning('范围是0-255')
+                    restore()
+                    return
+                }
+
+                var option = {
+                    [key]: $scope.component.object.level.info[key]
+                };
+                var oldOperate = ProjectService.SaveCurrentOperate();
+                ProjectService.enterGenerateAttrs(option, function () {
+                    $scope.$emit('ChangeCurrentPage', oldOperate);
+                    
                 })
             }
         }

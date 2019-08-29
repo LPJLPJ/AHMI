@@ -154,6 +154,7 @@ ideServices
                     height: 250,
                     left: 0, top: 0,
                     originX: 'center', originY: 'center',
+                    alpha:255,
                     count:3,
                     showCount:3,
                     curValue:0,
@@ -181,23 +182,25 @@ ideServices
                         imgSrc:'',
                         name:'元素'
                     }]
-                 },{
-                    currentSliceIdx:0,
-                    name:'选中高亮',
-                    slices:[{
-                        color:'rgba(0,70,70,0.1)',
-                        imgSrc:'',
-                        name:'选中'
-                    }]
-                },{
-                    currentSliceIdx:0,
-                    name:'未选中遮盖',
-                    slices:[{
-                        color:'rgba(0,70,70,0.5)',
-                        imgSrc:'',
-                        name:'未选中'
-                    }]
-                }]
+                 }
+                //  ,{
+                //     currentSliceIdx:0,
+                //     name:'选中高亮',
+                //     slices:[{
+                //         color:'rgba(0,70,70,0.1)',
+                //         imgSrc:'',
+                //         name:'选中'
+                //     }]
+                // },{
+                //     currentSliceIdx:0,
+                //     name:'未选中遮盖',
+                //     slices:[{
+                //         color:'rgba(0,70,70,0.5)',
+                //         imgSrc:'',
+                //         name:'未选中'
+                //     }]
+                // }
+            ]
             },
             defaultDashboard={
                 info:{

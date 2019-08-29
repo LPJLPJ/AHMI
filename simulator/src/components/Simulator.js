@@ -475,7 +475,8 @@ module.exports = React.createClass({
 
         if (shouldTestFPS) {
             var stopT = new Date();
-            var fps = (1000 / (stopT - startT)).toFixed(1)
+            var fps = parseInt(1000 / (stopT - startT))
+            this.setTagByName('帧率',fps)
             this.setState({fps: fps})
             //disable
             this.shouldTestFPS = false;
@@ -5568,6 +5569,12 @@ module.exports = React.createClass({
         if((showCount&1) === 0){
             showCount++
         }
+        if(widget.info.alpha===undefined||widget.info.alpha===null){
+            widget.info.alpha = 255
+        }
+        if(widget.alpha === undefined){
+            widget.alpha = 0//init
+        }
         var count = widget.info.count
        
         var elementHeight = height/showCount
@@ -5596,7 +5603,7 @@ module.exports = React.createClass({
                 this.resetHideAnimation(widget)
                 widget.translateY = offset
                 
-                widget.animationKey = AnimationManager.stepValue(offset, 0, duration, 30, easingFunc, function (obj) {
+                widget.animationKey = AnimationManager.stepValue(offset, 0, duration, this.fps, easingFunc, function (obj) {
                     widget.translateY = obj.curX;
                     // this.draw()
                 }.bind(this), function () {
@@ -5607,16 +5614,20 @@ module.exports = React.createClass({
                 }.bind(this));
             }else{
                 widget.translateY = 0
-                if(widget.alpha){
-                    this.startHideAnimation(widget)
-                }
+                // if(widget.alpha){
+                //     this.startHideAnimation(widget)
+                // }
+                widget.alpha = 0
             }
             
         }else{
             //no move but pressed
-            if(widget.alpha){
+            if(widget.info.enableAnimation){
                 this.startHideAnimation(widget)
+            }else{
+                widget.alpha = 0
             }
+            
         }
 
         widget.oldValue = curValue
@@ -5629,7 +5640,9 @@ module.exports = React.createClass({
                 clearInterval(widget.hideAnimationKey)
                 widget.hideAnimationKey = null
             }
-            widget.hideAnimationKey = AnimationManager.stepValue(widget.alpha, 0, 1000, 30, 'linear', function (obj) {
+            var duration = (widget.transition && widget.transition.duration) || 0;
+            var easingFunc = (widget.transition && widget.transition.timingFun) || 'easeInOutCubic';
+            widget.hideAnimationKey = AnimationManager.stepValue(widget.alpha, 0, duration, this.fps, easingFunc, function (obj) {
                 widget.alpha = obj.curX;
                 // console.log(widget.alpha)
                 // this.draw()
@@ -5649,7 +5662,7 @@ module.exports = React.createClass({
             widget.hideAnimationKey = null
             
         }
-        widget.alpha =  100
+        widget.alpha =  widget.info.alpha
     },
     paintSelector: function (curX, curY, widget, options, cb,ctx) {
         var info = widget.info
@@ -5710,9 +5723,7 @@ module.exports = React.createClass({
                 }
             }
             //draw back to ctx
-            if(widget.alpha===undefined||widget.alpha===null){
-                widget.alpha = 0
-            }
+            
 
             ctx.save()
             //clip upper and bottom
@@ -5722,16 +5733,16 @@ module.exports = React.createClass({
             ctx.clip()
             //draw upper and bottom with alpha
             ctx.save()
-            ctx.globalAlpha = widget.alpha/100.0
+            ctx.globalAlpha = widget.alpha/255
             ctx.drawImage(this.selectorCanvas,0,0,width,height,0,0,width,height)
             ctx.restore()
             //draw unchosen
-            this.drawBg(curX, curY, width,height, notChosenOverTex.imgSrc, notChosenOverTex.color,ctx);
+            // this.drawBg(curX, curY, width,height, notChosenOverTex.imgSrc, notChosenOverTex.color,ctx);
             ctx.restore()
             //draw middle
             ctx.save()
             ctx.drawImage(this.selectorCanvas,0,centerIdx*elementHeight,elementWidth,elementHeight,0,centerIdx*elementHeight,elementWidth,elementHeight)
-            this.drawBg(curX, curY+centerIdx*elementHeight, elementWidth,elementHeight, chosenOverTex.imgSrc, chosenOverTex.color,ctx);
+            // this.drawBg(curX, curY+centerIdx*elementHeight, elementWidth,elementHeight, chosenOverTex.imgSrc, chosenOverTex.color,ctx);
             ctx.restore()
 
         }
