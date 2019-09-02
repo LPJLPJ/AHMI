@@ -6383,7 +6383,7 @@ ideServices.service('WidgetService',['ProjectService', 'Type', 'ResourceService'
 
                 if(!window.selectorCanvas){
                     window.selectorCanvas = document.createElement('canvas')
-                    document.body.appendChild(window.selectorCanvas)
+                    // document.body.appendChild(window.selectorCanvas)
                 }
                 var selectorCanvas = window.selectorCanvas
                 selectorCanvas.width = width

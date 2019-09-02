@@ -2036,8 +2036,8 @@ ideServices.service('RenderSerive',['ResourceService','Upload','$http','FontGene
             elementTex.slices.forEach(function(slice){
                 totalSlices.push(slice)
             })
-            totalSlices.push(widget.texList[1].slices[0])
-            totalSlices.push(widget.texList[2].slices[0])
+            // totalSlices.push(widget.texList[1].slices[0])
+            // totalSlices.push(widget.texList[2].slices[0])
             var totalSlicesNum = totalSlices.length
             var allNum = totalSlicesNum
             totalSlices.forEach(function (slice,i) {
