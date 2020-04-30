@@ -27,7 +27,7 @@
   },
   "dependencies": {
 
-    "jquery": "^2.1.4",
+    "jquery": "^3.5.0",
     "lodash": "^4.6.1",
     "mathjs": "^3.6.0",
     "react": "^0.14.3",
